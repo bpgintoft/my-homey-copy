@@ -114,7 +114,7 @@ export default function Home() {
       <div className="container mx-auto px-6 -mt-12 relative z-30">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[
-            { label: 'Redfin Value', value: propertyData?.estimated_value ? `$${(propertyData.estimated_value / 1000).toFixed(0)}K` : '—', loading: propertyLoading, icon: DollarSign },
+            { label: 'Redfin Value', value: propertyData?.estimated_value ? `$${propertyData.estimated_value.toLocaleString()}` : '—', loading: propertyLoading },
             { label: 'Rooms', value: rooms?.length || 0 },
             { label: 'Tasks Due', value: upcomingTasks.length },
             { label: 'Sq. Ft.', value: propertyData?.square_footage?.toLocaleString() || home?.square_footage?.toLocaleString() || '—', loading: propertyLoading },
@@ -134,10 +134,7 @@ export default function Home() {
                     </>
                   ) : (
                     <>
-                      <div className="flex items-center justify-center gap-1">
-                        {stat.icon && <stat.icon className="w-4 h-4 text-emerald-600" />}
-                        <div className="text-2xl font-bold text-slate-800">{stat.value}</div>
-                      </div>
+                      <div className="text-2xl font-bold text-slate-800">{stat.value}</div>
                       <div className="text-sm text-slate-500">{stat.label}</div>
                     </>
                   )}
