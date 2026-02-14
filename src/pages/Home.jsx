@@ -78,9 +78,7 @@ export default function Home() {
         <div 
           className="h-[40vh] min-h-[320px] bg-cover bg-center"
           style={{ 
-            backgroundImage: home?.photo_url 
-              ? `url(${home.photo_url})` 
-              : 'url(https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=1600)'
+            backgroundImage: 'url(https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/19322ed38_image.png)'
           }}
         />
         <div className="absolute inset-0 z-20 flex items-center">

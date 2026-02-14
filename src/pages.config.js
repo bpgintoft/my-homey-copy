@@ -47,36 +47,36 @@
  *
  * The mainPage value must match a key in the PAGES object exactly.
  */
-import Home from './pages/Home';
-import History from './pages/History';
-import Rooms from './pages/Rooms';
-import RoomDetail from './pages/RoomDetail';
-import Maintenance from './pages/Maintenance';
-import Vendors from './pages/Vendors';
-import Dashboard from './pages/Dashboard';
 import Appliances from './pages/Appliances';
-import MaintenanceCalendar from './pages/MaintenanceCalendar';
-import Documents from './pages/Documents';
-import HomeDetails from './pages/HomeDetails';
-import Family from './pages/Family';
 import Contacts from './pages/Contacts';
+import Dashboard from './pages/Dashboard';
+import Documents from './pages/Documents';
+import Family from './pages/Family';
+import History from './pages/History';
+import Home from './pages/Home';
+import HomeDetails from './pages/HomeDetails';
+import Maintenance from './pages/Maintenance';
+import MaintenanceCalendar from './pages/MaintenanceCalendar';
+import RoomDetail from './pages/RoomDetail';
+import Rooms from './pages/Rooms';
+import Vendors from './pages/Vendors';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
-    "Home": Home,
-    "History": History,
-    "Rooms": Rooms,
-    "RoomDetail": RoomDetail,
-    "Maintenance": Maintenance,
-    "Vendors": Vendors,
-    "Dashboard": Dashboard,
     "Appliances": Appliances,
-    "MaintenanceCalendar": MaintenanceCalendar,
-    "Documents": Documents,
-    "HomeDetails": HomeDetails,
-    "Family": Family,
     "Contacts": Contacts,
+    "Dashboard": Dashboard,
+    "Documents": Documents,
+    "Family": Family,
+    "History": History,
+    "Home": Home,
+    "HomeDetails": HomeDetails,
+    "Maintenance": Maintenance,
+    "MaintenanceCalendar": MaintenanceCalendar,
+    "RoomDetail": RoomDetail,
+    "Rooms": Rooms,
+    "Vendors": Vendors,
 }
 
 export const pagesConfig = {
