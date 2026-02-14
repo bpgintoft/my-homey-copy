@@ -11,7 +11,9 @@ import {
   Palette,
   CalendarDays,
   ArrowRight,
-  Sparkles
+  Sparkles,
+  DollarSign,
+  TrendingUp
 } from 'lucide-react';
 import { Card, CardContent } from "@/components/ui/card";
 import { motion } from 'framer-motion';
@@ -30,6 +32,32 @@ export default function Home() {
   const { data: rooms } = useQuery({
     queryKey: ['rooms'],
     queryFn: () => base44.entities.Room.list(),
+  });
+
+  const { data: propertyData, isLoading: propertyLoading } = useQuery({
+    queryKey: ['propertyData'],
+    queryFn: async () => {
+      const result = await base44.integrations.Core.InvokeLLM({
+        prompt: `Search Redfin.com for the property at 1934 Church St, Wauwatosa, WI 53213. Get the current Redfin estimated value and property details. Include Redfin estimate, bedrooms, bathrooms, square footage, lot size, year built, and any recent sale history if available. Use Redfin as the primary data source.`,
+        add_context_from_internet: true,
+        response_json_schema: {
+          type: "object",
+          properties: {
+            estimated_value: { type: "number" },
+            bedrooms: { type: "number" },
+            bathrooms: { type: "number" },
+            square_footage: { type: "number" },
+            lot_size: { type: "string" },
+            year_built: { type: "number" },
+            last_sale_date: { type: "string" },
+            last_sale_price: { type: "number" },
+            data_source: { type: "string" }
+          }
+        }
+      });
+      return result;
+    },
+    staleTime: 1000 * 60 * 60, // Cache for 1 hour
   });
 
   const home = homeInfo?.[0];
@@ -86,10 +114,10 @@ export default function Home() {
       <div className="container mx-auto px-6 -mt-12 relative z-30">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[
+            { label: 'Redfin Value', value: propertyData?.estimated_value ? `$${(propertyData.estimated_value / 1000).toFixed(0)}K` : '—', loading: propertyLoading, icon: DollarSign },
             { label: 'Rooms', value: rooms?.length || 0 },
             { label: 'Tasks Due', value: upcomingTasks.length },
-            { label: 'Year Built', value: home?.year_built || '—' },
-            { label: 'Sq. Ft.', value: home?.square_footage?.toLocaleString() || '—' },
+            { label: 'Sq. Ft.', value: propertyData?.square_footage?.toLocaleString() || home?.square_footage?.toLocaleString() || '—', loading: propertyLoading },
           ].map((stat, i) => (
             <motion.div
               key={stat.label}
@@ -99,8 +127,20 @@ export default function Home() {
             >
               <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
                 <CardContent className="p-4 text-center">
-                  <div className="text-2xl font-bold text-slate-800">{stat.value}</div>
-                  <div className="text-sm text-slate-500">{stat.label}</div>
+                  {stat.loading ? (
+                    <>
+                      <div className="h-8 w-20 mx-auto bg-slate-200 rounded animate-pulse mb-1" />
+                      <div className="text-sm text-slate-500">{stat.label}</div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="flex items-center justify-center gap-1">
+                        {stat.icon && <stat.icon className="w-4 h-4 text-emerald-600" />}
+                        <div className="text-2xl font-bold text-slate-800">{stat.value}</div>
+                      </div>
+                      <div className="text-sm text-slate-500">{stat.label}</div>
+                    </>
+                  )}
                 </CardContent>
               </Card>
             </motion.div>
