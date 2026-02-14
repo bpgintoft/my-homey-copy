@@ -53,6 +53,12 @@ import Rooms from './pages/Rooms';
 import RoomDetail from './pages/RoomDetail';
 import Maintenance from './pages/Maintenance';
 import Vendors from './pages/Vendors';
+import Dashboard from './pages/Dashboard';
+import Appliances from './pages/Appliances';
+import MaintenanceCalendar from './pages/MaintenanceCalendar';
+import Documents from './pages/Documents';
+import HomeDetails from './pages/HomeDetails';
+import Family from './pages/Family';
 import __Layout from './Layout.jsx';
 
 
@@ -63,6 +69,12 @@ export const PAGES = {
     "RoomDetail": RoomDetail,
     "Maintenance": Maintenance,
     "Vendors": Vendors,
+    "Dashboard": Dashboard,
+    "Appliances": Appliances,
+    "MaintenanceCalendar": MaintenanceCalendar,
+    "Documents": Documents,
+    "HomeDetails": HomeDetails,
+    "Family": Family,
 }
 
 export const pagesConfig = {
