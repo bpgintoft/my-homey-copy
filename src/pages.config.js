@@ -52,6 +52,8 @@ import History from './pages/History';
 import Rooms from './pages/Rooms';
 import RoomDetail from './pages/RoomDetail';
 import Maintenance from './pages/Maintenance';
+import Vendors from './pages/Vendors';
+import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
@@ -60,9 +62,11 @@ export const PAGES = {
     "Rooms": Rooms,
     "RoomDetail": RoomDetail,
     "Maintenance": Maintenance,
+    "Vendors": Vendors,
 }
 
 export const pagesConfig = {
     mainPage: "Home",
     Pages: PAGES,
+    Layout: __Layout,
 };
