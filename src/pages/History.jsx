@@ -63,7 +63,7 @@ export default function History() {
     queryKey: ['propertyData'],
     queryFn: async () => {
       const result = await base44.integrations.Core.InvokeLLM({
-        prompt: `Get the current real estate estimated value and property details for the house at 1934 Church St, Wauwatosa, WI 53213. Include estimated value, bedrooms, bathrooms, square footage, lot size, year built, and any recent sale history if available.`,
+        prompt: `Search Redfin.com for the property at 1934 Church St, Wauwatosa, WI 53213. Get the current Redfin estimated value and property details. Include Redfin estimate, bedrooms, bathrooms, square footage, lot size, year built, and any recent sale history if available. Use Redfin as the primary data source.`,
         add_context_from_internet: true,
         response_json_schema: {
           type: "object",
