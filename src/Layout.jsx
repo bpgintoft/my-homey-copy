@@ -9,7 +9,11 @@ import {
   Users, 
   Menu, 
   X,
-  ChevronRight
+  ChevronRight,
+  FileText,
+  Calendar,
+  Package,
+  Phone
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -19,10 +23,16 @@ export default function Layout({ children, currentPageName }) {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const navItems = [
-    { name: 'Home', icon: Home, href: 'Home' },
+    { name: 'Dashboard', icon: Home, href: 'Dashboard' },
     { name: 'History', icon: History, href: 'History' },
     { name: 'Rooms', icon: LayoutGrid, href: 'Rooms' },
+    { name: 'Appliances', icon: Package, href: 'Appliances' },
     { name: 'Maintenance', icon: Wrench, href: 'Maintenance' },
+    { name: 'Calendar', icon: Calendar, href: 'MaintenanceCalendar' },
+    { name: 'Documents', icon: FileText, href: 'Documents' },
+    { name: 'Home Details', icon: Home, href: 'HomeDetails' },
+    { name: 'Family', icon: Users, href: 'Family' },
+    { name: 'Contacts', icon: Phone, href: 'Contacts' },
     { name: 'Vendors', icon: Users, href: 'Vendors' },
   ];
 

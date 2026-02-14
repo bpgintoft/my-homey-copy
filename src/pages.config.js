@@ -59,6 +59,7 @@ import MaintenanceCalendar from './pages/MaintenanceCalendar';
 import Documents from './pages/Documents';
 import HomeDetails from './pages/HomeDetails';
 import Family from './pages/Family';
+import Contacts from './pages/Contacts';
 import __Layout from './Layout.jsx';
 
 
@@ -75,6 +76,7 @@ export const PAGES = {
     "Documents": Documents,
     "HomeDetails": HomeDetails,
     "Family": Family,
+    "Contacts": Contacts,
 }
 
 export const pagesConfig = {
