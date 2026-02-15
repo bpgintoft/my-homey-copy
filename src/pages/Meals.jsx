@@ -19,6 +19,8 @@ export default function Meals() {
   const [planDialog, setPlanDialog] = useState(false);
   const [planSelection, setPlanSelection] = useState({ day: '', mealType: '' });
   const [expandedMealId, setExpandedMealId] = useState(null);
+  const [pastedMealText, setPastedMealText] = useState('');
+  const [isParsing, setIsParsing] = useState(false);
   const queryClient = useQueryClient();
 
   const { data: meals = [] } = useQuery({
