@@ -14,6 +14,7 @@ export default function Home() {
     house: null,
     history: null
   });
+  const [heroBanner, setHeroBanner] = useState(null);
   const [isGenerating, setIsGenerating] = useState(false);
 
   const { data: mealPlans } = useQuery({
@@ -35,7 +36,10 @@ export default function Home() {
     const generateImages = async () => {
       setIsGenerating(true);
       try {
-        const [mealsImg, kidsImg, houseImg, historyImg] = await Promise.all([
+        const [heroImg, mealsImg, kidsImg, houseImg, historyImg] = await Promise.all([
+          base44.integrations.Core.GenerateImage({
+            prompt: 'Cartoon illustration of a happy family of 4 - mother, father, young girl (age 4), and young boy (age 9) - sitting together outdoors in a lush green park or backyard. Vibrant colors, warm and friendly style, showing love and togetherness. Beautiful trees and nature in background. Rounded corners, bright and cheerful, suitable as a welcome banner. Family wearing casual outdoor clothing, big smiles, Disney/Pixar animation style'
+          }),
           base44.integrations.Core.GenerateImage({
             prompt: '3D cartoon illustration button with rounded square shape and pink gradient background. Shows a clipboard with checkmarks, a colorful pencil, fresh vegetables (carrot, tomatoes), and a plate with bread. Cute, playful style with soft shadows. White text at bottom reads "Meal Planning". Icon style, vibrant colors, isometric view, clean design'
           }),
@@ -50,6 +54,7 @@ export default function Home() {
           })
         ]);
 
+        setHeroBanner(heroImg.url);
         setImageUrls({
           meals: mealsImg.url,
           kids: kidsImg.url,
@@ -100,15 +105,37 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-[#F5F5F7]">
       {/* Header */}
-      <div className="bg-gradient-to-br from-[#00D9A3] to-[#00B386] py-8">
-        <div className="container mx-auto px-6">
-          <h1 className="text-3xl font-bold text-white mb-2">
-            Welcome Home
-          </h1>
-          <p className="text-white/90">
-            1934 Church St
-          </p>
-        </div>
+      <div className="relative overflow-hidden">
+        {heroBanner ? (
+          <div className="relative h-64 md:h-80">
+            <img 
+              src={heroBanner} 
+              alt="Family Welcome"
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent" />
+            <div className="absolute bottom-0 left-0 right-0 container mx-auto px-6 py-8">
+              <h1 className="text-3xl font-bold text-white mb-2 drop-shadow-lg">
+                Welcome Home
+              </h1>
+              <p className="text-white drop-shadow-md">
+                1934 Church St
+              </p>
+            </div>
+          </div>
+        ) : (
+          <div className="bg-gradient-to-br from-[#00D9A3] to-[#00B386] py-8">
+            <div className="container mx-auto px-6">
+              <Loader2 className="w-8 h-8 text-white/50 animate-spin mx-auto mb-4" />
+              <h1 className="text-3xl font-bold text-white mb-2">
+                Welcome Home
+              </h1>
+              <p className="text-white/90">
+                1934 Church St
+              </p>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Quick Stats */}
