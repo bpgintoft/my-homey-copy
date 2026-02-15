@@ -576,17 +576,9 @@ export default function Meals() {
                               <Calendar className="w-4 h-4 mr-2" />
                               Add to Plan
                             </Button>
-                          </div>
-                        </div>
-                      ) : (
-                        expandedMealId !== meal.id && meal.cooking_method && (
-                          <div className="bg-orange-100 text-orange-700 text-xs px-3 py-1 rounded-full font-medium w-fit">
-                            {meal.cooking_method === 'oven' && `${meal.cooking_temperature_or_heat} • ${meal.cook_time}m`}
-                            {meal.cooking_method === 'stovetop' && `Heat ${meal.cooking_temperature_or_heat} • ${meal.cook_time}m`}
-                            {meal.cooking_method === 'microwave' && `Microwave ${meal.cook_time}m`}
-                          </div>
-                        )
-                      )}
+                            </div>
+                            </div>
+                            )}
                     </CardContent>
                   </Card>
                 </motion.div>
