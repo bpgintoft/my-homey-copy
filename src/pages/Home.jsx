@@ -42,36 +42,40 @@ export default function Home() {
       description: 'Weekly meals & grocery lists',
       icon: UtensilsCrossed, 
       href: 'Meals', 
-      color: 'from-[#E91E8C] to-[#D01576]',
+      gradient: 'from-[#FF6B9D] via-[#FF85B0] to-[#FFA5C4]',
       stat: `${thisWeekMeals} meals planned`,
-      bgColor: 'bg-pink-50'
+      iconBg: 'bg-gradient-to-br from-white to-pink-100',
+      iconColor: 'text-pink-600'
     },
     { 
       title: 'Kids Activities', 
       description: 'Events, programs & reminders',
       icon: Calendar, 
       href: 'Kids', 
-      color: 'from-[#0AACFF] to-[#0890D9]',
+      gradient: 'from-[#4FC3F7] via-[#6DD5FA] to-[#89E7FE]',
       stat: `${upcomingEvents} upcoming`,
-      bgColor: 'bg-blue-50'
+      iconBg: 'bg-gradient-to-br from-white to-blue-100',
+      iconColor: 'text-blue-600'
     },
     { 
       title: 'House', 
       description: 'Rooms, appliances & organization',
       icon: HomeIcon, 
       href: 'House', 
-      color: 'from-[#00D9A3] to-[#00B386]',
+      gradient: 'from-[#26E2A3] via-[#4EEEB3] to-[#6FFAC4]',
       stat: `${totalAppliances} appliances`,
-      bgColor: 'bg-emerald-50'
+      iconBg: 'bg-gradient-to-br from-white to-emerald-100',
+      iconColor: 'text-emerald-600'
     },
     { 
       title: 'History', 
       description: 'Property history & details',
       icon: History, 
       href: 'History', 
-      color: 'from-[#FFB800] to-[#E5A200]',
+      gradient: 'from-[#FFB347] via-[#FFC870] to-[#FFDA94]',
       stat: 'Est. 1934',
-      bgColor: 'bg-amber-50'
+      iconBg: 'bg-gradient-to-br from-white to-amber-100',
+      iconColor: 'text-amber-600'
     },
   ];
 
@@ -124,14 +128,16 @@ export default function Home() {
               transition={{ duration: 0.4, delay: i * 0.1 }}
             >
               <Link to={createPageUrl(section.href)}>
-                <Card className="group cursor-pointer border-0 shadow-lg hover:shadow-xl transition-all overflow-hidden bg-white h-full">
-                  <CardContent className="p-5 flex flex-col h-full">
-                    <div className={`w-14 h-14 rounded-2xl ${section.bgColor} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
-                      <section.icon className="w-7 h-7 text-gray-700" />
+                <Card className={`group cursor-pointer border-0 shadow-lg hover:shadow-2xl hover:scale-105 transition-all duration-300 overflow-hidden h-full bg-gradient-to-br ${section.gradient}`}>
+                  <CardContent className="p-5 flex flex-col h-full relative">
+                    <div className={`w-16 h-16 rounded-3xl ${section.iconBg} shadow-md flex items-center justify-center mb-4 group-hover:rotate-6 transition-transform duration-300`}>
+                      <section.icon className={`w-8 h-8 ${section.iconColor}`} strokeWidth={2.5} />
                     </div>
-                    <h3 className="text-lg font-bold text-gray-900 mb-2">{section.title}</h3>
-                    <p className="text-sm text-gray-600 mb-3 flex-1">{section.stat}</p>
-                    <div className={`w-full h-1 rounded-full bg-gradient-to-r ${section.color}`} />
+                    <h3 className="text-lg font-bold text-white mb-2 drop-shadow-sm">{section.title}</h3>
+                    <p className="text-sm text-white/90 font-medium drop-shadow-sm">{section.stat}</p>
+                    <div className="absolute bottom-3 right-3 opacity-20">
+                      <section.icon className="w-16 h-16 text-white" strokeWidth={1} />
+                    </div>
                   </CardContent>
                 </Card>
               </Link>
