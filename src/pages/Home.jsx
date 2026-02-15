@@ -107,7 +107,7 @@ export default function Home() {
       {/* Header */}
       <div className="relative overflow-hidden">
         {heroBanner ? (
-          <div className="relative h-64 md:h-80">
+          <div className="relative h-40">
             <img 
               src={heroBanner} 
               alt="Family Welcome"
