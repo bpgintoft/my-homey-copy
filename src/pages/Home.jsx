@@ -66,36 +66,22 @@ export default function Home() {
     <div className="min-h-screen bg-[#F5F5F7]">
       {/* Header */}
       <div className="relative overflow-hidden">
-        {heroBanner ? (
-          <div className="relative h-40">
-            <img 
-              src={heroBanner} 
-              alt="Family Welcome"
-              className="w-full h-full object-cover"
-            />
-            <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/20 to-transparent" />
-            <div className="absolute top-0 left-0 right-0 container mx-auto px-6 py-6">
-              <h1 className="text-3xl font-bold text-white mb-2 drop-shadow-lg">
-                Welcome Home
-              </h1>
-              <p className="text-white drop-shadow-md">
-                1934 Church St
-              </p>
-            </div>
+        <div className="relative h-40">
+          <img 
+            src={heroBanner} 
+            alt="Family Welcome"
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/20 to-transparent" />
+          <div className="absolute top-0 left-0 right-0 container mx-auto px-6 py-6">
+            <h1 className="text-3xl font-bold text-white mb-2 drop-shadow-lg">
+              Welcome Home
+            </h1>
+            <p className="text-white drop-shadow-md">
+              1934 Church St
+            </p>
           </div>
-        ) : (
-          <div className="bg-gradient-to-br from-[#00D9A3] to-[#00B386] py-8">
-            <div className="container mx-auto px-6">
-              <Loader2 className="w-8 h-8 text-white/50 animate-spin mx-auto mb-4" />
-              <h1 className="text-3xl font-bold text-white mb-2">
-                Welcome Home
-              </h1>
-              <p className="text-white/90">
-                1934 Church St
-              </p>
-            </div>
-          </div>
-        )}
+        </div>
       </div>
 
       {/* Quick Stats */}
