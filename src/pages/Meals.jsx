@@ -155,13 +155,20 @@ export default function Meals() {
 
   return (
     <div className="min-h-screen bg-[#F5F5F7]">
-      <div className="bg-gradient-to-r from-[#E91E8C] to-[#D01576] text-white py-12">
-        <div className="container mx-auto px-6">
-          <div className="flex items-center gap-3 mb-3">
-            <ChefHat className="w-8 h-8" />
-            <h1 className="text-4xl font-bold">Meal Planning</h1>
+      <div className="relative overflow-hidden">
+        <div className="relative h-40 md:h-48 bg-gradient-to-r from-[#E91E8C] to-[#D01576] flex items-center justify-between px-4 md:px-12 gap-0">
+          <div className="flex-1">
+            <div className="flex items-center gap-3 mb-3">
+              <ChefHat className="w-8 h-8 text-white" />
+              <h1 className="text-2xl md:text-4xl font-bold text-white">Meal Planning</h1>
+            </div>
+            <p className="text-sm md:text-lg text-white/90">Kid-friendly meals for the whole family</p>
           </div>
-          <p className="text-white/90 text-lg">Kid-friendly meals for the whole family</p>
+          <img 
+            src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/8a93254d5_familycooking.png" 
+            alt="Family Cooking"
+            className="h-40 md:h-56 w-auto object-contain flex-shrink-0"
+          />
         </div>
       </div>
 
