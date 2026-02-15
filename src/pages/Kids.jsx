@@ -9,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Plus, Calendar as CalendarIcon, MapPin, DollarSign, Clock, Sparkles, Users, Trash2 } from 'lucide-react';
+import { Plus, Calendar as CalendarIcon, MapPin, DollarSign, Clock, Sparkles, Users, Trash2, ExternalLink } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, parseISO } from 'date-fns';
 
@@ -196,7 +196,18 @@ export default function Kids() {
                       )}
                       
                       {activity.description && (
-                        <p className="text-sm text-gray-500 mt-3 line-clamp-2">{activity.description}</p>
+                        <p className="text-sm text-gray-500 mt-3">{activity.description}</p>
+                      )}
+                      
+                      {activity.registration_url && (
+                        <a
+                          href={activity.registration_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-2 mt-3 text-sm text-blue-600 hover:text-blue-700 font-medium"
+                        >
+                          View Details <ExternalLink className="w-4 h-4" />
+                        </a>
                       )}
                     </CardContent>
                   </Card>
@@ -345,6 +356,11 @@ export default function Kids() {
               placeholder="Cost (e.g., Free, $25)"
               value={newActivity.cost || ''}
               onChange={(e) => setNewActivity({ ...newActivity, cost: e.target.value })}
+            />
+            <Input
+              placeholder="Registration URL (optional)"
+              value={newActivity.registration_url || ''}
+              onChange={(e) => setNewActivity({ ...newActivity, registration_url: e.target.value })}
             />
             <Textarea
               placeholder="Description"
