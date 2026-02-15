@@ -507,11 +507,11 @@ export default function Meals() {
       </div>
 
       <Dialog open={showMealDialog} onOpenChange={setShowMealDialog}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-2xl max-h-[90vh] flex flex-col">
           <DialogHeader>
             <DialogTitle>Add New Meal</DialogTitle>
           </DialogHeader>
-          <div className="space-y-6">
+          <div className="space-y-6 overflow-y-auto flex-1 pr-4">
             <div className="space-y-3">
               <label className="text-sm font-medium text-gray-900">Paste a recipe from online:</label>
               <Textarea
