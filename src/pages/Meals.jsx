@@ -27,8 +27,9 @@ export default function Meals() {
     const [selectedMealTypes, setSelectedMealTypes] = useState([]);
     const [showFilters, setShowFilters] = useState(false);
     const [appliedProteins, setAppliedProteins] = useState([]);
-    const [appliedMealTypes, setAppliedMealTypes] = useState([]);
-    const queryClient = useQueryClient();
+            const [appliedMealTypes, setAppliedMealTypes] = useState([]);
+            const [uploadingImage, setUploadingImage] = useState(false);
+            const queryClient = useQueryClient();
 
   const { data: meals = [] } = useQuery({
     queryKey: ['meals'],
