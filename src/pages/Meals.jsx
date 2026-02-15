@@ -415,6 +415,11 @@ export default function Meals() {
                       </div>
                       {expandedMealId === meal.id ? (
                         <div className="space-y-4">
+                          {meal.photo_url && (
+                            <div className="w-full h-48 rounded-lg overflow-hidden">
+                              <img src={meal.photo_url} alt={meal.name} className="w-full h-full object-cover" />
+                            </div>
+                          )}
                           {meal.ingredients && (
                             <div>
                               <h4 className="font-medium text-gray-900 mb-2">Ingredients:</h4>
