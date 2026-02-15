@@ -473,30 +473,39 @@ export default function Meals() {
                 >
                   <Card className="bg-white border-0 shadow-sm hover:shadow-md transition-shadow cursor-pointer" onClick={() => setExpandedMealId(expandedMealId === meal.id ? null : meal.id)}>
                     <CardContent className="p-4">
-                      <div className="flex items-start justify-between mb-2">
-                        <div className="flex items-center gap-2 flex-1">
-                          {meal.protein_type && getProteinIcon(meal.protein_type)}
-                          <h3 className="font-semibold text-gray-900">{meal.name}</h3>
-                        </div>
-                        <button
-                          onClick={(e) => { e.stopPropagation(); deleteMealMutation.mutate(meal.id); }}
-                          disabled={deleteMealMutation.isPending}
-                          className="text-gray-400 hover:text-red-500 transition-colors p-1 flex-shrink-0"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </div>
-                      <div className="flex flex-wrap gap-2 mb-3">
-                        <Badge className="bg-pink-100 text-pink-700 border-0 text-xs">
-                          {meal.type}
-                        </Badge>
-                        <div className="flex items-center gap-1 text-xs text-gray-500">
-                          <Clock className="w-3 h-3" />
-                          {(meal.prep_time || 0) + (meal.cook_time || 0)}m
-                        </div>
-                        <div className="flex items-center gap-1 text-xs text-gray-500">
-                          <Users className="w-3 h-3" />
-                          {meal.servings || 4}
+                      <div className="flex gap-3 mb-3">
+                        {meal.photo_url && (
+                          <div className="w-16 h-16 flex-shrink-0 rounded-lg overflow-hidden">
+                            <img src={meal.photo_url} alt={meal.name} className="w-full h-full object-cover" />
+                          </div>
+                        )}
+                        <div className="flex-1">
+                          <div className="flex items-start justify-between mb-2">
+                            <div className="flex items-center gap-2 flex-1">
+                              {meal.protein_type && getProteinIcon(meal.protein_type)}
+                              <h3 className="font-semibold text-gray-900">{meal.name}</h3>
+                            </div>
+                            <button
+                              onClick={(e) => { e.stopPropagation(); deleteMealMutation.mutate(meal.id); }}
+                              disabled={deleteMealMutation.isPending}
+                              className="text-gray-400 hover:text-red-500 transition-colors p-1 flex-shrink-0"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
+                          <div className="flex flex-wrap gap-2">
+                            <Badge className="bg-pink-100 text-pink-700 border-0 text-xs">
+                              {meal.type}
+                            </Badge>
+                            <div className="flex items-center gap-1 text-xs text-gray-500">
+                              <Clock className="w-3 h-3" />
+                              {(meal.prep_time || 0) + (meal.cook_time || 0)}m
+                            </div>
+                            <div className="flex items-center gap-1 text-xs text-gray-500">
+                              <Users className="w-3 h-3" />
+                              {meal.servings || 4}
+                            </div>
+                          </div>
                         </div>
                       </div>
                       {expandedMealId === meal.id && (
