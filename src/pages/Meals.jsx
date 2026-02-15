@@ -273,9 +273,18 @@ export default function Meals() {
                                 <div className="text-sm font-medium text-gray-900">{plan.meal_name}</div>
                                 <div className="text-xs text-gray-500 capitalize">{plan.meal_type}</div>
                               </div>
-                              <Badge className="bg-pink-100 text-pink-700 border-0 capitalize">
-                                {plan.meal_type}
-                              </Badge>
+                              <div className="flex items-center gap-2">
+                                <Badge className="bg-pink-100 text-pink-700 border-0 capitalize">
+                                  {plan.meal_type}
+                                </Badge>
+                                <button
+                                  onClick={() => deleteFromMealPlanMutation.mutate(plan.id)}
+                                  disabled={deleteFromMealPlanMutation.isPending}
+                                  className="text-gray-400 hover:text-red-500 transition-colors p-1"
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </button>
+                              </div>
                             </div>
                           ))}
                         </div>
