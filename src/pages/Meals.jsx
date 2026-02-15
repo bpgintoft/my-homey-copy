@@ -15,6 +15,9 @@ import { motion } from 'framer-motion';
 export default function Meals() {
   const [showMealDialog, setShowMealDialog] = useState(false);
   const [newMeal, setNewMeal] = useState({});
+  const [selectedMealForPlan, setSelectedMealForPlan] = useState(null);
+  const [planDialog, setPlanDialog] = useState(false);
+  const [planSelection, setPlanSelection] = useState({ day: '', mealType: '' });
   const queryClient = useQueryClient();
 
   const { data: meals = [] } = useQuery({
