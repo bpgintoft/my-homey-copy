@@ -24,6 +24,9 @@ export default function Meals() {
     const [generatedMeal, setGeneratedMeal] = useState(null);
     const [selectedProteins, setSelectedProteins] = useState([]);
     const [selectedMealTypes, setSelectedMealTypes] = useState([]);
+    const [showFilters, setShowFilters] = useState(false);
+    const [appliedProteins, setAppliedProteins] = useState([]);
+    const [appliedMealTypes, setAppliedMealTypes] = useState([]);
     const queryClient = useQueryClient();
 
   const { data: meals = [] } = useQuery({
@@ -205,10 +208,16 @@ export default function Meals() {
   const kidFriendlyMeals = meals.filter(m => m.kid_friendly);
 
   const filteredMeals = kidFriendlyMeals.filter(meal => {
-    const proteinMatch = selectedProteins.length === 0 || (meal.protein_type && selectedProteins.includes(meal.protein_type));
-    const typeMatch = selectedMealTypes.length === 0 || selectedMealTypes.includes(meal.type);
+    const proteinMatch = appliedProteins.length === 0 || (meal.protein_type && appliedProteins.includes(meal.protein_type));
+    const typeMatch = appliedMealTypes.length === 0 || appliedMealTypes.includes(meal.type);
     return proteinMatch && typeMatch;
   });
+
+  const handleSaveFilters = () => {
+    setAppliedProteins(selectedProteins);
+    setAppliedMealTypes(selectedMealTypes);
+    setShowFilters(false);
+  };
 
   return (
     <div className="min-h-screen bg-[#F5F5F7]">
@@ -245,74 +254,92 @@ export default function Meals() {
           </TabsList>
 
           <TabsContent value="meals" className="space-y-6">
+            <h2 className="text-xl font-semibold text-gray-900">
+              {filteredMeals.length} Kid-Friendly Meals
+            </h2>
+
             <div className="space-y-4">
-              <div className="flex justify-between items-start gap-4">
-                <div>
-                  <h2 className="text-xl font-semibold text-gray-900 mb-4">
-                    {filteredMeals.length} Kid-Friendly Meals
-                  </h2>
-                  <div className="space-y-3">
-                    <div>
-                      <p className="text-sm font-medium text-gray-700 mb-2">Protein Type</p>
-                      <div className="flex flex-wrap gap-2">
-                        {['fish', 'beef', 'chicken', 'pork', 'turkey', 'vegetarian'].map(protein => (
-                          <button
-                            key={protein}
-                            onClick={() => setSelectedProteins(prev => 
-                              prev.includes(protein) ? prev.filter(p => p !== protein) : [...prev, protein]
-                            )}
-                            className={`px-3 py-1 rounded-full text-sm font-medium transition-all ${
-                              selectedProteins.includes(protein)
-                                ? 'bg-pink-600 text-white'
-                                : 'bg-pink-100 text-pink-700 hover:bg-pink-200'
-                            }`}
-                          >
-                            {protein.charAt(0).toUpperCase() + protein.slice(1)}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-gray-700 mb-2">Meal Type</p>
-                      <div className="flex flex-wrap gap-2">
-                        {['breakfast', 'lunch', 'dinner', 'snack', 'dessert'].map(type => (
-                          <button
-                            key={type}
-                            onClick={() => setSelectedMealTypes(prev =>
-                              prev.includes(type) ? prev.filter(t => t !== type) : [...prev, type]
-                            )}
-                            className={`px-3 py-1 rounded-full text-sm font-medium transition-all ${
-                              selectedMealTypes.includes(type)
-                                ? 'bg-pink-600 text-white'
-                                : 'bg-pink-100 text-pink-700 hover:bg-pink-200'
-                            }`}
-                          >
-                            {type.charAt(0).toUpperCase() + type.slice(1)}
-                          </button>
-                        ))}
-                      </div>
+              <div className="flex gap-3 items-start">
+                <Button
+                  onClick={() => setShowFilters(!showFilters)}
+                  variant="outline"
+                  className="border-pink-200 text-pink-600 hover:bg-pink-50"
+                >
+                  Filter
+                </Button>
+                <Button
+                  onClick={() => generateMealPlanMutation.mutate()}
+                  disabled={generateMealPlanMutation.isPending}
+                  variant="outline"
+                  className="border-pink-200 text-pink-600 hover:bg-pink-50"
+                >
+                  <Sparkles className="w-4 h-4 mr-2" />
+                  {generateMealPlanMutation.isPending ? 'Generating...' : 'AI Meal Idea'}
+                </Button>
+                <Button
+                  onClick={() => setShowMealDialog(true)}
+                  className="bg-gradient-to-r from-[#E91E8C] to-[#D01576] text-white"
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  Add Meal
+                </Button>
+              </div>
+
+              {showFilters && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="bg-pink-50 rounded-lg p-4 space-y-4"
+                >
+                  <div>
+                    <p className="text-sm font-medium text-gray-700 mb-2">Protein Type</p>
+                    <div className="flex flex-wrap gap-2">
+                      {['fish', 'beef', 'chicken', 'pork', 'turkey', 'vegetarian'].map(protein => (
+                        <button
+                          key={protein}
+                          onClick={() => setSelectedProteins(prev => 
+                            prev.includes(protein) ? prev.filter(p => p !== protein) : [...prev, protein]
+                          )}
+                          className={`px-3 py-1 rounded-full text-sm font-medium transition-all ${
+                            selectedProteins.includes(protein)
+                              ? 'bg-pink-600 text-white'
+                              : 'bg-white text-pink-700 border border-pink-200 hover:bg-pink-100'
+                          }`}
+                        >
+                          {protein.charAt(0).toUpperCase() + protein.slice(1)}
+                        </button>
+                      ))}
                     </div>
                   </div>
-                </div>
-                <div className="flex gap-3 flex-shrink-0">
+                  <div>
+                    <p className="text-sm font-medium text-gray-700 mb-2">Meal Type</p>
+                    <div className="flex flex-wrap gap-2">
+                      {['breakfast', 'lunch', 'dinner', 'snack', 'dessert'].map(type => (
+                        <button
+                          key={type}
+                          onClick={() => setSelectedMealTypes(prev =>
+                            prev.includes(type) ? prev.filter(t => t !== type) : [...prev, type]
+                          )}
+                          className={`px-3 py-1 rounded-full text-sm font-medium transition-all ${
+                            selectedMealTypes.includes(type)
+                              ? 'bg-pink-600 text-white'
+                              : 'bg-white text-pink-700 border border-pink-200 hover:bg-pink-100'
+                          }`}
+                        >
+                          {type.charAt(0).toUpperCase() + type.slice(1)}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
                   <Button
-                    onClick={() => generateMealPlanMutation.mutate()}
-                    disabled={generateMealPlanMutation.isPending}
-                    variant="outline"
-                    className="border-pink-200 text-pink-600 hover:bg-pink-50"
-                  >
-                    <Sparkles className="w-4 h-4 mr-2" />
-                    {generateMealPlanMutation.isPending ? 'Generating...' : 'AI Meal Idea'}
-                  </Button>
-                  <Button
-                    onClick={() => setShowMealDialog(true)}
+                    onClick={handleSaveFilters}
                     className="bg-gradient-to-r from-[#E91E8C] to-[#D01576] text-white"
                   >
-                    <Plus className="w-4 h-4 mr-2" />
-                    Add Meal
+                    Save Filter
                   </Button>
-                </div>
-              </div>
+                </motion.div>
+              )}
             </div>
 
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -408,8 +435,8 @@ export default function Meals() {
             {filteredMeals.length === 0 && (
               <Card className="bg-white border-0 shadow-sm p-12 text-center">
                 <ChefHat className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">{selectedProteins.length > 0 || selectedMealTypes.length > 0 ? 'No meals match your filters' : 'No meals yet'}</h3>
-                <p className="text-gray-500 mb-4">{selectedProteins.length > 0 || selectedMealTypes.length > 0 ? 'Try adjusting your filters' : 'Add meals manually or generate AI suggestions'}</p>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">{appliedProteins.length > 0 || appliedMealTypes.length > 0 ? 'No meals match your filters' : 'No meals yet'}</h3>
+                <p className="text-gray-500 mb-4">{appliedProteins.length > 0 || appliedMealTypes.length > 0 ? 'Try adjusting your filters' : 'Add meals manually or generate AI suggestions'}</p>
                 <Button
                   onClick={() => generateMealPlanMutation.mutate()}
                   disabled={generateMealPlanMutation.isPending}
