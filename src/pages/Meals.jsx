@@ -191,7 +191,7 @@ export default function Meals() {
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                 >
-                  <Card className="bg-white border-0 shadow-sm hover:shadow-md transition-shadow">
+                  <Card className="bg-white border-0 shadow-sm hover:shadow-md transition-shadow cursor-pointer" onClick={() => { setSelectedMealForPlan(meal); setPlanDialog(true); }}>
                     <CardContent className="p-5">
                       <div className="flex items-start justify-between mb-3">
                         <h3 className="font-semibold text-gray-900 text-lg">{meal.name}</h3>
@@ -217,7 +217,7 @@ export default function Meals() {
                         </div>
                       )}
                       <Button
-                        onClick={() => addToGroceryListMutation.mutate(meal)}
+                        onClick={(e) => { e.stopPropagation(); addToGroceryListMutation.mutate(meal); }}
                         disabled={addToGroceryListMutation.isPending || !meal.ingredients?.length}
                         size="sm"
                         className="w-full bg-pink-100 text-pink-700 hover:bg-pink-200"
