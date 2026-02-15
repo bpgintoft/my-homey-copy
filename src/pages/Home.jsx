@@ -40,25 +40,29 @@ export default function Home() {
       title: 'Meal Planning', 
       href: 'Meals', 
       stat: `${thisWeekMeals} meals planned`,
-      imageKey: 'meals'
+      imageKey: 'meals',
+      bgColor: 'bg-gradient-to-br from-pink-200 to-pink-300'
     },
     { 
       title: 'Kids Activities', 
       href: 'Kids', 
       stat: `${upcomingEvents} upcoming`,
-      imageKey: 'kids'
+      imageKey: 'kids',
+      bgColor: 'bg-gradient-to-br from-blue-200 to-blue-300'
     },
     { 
       title: 'House', 
       href: 'House', 
       stat: `${totalAppliances} appliances`,
-      imageKey: 'house'
+      imageKey: 'house',
+      bgColor: 'bg-gradient-to-br from-green-200 to-green-300'
     },
     { 
       title: 'History', 
       href: 'History', 
       stat: 'Est. 1927',
-      imageKey: 'history'
+      imageKey: 'history',
+      bgColor: 'bg-gradient-to-br from-amber-200 to-amber-300'
     },
   ];
 
@@ -118,25 +122,17 @@ export default function Home() {
             >
               <Link to={createPageUrl(section.href)}>
                 <div className="group cursor-pointer hover:scale-105 transition-all duration-300">
-                  {imageUrls[section.imageKey] ? (
-                    <div className="relative">
+                  <div className={`relative rounded-3xl shadow-lg hover:shadow-2xl transition-all ${section.bgColor} p-6 flex flex-col items-center justify-center h-48`}>
+                    {imageUrls[section.imageKey] && (
                       <img 
                         src={imageUrls[section.imageKey]} 
                         alt={section.title}
-                        className="w-full h-auto rounded-3xl shadow-lg hover:shadow-2xl transition-shadow duration-300"
+                        className="w-32 h-32 object-contain mb-3"
                       />
-                      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/40 to-transparent rounded-b-3xl p-4">
-                        <p className="text-sm text-white font-medium drop-shadow-md">{section.stat}</p>
-                      </div>
-                    </div>
-                  ) : (
-                    <Card className="border-0 shadow-lg hover:shadow-2xl transition-all bg-gradient-to-br from-gray-100 to-gray-200">
-                      <CardContent className="p-8 flex flex-col h-48 items-center justify-center">
-                        <h3 className="text-xl font-bold text-gray-700 mb-2">{section.title}</h3>
-                        <p className="text-sm text-gray-500">{section.stat}</p>
-                      </CardContent>
-                    </Card>
-                  )}
+                    )}
+                    <h3 className="text-xl font-bold text-white drop-shadow-lg">{section.title}</h3>
+                    <p className="text-sm text-white/90 mt-1">{section.stat}</p>
+                  </div>
                 </div>
               </Link>
             </motion.div>
