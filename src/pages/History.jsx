@@ -117,7 +117,7 @@ export default function History() {
                 <div>
                   <div className="text-sm text-gray-500 mb-1">Year Built</div>
                   <div className="text-2xl font-bold text-gray-900">
-                    {propertyData?.year_built || home?.year_built || '1934'}
+                    {propertyData?.year_built || home?.year_built || '1927'}
                   </div>
                 </div>
                 <div>
