@@ -509,7 +509,7 @@ export default function Meals() {
                         </div>
                       </div>
                       {expandedMealId === meal.id && (
-                        <div className="space-y-4 pt-3 border-t border-gray-200">
+                        <div className="space-y-4 pt-4 border-t border-gray-200">
                           {meal.photo_url && (
                             <div className="w-full h-48 rounded-lg overflow-hidden">
                               <img src={meal.photo_url} alt={meal.name} className="w-full h-full object-cover" />
