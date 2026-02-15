@@ -101,6 +101,13 @@ export default function Meals() {
     },
   });
 
+  const deleteFromMealPlanMutation = useMutation({
+    mutationFn: (mealPlanId) => base44.entities.MealPlan.delete(mealPlanId),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['mealPlans']);
+    },
+  });
+
   const generateMealPlanMutation = useMutation({
     mutationFn: async () => {
       const result = await base44.integrations.Core.InvokeLLM({
