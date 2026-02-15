@@ -249,7 +249,7 @@ export default function Meals() {
                   className="border-pink-200 text-pink-600 hover:bg-pink-50"
                 >
                   <Sparkles className="w-4 h-4 mr-2" />
-                  {generateMealPlanMutation.isPending ? 'Generating...' : 'AI Meal Ideas'}
+                  {generateMealPlanMutation.isPending ? 'Generating...' : 'AI Meal Idea'}
                 </Button>
                 <Button
                   onClick={() => setShowMealDialog(true)}
