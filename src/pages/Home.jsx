@@ -79,21 +79,43 @@ export default function Home() {
     <div className="min-h-screen bg-[#F5F5F7]">
       <VoiceAssistant />
       
-      {/* Compact Header */}
-      <div className="bg-white border-b border-gray-200 py-6">
+      {/* Header */}
+      <div className="bg-gradient-to-br from-[#00D9A3] to-[#00B386] py-8">
         <div className="container mx-auto px-6">
-          <h1 className="text-2xl font-bold text-gray-900 mb-1">
+          <h1 className="text-3xl font-bold text-white mb-2">
             Welcome Home
           </h1>
-          <p className="text-sm text-gray-600">
-            1934 Church St, Wauwatosa
+          <p className="text-white/90">
+            1934 Church St
           </p>
         </div>
       </div>
 
-      {/* Main Sections */}
-      <div className="container mx-auto px-6 py-6">
-        <div className="grid grid-cols-2 gap-3">
+      {/* Quick Stats */}
+      <div className="container mx-auto px-6 -mt-6">
+        <div className="grid grid-cols-3 gap-3 mb-6">
+          <Card className="border-0 shadow-lg bg-white">
+            <CardContent className="p-4 text-center">
+              <div className="text-2xl font-bold text-gray-900">{thisWeekMeals}</div>
+              <div className="text-xs text-gray-500">Meals</div>
+            </CardContent>
+          </Card>
+          <Card className="border-0 shadow-lg bg-white">
+            <CardContent className="p-4 text-center">
+              <div className="text-2xl font-bold text-gray-900">{upcomingEvents}</div>
+              <div className="text-xs text-gray-500">Events</div>
+            </CardContent>
+          </Card>
+          <Card className="border-0 shadow-lg bg-white">
+            <CardContent className="p-4 text-center">
+              <div className="text-2xl font-bold text-gray-900">{totalAppliances}</div>
+              <div className="text-xs text-gray-500">Items</div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Main Sections */}
+        <div className="grid grid-cols-2 gap-4 pb-24">
           {sections.map((section, i) => (
             <motion.div
               key={section.title}
@@ -102,17 +124,14 @@ export default function Home() {
               transition={{ duration: 0.4, delay: i * 0.1 }}
             >
               <Link to={createPageUrl(section.href)}>
-                <Card className="group cursor-pointer border-0 shadow-sm hover:shadow-md transition-all overflow-hidden bg-white">
-                  <CardContent className="p-0">
-                    <div className={`h-1 bg-gradient-to-r ${section.color}`} />
-                    <div className="p-4">
-                      <div className={`w-12 h-12 rounded-xl ${section.bgColor} flex items-center justify-center mb-3 group-hover:scale-105 transition-transform`}>
-                        <section.icon className="w-6 h-6 text-gray-700" />
-                      </div>
-                      <h3 className="text-base font-bold text-gray-900 mb-1">{section.title}</h3>
-                      <p className="text-xs text-gray-500 mb-2 line-clamp-1">{section.description}</p>
-                      <span className="text-xs font-medium text-gray-600">{section.stat}</span>
+                <Card className="group cursor-pointer border-0 shadow-lg hover:shadow-xl transition-all overflow-hidden bg-white h-full">
+                  <CardContent className="p-5 flex flex-col h-full">
+                    <div className={`w-14 h-14 rounded-2xl ${section.bgColor} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
+                      <section.icon className="w-7 h-7 text-gray-700" />
                     </div>
+                    <h3 className="text-lg font-bold text-gray-900 mb-2">{section.title}</h3>
+                    <p className="text-sm text-gray-600 mb-3 flex-1">{section.stat}</p>
+                    <div className={`w-full h-1 rounded-full bg-gradient-to-r ${section.color}`} />
                   </CardContent>
                 </Card>
               </Link>
