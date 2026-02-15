@@ -619,8 +619,9 @@ export default function Meals() {
               >
                 Add Meal
               </Button>
-            </div>
-        </DialogContent>
+              </div>
+              </div>
+              </DialogContent>
       </Dialog>
 
       <Dialog open={planDialog} onOpenChange={setPlanDialog}>
