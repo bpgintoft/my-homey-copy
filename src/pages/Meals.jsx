@@ -186,12 +186,21 @@ export default function Meals() {
                         </div>
                       </div>
                       {meal.ingredients && (
-                        <div className="text-sm text-gray-600">
+                        <div className="text-sm text-gray-600 mb-4">
                           <span className="font-medium">Ingredients: </span>
                           {meal.ingredients.slice(0, 3).join(', ')}
                           {meal.ingredients.length > 3 && '...'}
                         </div>
                       )}
+                      <Button
+                        onClick={() => addToGroceryListMutation.mutate(meal)}
+                        disabled={addToGroceryListMutation.isPending || !meal.ingredients?.length}
+                        size="sm"
+                        className="w-full bg-pink-100 text-pink-700 hover:bg-pink-200"
+                      >
+                        <ShoppingCart className="w-4 h-4 mr-2" />
+                        {addToGroceryListMutation.isPending ? 'Adding...' : 'Add to Grocery List'}
+                      </Button>
                     </CardContent>
                   </Card>
                 </motion.div>
