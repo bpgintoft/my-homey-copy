@@ -244,9 +244,18 @@ export default function Meals() {
                     <CardContent className="p-5">
                       <div className="flex items-start justify-between mb-3">
                         <h3 className="font-semibold text-gray-900 text-lg">{meal.name}</h3>
-                        <Badge className="bg-pink-100 text-pink-700 border-0">
-                          {meal.type}
-                        </Badge>
+                        <div className="flex items-center gap-2">
+                          <Badge className="bg-pink-100 text-pink-700 border-0">
+                            {meal.type}
+                          </Badge>
+                          <button
+                            onClick={(e) => { e.stopPropagation(); deleteMealMutation.mutate(meal.id); }}
+                            disabled={deleteMealMutation.isPending}
+                            className="text-gray-400 hover:text-red-500 transition-colors p-1"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
                       </div>
                       <div className="flex flex-wrap gap-2 mb-3">
                         <div className="flex items-center gap-1 text-sm text-gray-500">
