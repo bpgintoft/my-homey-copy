@@ -129,8 +129,8 @@ export default function Home() {
               alt="Family Welcome"
               className="w-full h-full object-cover"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent" />
-            <div className="absolute bottom-0 left-0 right-0 container mx-auto px-6 py-8">
+            <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/20 to-transparent" />
+            <div className="absolute top-0 left-0 right-0 container mx-auto px-6 py-6">
               <h1 className="text-3xl font-bold text-white mb-2 drop-shadow-lg">
                 Welcome Home
               </h1>
