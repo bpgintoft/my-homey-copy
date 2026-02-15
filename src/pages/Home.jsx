@@ -11,8 +11,8 @@ export default function Home() {
   const [imageUrls] = useState({
     meals: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/294a7181f_mealplanning.png',
     kids: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/64d88eba1_kidsactivities.png',
-    house: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/43cba6905_house.png',
-    history: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/56500e0a8_history.png'
+    house: null,
+    history: null
   });
   const [heroBanner] = useState('https://images.unsplash.com/photo-1511895426328-dc8714191300?w=1200&h=400&fit=crop');
 
