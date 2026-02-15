@@ -124,6 +124,42 @@ export default function Meals() {
     },
   });
 
+  const parseMealFromTextMutation = useMutation({
+    mutationFn: async (mealText) => {
+      const result = await base44.integrations.Core.InvokeLLM({
+        prompt: `Parse this recipe/meal description and extract the following information. Return as JSON:\n\n${mealText}`,
+        response_json_schema: {
+          type: "object",
+          properties: {
+            name: { type: "string", description: "Meal name" },
+            ingredients: { type: "array", items: { type: "string" }, description: "List of ingredients" },
+            instructions: { type: "string", description: "Cooking instructions" },
+            prep_time: { type: "number", description: "Prep time in minutes" },
+            cook_time: { type: "number", description: "Cook time in minutes" },
+            servings: { type: "number", description: "Number of servings" },
+            cooking_method: { type: "string", enum: ["oven", "stovetop", "microwave"], description: "Primary cooking method" },
+            cooking_temperature_or_heat: { type: "string", description: "Temperature or heat level" }
+          }
+        }
+      });
+      return result;
+    },
+    onSuccess: (parsedData) => {
+      setNewMeal({
+        name: parsedData.name || '',
+        ingredients: parsedData.ingredients || [],
+        instructions: parsedData.instructions || '',
+        prep_time: parsedData.prep_time || '',
+        cook_time: parsedData.cook_time || '',
+        servings: parsedData.servings || '',
+        cooking_method: parsedData.cooking_method || '',
+        cooking_temperature_or_heat: parsedData.cooking_temperature_or_heat || '',
+        type: 'dinner'
+      });
+      setPastedMealText('');
+    },
+  });
+
   const updateGroceryQuantityMutation = useMutation({
     mutationFn: ({ id, quantity }) => base44.entities.GroceryItem.update(id, { quantity: quantity.toString() }),
     onSuccess: () => {
