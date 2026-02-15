@@ -507,7 +507,7 @@ export default function Meals() {
       </div>
 
       <Dialog open={showMealDialog} onOpenChange={setShowMealDialog}>
-        <DialogContent className="max-w-2xl max-h-[90vh] flex flex-col">
+        <DialogContent className="max-w-2xl max-h-[90vh] flex flex-col bg-white">
           <DialogHeader>
             <DialogTitle>Add New Meal</DialogTitle>
           </DialogHeader>
