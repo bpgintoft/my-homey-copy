@@ -604,10 +604,58 @@ export default function Meals() {
             <div className="space-y-4">
               {['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].map(day => {
                 const dayMeals = mealPlans.filter(plan => plan.day_of_week === day);
+                const dailyNutrients = calculateDailyNutrients(dayMeals);
                 return (
                   <Card key={day} className="bg-white border-0 shadow-sm">
                     <CardContent className="p-5">
-                      <h3 className="font-semibold text-gray-900 capitalize mb-3">{day}</h3>
+                      <div className="flex items-center justify-between mb-3">
+                        <h3 className="font-semibold text-gray-900 capitalize">{day}</h3>
+                        {dailyNutrients && dayMeals.length > 0 && (
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <Button 
+                                variant="outline" 
+                                size="sm"
+                                className="border-pink-200 text-pink-600 hover:bg-pink-50"
+                              >
+                                <BarChart3 className="w-4 h-4 mr-2" />
+                                Daily Nutrients
+                              </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-72">
+                              <div className="space-y-3">
+                                <h4 className="font-semibold text-gray-900">Daily Total ({dayMeals.length} meal{dayMeals.length !== 1 ? 's' : ''})</h4>
+                                <div className="grid grid-cols-2 gap-3 text-sm">
+                                  <div>
+                                    <div className="text-gray-500">Calories</div>
+                                    <div className="text-lg font-bold text-gray-900">{dailyNutrients.calories}</div>
+                                  </div>
+                                  <div>
+                                    <div className="text-gray-500">Protein</div>
+                                    <div className="text-lg font-bold text-gray-900">{dailyNutrients.protein_g}g</div>
+                                  </div>
+                                  <div>
+                                    <div className="text-gray-500">Carbs</div>
+                                    <div className="text-lg font-bold text-gray-900">{dailyNutrients.carbs_g}g</div>
+                                  </div>
+                                  <div>
+                                    <div className="text-gray-500">Fat</div>
+                                    <div className="text-lg font-bold text-gray-900">{dailyNutrients.fat_g}g</div>
+                                  </div>
+                                  <div>
+                                    <div className="text-gray-500">Fiber</div>
+                                    <div className="text-lg font-bold text-gray-900">{dailyNutrients.fiber_g}g</div>
+                                  </div>
+                                  <div>
+                                    <div className="text-gray-500">Sugar</div>
+                                    <div className="text-lg font-bold text-gray-900">{dailyNutrients.sugar_g}g</div>
+                                  </div>
+                                </div>
+                              </div>
+                            </PopoverContent>
+                          </Popover>
+                        )}
+                      </div>
                       {dayMeals.length === 0 ? (
                         <p className="text-gray-500 text-sm">No meals planned</p>
                       ) : (
