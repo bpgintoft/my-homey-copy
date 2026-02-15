@@ -239,6 +239,22 @@ export default function Meals() {
     setUploadingImage(false);
   };
 
+  const handlePasteImage = async () => {
+    try {
+      const items = await navigator.clipboard.read();
+      for (const item of items) {
+        if (item.type.startsWith('image/')) {
+          const blob = await item.getType(item.type);
+          handleImageUpload(blob);
+          return;
+        }
+      }
+      alert('No image found in clipboard');
+    } catch (err) {
+      alert('Unable to paste image. Please use file upload instead.');
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#F5F5F7]">
       <div className="relative overflow-hidden">
