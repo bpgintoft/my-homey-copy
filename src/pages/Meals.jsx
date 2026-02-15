@@ -381,6 +381,14 @@ export default function Meals() {
                         </div>
                       </div>
                       <div className="flex flex-wrap gap-2 mb-3">
+                        <Badge className="bg-pink-100 text-pink-700 border-0">
+                          {Array.isArray(meal.type) ? meal.type.join(', ') : meal.type}
+                        </Badge>
+                        {meal.protein_type && (
+                          <Badge className="bg-blue-100 text-blue-700 border-0">
+                            {Array.isArray(meal.protein_type) ? meal.protein_type.join(', ') : meal.protein_type}
+                          </Badge>
+                        )}
                         <div className="flex items-center gap-1 text-sm text-gray-500">
                           <Clock className="w-4 h-4" />
                           {(meal.prep_time || 0) + (meal.cook_time || 0)} min
@@ -713,50 +721,76 @@ export default function Meals() {
                 value={newMeal.name || ''}
                 onChange={(e) => setNewMeal({ ...newMeal, name: e.target.value })}
               />
-              <Select
-                value={newMeal.type}
-                onValueChange={(value) => setNewMeal({ ...newMeal, type: value })}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Meal type" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="breakfast">Breakfast</SelectItem>
-                  <SelectItem value="lunch">Lunch</SelectItem>
-                  <SelectItem value="dinner">Dinner</SelectItem>
-                  <SelectItem value="snack">Snack</SelectItem>
-                  <SelectItem value="dessert">Dessert</SelectItem>
-                </SelectContent>
-              </Select>
-              <Select
-                value={newMeal.protein_type || ''}
-                onValueChange={(value) => setNewMeal({ ...newMeal, protein_type: value })}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Protein type (optional)" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="fish">Fish</SelectItem>
-                  <SelectItem value="beef">Beef</SelectItem>
-                  <SelectItem value="chicken">Chicken</SelectItem>
-                  <SelectItem value="pork">Pork</SelectItem>
-                  <SelectItem value="turkey">Turkey</SelectItem>
-                  <SelectItem value="vegetarian">Vegetarian</SelectItem>
-                </SelectContent>
-              </Select>
-              <Select
-                value={newMeal.cooking_method || ''}
-                onValueChange={(value) => setNewMeal({ ...newMeal, cooking_method: value })}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Cooking method (optional)" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="oven">Oven</SelectItem>
-                  <SelectItem value="stovetop">Stovetop</SelectItem>
-                  <SelectItem value="microwave">Microwave</SelectItem>
-                </SelectContent>
-              </Select>
+              <div>
+                <label className="text-sm font-medium text-gray-700 mb-2 block">Meal Type(s)</label>
+                <div className="flex flex-wrap gap-2">
+                  {['breakfast', 'lunch', 'dinner', 'snack', 'dessert'].map(type => {
+                    const types = Array.isArray(newMeal.type) ? newMeal.type : (newMeal.type ? [newMeal.type] : []);
+                    const isSelected = types.includes(type);
+                    return (
+                      <button
+                        key={type}
+                        onClick={() => {
+                          const newTypes = isSelected 
+                            ? types.filter(t => t !== type)
+                            : [...types, type];
+                          setNewMeal({ ...newMeal, type: newTypes });
+                        }}
+                        className={`px-3 py-1 rounded-full text-sm font-medium transition-all ${
+                          isSelected
+                            ? 'bg-pink-600 text-white'
+                            : 'bg-white text-pink-700 border border-pink-200 hover:bg-pink-100'
+                        }`}
+                      >
+                        {type.charAt(0).toUpperCase() + type.slice(1)}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+              <div>
+                <label className="text-sm font-medium text-gray-700 mb-2 block">Protein Type(s)</label>
+                <div className="flex flex-wrap gap-2">
+                  {['fish', 'beef', 'chicken', 'pork', 'turkey', 'vegetarian'].map(protein => {
+                    const proteins = Array.isArray(newMeal.protein_type) ? newMeal.protein_type : (newMeal.protein_type ? [newMeal.protein_type] : []);
+                    const isSelected = proteins.includes(protein);
+                    return (
+                      <button
+                        key={protein}
+                        onClick={() => {
+                          const newProteins = isSelected
+                            ? proteins.filter(p => p !== protein)
+                            : [...proteins, protein];
+                          setNewMeal({ ...newMeal, protein_type: newProteins });
+                        }}
+                        className={`px-3 py-1 rounded-full text-sm font-medium transition-all ${
+                          isSelected
+                            ? 'bg-pink-600 text-white'
+                            : 'bg-white text-pink-700 border border-pink-200 hover:bg-pink-100'
+                        }`}
+                      >
+                        {protein.charAt(0).toUpperCase() + protein.slice(1)}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+              <div>
+                <label className="text-sm font-medium text-gray-700 mb-2 block">Cooking Method</label>
+                <Select
+                  value={newMeal.cooking_method || ''}
+                  onValueChange={(value) => setNewMeal({ ...newMeal, cooking_method: value })}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Cooking method (optional)" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="oven">Oven</SelectItem>
+                    <SelectItem value="stovetop">Stovetop</SelectItem>
+                    <SelectItem value="microwave">Microwave</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
               {newMeal.cooking_method && newMeal.cooking_method !== 'microwave' && (
                 <Input
                   placeholder={newMeal.cooking_method === 'oven' ? 'Temperature (e.g., 350°F)' : 'Heat level (1-10)'}
