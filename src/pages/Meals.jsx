@@ -249,11 +249,35 @@ export default function Meals() {
           </TabsContent>
 
           <TabsContent value="plan">
-            <Card className="bg-white border-0 shadow-sm p-8 text-center">
-              <Calendar className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Weekly Meal Planner</h3>
-              <p className="text-gray-500">Coming soon - Plan your meals for the week</p>
-            </Card>
+            <div className="space-y-4">
+              {['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].map(day => {
+                const dayMeals = mealPlans.filter(plan => plan.day_of_week === day);
+                return (
+                  <Card key={day} className="bg-white border-0 shadow-sm">
+                    <CardContent className="p-5">
+                      <h3 className="font-semibold text-gray-900 capitalize mb-3">{day}</h3>
+                      {dayMeals.length === 0 ? (
+                        <p className="text-gray-500 text-sm">No meals planned</p>
+                      ) : (
+                        <div className="space-y-2">
+                          {dayMeals.map(plan => (
+                            <div key={plan.id} className="flex items-center justify-between bg-pink-50 p-3 rounded-lg">
+                              <div>
+                                <div className="text-sm font-medium text-gray-900">{plan.meal_name}</div>
+                                <div className="text-xs text-gray-500 capitalize">{plan.meal_type}</div>
+                              </div>
+                              <Badge className="bg-pink-100 text-pink-700 border-0 capitalize">
+                                {plan.meal_type}
+                              </Badge>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </div>
           </TabsContent>
 
           <TabsContent value="grocery">
