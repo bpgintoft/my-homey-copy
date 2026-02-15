@@ -60,6 +60,8 @@ import MaintenanceCalendar from './pages/MaintenanceCalendar';
 import RoomDetail from './pages/RoomDetail';
 import Rooms from './pages/Rooms';
 import Vendors from './pages/Vendors';
+import Meals from './pages/Meals';
+import Kids from './pages/Kids';
 import __Layout from './Layout.jsx';
 
 
@@ -77,6 +79,8 @@ export const PAGES = {
     "RoomDetail": RoomDetail,
     "Rooms": Rooms,
     "Vendors": Vendors,
+    "Meals": Meals,
+    "Kids": Kids,
 }
 
 export const pagesConfig = {
