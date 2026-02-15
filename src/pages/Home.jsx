@@ -39,28 +39,28 @@ export default function Home() {
     { 
       title: 'Meal Planning', 
       href: 'Meals', 
-      stat: `${thisWeekMeals} meals planned`,
+      count: thisWeekMeals,
       imageKey: 'meals',
       bgColor: 'bg-gradient-to-br from-pink-200 to-pink-300'
     },
     { 
       title: 'Kids Activities', 
       href: 'Kids', 
-      stat: `${upcomingEvents} upcoming`,
+      count: upcomingEvents,
       imageKey: 'kids',
       bgColor: 'bg-gradient-to-br from-blue-200 to-blue-300'
     },
     { 
       title: 'House', 
       href: 'House', 
-      stat: `${totalAppliances} appliances`,
+      count: totalAppliances,
       imageKey: 'house',
       bgColor: 'bg-gradient-to-br from-green-200 to-green-300'
     },
     { 
       title: 'History', 
       href: 'History', 
-      stat: 'Est. 1927',
+      count: 0,
       imageKey: 'history',
       bgColor: 'bg-gradient-to-br from-amber-200 to-amber-300'
     },
@@ -123,6 +123,11 @@ export default function Home() {
               <Link to={createPageUrl(section.href)}>
                 <div className="group cursor-pointer hover:scale-105 transition-all duration-300">
                   <div className={`relative rounded-3xl shadow-lg hover:shadow-2xl transition-all ${section.bgColor} p-6 flex flex-col items-center justify-center h-48`}>
+                    {section.count > 0 && (
+                      <div className="absolute top-3 right-3 bg-red-500 text-white text-xs font-bold rounded-full w-7 h-7 flex items-center justify-center shadow-lg">
+                        {section.count}
+                      </div>
+                    )}
                     {imageUrls[section.imageKey] && (
                       <img 
                         src={imageUrls[section.imageKey]} 
@@ -131,7 +136,6 @@ export default function Home() {
                       />
                     )}
                     <h3 className="text-xl font-bold text-white drop-shadow-lg">{section.title}</h3>
-                    <p className="text-sm text-white/90 mt-1">{section.stat}</p>
                   </div>
                 </div>
               </Link>
