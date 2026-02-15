@@ -634,6 +634,17 @@ export default function Meals() {
                                         View Recipe <ExternalLink className="w-4 h-4" />
                                       </a>
                                     )}
+                                    {mealDetails?.nutrition && (
+                                      <div className="bg-gray-50 p-2 rounded-lg text-sm">
+                                        <p className="font-medium text-gray-900 mb-1">Nutrition (per serving)</p>
+                                        <div className="grid grid-cols-2 gap-1 text-gray-600 text-xs">
+                                          <div><span className="font-medium">{mealDetails.nutrition.calories}</span> cal</div>
+                                          <div><span className="font-medium">{mealDetails.nutrition.protein_g}g</span> protein</div>
+                                          <div><span className="font-medium">{mealDetails.nutrition.carbs_g}g</span> carbs</div>
+                                          <div><span className="font-medium">{mealDetails.nutrition.fat_g}g</span> fat</div>
+                                        </div>
+                                      </div>
+                                    )}
                                     {mealDetails?.ingredients && (
                                       <Button
                                         onClick={(e) => { e.stopPropagation(); addToGroceryListMutation.mutate(mealDetails); }}
