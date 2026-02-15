@@ -511,7 +511,36 @@ export default function Meals() {
           <DialogHeader>
             <DialogTitle>Add New Meal</DialogTitle>
           </DialogHeader>
-          <div className="space-y-4">
+          <div className="space-y-6">
+            <div className="space-y-3">
+              <label className="text-sm font-medium text-gray-900">Paste a recipe from online:</label>
+              <Textarea
+                placeholder="Paste the entire recipe here... (we'll parse it automatically)"
+                value={pastedMealText}
+                onChange={(e) => setPastedMealText(e.target.value)}
+                rows={4}
+                className="text-sm"
+              />
+              <Button
+                onClick={() => parseMealFromTextMutation.mutate(pastedMealText)}
+                disabled={!pastedMealText || parseMealFromTextMutation.isPending}
+                variant="outline"
+                className="w-full"
+              >
+                {parseMealFromTextMutation.isPending ? 'Parsing...' : 'Parse Recipe'}
+              </Button>
+            </div>
+
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-gray-300"></div>
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="px-2 bg-white text-gray-500">or fill in manually</span>
+              </div>
+            </div>
+
+            <div className="space-y-4">
             <Input
               placeholder="Meal name"
               value={newMeal.name || ''}
