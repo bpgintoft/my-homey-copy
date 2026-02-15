@@ -61,25 +61,31 @@ export default function Meals() {
   });
 
   const addToGroceryListMutation = useMutation({
-    mutationFn: async (meal) => {
-      const filteredIngredients = filterStaples(meal.ingredients || []);
-      const weekStart = new Date();
-      weekStart.setDate(weekStart.getDate() - weekStart.getDay());
-      
-      for (const ingredient of filteredIngredients) {
-        await base44.entities.GroceryItem.create({
-          name: ingredient,
-          category: 'other',
-          quantity: '',
-          purchased: false,
-          week_start_date: weekStart.toISOString().split('T')[0],
-        });
-      }
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries(['groceries']);
-    },
-  });
+        mutationFn: async (meal) => {
+          const filteredIngredients = filterStaples(meal.ingredients || []);
+          const weekStart = new Date();
+          weekStart.setDate(weekStart.getDate() - weekStart.getDay());
+
+          for (const ingredient of filteredIngredients) {
+            const existing = groceries.find(g => g.name.toLowerCase() === ingredient.toLowerCase());
+            if (existing) {
+              const qty = parseInt(existing.quantity) || 1;
+              await base44.entities.GroceryItem.update(existing.id, { quantity: (qty + 1).toString() });
+            } else {
+              await base44.entities.GroceryItem.create({
+                name: ingredient,
+                category: 'other',
+                quantity: '1',
+                purchased: false,
+                week_start_date: weekStart.toISOString().split('T')[0],
+              });
+            }
+          }
+        },
+        onSuccess: () => {
+          queryClient.invalidateQueries(['groceries']);
+        },
+      });
 
   const addToMealPlanMutation = useMutation({
     mutationFn: async () => {
