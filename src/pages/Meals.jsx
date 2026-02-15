@@ -572,11 +572,13 @@ export default function Meals() {
                           </div>
                         </div>
                       ) : (
-                        <div className="text-sm text-gray-600">
-                          <span className="font-medium">Ingredients: </span>
-                          {meal.ingredients?.slice(0, 3).join(', ')}
-                          {meal.ingredients && meal.ingredients.length > 3 && '...'}
-                        </div>
+                        expandedMealId !== meal.id && meal.cooking_method && (
+                          <div className="bg-orange-100 text-orange-700 text-xs px-3 py-1 rounded-full font-medium w-fit">
+                            {meal.cooking_method === 'oven' && `${meal.cooking_temperature_or_heat} • ${meal.cook_time}m`}
+                            {meal.cooking_method === 'stovetop' && `Heat ${meal.cooking_temperature_or_heat} • ${meal.cook_time}m`}
+                            {meal.cooking_method === 'microwave' && `Microwave ${meal.cook_time}m`}
+                          </div>
+                        )
                       )}
                     </CardContent>
                   </Card>
