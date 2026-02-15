@@ -448,9 +448,6 @@ export default function Meals() {
                         </div>
                       </div>
                       <div className="flex flex-wrap gap-2 mb-3">
-                        <Badge className="bg-pink-100 text-pink-700 border-0">
-                          {meal.type}
-                        </Badge>
                         {meal.protein_type && (
                           <Badge className="bg-blue-100 text-blue-700 border-0">
                             {meal.protein_type}
