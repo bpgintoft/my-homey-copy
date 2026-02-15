@@ -32,12 +32,48 @@ export default function Meals() {
     queryFn: () => base44.entities.GroceryItem.list(),
   });
 
+  const staples = [
+    'salt', 'pepper', 'butter', 'oil', 'olive oil', 'vegetable oil', 'garlic', 'onion',
+    'water', 'milk', 'sugar', 'flour', 'eggs', 'baking powder', 'baking soda', 'vanilla extract',
+    'cinnamon', 'paprika', 'cumin', 'oregano', 'basil', 'thyme', 'rosemary', 'parsley',
+    'honey', 'soy sauce', 'vinegar', 'lemon juice', 'lime juice', 'worcestershire sauce',
+    'hot sauce', 'mayonnaise', 'ketchup', 'mustard', 'cornstarch'
+  ];
+
+  const filterStaples = (ingredients) => {
+    return ingredients.filter(ingredient => {
+      const lower = ingredient.toLowerCase();
+      return !staples.some(staple => lower.includes(staple));
+    });
+  };
+
   const createMealMutation = useMutation({
     mutationFn: (data) => base44.entities.Meal.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries(['meals']);
       setShowMealDialog(false);
       setNewMeal({});
+    },
+  });
+
+  const addToGroceryListMutation = useMutation({
+    mutationFn: async (meal) => {
+      const filteredIngredients = filterStaples(meal.ingredients || []);
+      const weekStart = new Date();
+      weekStart.setDate(weekStart.getDate() - weekStart.getDay());
+      
+      for (const ingredient of filteredIngredients) {
+        await base44.entities.GroceryItem.create({
+          name: ingredient,
+          category: 'other',
+          quantity: '',
+          purchased: false,
+          week_start_date: weekStart.toISOString().split('T')[0],
+        });
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(['groceries']);
     },
   });
 
