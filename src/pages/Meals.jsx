@@ -417,7 +417,7 @@ export default function Meals() {
                   <div>
                     <p className="text-sm font-medium text-gray-700 mb-2">Protein Type</p>
                     <div className="flex flex-wrap gap-2">
-                      {['fish', 'beef', 'chicken', 'pork', 'turkey', 'vegetarian'].map(protein => (
+                      {['fish', 'beef', 'chicken', 'pork', 'turkey', 'beans', 'vegetarian'].map(protein => (
                         <button
                           key={protein}
                           onClick={() => setSelectedProteins(prev => 
