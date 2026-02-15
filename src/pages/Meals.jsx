@@ -977,6 +977,47 @@ export default function Meals() {
                   onChange={(e) => setNewMeal({ ...newMeal, servings: parseInt(e.target.value) })}
                 />
               </div>
+              <div>
+                <label className="text-sm font-medium text-gray-700 mb-2 block">Nutrition Facts (per serving) - Optional</label>
+                <div className="grid grid-cols-2 gap-3">
+                  <Input
+                    type="number"
+                    placeholder="Calories"
+                    value={newMeal.nutrition?.calories || ''}
+                    onChange={(e) => setNewMeal({ ...newMeal, nutrition: { ...newMeal.nutrition, calories: parseInt(e.target.value) } })}
+                  />
+                  <Input
+                    type="number"
+                    placeholder="Protein (g)"
+                    value={newMeal.nutrition?.protein_g || ''}
+                    onChange={(e) => setNewMeal({ ...newMeal, nutrition: { ...newMeal.nutrition, protein_g: parseInt(e.target.value) } })}
+                  />
+                  <Input
+                    type="number"
+                    placeholder="Carbs (g)"
+                    value={newMeal.nutrition?.carbs_g || ''}
+                    onChange={(e) => setNewMeal({ ...newMeal, nutrition: { ...newMeal.nutrition, carbs_g: parseInt(e.target.value) } })}
+                  />
+                  <Input
+                    type="number"
+                    placeholder="Fat (g)"
+                    value={newMeal.nutrition?.fat_g || ''}
+                    onChange={(e) => setNewMeal({ ...newMeal, nutrition: { ...newMeal.nutrition, fat_g: parseInt(e.target.value) } })}
+                  />
+                  <Input
+                    type="number"
+                    placeholder="Fiber (g)"
+                    value={newMeal.nutrition?.fiber_g || ''}
+                    onChange={(e) => setNewMeal({ ...newMeal, nutrition: { ...newMeal.nutrition, fiber_g: parseInt(e.target.value) } })}
+                  />
+                  <Input
+                    type="number"
+                    placeholder="Sugar (g)"
+                    value={newMeal.nutrition?.sugar_g || ''}
+                    onChange={(e) => setNewMeal({ ...newMeal, nutrition: { ...newMeal.nutrition, sugar_g: parseInt(e.target.value) } })}
+                  />
+                </div>
+              </div>
               <div className="space-y-3">
                 <Button
                   type="button"
