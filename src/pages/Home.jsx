@@ -76,19 +76,19 @@ export default function Home() {
             background-size: 400% 400%;
           }
         `}</style>
-        <div className="relative h-48 banner-bg flex items-center justify-between px-6 md:px-12">
+        <div className="relative h-32 md:h-48 banner-bg flex items-center justify-between px-4 md:px-12 gap-2">
           <div className="flex-1">
-            <h1 className="text-4xl font-bold text-gray-800 mb-2">
+            <h1 className="text-2xl md:text-4xl font-bold text-gray-800 mb-1 md:mb-2">
               Welcome Home
             </h1>
-            <p className="text-gray-700 text-lg">
+            <p className="text-sm md:text-lg text-gray-700">
               1934 Church St
             </p>
           </div>
           <img 
             src={familyImage} 
             alt="Family Welcome"
-            className="h-40 w-auto object-contain"
+            className="h-28 md:h-40 w-auto object-contain flex-shrink-0"
           />
         </div>
       </div>
