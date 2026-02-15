@@ -56,7 +56,7 @@ export default function Layout({ children, currentPageName }) {
               <Home className="w-5 h-5 text-white" />
             </div>
             <div>
-              <h1 className="font-bold text-gray-900">1934 Church</h1>
+              <h1 className="font-bold text-gray-900">The Gintoft Family</h1>
               <p className="text-xs text-gray-500">Family Home</p>
             </div>
           </Link>
@@ -74,7 +74,7 @@ export default function Layout({ children, currentPageName }) {
           <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-[#E91E8C] to-[#0AACFF] flex items-center justify-center">
             <Home className="w-4 h-4 text-white" />
           </div>
-          <span className="font-bold text-gray-900">1934 Church</span>
+          <span className="font-bold text-gray-900">The Gintoft Family</span>
         </Link>
         <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
           <SheetTrigger asChild>
@@ -89,7 +89,7 @@ export default function Layout({ children, currentPageName }) {
                   <Home className="w-5 h-5 text-white" />
                 </div>
                 <div>
-                  <h1 className="font-bold text-gray-900">1934 Church St.</h1>
+                  <h1 className="font-bold text-gray-900">The Gintoft Family</h1>
                   <p className="text-xs text-gray-500">Wauwatosa, WI</p>
                 </div>
               </div>
