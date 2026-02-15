@@ -420,7 +420,11 @@ export default function Meals() {
                           {meal.instructions && (
                             <div>
                               <h4 className="font-medium text-gray-900 mb-2">Instructions:</h4>
-                              <p className="text-sm text-gray-600 whitespace-pre-wrap">{meal.instructions}</p>
+                              <ul className="text-sm text-gray-600 space-y-1">
+                                {meal.instructions.split(/(?<=[.!?])\s+/).map((sentence, idx) => (
+                                  <li key={idx}>• {sentence.trim()}</li>
+                                ))}
+                              </ul>
                             </div>
                           )}
                           {meal.recipe_url && (
@@ -527,11 +531,15 @@ export default function Meals() {
                                       </div>
                                     )}
                                     {mealDetails?.instructions && (
-                                      <div>
-                                        <h4 className="font-medium text-gray-900 mb-2">Instructions:</h4>
-                                        <p className="text-sm text-gray-600 whitespace-pre-wrap">{mealDetails.instructions}</p>
-                                      </div>
-                                    )}
+                                                <div>
+                                                  <h4 className="font-medium text-gray-900 mb-2">Instructions:</h4>
+                                                  <ul className="text-sm text-gray-600 space-y-1">
+                                                    {mealDetails.instructions.split(/(?<=[.!?])\s+/).map((sentence, idx) => (
+                                                      <li key={idx}>• {sentence.trim()}</li>
+                                                    ))}
+                                                  </ul>
+                                                </div>
+                                              )}
                                     {mealDetails?.recipe_url && (
                                       <a
                                         href={mealDetails.recipe_url}
@@ -655,7 +663,11 @@ export default function Meals() {
               {generatedMeal.instructions && (
                 <div>
                   <h4 className="font-medium text-gray-900 mb-2">Instructions:</h4>
-                  <p className="text-sm text-gray-600 whitespace-pre-wrap">{generatedMeal.instructions}</p>
+                  <ul className="text-sm text-gray-600 space-y-1">
+                    {generatedMeal.instructions.split(/(?<=[.!?])\s+/).map((sentence, idx) => (
+                      <li key={idx}>• {sentence.trim()}</li>
+                    ))}
+                  </ul>
                 </div>
               )}
               <div className="flex gap-3 pt-4">
