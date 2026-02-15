@@ -541,85 +541,85 @@ export default function Meals() {
             </div>
 
             <div className="space-y-4">
-            <Input
-              placeholder="Meal name"
-              value={newMeal.name || ''}
-              onChange={(e) => setNewMeal({ ...newMeal, name: e.target.value })}
-            />
-            <Select
-              value={newMeal.type}
-              onValueChange={(value) => setNewMeal({ ...newMeal, type: value })}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Meal type" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="breakfast">Breakfast</SelectItem>
-                <SelectItem value="lunch">Lunch</SelectItem>
-                <SelectItem value="dinner">Dinner</SelectItem>
-                <SelectItem value="snack">Snack</SelectItem>
-              </SelectContent>
-            </Select>
-            <Select
-              value={newMeal.cooking_method || ''}
-              onValueChange={(value) => setNewMeal({ ...newMeal, cooking_method: value })}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Cooking method (optional)" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="oven">Oven</SelectItem>
-                <SelectItem value="stovetop">Stovetop</SelectItem>
-                <SelectItem value="microwave">Microwave</SelectItem>
-              </SelectContent>
-            </Select>
-            {newMeal.cooking_method && newMeal.cooking_method !== 'microwave' && (
               <Input
-                placeholder={newMeal.cooking_method === 'oven' ? 'Temperature (e.g., 350°F)' : 'Heat level (1-10)'}
-                value={newMeal.cooking_temperature_or_heat || ''}
-                onChange={(e) => setNewMeal({ ...newMeal, cooking_temperature_or_heat: e.target.value })}
+                placeholder="Meal name"
+                value={newMeal.name || ''}
+                onChange={(e) => setNewMeal({ ...newMeal, name: e.target.value })}
               />
-            )}
-            <Textarea
-              placeholder="Ingredients (one per line)"
-              value={newMeal.ingredients?.join('\n') || ''}
-              onChange={(e) => setNewMeal({ ...newMeal, ingredients: e.target.value.split('\n').filter(i => i.trim()) })}
-              rows={4}
-            />
-            <Textarea
-              placeholder="Cooking instructions"
-              value={newMeal.instructions || ''}
-              onChange={(e) => setNewMeal({ ...newMeal, instructions: e.target.value })}
-              rows={4}
-            />
-            <div className="grid grid-cols-3 gap-4">
-              <Input
-                type="number"
-                placeholder="Prep time (min)"
-                value={newMeal.prep_time || ''}
-                onChange={(e) => setNewMeal({ ...newMeal, prep_time: parseInt(e.target.value) })}
+              <Select
+                value={newMeal.type}
+                onValueChange={(value) => setNewMeal({ ...newMeal, type: value })}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Meal type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="breakfast">Breakfast</SelectItem>
+                  <SelectItem value="lunch">Lunch</SelectItem>
+                  <SelectItem value="dinner">Dinner</SelectItem>
+                  <SelectItem value="snack">Snack</SelectItem>
+                </SelectContent>
+              </Select>
+              <Select
+                value={newMeal.cooking_method || ''}
+                onValueChange={(value) => setNewMeal({ ...newMeal, cooking_method: value })}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Cooking method (optional)" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="oven">Oven</SelectItem>
+                  <SelectItem value="stovetop">Stovetop</SelectItem>
+                  <SelectItem value="microwave">Microwave</SelectItem>
+                </SelectContent>
+              </Select>
+              {newMeal.cooking_method && newMeal.cooking_method !== 'microwave' && (
+                <Input
+                  placeholder={newMeal.cooking_method === 'oven' ? 'Temperature (e.g., 350°F)' : 'Heat level (1-10)'}
+                  value={newMeal.cooking_temperature_or_heat || ''}
+                  onChange={(e) => setNewMeal({ ...newMeal, cooking_temperature_or_heat: e.target.value })}
+                />
+              )}
+              <Textarea
+                placeholder="Ingredients (one per line)"
+                value={newMeal.ingredients?.join('\n') || ''}
+                onChange={(e) => setNewMeal({ ...newMeal, ingredients: e.target.value.split('\n').filter(i => i.trim()) })}
+                rows={4}
               />
-              <Input
-                type="number"
-                placeholder="Cook time (min)"
-                value={newMeal.cook_time || ''}
-                onChange={(e) => setNewMeal({ ...newMeal, cook_time: parseInt(e.target.value) })}
+              <Textarea
+                placeholder="Cooking instructions"
+                value={newMeal.instructions || ''}
+                onChange={(e) => setNewMeal({ ...newMeal, instructions: e.target.value })}
+                rows={4}
               />
-              <Input
-                type="number"
-                placeholder="Servings"
-                value={newMeal.servings || ''}
-                onChange={(e) => setNewMeal({ ...newMeal, servings: parseInt(e.target.value) })}
-              />
+              <div className="grid grid-cols-3 gap-4">
+                <Input
+                  type="number"
+                  placeholder="Prep time (min)"
+                  value={newMeal.prep_time || ''}
+                  onChange={(e) => setNewMeal({ ...newMeal, prep_time: parseInt(e.target.value) })}
+                />
+                <Input
+                  type="number"
+                  placeholder="Cook time (min)"
+                  value={newMeal.cook_time || ''}
+                  onChange={(e) => setNewMeal({ ...newMeal, cook_time: parseInt(e.target.value) })}
+                />
+                <Input
+                  type="number"
+                  placeholder="Servings"
+                  value={newMeal.servings || ''}
+                  onChange={(e) => setNewMeal({ ...newMeal, servings: parseInt(e.target.value) })}
+                />
+              </div>
+              <Button
+                onClick={() => createMealMutation.mutate({ ...newMeal, kid_friendly: true, age_range: '4-9 years' })}
+                disabled={!newMeal.name || !newMeal.type}
+                className="w-full bg-gradient-to-r from-[#E91E8C] to-[#D01576] text-white"
+              >
+                Add Meal
+              </Button>
             </div>
-            <Button
-              onClick={() => createMealMutation.mutate({ ...newMeal, kid_friendly: true, age_range: '4-9 years' })}
-              disabled={!newMeal.name || !newMeal.type}
-              className="w-full bg-gradient-to-r from-[#E91E8C] to-[#D01576] text-white"
-            >
-              Add Meal
-            </Button>
-          </div>
         </DialogContent>
       </Dialog>
 
