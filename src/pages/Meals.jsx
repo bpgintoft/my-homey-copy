@@ -156,18 +156,25 @@ export default function Meals() {
   return (
     <div className="min-h-screen bg-[#F5F5F7]">
       <div className="relative overflow-hidden">
-        <div className="relative h-40 md:h-48 bg-gradient-to-r from-[#E91E8C] to-[#D01576] flex items-center justify-between px-4 md:px-12 gap-0">
+        <style>{`
+          .meal-banner-bg {
+            background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 50%, #A5D6A7 100%);
+            background-size: 400% 400%;
+          }
+        `}</style>
+        <div className="relative h-40 md:h-48 meal-banner-bg flex items-center justify-between px-4 md:px-12 gap-0">
           <div className="flex-1">
-            <div className="flex items-center gap-3 mb-3">
-              <ChefHat className="w-8 h-8 text-white" />
-              <h1 className="text-2xl md:text-4xl font-bold text-white">Meal Planning</h1>
-            </div>
-            <p className="text-sm md:text-lg text-white/90">Kid-friendly meals for the whole family</p>
+            <h1 className="text-2xl md:text-4xl font-bold text-gray-800 mb-1 md:mb-2">
+              Meal Planning
+            </h1>
+            <p className="text-sm md:text-lg text-gray-700">
+              Kid-friendly meals for the whole family
+            </p>
           </div>
           <img 
-            src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/8a93254d5_familycooking.png" 
+            src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/9d880a561_familycooking.png" 
             alt="Family Cooking"
-            className="h-40 md:h-56 w-auto object-contain flex-shrink-0"
+            className="h-40 md:h-56 w-auto object-cover flex-shrink-0"
           />
         </div>
       </div>
