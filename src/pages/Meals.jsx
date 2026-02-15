@@ -481,17 +481,17 @@ export default function Meals() {
                         )}
                         <div className="flex-1">
                           <div className="flex items-start justify-between mb-2">
-                            <div className="flex items-center gap-2 flex-1">
+                            <h3 className="font-semibold text-gray-900">{meal.name}</h3>
+                            <div className="flex flex-col items-center gap-1 flex-shrink-0">
+                              <button
+                                onClick={(e) => { e.stopPropagation(); deleteMealMutation.mutate(meal.id); }}
+                                disabled={deleteMealMutation.isPending}
+                                className="text-gray-400 hover:text-red-500 transition-colors p-1"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
                               {meal.protein_type && getProteinIcon(meal.protein_type)}
-                              <h3 className="font-semibold text-gray-900">{meal.name}</h3>
                             </div>
-                            <button
-                              onClick={(e) => { e.stopPropagation(); deleteMealMutation.mutate(meal.id); }}
-                              disabled={deleteMealMutation.isPending}
-                              className="text-gray-400 hover:text-red-500 transition-colors p-1 flex-shrink-0"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </button>
                           </div>
                           <div className="flex flex-wrap gap-2">
                             <Badge className="bg-pink-100 text-pink-700 border-0 text-xs">
