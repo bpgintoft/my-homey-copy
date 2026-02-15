@@ -21,6 +21,7 @@ export default function Meals() {
   const [expandedMealId, setExpandedMealId] = useState(null);
   const [pastedMealText, setPastedMealText] = useState('');
   const [isParsing, setIsParsing] = useState(false);
+  const [generatedMeal, setGeneratedMeal] = useState(null);
   const queryClient = useQueryClient();
 
   const { data: meals = [] } = useQuery({
