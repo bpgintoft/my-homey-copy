@@ -784,6 +784,7 @@ export default function Meals() {
             <div className="space-y-4">
               <div>
                 <label className="text-sm font-medium text-gray-700 mb-2 block">Meal Image</label>
+                <p className="text-xs text-gray-500 mb-2">Choose file or Ctrl+V to paste image</p>
                 <Input
                   type="file"
                   accept="image/*"
