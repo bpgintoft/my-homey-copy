@@ -235,8 +235,7 @@ export default function Meals() {
       <div className="relative overflow-hidden">
         <style>{`
           .meal-banner-bg {
-            background: linear-gradient(135deg, #FCE4EC 0%, #F8BBD0 50%, #F48FB1 100%);
-            background-size: 400% 400%;
+            background: #E8A8D0;
           }
         `}</style>
         <div className="relative h-40 md:h-48 meal-banner-bg flex items-center justify-between px-4 md:px-12 gap-0">
