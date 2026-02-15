@@ -8,15 +8,69 @@ import { motion } from 'framer-motion';
 import { Loader2 } from 'lucide-react';
 
 export default function Home() {
-  // Static image URLs - generated once
-  const heroBanner = 'https://image.pollinations.ai/prompt/Cartoon%20illustration%20of%20a%20happy%20family%20of%204%20-%20mother%2C%20father%2C%20young%20girl%20(age%204)%2C%20and%20young%20boy%20(age%209)%20-%20sitting%20together%20outdoors%20in%20a%20lush%20green%20park%20or%20backyard.%20Vibrant%20colors%2C%20warm%20and%20friendly%20style%2C%20showing%20love%20and%20togetherness.%20Beautiful%20trees%20and%20nature%20in%20background.%20Rounded%20corners%2C%20bright%20and%20cheerful%2C%20suitable%20as%20a%20welcome%20banner.%20Family%20wearing%20casual%20outdoor%20clothing%2C%20big%20smiles%2C%20Disney%2FPixar%20animation%20style?width=1200&height=400&seed=42';
-  
-  const imageUrls = {
-    meals: 'https://image.pollinations.ai/prompt/3D%20cartoon%20illustration%20button%20with%20rounded%20square%20shape%20and%20pink%20gradient%20background.%20Shows%20a%20clipboard%20with%20checkmarks%2C%20a%20colorful%20pencil%2C%20fresh%20vegetables%20(carrot%2C%20tomatoes)%2C%20and%20a%20plate%20with%20bread.%20Cute%2C%20playful%20style%20with%20soft%20shadows.%20Icon%20style%2C%20vibrant%20colors%2C%20isometric%20view%2C%20clean%20design?width=500&height=500&seed=101',
-    kids: 'https://image.pollinations.ai/prompt/3D%20cartoon%20illustration%20button%20with%20rounded%20square%20shape%20and%20light%20blue%20gradient%20background.%20Shows%20a%20soccer%20ball%2C%20jump%20rope%20in%20red%2C%20and%20a%20calendar%20with%20stars%20marked.%20Cute%2C%20playful%20style%20with%20soft%20shadows.%20Icon%20style%2C%20vibrant%20colors%2C%20isometric%20view%2C%20clean%20design?width=500&height=500&seed=102',
-    house: 'https://image.pollinations.ai/prompt/3D%20cartoon%20illustration%20button%20with%20rounded%20square%20shape%20and%20green%20gradient%20background.%20Shows%20a%20beautiful%20two-story%20brick%20house%20with%20glowing%20windows%2C%20white%20door%2C%20surrounded%20by%20green%20trees%20and%20bushes%2C%20front%20porch%20with%20lights.%20Cute%2C%20playful%20style%20with%20soft%20shadows.%20Icon%20style%2C%20vibrant%20colors%2C%20isometric%20view%2C%20clean%20design?width=500&height=500&seed=103',
-    history: 'https://image.pollinations.ai/prompt/3D%20cartoon%20illustration%20button%20with%20rounded%20square%20shape%20and%20warm%20yellow%2Forange%20gradient%20background.%20Shows%20an%20old%20parchment%20scroll%20with%20a%20sepia-toned%20house%20illustration%2C%20and%20a%20magnifying%20glass%20examining%20details.%20Cute%2C%20playful%20style%20with%20soft%20shadows.%20Icon%20style%2C%20vibrant%20colors%2C%20isometric%20view%2C%20clean%20design?width=500&height=500&seed=104'
-  };
+  const [imageUrls, setImageUrls] = useState({
+    meals: null,
+    kids: null,
+    house: null,
+    history: null
+  });
+  const [heroBanner, setHeroBanner] = useState(null);
+  const [isGenerating, setIsGenerating] = useState(false);
+
+  useEffect(() => {
+    // Check if images are already stored in localStorage
+    const storedImages = localStorage.getItem('homePageImages');
+    if (storedImages) {
+      const parsed = JSON.parse(storedImages);
+      setHeroBanner(parsed.heroBanner);
+      setImageUrls(parsed.imageUrls);
+      return;
+    }
+
+    // Generate images only once and store them
+    const generateImages = async () => {
+      setIsGenerating(true);
+      try {
+        const [heroImg, mealsImg, kidsImg, houseImg, historyImg] = await Promise.all([
+          base44.integrations.Core.GenerateImage({
+            prompt: 'Cartoon illustration of a happy family of 4 - mother, father, young girl (age 4), and young boy (age 9) - sitting together outdoors in a lush green park or backyard. Vibrant colors, warm and friendly style, showing love and togetherness. Beautiful trees and nature in background. Rounded corners, bright and cheerful, suitable as a welcome banner. Family wearing casual outdoor clothing, big smiles, Disney/Pixar animation style'
+          }),
+          base44.integrations.Core.GenerateImage({
+            prompt: '3D cartoon illustration button with rounded square shape and pink gradient background. Shows a clipboard with checkmarks, a colorful pencil, fresh vegetables (carrot, tomatoes), and a plate with bread. Cute, playful style with soft shadows. White text at bottom reads "Meal Planning". Icon style, vibrant colors, isometric view, clean design'
+          }),
+          base44.integrations.Core.GenerateImage({
+            prompt: '3D cartoon illustration button with rounded square shape and light blue gradient background. Shows a soccer ball, jump rope in red, and a calendar with stars marked. Cute, playful style with soft shadows. White text at bottom reads "Kids Activities". Icon style, vibrant colors, isometric view, clean design'
+          }),
+          base44.integrations.Core.GenerateImage({
+            prompt: '3D cartoon illustration button with rounded square shape and green gradient background. Shows a beautiful two-story brick house with glowing windows, white door, surrounded by green trees and bushes, front porch with lights. Cute, playful style with soft shadows. White text at bottom reads "House". Icon style, vibrant colors, isometric view, clean design'
+          }),
+          base44.integrations.Core.GenerateImage({
+            prompt: '3D cartoon illustration button with rounded square shape and warm yellow/orange gradient background. Shows an old parchment scroll with a sepia-toned house illustration, and a magnifying glass examining details. EST. 1927 visible on scroll. Cute, playful style with soft shadows. White text at bottom reads "History". Icon style, vibrant colors, isometric view, clean design'
+          })
+        ]);
+
+        const newImages = {
+          heroBanner: heroImg.url,
+          imageUrls: {
+            meals: mealsImg.url,
+            kids: kidsImg.url,
+            house: houseImg.url,
+            history: historyImg.url
+          }
+        };
+
+        setHeroBanner(heroImg.url);
+        setImageUrls(newImages.imageUrls);
+        localStorage.setItem('homePageImages', JSON.stringify(newImages));
+      } catch (error) {
+        console.error('Error generating images:', error);
+      } finally {
+        setIsGenerating(false);
+      }
+    };
+
+    generateImages();
+  }, []);
 
   const { data: mealPlans } = useQuery({
     queryKey: ['thisWeekMeals'],
@@ -68,22 +122,36 @@ export default function Home() {
     <div className="min-h-screen bg-[#F5F5F7]">
       {/* Header */}
       <div className="relative overflow-hidden">
-        <div className="relative h-40">
-          <img 
-            src={heroBanner} 
-            alt="Family Welcome"
-            className="w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent" />
-          <div className="absolute bottom-0 left-0 right-0 container mx-auto px-6 py-8">
-            <h1 className="text-3xl font-bold text-white mb-2 drop-shadow-lg">
-              Welcome Home
-            </h1>
-            <p className="text-white drop-shadow-md">
-              1934 Church St
-            </p>
+        {heroBanner ? (
+          <div className="relative h-40">
+            <img 
+              src={heroBanner} 
+              alt="Family Welcome"
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent" />
+            <div className="absolute bottom-0 left-0 right-0 container mx-auto px-6 py-8">
+              <h1 className="text-3xl font-bold text-white mb-2 drop-shadow-lg">
+                Welcome Home
+              </h1>
+              <p className="text-white drop-shadow-md">
+                1934 Church St
+              </p>
+            </div>
           </div>
-        </div>
+        ) : (
+          <div className="bg-gradient-to-br from-[#00D9A3] to-[#00B386] py-8">
+            <div className="container mx-auto px-6">
+              <Loader2 className="w-8 h-8 text-white/50 animate-spin mx-auto mb-4" />
+              <h1 className="text-3xl font-bold text-white mb-2">
+                Welcome Home
+              </h1>
+              <p className="text-white/90">
+                1934 Church St
+              </p>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Quick Stats */}
@@ -110,31 +178,48 @@ export default function Home() {
         </div>
 
         {/* Main Sections */}
-        <div className="grid grid-cols-2 gap-4 pb-24">
-          {sections.map((section, i) => (
-            <motion.div
-              key={section.title}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: i * 0.1 }}
-            >
-              <Link to={createPageUrl(section.href)}>
-                <div className="group cursor-pointer hover:scale-105 transition-all duration-300">
-                  <div className="relative">
-                    <img 
-                      src={imageUrls[section.imageKey]} 
-                      alt={section.title}
-                      className="w-full h-auto rounded-3xl shadow-lg hover:shadow-2xl transition-shadow duration-300"
-                    />
-                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/40 to-transparent rounded-b-3xl p-4">
-                      <p className="text-sm text-white font-medium drop-shadow-md">{section.stat}</p>
-                    </div>
+        {isGenerating ? (
+          <div className="flex items-center justify-center py-20">
+            <div className="text-center">
+              <Loader2 className="w-12 h-12 text-blue-500 animate-spin mx-auto mb-4" />
+              <p className="text-gray-600">Creating your home buttons...</p>
+            </div>
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 gap-4 pb-24">
+            {sections.map((section, i) => (
+              <motion.div
+                key={section.title}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: i * 0.1 }}
+              >
+                <Link to={createPageUrl(section.href)}>
+                  <div className="group cursor-pointer hover:scale-105 transition-all duration-300">
+                    {imageUrls[section.imageKey] ? (
+                      <div className="relative">
+                        <img 
+                          src={imageUrls[section.imageKey]} 
+                          alt={section.title}
+                          className="w-full h-auto rounded-3xl shadow-lg hover:shadow-2xl transition-shadow duration-300"
+                        />
+                        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/40 to-transparent rounded-b-3xl p-4">
+                          <p className="text-sm text-white font-medium drop-shadow-md">{section.stat}</p>
+                        </div>
+                      </div>
+                    ) : (
+                      <Card className="border-0 shadow-lg hover:shadow-2xl transition-all bg-gray-100">
+                        <CardContent className="p-5 flex flex-col h-48 items-center justify-center">
+                          <Loader2 className="w-8 h-8 text-gray-400 animate-spin" />
+                        </CardContent>
+                      </Card>
+                    )}
                   </div>
-                </div>
-              </Link>
-            </motion.div>
-          ))}
-        </div>
+                </Link>
+              </motion.div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
