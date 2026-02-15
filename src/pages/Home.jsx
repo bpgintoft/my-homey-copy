@@ -73,7 +73,7 @@ export default function Home() {
       icon: History, 
       href: 'History', 
       gradient: 'from-[#FFB347] via-[#FFC870] to-[#FFDA94]',
-      stat: 'Est. 1934',
+      stat: 'Est. 1927',
       iconBg: 'bg-gradient-to-br from-white to-amber-100',
       iconColor: 'text-amber-600'
     },
