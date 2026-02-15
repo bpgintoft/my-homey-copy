@@ -72,7 +72,7 @@ export default function Home() {
       <div className="relative overflow-hidden">
         <style>{`
           .banner-bg {
-            background: linear-gradient(135deg, #FFC0E3 0%, #FFE5B4 25%, #D4F1F4 50%, #E6F3FF 75%, #FFE8D6 100%);
+            background: linear-gradient(135deg, #C8F0E0 0%, #A8E6D3 50%, #88DCC8 100%);
             background-size: 400% 400%;
           }
         `}</style>
