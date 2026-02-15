@@ -8,69 +8,13 @@ import { motion } from 'framer-motion';
 import { Loader2 } from 'lucide-react';
 
 export default function Home() {
-  const [imageUrls, setImageUrls] = useState({
-    meals: null,
-    kids: null,
+  const [imageUrls] = useState({
+    meals: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/294a7181f_mealplanning.png',
+    kids: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/64d88eba1_kidsactivities.png',
     house: null,
     history: null
   });
-  const [heroBanner, setHeroBanner] = useState(null);
-  const [isGenerating, setIsGenerating] = useState(false);
-
-  useEffect(() => {
-    // Check if images are already stored in localStorage
-    const storedImages = localStorage.getItem('homePageImages');
-    if (storedImages) {
-      const parsed = JSON.parse(storedImages);
-      setHeroBanner(parsed.heroBanner);
-      setImageUrls(parsed.imageUrls);
-      return;
-    }
-
-    // Generate images only once and store them
-    const generateImages = async () => {
-      setIsGenerating(true);
-      try {
-        const [heroImg, mealsImg, kidsImg, houseImg, historyImg] = await Promise.all([
-          base44.integrations.Core.GenerateImage({
-            prompt: 'Cartoon illustration of a happy family of 4 - mother, father, young girl (age 4), and young boy (age 9) - sitting together outdoors in a lush green park or backyard. Vibrant colors, warm and friendly style, showing love and togetherness. Beautiful trees and nature in background. Rounded corners, bright and cheerful, suitable as a welcome banner. Family wearing casual outdoor clothing, big smiles, Disney/Pixar animation style'
-          }),
-          base44.integrations.Core.GenerateImage({
-            prompt: '3D cartoon illustration button with rounded square shape and pink gradient background. Shows a clipboard with checkmarks, a colorful pencil, fresh vegetables (carrot, tomatoes), and a plate with bread. Cute, playful style with soft shadows. White text at bottom reads "Meal Planning". Icon style, vibrant colors, isometric view, clean design'
-          }),
-          base44.integrations.Core.GenerateImage({
-            prompt: '3D cartoon illustration button with rounded square shape and light blue gradient background. Shows a soccer ball, jump rope in red, and a calendar with stars marked. Cute, playful style with soft shadows. White text at bottom reads "Kids Activities". Icon style, vibrant colors, isometric view, clean design'
-          }),
-          base44.integrations.Core.GenerateImage({
-            prompt: '3D cartoon illustration button with rounded square shape and green gradient background. Shows a beautiful two-story brick house with glowing windows, white door, surrounded by green trees and bushes, front porch with lights. Cute, playful style with soft shadows. White text at bottom reads "House". Icon style, vibrant colors, isometric view, clean design'
-          }),
-          base44.integrations.Core.GenerateImage({
-            prompt: '3D cartoon illustration button with rounded square shape and warm yellow/orange gradient background. Shows an old parchment scroll with a sepia-toned house illustration, and a magnifying glass examining details. EST. 1927 visible on scroll. Cute, playful style with soft shadows. White text at bottom reads "History". Icon style, vibrant colors, isometric view, clean design'
-          })
-        ]);
-
-        const newImages = {
-          heroBanner: heroImg.url,
-          imageUrls: {
-            meals: mealsImg.url,
-            kids: kidsImg.url,
-            house: houseImg.url,
-            history: historyImg.url
-          }
-        };
-
-        setHeroBanner(heroImg.url);
-        setImageUrls(newImages.imageUrls);
-        localStorage.setItem('homePageImages', JSON.stringify(newImages));
-      } catch (error) {
-        console.error('Error generating images:', error);
-      } finally {
-        setIsGenerating(false);
-      }
-    };
-
-    generateImages();
-  }, []);
+  const [heroBanner] = useState('https://images.unsplash.com/photo-1511895426328-dc8714191300?w=1200&h=400&fit=crop');
 
   const { data: mealPlans } = useQuery({
     queryKey: ['thisWeekMeals'],
