@@ -219,8 +219,8 @@ export default function Meals() {
   const kidFriendlyMeals = meals.filter(m => m.kid_friendly);
 
   const filteredMeals = kidFriendlyMeals.filter(meal => {
-    const proteinMatch = appliedProteins.length === 0 || (meal.protein_type && appliedProteins.includes(meal.protein_type));
-    const typeMatch = appliedMealTypes.length === 0 || appliedMealTypes.includes(meal.type);
+    const proteinMatch = appliedProteins.length === 0 || (meal.protein_type && appliedProteins.some(p => meal.protein_type.split(',').map(x => x.trim()).includes(p)));
+    const typeMatch = appliedMealTypes.length === 0 || appliedMealTypes.some(t => meal.type.split(',').map(x => x.trim()).includes(t));
     return proteinMatch && typeMatch;
   });
 
@@ -382,11 +382,11 @@ export default function Meals() {
                       </div>
                       <div className="flex flex-wrap gap-2 mb-3">
                         <Badge className="bg-pink-100 text-pink-700 border-0">
-                          {Array.isArray(meal.type) ? meal.type.join(', ') : meal.type}
+                          {meal.type}
                         </Badge>
                         {meal.protein_type && (
                           <Badge className="bg-blue-100 text-blue-700 border-0">
-                            {Array.isArray(meal.protein_type) ? meal.protein_type.join(', ') : meal.protein_type}
+                            {meal.protein_type}
                           </Badge>
                         )}
                         <div className="flex items-center gap-1 text-sm text-gray-500">
@@ -725,7 +725,7 @@ export default function Meals() {
                 <label className="text-sm font-medium text-gray-700 mb-2 block">Meal Type(s)</label>
                 <div className="flex flex-wrap gap-2">
                   {['breakfast', 'lunch', 'dinner', 'snack', 'dessert'].map(type => {
-                    const types = Array.isArray(newMeal.type) ? newMeal.type : (newMeal.type ? [newMeal.type] : []);
+                    const types = newMeal.type ? newMeal.type.split(',').map(t => t.trim()) : [];
                     const isSelected = types.includes(type);
                     return (
                       <button
@@ -734,7 +734,7 @@ export default function Meals() {
                           const newTypes = isSelected 
                             ? types.filter(t => t !== type)
                             : [...types, type];
-                          setNewMeal({ ...newMeal, type: newTypes });
+                          setNewMeal({ ...newMeal, type: newTypes.join(',') });
                         }}
                         className={`px-3 py-1 rounded-full text-sm font-medium transition-all ${
                           isSelected
@@ -752,7 +752,7 @@ export default function Meals() {
                 <label className="text-sm font-medium text-gray-700 mb-2 block">Protein Type(s)</label>
                 <div className="flex flex-wrap gap-2">
                   {['fish', 'beef', 'chicken', 'pork', 'turkey', 'vegetarian'].map(protein => {
-                    const proteins = Array.isArray(newMeal.protein_type) ? newMeal.protein_type : (newMeal.protein_type ? [newMeal.protein_type] : []);
+                    const proteins = newMeal.protein_type ? newMeal.protein_type.split(',').map(p => p.trim()) : [];
                     const isSelected = proteins.includes(protein);
                     return (
                       <button
@@ -761,7 +761,7 @@ export default function Meals() {
                           const newProteins = isSelected
                             ? proteins.filter(p => p !== protein)
                             : [...proteins, protein];
-                          setNewMeal({ ...newMeal, protein_type: newProteins });
+                          setNewMeal({ ...newMeal, protein_type: newProteins.join(',') });
                         }}
                         className={`px-3 py-1 rounded-full text-sm font-medium transition-all ${
                           isSelected
