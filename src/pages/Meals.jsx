@@ -761,24 +761,12 @@ export default function Meals() {
             <div className="space-y-4">
               <div>
                 <label className="text-sm font-medium text-gray-700 mb-2 block">Meal Image</label>
-                <div className="flex gap-2">
-                  <Input
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => e.target.files?.[0] && handleImageUpload(e.target.files[0])}
-                    disabled={uploadingImage}
-                    className="flex-1"
-                  />
-                  <Button
-                    type="button"
-                    onClick={handlePasteImage}
-                    disabled={uploadingImage}
-                    variant="outline"
-                    className="whitespace-nowrap"
-                  >
-                    Paste Image
-                  </Button>
-                </div>
+                <Input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => e.target.files?.[0] && handleImageUpload(e.target.files[0])}
+                  disabled={uploadingImage}
+                />
                 {uploadingImage && <span className="text-sm text-gray-500 mt-2 block">Uploading...</span>}
                 {newMeal.photo_url && (
                   <div className="mt-2 w-full h-32 rounded-lg overflow-hidden">
