@@ -127,7 +127,7 @@ export default function Home() {
                       {section.count}
                     </div>
                   )}
-                  <div className={`rounded-3xl shadow-lg hover:shadow-2xl transition-all ${section.bgColor} p-6 flex flex-col items-center justify-center h-48`}>
+                  <div className={`rounded-3xl shadow-lg hover:shadow-2xl transition-all ${section.bgColor} p-6 flex flex-col items-center justify-center h-36`}>
                     {imageUrls[section.imageKey] && (
                       <img 
                         src={imageUrls[section.imageKey]} 
