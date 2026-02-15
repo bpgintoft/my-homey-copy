@@ -333,6 +333,54 @@ export default function Meals() {
           </div>
         </DialogContent>
       </Dialog>
+
+      <Dialog open={planDialog} onOpenChange={setPlanDialog}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Add {selectedMealForPlan?.name} to Weekly Plan</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <Select
+              value={planSelection.day}
+              onValueChange={(value) => setPlanSelection({ ...planSelection, day: value })}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select day" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="monday">Monday</SelectItem>
+                <SelectItem value="tuesday">Tuesday</SelectItem>
+                <SelectItem value="wednesday">Wednesday</SelectItem>
+                <SelectItem value="thursday">Thursday</SelectItem>
+                <SelectItem value="friday">Friday</SelectItem>
+                <SelectItem value="saturday">Saturday</SelectItem>
+                <SelectItem value="sunday">Sunday</SelectItem>
+              </SelectContent>
+            </Select>
+            <Select
+              value={planSelection.mealType}
+              onValueChange={(value) => setPlanSelection({ ...planSelection, mealType: value })}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select meal type" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="breakfast">Breakfast</SelectItem>
+                <SelectItem value="lunch">Lunch</SelectItem>
+                <SelectItem value="dinner">Dinner</SelectItem>
+                <SelectItem value="snack">Snack</SelectItem>
+              </SelectContent>
+            </Select>
+            <Button
+              onClick={() => addToMealPlanMutation.mutate()}
+              disabled={!planSelection.day || !planSelection.mealType || addToMealPlanMutation.isPending}
+              className="w-full bg-gradient-to-r from-[#E91E8C] to-[#D01576] text-white"
+            >
+              {addToMealPlanMutation.isPending ? 'Adding...' : 'Add to Plan'}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
