@@ -178,36 +178,25 @@ export default function Meals() {
   const generateMealPlanMutation = useMutation({
     mutationFn: async () => {
       const result = await base44.integrations.Core.InvokeLLM({
-        prompt: `Create a weekly meal plan for a family with a 4-year-old and 9-year-old. Generate 7 days of kid-friendly dinners. Return as JSON array with: name, ingredients (array), instructions, prep_time, cook_time, kid_friendly: true, age_range: "4-9 years", type: "dinner"`,
+        prompt: `Create one kid-friendly dinner meal for a family with a 4-year-old and 9-year-old. Return as JSON with: name, ingredients (array), instructions, prep_time, cook_time, kid_friendly: true, age_range: "4-9 years", type: "dinner"`,
         response_json_schema: {
           type: "object",
           properties: {
-            meals: {
-              type: "array",
-              items: {
-                type: "object",
-                properties: {
-                  name: { type: "string" },
-                  ingredients: { type: "array", items: { type: "string" } },
-                  instructions: { type: "string" },
-                  prep_time: { type: "number" },
-                  cook_time: { type: "number" },
-                  kid_friendly: { type: "boolean" },
-                  age_range: { type: "string" },
-                  type: { type: "string" }
-                }
-              }
-            }
+            name: { type: "string" },
+            ingredients: { type: "array", items: { type: "string" } },
+            instructions: { type: "string" },
+            prep_time: { type: "number" },
+            cook_time: { type: "number" },
+            kid_friendly: { type: "boolean" },
+            age_range: { type: "string" },
+            type: { type: "string" }
           }
         }
       });
-      return result.meals;
+      return result;
     },
-    onSuccess: async (generatedMeals) => {
-      for (const meal of generatedMeals) {
-        await base44.entities.Meal.create(meal);
-      }
-      queryClient.invalidateQueries(['meals']);
+    onSuccess: (meal) => {
+      setGeneratedMeal(meal);
     },
   });
 
