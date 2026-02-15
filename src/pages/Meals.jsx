@@ -295,6 +295,18 @@ export default function Meals() {
     setShowFilters(false);
   };
 
+  const getProteinIcon = (proteinType) => {
+    if (!proteinType) return null;
+    const type = proteinType.toLowerCase();
+    if (type.includes('beef')) return <Beef className="w-4 h-4" />;
+    if (type.includes('chicken')) return <Drumstick className="w-4 h-4" />;
+    if (type.includes('fish')) return <Fish className="w-4 h-4" />;
+    if (type.includes('vegetarian')) return <Leaf className="w-4 h-4" />;
+    if (type.includes('pork')) return <Drumstick className="w-4 h-4" />;
+    if (type.includes('turkey')) return <Drumstick className="w-4 h-4" />;
+    return null;
+  };
+
   const handleImageUpload = async (file) => {
     if (!file) return;
     setUploadingImage(true);
