@@ -103,8 +103,7 @@ export default function Kids() {
       <div className="relative overflow-hidden">
         <style>{`
           .kids-banner-bg {
-            background: linear-gradient(135deg, #D0E8F2 0%, #B8E0EB 50%, #A0D8E3 100%);
-            background-size: 400% 400%;
+            background: #C5DFF0;
           }
         `}</style>
         <div className="relative h-40 md:h-48 kids-banner-bg flex items-center justify-between px-4 md:px-12 gap-0">
