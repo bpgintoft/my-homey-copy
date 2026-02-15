@@ -321,31 +321,56 @@ export default function Meals() {
                         <div className="space-y-2">
                           {dayMeals.map(plan => {
                             const mealDetails = meals.find(m => m.id === plan.meal_id);
+                            const isExpanded = expandedMealId === `plan-${plan.id}`;
                             return (
-                              <div key={plan.id} className="bg-pink-50 p-3 rounded-lg space-y-2">
+                              <div 
+                                key={plan.id} 
+                                className="bg-pink-50 p-3 rounded-lg space-y-2 cursor-pointer hover:bg-pink-100 transition-colors"
+                                onClick={() => setExpandedMealId(isExpanded ? null : `plan-${plan.id}`)}
+                              >
                                 <div className="flex items-center justify-between">
-                                  <div>
+                                  <div className="flex-1">
                                     <div className="text-sm font-medium text-gray-900">{plan.meal_name}</div>
                                     <div className="text-xs text-gray-500 capitalize">{plan.meal_type}</div>
                                   </div>
                                   <button
-                                    onClick={() => deleteFromMealPlanMutation.mutate(plan.id)}
+                                    onClick={(e) => { e.stopPropagation(); deleteFromMealPlanMutation.mutate(plan.id); }}
                                     disabled={deleteFromMealPlanMutation.isPending}
                                     className="text-gray-400 hover:text-red-500 transition-colors p-1"
                                   >
                                     <Trash2 className="w-4 h-4" />
                                   </button>
                                 </div>
-                                {mealDetails?.ingredients && (
-                                  <Button
-                                    onClick={() => addToGroceryListMutation.mutate(mealDetails)}
-                                    disabled={addToGroceryListMutation.isPending}
-                                    size="sm"
-                                    className="w-full bg-white text-pink-700 hover:bg-pink-100 border border-pink-200"
-                                  >
-                                    <ShoppingCart className="w-4 h-4 mr-2" />
-                                    {addToGroceryListMutation.isPending ? 'Adding...' : 'Add Ingredients to Grocery'}
-                                  </Button>
+                                {isExpanded && (
+                                  <div className="space-y-3 pt-2 border-t border-pink-200">
+                                    {mealDetails?.ingredients && (
+                                      <div>
+                                        <h4 className="font-medium text-gray-900 mb-2">Ingredients:</h4>
+                                        <ul className="text-sm text-gray-600 space-y-1">
+                                          {mealDetails.ingredients.map((ing, idx) => (
+                                            <li key={idx}>• {ing}</li>
+                                          ))}
+                                        </ul>
+                                      </div>
+                                    )}
+                                    {mealDetails?.instructions && (
+                                      <div>
+                                        <h4 className="font-medium text-gray-900 mb-2">Instructions:</h4>
+                                        <p className="text-sm text-gray-600 whitespace-pre-wrap">{mealDetails.instructions}</p>
+                                      </div>
+                                    )}
+                                    {mealDetails?.ingredients && (
+                                      <Button
+                                        onClick={(e) => { e.stopPropagation(); addToGroceryListMutation.mutate(mealDetails); }}
+                                        disabled={addToGroceryListMutation.isPending}
+                                        size="sm"
+                                        className="w-full bg-white text-pink-700 hover:bg-pink-100 border border-pink-200"
+                                      >
+                                        <ShoppingCart className="w-4 h-4 mr-2" />
+                                        {addToGroceryListMutation.isPending ? 'Adding...' : 'Add Ingredients to Grocery'}
+                                      </Button>
+                                    )}
+                                  </div>
                                 )}
                               </div>
                             );
