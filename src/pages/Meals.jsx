@@ -14,15 +14,17 @@ import { motion } from 'framer-motion';
 
 export default function Meals() {
   const [showMealDialog, setShowMealDialog] = useState(false);
-  const [newMeal, setNewMeal] = useState({});
-  const [selectedMealForPlan, setSelectedMealForPlan] = useState(null);
-  const [planDialog, setPlanDialog] = useState(false);
-  const [planSelection, setPlanSelection] = useState({ day: '', mealType: '' });
-  const [expandedMealId, setExpandedMealId] = useState(null);
-  const [pastedMealText, setPastedMealText] = useState('');
-  const [isParsing, setIsParsing] = useState(false);
-  const [generatedMeal, setGeneratedMeal] = useState(null);
-  const queryClient = useQueryClient();
+    const [newMeal, setNewMeal] = useState({});
+    const [selectedMealForPlan, setSelectedMealForPlan] = useState(null);
+    const [planDialog, setPlanDialog] = useState(false);
+    const [planSelection, setPlanSelection] = useState({ day: '', mealType: '' });
+    const [expandedMealId, setExpandedMealId] = useState(null);
+    const [pastedMealText, setPastedMealText] = useState('');
+    const [isParsing, setIsParsing] = useState(false);
+    const [generatedMeal, setGeneratedMeal] = useState(null);
+    const [selectedProteins, setSelectedProteins] = useState([]);
+    const [selectedMealTypes, setSelectedMealTypes] = useState([]);
+    const queryClient = useQueryClient();
 
   const { data: meals = [] } = useQuery({
     queryKey: ['meals'],
@@ -202,6 +204,12 @@ export default function Meals() {
 
   const kidFriendlyMeals = meals.filter(m => m.kid_friendly);
 
+  const filteredMeals = kidFriendlyMeals.filter(meal => {
+    const proteinMatch = selectedProteins.length === 0 || (meal.protein_type && selectedProteins.includes(meal.protein_type));
+    const typeMatch = selectedMealTypes.length === 0 || selectedMealTypes.includes(meal.type);
+    return proteinMatch && typeMatch;
+  });
+
   return (
     <div className="min-h-screen bg-[#F5F5F7]">
       <div className="relative overflow-hidden">
@@ -238,31 +246,77 @@ export default function Meals() {
 
           <TabsContent value="meals" className="space-y-6">
             <div className="space-y-4">
-              <h2 className="text-xl font-semibold text-gray-900">
-                {kidFriendlyMeals.length} Kid-Friendly Meals
-              </h2>
-              <div className="flex gap-3">
-                <Button
-                  onClick={() => generateMealPlanMutation.mutate()}
-                  disabled={generateMealPlanMutation.isPending}
-                  variant="outline"
-                  className="border-pink-200 text-pink-600 hover:bg-pink-50"
-                >
-                  <Sparkles className="w-4 h-4 mr-2" />
-                  {generateMealPlanMutation.isPending ? 'Generating...' : 'AI Meal Idea'}
-                </Button>
-                <Button
-                  onClick={() => setShowMealDialog(true)}
-                  className="bg-gradient-to-r from-[#E91E8C] to-[#D01576] text-white"
-                >
-                  <Plus className="w-4 h-4 mr-2" />
-                  Add Meal
-                </Button>
+              <div className="flex justify-between items-start gap-4">
+                <div>
+                  <h2 className="text-xl font-semibold text-gray-900 mb-4">
+                    {filteredMeals.length} Kid-Friendly Meals
+                  </h2>
+                  <div className="space-y-3">
+                    <div>
+                      <p className="text-sm font-medium text-gray-700 mb-2">Protein Type</p>
+                      <div className="flex flex-wrap gap-2">
+                        {['fish', 'beef', 'chicken', 'pork', 'turkey', 'vegetarian'].map(protein => (
+                          <button
+                            key={protein}
+                            onClick={() => setSelectedProteins(prev => 
+                              prev.includes(protein) ? prev.filter(p => p !== protein) : [...prev, protein]
+                            )}
+                            className={`px-3 py-1 rounded-full text-sm font-medium transition-all ${
+                              selectedProteins.includes(protein)
+                                ? 'bg-pink-600 text-white'
+                                : 'bg-pink-100 text-pink-700 hover:bg-pink-200'
+                            }`}
+                          >
+                            {protein.charAt(0).toUpperCase() + protein.slice(1)}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-gray-700 mb-2">Meal Type</p>
+                      <div className="flex flex-wrap gap-2">
+                        {['breakfast', 'lunch', 'dinner', 'snack', 'dessert'].map(type => (
+                          <button
+                            key={type}
+                            onClick={() => setSelectedMealTypes(prev =>
+                              prev.includes(type) ? prev.filter(t => t !== type) : [...prev, type]
+                            )}
+                            className={`px-3 py-1 rounded-full text-sm font-medium transition-all ${
+                              selectedMealTypes.includes(type)
+                                ? 'bg-pink-600 text-white'
+                                : 'bg-pink-100 text-pink-700 hover:bg-pink-200'
+                            }`}
+                          >
+                            {type.charAt(0).toUpperCase() + type.slice(1)}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="flex gap-3 flex-shrink-0">
+                  <Button
+                    onClick={() => generateMealPlanMutation.mutate()}
+                    disabled={generateMealPlanMutation.isPending}
+                    variant="outline"
+                    className="border-pink-200 text-pink-600 hover:bg-pink-50"
+                  >
+                    <Sparkles className="w-4 h-4 mr-2" />
+                    {generateMealPlanMutation.isPending ? 'Generating...' : 'AI Meal Idea'}
+                  </Button>
+                  <Button
+                    onClick={() => setShowMealDialog(true)}
+                    className="bg-gradient-to-r from-[#E91E8C] to-[#D01576] text-white"
+                  >
+                    <Plus className="w-4 h-4 mr-2" />
+                    Add Meal
+                  </Button>
+                </div>
               </div>
             </div>
 
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {kidFriendlyMeals.map((meal) => (
+              {filteredMeals.map((meal) => (
                 <motion.div
                   key={meal.id}
                   initial={{ opacity: 0, scale: 0.95 }}
@@ -351,11 +405,11 @@ export default function Meals() {
               ))}
             </div>
 
-            {kidFriendlyMeals.length === 0 && (
+            {filteredMeals.length === 0 && (
               <Card className="bg-white border-0 shadow-sm p-12 text-center">
                 <ChefHat className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">No meals yet</h3>
-                <p className="text-gray-500 mb-4">Add meals manually or generate AI suggestions</p>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">{selectedProteins.length > 0 || selectedMealTypes.length > 0 ? 'No meals match your filters' : 'No meals yet'}</h3>
+                <p className="text-gray-500 mb-4">{selectedProteins.length > 0 || selectedMealTypes.length > 0 ? 'Try adjusting your filters' : 'Add meals manually or generate AI suggestions'}</p>
                 <Button
                   onClick={() => generateMealPlanMutation.mutate()}
                   disabled={generateMealPlanMutation.isPending}
@@ -621,6 +675,23 @@ export default function Meals() {
                   <SelectItem value="lunch">Lunch</SelectItem>
                   <SelectItem value="dinner">Dinner</SelectItem>
                   <SelectItem value="snack">Snack</SelectItem>
+                  <SelectItem value="dessert">Dessert</SelectItem>
+                </SelectContent>
+              </Select>
+              <Select
+                value={newMeal.protein_type || ''}
+                onValueChange={(value) => setNewMeal({ ...newMeal, protein_type: value })}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Protein type (optional)" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="fish">Fish</SelectItem>
+                  <SelectItem value="beef">Beef</SelectItem>
+                  <SelectItem value="chicken">Chicken</SelectItem>
+                  <SelectItem value="pork">Pork</SelectItem>
+                  <SelectItem value="turkey">Turkey</SelectItem>
+                  <SelectItem value="vegetarian">Vegetarian</SelectItem>
                 </SelectContent>
               </Select>
               <Select
