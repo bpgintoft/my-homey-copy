@@ -9,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Plus, ChefHat, ShoppingCart, Calendar, Clock, Users, Sparkles, Trash2 } from 'lucide-react';
+import { Plus, ChefHat, ShoppingCart, Calendar, Clock, Users, Sparkles, Trash2, ExternalLink } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function Meals() {
@@ -320,6 +320,16 @@ export default function Meals() {
                               <p className="text-sm text-gray-600 whitespace-pre-wrap">{meal.instructions}</p>
                             </div>
                           )}
+                          {meal.recipe_url && (
+                            <a
+                              href={meal.recipe_url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-2 text-sm text-pink-600 hover:text-pink-700 font-medium"
+                            >
+                              View Recipe <ExternalLink className="w-4 h-4" />
+                            </a>
+                          )}
                           <Button
                             onClick={(e) => { e.stopPropagation(); setSelectedMealForPlan(meal); setPlanDialog(true); }}
                             className="w-full bg-gradient-to-r from-[#E91E8C] to-[#D01576] text-white"
@@ -409,6 +419,16 @@ export default function Meals() {
                                         <h4 className="font-medium text-gray-900 mb-2">Instructions:</h4>
                                         <p className="text-sm text-gray-600 whitespace-pre-wrap">{mealDetails.instructions}</p>
                                       </div>
+                                    )}
+                                    {mealDetails?.recipe_url && (
+                                      <a
+                                        href={mealDetails.recipe_url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="inline-flex items-center gap-2 text-sm text-pink-600 hover:text-pink-700 font-medium"
+                                      >
+                                        View Recipe <ExternalLink className="w-4 h-4" />
+                                      </a>
                                     )}
                                     {mealDetails?.ingredients && (
                                       <Button
@@ -634,6 +654,11 @@ export default function Meals() {
                 value={newMeal.instructions || ''}
                 onChange={(e) => setNewMeal({ ...newMeal, instructions: e.target.value })}
                 rows={4}
+              />
+              <Input
+                placeholder="Recipe URL (optional)"
+                value={newMeal.recipe_url || ''}
+                onChange={(e) => setNewMeal({ ...newMeal, recipe_url: e.target.value })}
               />
               <div className="grid grid-cols-3 gap-4">
                 <Input
