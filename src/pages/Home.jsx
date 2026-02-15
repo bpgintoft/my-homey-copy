@@ -14,7 +14,7 @@ export default function Home() {
     house: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/04b7513e6_house.png',
     history: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/2d4840f69_history.png'
   });
-  const [heroBanner] = useState('https://images.unsplash.com/photo-1511895426328-dc8714191300?w=1200&h=400&fit=crop');
+  const [familyImage] = useState('https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/7afddfe7e_family.png');
 
   const { data: mealPlans } = useQuery({
     queryKey: ['thisWeekMeals'],
