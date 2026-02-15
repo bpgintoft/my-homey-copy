@@ -524,8 +524,7 @@ export default function Meals() {
               <Button
                 onClick={() => parseMealFromTextMutation.mutate(pastedMealText)}
                 disabled={!pastedMealText || parseMealFromTextMutation.isPending}
-                variant="outline"
-                className="w-full"
+                className="w-full bg-gradient-to-r from-[#E91E8C] to-[#D01576] text-white"
               >
                 {parseMealFromTextMutation.isPending ? 'Parsing...' : 'Parse Recipe'}
               </Button>
