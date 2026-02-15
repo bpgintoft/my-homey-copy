@@ -422,7 +422,10 @@ export default function Meals() {
                               <h4 className="font-medium text-gray-900 mb-2">Instructions:</h4>
                               <ul className="text-sm text-gray-600 space-y-1">
                                 {meal.instructions.split(/(?<=[.!?])\s+/).map((sentence, idx) => (
-                                  <li key={idx}>• {sentence.trim()}</li>
+                                  <li key={idx} className="flex gap-2">
+                                    <span className="flex-shrink-0">•</span>
+                                    <span>{sentence.trim()}</span>
+                                  </li>
                                 ))}
                               </ul>
                             </div>
@@ -535,7 +538,10 @@ export default function Meals() {
                                                   <h4 className="font-medium text-gray-900 mb-2">Instructions:</h4>
                                                   <ul className="text-sm text-gray-600 space-y-1">
                                                     {mealDetails.instructions.split(/(?<=[.!?])\s+/).map((sentence, idx) => (
-                                                      <li key={idx}>• {sentence.trim()}</li>
+                                                      <li key={idx} className="flex gap-2">
+                                                        <span className="flex-shrink-0">•</span>
+                                                        <span>{sentence.trim()}</span>
+                                                      </li>
                                                     ))}
                                                   </ul>
                                                 </div>
@@ -665,7 +671,10 @@ export default function Meals() {
                   <h4 className="font-medium text-gray-900 mb-2">Instructions:</h4>
                   <ul className="text-sm text-gray-600 space-y-1">
                     {generatedMeal.instructions.split(/(?<=[.!?])\s+/).map((sentence, idx) => (
-                      <li key={idx}>• {sentence.trim()}</li>
+                      <li key={idx} className="flex gap-2">
+                        <span className="flex-shrink-0">•</span>
+                        <span>{sentence.trim()}</span>
+                      </li>
                     ))}
                   </ul>
                 </div>
