@@ -15,6 +15,7 @@ import { motion } from 'framer-motion';
 export default function Meals() {
   const [showMealDialog, setShowMealDialog] = useState(false);
     const [newMeal, setNewMeal] = useState({});
+    const [editingMeal, setEditingMeal] = useState(null);
     const [selectedMealForPlan, setSelectedMealForPlan] = useState(null);
     const [planDialog, setPlanDialog] = useState(false);
     const [planSelection, setPlanSelection] = useState({ day: '', mealType: '' });
@@ -64,6 +65,16 @@ export default function Meals() {
     onSuccess: () => {
       queryClient.invalidateQueries(['meals']);
       setShowMealDialog(false);
+      setNewMeal({});
+    },
+  });
+
+  const updateMealMutation = useMutation({
+    mutationFn: (data) => base44.entities.Meal.update(editingMeal.id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['meals']);
+      setShowMealDialog(false);
+      setEditingMeal(null);
       setNewMeal({});
     },
   });
@@ -414,13 +425,22 @@ export default function Meals() {
                               View Recipe <ExternalLink className="w-4 h-4" />
                             </a>
                           )}
-                          <Button
-                            onClick={(e) => { e.stopPropagation(); setSelectedMealForPlan(meal); setPlanDialog(true); }}
-                            className="w-full bg-gradient-to-r from-[#E91E8C] to-[#D01576] text-white"
-                          >
-                            <Calendar className="w-4 h-4 mr-2" />
-                            Add to Weekly Plan
-                          </Button>
+                          <div className="flex gap-2">
+                            <Button
+                              onClick={(e) => { e.stopPropagation(); setEditingMeal(meal); setNewMeal(meal); setShowMealDialog(true); }}
+                              variant="outline"
+                              className="flex-1 border-pink-200 text-pink-600 hover:bg-pink-50"
+                            >
+                              Edit Meal
+                            </Button>
+                            <Button
+                              onClick={(e) => { e.stopPropagation(); setSelectedMealForPlan(meal); setPlanDialog(true); }}
+                              className="flex-1 bg-gradient-to-r from-[#E91E8C] to-[#D01576] text-white"
+                            >
+                              <Calendar className="w-4 h-4 mr-2" />
+                              Add to Plan
+                            </Button>
+                          </div>
                         </div>
                       ) : (
                         <div className="text-sm text-gray-600">
@@ -654,10 +674,10 @@ export default function Meals() {
             </DialogContent>
             </Dialog>
 
-      <Dialog open={showMealDialog} onOpenChange={setShowMealDialog}>
+      <Dialog open={showMealDialog} onOpenChange={(open) => { setShowMealDialog(open); if (!open) { setEditingMeal(null); setNewMeal({}); } }}>
         <DialogContent className="max-w-2xl max-h-[90vh] flex flex-col bg-white">
           <DialogHeader>
-            <DialogTitle>Add New Meal</DialogTitle>
+            <DialogTitle>{editingMeal ? 'Edit Meal' : 'Add New Meal'}</DialogTitle>
           </DialogHeader>
           <div className="space-y-6 overflow-y-auto flex-1 pr-4">
             <div className="space-y-3">
@@ -782,11 +802,17 @@ export default function Meals() {
                 />
               </div>
               <Button
-                onClick={() => createMealMutation.mutate({ ...newMeal, kid_friendly: true, age_range: '4-9 years' })}
+                onClick={() => {
+                  if (editingMeal) {
+                    updateMealMutation.mutate(newMeal);
+                  } else {
+                    createMealMutation.mutate({ ...newMeal, kid_friendly: true, age_range: '4-9 years' });
+                  }
+                }}
                 disabled={!newMeal.name || !newMeal.type}
                 className="w-full bg-gradient-to-r from-[#E91E8C] to-[#D01576] text-white"
               >
-                Add Meal
+                {editingMeal ? 'Save Changes' : 'Add Meal'}
               </Button>
               </div>
               </div>
