@@ -217,6 +217,29 @@ export default function Meals() {
     },
   });
 
+  const calculateNutritionMutation = useMutation({
+    mutationFn: async (mealData) => {
+      const result = await base44.integrations.Core.InvokeLLM({
+        prompt: `Calculate nutrition facts per serving for this meal. Name: ${mealData.name}. Ingredients: ${mealData.ingredients?.join(', ') || 'not specified'}. Servings: ${mealData.servings || 4}. Return as JSON with estimated values per serving.`,
+        response_json_schema: {
+          type: "object",
+          properties: {
+            calories: { type: "number" },
+            protein_g: { type: "number" },
+            carbs_g: { type: "number" },
+            fat_g: { type: "number" },
+            fiber_g: { type: "number" },
+            sugar_g: { type: "number" }
+          }
+        }
+      });
+      return result;
+    },
+    onSuccess: (nutrition) => {
+      setNewMeal({ ...newMeal, nutrition });
+    },
+  });
+
   const kidFriendlyMeals = meals.filter(m => m.kid_friendly);
 
   const filteredMeals = kidFriendlyMeals.filter(meal => {
