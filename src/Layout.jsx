@@ -3,17 +3,11 @@ import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { 
   Home, 
-  History, 
-  LayoutGrid, 
-  Wrench, 
-  Users, 
-  Menu, 
-  X,
-  ChevronRight,
-  FileText,
+  UtensilsCrossed,
   Calendar,
-  Package,
-  Phone
+  History,
+  Menu, 
+  X
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -23,22 +17,15 @@ export default function Layout({ children, currentPageName }) {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const navItems = [
-    { name: 'Dashboard', icon: Home, href: 'Dashboard' },
+    { name: 'Home', icon: Home, href: 'Home' },
+    { name: 'Meals', icon: UtensilsCrossed, href: 'Meals' },
+    { name: 'Kids', icon: Calendar, href: 'Kids' },
+    { name: 'House', icon: Home, href: 'House' },
     { name: 'History', icon: History, href: 'History' },
-    { name: 'Rooms', icon: LayoutGrid, href: 'Rooms' },
-    { name: 'Appliances', icon: Package, href: 'Appliances' },
-    { name: 'Maintenance', icon: Wrench, href: 'Maintenance' },
-    { name: 'Calendar', icon: Calendar, href: 'MaintenanceCalendar' },
-    { name: 'Documents', icon: FileText, href: 'Documents' },
-    { name: 'Home Details', icon: Home, href: 'HomeDetails' },
-    { name: 'Family', icon: Users, href: 'Family' },
-    { name: 'Contacts', icon: Phone, href: 'Contacts' },
-    { name: 'Vendors', icon: Users, href: 'Vendors' },
   ];
 
   const NavLink = ({ item, mobile = false }) => {
-    const isActive = currentPageName === item.href || 
-      (item.href === 'Rooms' && currentPageName === 'RoomDetail');
+    const isActive = currentPageName === item.href;
     
     return (
       <Link
@@ -46,29 +33,28 @@ export default function Layout({ children, currentPageName }) {
         onClick={() => mobile && setMobileOpen(false)}
         className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
           isActive 
-            ? 'bg-slate-800 text-white' 
-            : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+            ? 'bg-gray-900 text-white' 
+            : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
         } ${mobile ? 'w-full' : ''}`}
       >
         <item.icon className="w-5 h-5" />
         <span className="font-medium">{item.name}</span>
-        {mobile && <ChevronRight className="w-4 h-4 ml-auto opacity-50" />}
       </Link>
     );
   };
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-[#F5F5F7]">
       {/* Desktop Sidebar */}
-      <aside className="hidden lg:flex fixed left-0 top-0 bottom-0 w-64 bg-white border-r border-slate-200 flex-col z-40">
-        <div className="p-6 border-b border-slate-100">
+      <aside className="hidden lg:flex fixed left-0 top-0 bottom-0 w-64 bg-white border-r border-gray-200 flex-col z-40">
+        <div className="p-6 border-b border-gray-100">
           <Link to={createPageUrl('Home')} className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-slate-800 to-slate-600 flex items-center justify-center">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#E91E8C] to-[#0AACFF] flex items-center justify-center">
               <Home className="w-5 h-5 text-white" />
             </div>
             <div>
-              <h1 className="font-bold text-slate-800">1934 Church</h1>
-              <p className="text-xs text-slate-500">Home Manager</p>
+              <h1 className="font-bold text-gray-900">1934 Church</h1>
+              <p className="text-xs text-gray-500">Family Home</p>
             </div>
           </Link>
         </div>
@@ -77,20 +63,15 @@ export default function Layout({ children, currentPageName }) {
             <NavLink key={item.name} item={item} />
           ))}
         </nav>
-        <div className="p-4 border-t border-slate-100">
-          <div className="text-xs text-slate-400 text-center">
-            Wauwatosa, WI 53213
-          </div>
-        </div>
       </aside>
 
       {/* Mobile Header */}
-      <header className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-white/80 backdrop-blur-md border-b border-slate-200 z-40 flex items-center justify-between px-4">
+      <header className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-white/95 backdrop-blur-sm border-b border-gray-200 z-40 flex items-center justify-between px-4">
         <Link to={createPageUrl('Home')} className="flex items-center gap-2">
-          <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-slate-800 to-slate-600 flex items-center justify-center">
+          <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-[#E91E8C] to-[#0AACFF] flex items-center justify-center">
             <Home className="w-4 h-4 text-white" />
           </div>
-          <span className="font-bold text-slate-800">1934 Church</span>
+          <span className="font-bold text-gray-900">1934 Church</span>
         </Link>
         <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
           <SheetTrigger asChild>
@@ -98,15 +79,15 @@ export default function Layout({ children, currentPageName }) {
               <Menu className="w-5 h-5" />
             </Button>
           </SheetTrigger>
-          <SheetContent side="right" className="w-80 p-0">
-            <div className="p-6 border-b border-slate-100">
+          <SheetContent side="right" className="w-80 p-0 bg-white">
+            <div className="p-6 border-b border-gray-100">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-slate-800 to-slate-600 flex items-center justify-center">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#E91E8C] to-[#0AACFF] flex items-center justify-center">
                   <Home className="w-5 h-5 text-white" />
                 </div>
                 <div>
-                  <h1 className="font-bold text-slate-800">1934 Church St.</h1>
-                  <p className="text-xs text-slate-500">Wauwatosa, WI</p>
+                  <h1 className="font-bold text-gray-900">1934 Church St.</h1>
+                  <p className="text-xs text-gray-500">Wauwatosa, WI</p>
                 </div>
               </div>
             </div>

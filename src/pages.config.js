@@ -62,6 +62,7 @@ import Rooms from './pages/Rooms';
 import Vendors from './pages/Vendors';
 import Meals from './pages/Meals';
 import Kids from './pages/Kids';
+import House from './pages/House';
 import __Layout from './Layout.jsx';
 
 
@@ -81,6 +82,7 @@ export const PAGES = {
     "Vendors": Vendors,
     "Meals": Meals,
     "Kids": Kids,
+    "House": House,
 }
 
 export const pagesConfig = {
