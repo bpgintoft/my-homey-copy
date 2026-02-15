@@ -155,7 +155,7 @@ export default function Home() {
       </div>
 
       {/* Quick Stats */}
-      <div className="container mx-auto px-6 -mt-6">
+      <div className="container mx-auto px-6 pt-6">
         <div className="grid grid-cols-3 gap-3 mb-6">
           <Card className="border-0 shadow-lg bg-white">
             <CardContent className="p-4 text-center">
