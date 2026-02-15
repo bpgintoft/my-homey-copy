@@ -325,12 +325,56 @@ export default function Meals() {
             </div>
           </TabsContent>
 
-          <TabsContent value="grocery">
-            <Card className="bg-white border-0 shadow-sm p-8 text-center">
-              <ShoppingCart className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Grocery List</h3>
-              <p className="text-gray-500">Coming soon - Auto-generated from your meal plan</p>
-            </Card>
+          <TabsContent value="grocery" className="space-y-4">
+            {groceries.length === 0 ? (
+              <Card className="bg-white border-0 shadow-sm p-8 text-center">
+                <ShoppingCart className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">Grocery List</h3>
+                <p className="text-gray-500">No items yet - add ingredients from your meal plan</p>
+              </Card>
+            ) : (
+              <Card className="bg-white border-0 shadow-sm">
+                <CardContent className="p-5">
+                  <div className="space-y-3">
+                    {groceries.map((item) => (
+                      <div key={item.id} className="flex items-center justify-between bg-gray-50 p-3 rounded-lg">
+                        <div>
+                          <div className="text-sm font-medium text-gray-900">{item.name}</div>
+                          <div className="text-xs text-gray-500 capitalize">{item.category}</div>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <div className="flex items-center gap-2 bg-white border border-gray-200 rounded-lg">
+                            <button
+                              onClick={() => {
+                                const qty = parseInt(item.quantity) || 0;
+                                if (qty > 0) {
+                                  base44.entities.GroceryItem.update(item.id, { quantity: (qty - 1).toString() });
+                                  queryClient.invalidateQueries(['groceries']);
+                                }
+                              }}
+                              className="px-2 py-1 text-gray-500 hover:text-gray-900"
+                            >
+                              −
+                            </button>
+                            <span className="w-8 text-center font-medium text-sm">{item.quantity || 1}</span>
+                            <button
+                              onClick={() => {
+                                const qty = parseInt(item.quantity) || 0;
+                                base44.entities.GroceryItem.update(item.id, { quantity: (qty + 1).toString() });
+                                queryClient.invalidateQueries(['groceries']);
+                              }}
+                              className="px-2 py-1 text-gray-500 hover:text-gray-900"
+                            >
+                              +
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
           </TabsContent>
         </Tabs>
       </div>
