@@ -953,19 +953,40 @@ export default function Meals() {
                   onChange={(e) => setNewMeal({ ...newMeal, servings: parseInt(e.target.value) })}
                 />
               </div>
-              <Button
-                onClick={() => {
-                  if (editingMeal) {
-                    updateMealMutation.mutate(newMeal);
-                  } else {
-                    createMealMutation.mutate({ ...newMeal, kid_friendly: true, age_range: '4-9 years' });
-                  }
-                }}
-                disabled={!newMeal.name || !newMeal.type}
-                className="w-full bg-gradient-to-r from-[#E91E8C] to-[#D01576] text-white"
-              >
-                {editingMeal ? 'Save Changes' : 'Add Meal'}
-              </Button>
+              <div className="space-y-3">
+                <Button
+                  type="button"
+                  onClick={() => calculateNutritionMutation.mutate(newMeal)}
+                  disabled={!newMeal.name || !newMeal.ingredients?.length || calculateNutritionMutation.isPending}
+                  variant="outline"
+                  className="w-full border-pink-200 text-pink-600 hover:bg-pink-50"
+                >
+                  {calculateNutritionMutation.isPending ? 'Calculating...' : 'Calculate Nutrition'}
+                </Button>
+                {newMeal.nutrition && (
+                  <div className="bg-pink-50 p-3 rounded-lg text-sm">
+                    <div className="grid grid-cols-2 gap-2 text-gray-700">
+                      <div><span className="font-medium">{newMeal.nutrition.calories}</span> cal</div>
+                      <div><span className="font-medium">{newMeal.nutrition.protein_g}g</span> protein</div>
+                      <div><span className="font-medium">{newMeal.nutrition.carbs_g}g</span> carbs</div>
+                      <div><span className="font-medium">{newMeal.nutrition.fat_g}g</span> fat</div>
+                    </div>
+                  </div>
+                )}
+                <Button
+                  onClick={() => {
+                    if (editingMeal) {
+                      updateMealMutation.mutate(newMeal);
+                    } else {
+                      createMealMutation.mutate({ ...newMeal, kid_friendly: true, age_range: '4-9 years' });
+                    }
+                  }}
+                  disabled={!newMeal.name || !newMeal.type}
+                  className="w-full bg-gradient-to-r from-[#E91E8C] to-[#D01576] text-white"
+                >
+                  {editingMeal ? 'Save Changes' : 'Add Meal'}
+                </Button>
+              </div>
               </div>
               </div>
               </DialogContent>
