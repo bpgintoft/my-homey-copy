@@ -1,21 +1,21 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
-import { 
-  UtensilsCrossed,
-  Calendar,
-  Home as HomeIcon,
-  History,
-  ArrowRight,
-  ChefHat,
-  Users
-} from 'lucide-react';
 import { Card, CardContent } from "@/components/ui/card";
 import { motion } from 'framer-motion';
+import { Loader2 } from 'lucide-react';
 
 export default function Home() {
+  const [imageUrls, setImageUrls] = useState({
+    meals: null,
+    kids: null,
+    house: null,
+    history: null
+  });
+  const [isGenerating, setIsGenerating] = useState(false);
+
   const { data: mealPlans } = useQuery({
     queryKey: ['thisWeekMeals'],
     queryFn: () => base44.entities.MealPlan.list(),
@@ -31,6 +31,41 @@ export default function Home() {
     queryFn: () => base44.entities.Appliance.list(),
   });
 
+  useEffect(() => {
+    const generateImages = async () => {
+      setIsGenerating(true);
+      try {
+        const [mealsImg, kidsImg, houseImg, historyImg] = await Promise.all([
+          base44.integrations.Core.GenerateImage({
+            prompt: '3D cartoon illustration button with rounded square shape and pink gradient background. Shows a clipboard with checkmarks, a colorful pencil, fresh vegetables (carrot, tomatoes), and a plate with bread. Cute, playful style with soft shadows. White text at bottom reads "Meal Planning". Icon style, vibrant colors, isometric view, clean design'
+          }),
+          base44.integrations.Core.GenerateImage({
+            prompt: '3D cartoon illustration button with rounded square shape and light blue gradient background. Shows a soccer ball, jump rope in red, and a calendar with stars marked. Cute, playful style with soft shadows. White text at bottom reads "Kids Activities". Icon style, vibrant colors, isometric view, clean design'
+          }),
+          base44.integrations.Core.GenerateImage({
+            prompt: '3D cartoon illustration button with rounded square shape and green gradient background. Shows a beautiful two-story brick house with glowing windows, white door, surrounded by green trees and bushes, front porch with lights. Cute, playful style with soft shadows. White text at bottom reads "House". Icon style, vibrant colors, isometric view, clean design'
+          }),
+          base44.integrations.Core.GenerateImage({
+            prompt: '3D cartoon illustration button with rounded square shape and warm yellow/orange gradient background. Shows an old parchment scroll with a sepia-toned house illustration, and a magnifying glass examining details. EST. 1927 visible on scroll. Cute, playful style with soft shadows. White text at bottom reads "History". Icon style, vibrant colors, isometric view, clean design'
+          })
+        ]);
+
+        setImageUrls({
+          meals: mealsImg.url,
+          kids: kidsImg.url,
+          house: houseImg.url,
+          history: historyImg.url
+        });
+      } catch (error) {
+        console.error('Error generating images:', error);
+      } finally {
+        setIsGenerating(false);
+      }
+    };
+
+    generateImages();
+  }, []);
+
   const thisWeekMeals = mealPlans?.length || 0;
   const upcomingEvents = activities?.filter(a => !a.reminder_sent)?.length || 0;
   const totalAppliances = appliances?.length || 0;
@@ -38,43 +73,27 @@ export default function Home() {
   const sections = [
     { 
       title: 'Meal Planning', 
-      description: 'Weekly meals & grocery lists',
-      icon: UtensilsCrossed, 
       href: 'Meals', 
-      gradient: 'from-[#FF6B9D] via-[#FF85B0] to-[#FFA5C4]',
       stat: `${thisWeekMeals} meals planned`,
-      iconBg: 'bg-gradient-to-br from-white to-pink-100',
-      iconColor: 'text-pink-600'
+      imageKey: 'meals'
     },
     { 
       title: 'Kids Activities', 
-      description: 'Events, programs & reminders',
-      icon: Calendar, 
       href: 'Kids', 
-      gradient: 'from-[#4FC3F7] via-[#6DD5FA] to-[#89E7FE]',
       stat: `${upcomingEvents} upcoming`,
-      iconBg: 'bg-gradient-to-br from-white to-blue-100',
-      iconColor: 'text-blue-600'
+      imageKey: 'kids'
     },
     { 
       title: 'House', 
-      description: 'Rooms, appliances & organization',
-      icon: HomeIcon, 
       href: 'House', 
-      gradient: 'from-[#26E2A3] via-[#4EEEB3] to-[#6FFAC4]',
       stat: `${totalAppliances} appliances`,
-      iconBg: 'bg-gradient-to-br from-white to-emerald-100',
-      iconColor: 'text-emerald-600'
+      imageKey: 'house'
     },
     { 
       title: 'History', 
-      description: 'Property history & details',
-      icon: History, 
       href: 'History', 
-      gradient: 'from-[#FFB347] via-[#FFC870] to-[#FFDA94]',
       stat: 'Est. 1927',
-      iconBg: 'bg-gradient-to-br from-white to-amber-100',
-      iconColor: 'text-amber-600'
+      imageKey: 'history'
     },
   ];
 
@@ -116,31 +135,48 @@ export default function Home() {
         </div>
 
         {/* Main Sections */}
-        <div className="grid grid-cols-2 gap-4 pb-24">
-          {sections.map((section, i) => (
-            <motion.div
-              key={section.title}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: i * 0.1 }}
-            >
-              <Link to={createPageUrl(section.href)}>
-                <Card className={`group cursor-pointer border-0 shadow-lg hover:shadow-2xl hover:scale-105 transition-all duration-300 overflow-hidden h-full bg-gradient-to-br ${section.gradient}`}>
-                  <CardContent className="p-5 flex flex-col h-full relative">
-                    <div className={`w-16 h-16 rounded-3xl ${section.iconBg} shadow-md flex items-center justify-center mb-4 group-hover:rotate-6 transition-transform duration-300`}>
-                      <section.icon className={`w-8 h-8 ${section.iconColor}`} strokeWidth={2.5} />
-                    </div>
-                    <h3 className="text-lg font-bold text-white mb-2 drop-shadow-sm">{section.title}</h3>
-                    <p className="text-sm text-white/90 font-medium drop-shadow-sm">{section.stat}</p>
-                    <div className="absolute bottom-3 right-3 opacity-20">
-                      <section.icon className="w-16 h-16 text-white" strokeWidth={1} />
-                    </div>
-                  </CardContent>
-                </Card>
-              </Link>
-            </motion.div>
-          ))}
-        </div>
+        {isGenerating ? (
+          <div className="flex items-center justify-center py-20">
+            <div className="text-center">
+              <Loader2 className="w-12 h-12 text-blue-500 animate-spin mx-auto mb-4" />
+              <p className="text-gray-600">Creating your home buttons...</p>
+            </div>
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 gap-4 pb-24">
+            {sections.map((section, i) => (
+              <motion.div
+                key={section.title}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: i * 0.1 }}
+              >
+                <Link to={createPageUrl(section.href)}>
+                  <div className="group cursor-pointer hover:scale-105 transition-all duration-300">
+                    {imageUrls[section.imageKey] ? (
+                      <div className="relative">
+                        <img 
+                          src={imageUrls[section.imageKey]} 
+                          alt={section.title}
+                          className="w-full h-auto rounded-3xl shadow-lg hover:shadow-2xl transition-shadow duration-300"
+                        />
+                        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/40 to-transparent rounded-b-3xl p-4">
+                          <p className="text-sm text-white font-medium drop-shadow-md">{section.stat}</p>
+                        </div>
+                      </div>
+                    ) : (
+                      <Card className="border-0 shadow-lg hover:shadow-2xl transition-all bg-gray-100">
+                        <CardContent className="p-5 flex flex-col h-48 items-center justify-center">
+                          <Loader2 className="w-8 h-8 text-gray-400 animate-spin" />
+                        </CardContent>
+                      </Card>
+                    )}
+                  </div>
+                </Link>
+              </motion.div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
