@@ -80,6 +80,27 @@ export default function Meals() {
     },
   });
 
+  const addToMealPlanMutation = useMutation({
+    mutationFn: async () => {
+      const weekStart = new Date();
+      weekStart.setDate(weekStart.getDate() - weekStart.getDay());
+      
+      await base44.entities.MealPlan.create({
+        week_start_date: weekStart.toISOString().split('T')[0],
+        day_of_week: planSelection.day,
+        meal_type: planSelection.mealType,
+        meal_id: selectedMealForPlan.id,
+        meal_name: selectedMealForPlan.name,
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(['mealPlans']);
+      setPlanDialog(false);
+      setSelectedMealForPlan(null);
+      setPlanSelection({ day: '', mealType: '' });
+    },
+  });
+
   const generateMealPlanMutation = useMutation({
     mutationFn: async () => {
       const result = await base44.integrations.Core.InvokeLLM({
