@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { Card, CardContent } from "@/components/ui/card";
 import { motion } from 'framer-motion';
+import VoiceAssistant from '../components/VoiceAssistant';
 
 export default function Home() {
   const { data: mealPlans } = useQuery({
@@ -76,6 +77,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-[#F5F5F7]">
+      <VoiceAssistant />
       {/* Hero Section */}
       <div className="relative overflow-hidden bg-white">
         <div 
