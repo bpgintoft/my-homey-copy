@@ -231,6 +231,14 @@ export default function Meals() {
     setShowFilters(false);
   };
 
+  const handleImageUpload = async (file) => {
+    if (!file) return;
+    setUploadingImage(true);
+    const result = await base44.integrations.Core.UploadFile({ file });
+    setNewMeal({ ...newMeal, photo_url: result.file_url });
+    setUploadingImage(false);
+  };
+
   return (
     <div className="min-h-screen bg-[#F5F5F7]">
       <div className="relative overflow-hidden">
