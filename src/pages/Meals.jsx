@@ -372,7 +372,7 @@ export default function Meals() {
                   <div className="space-y-3">
                     {groceries.map((item) => (
                       <div key={item.id} className="flex items-center justify-between bg-gray-50 p-3 rounded-lg">
-                        <div>
+                        <div className="flex-1">
                           <div className="text-sm font-medium text-gray-900">{item.name}</div>
                           <div className="text-xs text-gray-500 capitalize">{item.category}</div>
                         </div>
@@ -382,10 +382,10 @@ export default function Meals() {
                               onClick={() => {
                                 const qty = parseInt(item.quantity) || 0;
                                 if (qty > 0) {
-                                  base44.entities.GroceryItem.update(item.id, { quantity: (qty - 1).toString() });
-                                  queryClient.invalidateQueries(['groceries']);
+                                  updateGroceryQuantityMutation.mutate({ id: item.id, quantity: qty - 1 });
                                 }
                               }}
+                              disabled={updateGroceryQuantityMutation.isPending}
                               className="px-2 py-1 text-gray-500 hover:text-gray-900"
                             >
                               −
@@ -394,14 +394,21 @@ export default function Meals() {
                             <button
                               onClick={() => {
                                 const qty = parseInt(item.quantity) || 0;
-                                base44.entities.GroceryItem.update(item.id, { quantity: (qty + 1).toString() });
-                                queryClient.invalidateQueries(['groceries']);
+                                updateGroceryQuantityMutation.mutate({ id: item.id, quantity: qty + 1 });
                               }}
+                              disabled={updateGroceryQuantityMutation.isPending}
                               className="px-2 py-1 text-gray-500 hover:text-gray-900"
                             >
                               +
                             </button>
                           </div>
+                          <button
+                            onClick={() => deleteGroceryItemMutation.mutate(item.id)}
+                            disabled={deleteGroceryItemMutation.isPending}
+                            className="text-gray-400 hover:text-red-500 transition-colors p-1"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
                         </div>
                       </div>
                     ))}
