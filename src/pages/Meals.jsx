@@ -498,11 +498,18 @@ export default function Meals() {
                           {meal.servings || 4}
                         </div>
                       </div>
-                      {expandedMealId === meal.id ? (
-                        <div className="space-y-4">
+                      {expandedMealId === meal.id && (
+                        <div className="space-y-4 pt-3 border-t border-gray-200">
                           {meal.photo_url && (
                             <div className="w-full h-48 rounded-lg overflow-hidden">
                               <img src={meal.photo_url} alt={meal.name} className="w-full h-full object-cover" />
+                            </div>
+                          )}
+                          {meal.cooking_method && (
+                            <div className="bg-orange-100 text-orange-700 text-xs px-3 py-1 rounded-full font-medium w-fit">
+                              {meal.cooking_method === 'oven' && `${meal.cooking_temperature_or_heat} • ${meal.cook_time}m`}
+                              {meal.cooking_method === 'stovetop' && `Heat ${meal.cooking_temperature_or_heat} • ${meal.cook_time}m`}
+                              {meal.cooking_method === 'microwave' && `Microwave ${meal.cook_time}m`}
                             </div>
                           )}
                           {meal.ingredients && (
