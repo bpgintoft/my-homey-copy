@@ -108,48 +108,40 @@ export default function Home() {
         </div>
 
         {/* Main Sections */}
-        {isGenerating ? (
-          <div className="flex items-center justify-center py-20">
-            <div className="text-center">
-              <Loader2 className="w-12 h-12 text-blue-500 animate-spin mx-auto mb-4" />
-              <p className="text-gray-600">Creating your home buttons...</p>
-            </div>
-          </div>
-        ) : (
-          <div className="grid grid-cols-2 gap-4 pb-24">
-            {sections.map((section, i) => (
-              <motion.div
-                key={section.title}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: i * 0.1 }}
-              >
-                <Link to={createPageUrl(section.href)}>
-                  <div className="group cursor-pointer hover:scale-105 transition-all duration-300">
-                    {imageUrls[section.imageKey] ? (
-                      <div className="relative">
-                        <img 
-                          src={imageUrls[section.imageKey]} 
-                          alt={section.title}
-                          className="w-full h-auto rounded-3xl shadow-lg hover:shadow-2xl transition-shadow duration-300"
-                        />
-                        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/40 to-transparent rounded-b-3xl p-4">
-                          <p className="text-sm text-white font-medium drop-shadow-md">{section.stat}</p>
-                        </div>
+        <div className="grid grid-cols-2 gap-4 pb-24">
+          {sections.map((section, i) => (
+            <motion.div
+              key={section.title}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: i * 0.1 }}
+            >
+              <Link to={createPageUrl(section.href)}>
+                <div className="group cursor-pointer hover:scale-105 transition-all duration-300">
+                  {imageUrls[section.imageKey] ? (
+                    <div className="relative">
+                      <img 
+                        src={imageUrls[section.imageKey]} 
+                        alt={section.title}
+                        className="w-full h-auto rounded-3xl shadow-lg hover:shadow-2xl transition-shadow duration-300"
+                      />
+                      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/40 to-transparent rounded-b-3xl p-4">
+                        <p className="text-sm text-white font-medium drop-shadow-md">{section.stat}</p>
                       </div>
-                    ) : (
-                      <Card className="border-0 shadow-lg hover:shadow-2xl transition-all bg-gray-100">
-                        <CardContent className="p-5 flex flex-col h-48 items-center justify-center">
-                          <Loader2 className="w-8 h-8 text-gray-400 animate-spin" />
-                        </CardContent>
-                      </Card>
-                    )}
-                  </div>
-                </Link>
-              </motion.div>
-            ))}
-          </div>
-        )}
+                    </div>
+                  ) : (
+                    <Card className="border-0 shadow-lg hover:shadow-2xl transition-all bg-gradient-to-br from-gray-100 to-gray-200">
+                      <CardContent className="p-8 flex flex-col h-48 items-center justify-center">
+                        <h3 className="text-xl font-bold text-gray-700 mb-2">{section.title}</h3>
+                        <p className="text-sm text-gray-500">{section.stat}</p>
+                      </CardContent>
+                    </Card>
+                  )}
+                </div>
+              </Link>
+            </motion.div>
+          ))}
+        </div>
       </div>
     </div>
   );
