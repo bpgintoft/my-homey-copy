@@ -115,6 +115,13 @@ export default function Meals() {
     },
   });
 
+  const deleteMealMutation = useMutation({
+    mutationFn: (mealId) => base44.entities.Meal.delete(mealId),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['meals']);
+    },
+  });
+
   const updateGroceryQuantityMutation = useMutation({
     mutationFn: ({ id, quantity }) => base44.entities.GroceryItem.update(id, { quantity: quantity.toString() }),
     onSuccess: () => {
