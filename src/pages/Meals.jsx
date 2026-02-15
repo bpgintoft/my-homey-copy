@@ -412,7 +412,10 @@ export default function Meals() {
                               <h4 className="font-medium text-gray-900 mb-2">Ingredients:</h4>
                               <ul className="text-sm text-gray-600 space-y-1">
                                 {meal.ingredients.map((ing, idx) => (
-                                  <li key={idx}>• {ing}</li>
+                                  <li key={idx} className="flex gap-2">
+                                    <span className="flex-shrink-0">•</span>
+                                    <span>{ing}</span>
+                                  </li>
                                 ))}
                               </ul>
                             </div>
@@ -524,15 +527,18 @@ export default function Meals() {
                                 {isExpanded && (
                                   <div className="space-y-3 pt-2 border-t border-pink-200">
                                     {mealDetails?.ingredients && (
-                                      <div>
-                                        <h4 className="font-medium text-gray-900 mb-2">Ingredients:</h4>
-                                        <ul className="text-sm text-gray-600 space-y-1">
-                                          {mealDetails.ingredients.map((ing, idx) => (
-                                            <li key={idx}>• {ing}</li>
-                                          ))}
-                                        </ul>
-                                      </div>
-                                    )}
+                                                <div>
+                                                  <h4 className="font-medium text-gray-900 mb-2">Ingredients:</h4>
+                                                  <ul className="text-sm text-gray-600 space-y-1">
+                                                    {mealDetails.ingredients.map((ing, idx) => (
+                                                      <li key={idx} className="flex gap-2">
+                                                        <span className="flex-shrink-0">•</span>
+                                                        <span>{ing}</span>
+                                                      </li>
+                                                    ))}
+                                                  </ul>
+                                                </div>
+                                              )}
                                     {mealDetails?.instructions && (
                                                 <div>
                                                   <h4 className="font-medium text-gray-900 mb-2">Instructions:</h4>
@@ -661,7 +667,10 @@ export default function Meals() {
                   <h4 className="font-medium text-gray-900 mb-2">Ingredients:</h4>
                   <ul className="text-sm text-gray-600 space-y-1">
                     {generatedMeal.ingredients.map((ing, idx) => (
-                      <li key={idx}>• {ing}</li>
+                      <li key={idx} className="flex gap-2">
+                        <span className="flex-shrink-0">•</span>
+                        <span>{ing}</span>
+                      </li>
                     ))}
                   </ul>
                 </div>
