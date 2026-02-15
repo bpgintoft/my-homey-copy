@@ -241,15 +241,22 @@ export default function Meals() {
                           {meal.type}
                         </Badge>
                       </div>
-                      <div className="flex gap-4 text-sm text-gray-500 mb-3">
-                        <div className="flex items-center gap-1">
+                      <div className="flex flex-wrap gap-2 mb-3">
+                        <div className="flex items-center gap-1 text-sm text-gray-500">
                           <Clock className="w-4 h-4" />
                           {(meal.prep_time || 0) + (meal.cook_time || 0)} min
                         </div>
-                        <div className="flex items-center gap-1">
+                        <div className="flex items-center gap-1 text-sm text-gray-500">
                           <Users className="w-4 h-4" />
                           {meal.servings || 4}
                         </div>
+                        {meal.cooking_method && (
+                          <div className="bg-orange-100 text-orange-700 text-xs px-3 py-1 rounded-full font-medium">
+                            {meal.cooking_method === 'oven' && `${meal.cooking_temperature_or_heat} • ${meal.cook_time}m`}
+                            {meal.cooking_method === 'stovetop' && `Heat ${meal.cooking_temperature_or_heat} • ${meal.cook_time}m`}
+                            {meal.cooking_method === 'microwave' && `Microwave ${meal.cook_time}m`}
+                          </div>
+                        )}
                       </div>
                       {expandedMealId === meal.id ? (
                         <div className="space-y-4">
