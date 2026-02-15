@@ -261,6 +261,57 @@ export default function Meals() {
               </div>
             </div>
 
+            {generatedMeal && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+              >
+                <Card className="bg-white border-2 border-pink-300 shadow-md">
+                  <CardContent className="p-5">
+                    <div className="flex items-start justify-between mb-3">
+                      <h3 className="font-semibold text-gray-900 text-lg">{generatedMeal.name}</h3>
+                    </div>
+                    <div className="space-y-3 mb-4">
+                      {generatedMeal.ingredients && (
+                        <div>
+                          <h4 className="font-medium text-gray-900 mb-2">Ingredients:</h4>
+                          <ul className="text-sm text-gray-600 space-y-1">
+                            {generatedMeal.ingredients.map((ing, idx) => (
+                              <li key={idx}>• {ing}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                      {generatedMeal.instructions && (
+                        <div>
+                          <h4 className="font-medium text-gray-900 mb-2">Instructions:</h4>
+                          <p className="text-sm text-gray-600 whitespace-pre-wrap">{generatedMeal.instructions}</p>
+                        </div>
+                      )}
+                    </div>
+                    <div className="flex gap-2">
+                      <Button
+                        onClick={() => {
+                          createMealMutation.mutate({ ...generatedMeal, kid_friendly: true, age_range: '4-9 years' });
+                          setGeneratedMeal(null);
+                        }}
+                        className="flex-1 bg-gradient-to-r from-[#E91E8C] to-[#D01576] text-white"
+                      >
+                        Add to Ideas
+                      </Button>
+                      <Button
+                        onClick={() => setGeneratedMeal(null)}
+                        variant="outline"
+                        className="px-4"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            )}
+
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {kidFriendlyMeals.map((meal) => (
                 <motion.div
