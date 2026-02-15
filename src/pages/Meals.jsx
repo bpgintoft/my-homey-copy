@@ -199,7 +199,7 @@ export default function Meals() {
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                 >
-                  <Card className="bg-white border-0 shadow-sm hover:shadow-md transition-shadow cursor-pointer" onClick={() => { setSelectedMealForPlan(meal); setPlanDialog(true); }}>
+                  <Card className="bg-white border-0 shadow-sm hover:shadow-md transition-shadow cursor-pointer" onClick={() => setExpandedMealId(expandedMealId === meal.id ? null : meal.id)}>
                     <CardContent className="p-5">
                       <div className="flex items-start justify-between mb-3">
                         <h3 className="font-semibold text-gray-900 text-lg">{meal.name}</h3>
@@ -217,22 +217,39 @@ export default function Meals() {
                           {meal.servings || 4}
                         </div>
                       </div>
-                      {meal.ingredients && (
-                        <div className="text-sm text-gray-600 mb-4">
+                      {expandedMealId === meal.id ? (
+                        <div className="space-y-4">
+                          {meal.ingredients && (
+                            <div>
+                              <h4 className="font-medium text-gray-900 mb-2">Ingredients:</h4>
+                              <ul className="text-sm text-gray-600 space-y-1">
+                                {meal.ingredients.map((ing, idx) => (
+                                  <li key={idx}>• {ing}</li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+                          {meal.instructions && (
+                            <div>
+                              <h4 className="font-medium text-gray-900 mb-2">Instructions:</h4>
+                              <p className="text-sm text-gray-600 whitespace-pre-wrap">{meal.instructions}</p>
+                            </div>
+                          )}
+                          <Button
+                            onClick={(e) => { e.stopPropagation(); setSelectedMealForPlan(meal); setPlanDialog(true); }}
+                            className="w-full bg-gradient-to-r from-[#E91E8C] to-[#D01576] text-white"
+                          >
+                            <Calendar className="w-4 h-4 mr-2" />
+                            Add to Weekly Plan
+                          </Button>
+                        </div>
+                      ) : (
+                        <div className="text-sm text-gray-600">
                           <span className="font-medium">Ingredients: </span>
-                          {meal.ingredients.slice(0, 3).join(', ')}
-                          {meal.ingredients.length > 3 && '...'}
+                          {meal.ingredients?.slice(0, 3).join(', ')}
+                          {meal.ingredients && meal.ingredients.length > 3 && '...'}
                         </div>
                       )}
-                      <Button
-                        onClick={(e) => { e.stopPropagation(); addToGroceryListMutation.mutate(meal); }}
-                        disabled={addToGroceryListMutation.isPending || !meal.ingredients?.length}
-                        size="sm"
-                        className="w-full bg-pink-100 text-pink-700 hover:bg-pink-200"
-                      >
-                        <ShoppingCart className="w-4 h-4 mr-2" />
-                        {addToGroceryListMutation.isPending ? 'Adding...' : 'Add to Grocery List'}
-                      </Button>
                     </CardContent>
                   </Card>
                 </motion.div>
