@@ -785,8 +785,17 @@ export default function Meals() {
                     disabled={uploadingImage}
                     className="flex-1"
                   />
-                  {uploadingImage && <span className="text-sm text-gray-500">Uploading...</span>}
+                  <Button
+                    type="button"
+                    onClick={handlePasteImage}
+                    disabled={uploadingImage}
+                    variant="outline"
+                    className="whitespace-nowrap"
+                  >
+                    Paste Image
+                  </Button>
                 </div>
+                {uploadingImage && <span className="text-sm text-gray-500 mt-2 block">Uploading...</span>}
                 {newMeal.photo_url && (
                   <div className="mt-2 w-full h-32 rounded-lg overflow-hidden">
                     <img src={newMeal.photo_url} alt="Meal preview" className="w-full h-full object-cover" />
