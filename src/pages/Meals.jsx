@@ -301,6 +301,7 @@ export default function Meals() {
     if (type.includes('beef')) return <span className="text-xl">🥩</span>;
     if (type.includes('chicken')) return <span className="text-xl">🍗</span>;
     if (type.includes('fish')) return <span className="text-xl">🐟</span>;
+    if (type.includes('beans')) return <span className="text-xl">🫘</span>;
     if (type.includes('vegetarian')) return <span className="text-xl">🥬</span>;
     if (type.includes('pork')) return <span className="text-xl">🍖</span>;
     if (type.includes('turkey')) return <span className="text-xl">🦃</span>;
