@@ -168,7 +168,7 @@ export default function Meals() {
           </TabsList>
 
           <TabsContent value="meals" className="space-y-6">
-            <div className="flex justify-between items-center">
+            <div className="space-y-4">
               <h2 className="text-xl font-semibold text-gray-900">
                 {kidFriendlyMeals.length} Kid-Friendly Meals
               </h2>
