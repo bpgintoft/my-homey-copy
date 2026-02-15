@@ -43,7 +43,7 @@ export default function Kids() {
   const generateActivitiesMutation = useMutation({
     mutationFn: async () => {
       const result = await base44.integrations.Core.InvokeLLM({
-        prompt: `Find current kids activities, events, and sports leagues in or near Milwaukee, WI suitable for ages 4 and 9. Include local rec programs, museums, parks events, and sports leagues. Return as JSON array with: title, type (event/sports_league/program), location, date (YYYY-MM-DD), time, age_range, description, cost.`,
+        prompt: `Find current kids activities, events, and sports leagues in or near Milwaukee, WI suitable for ages 4 and 9. Include local rec programs, museums, parks events, and sports leagues. For each activity, find the official registration or event details URL. Return as JSON array with: title, type (event/sports_league/program), location, date (YYYY-MM-DD), time, age_range, description, cost, registration_url (the full URL to the event page or registration page).`,
         add_context_from_internet: true,
         response_json_schema: {
           type: "object",
@@ -60,7 +60,8 @@ export default function Kids() {
                   time: { type: "string" },
                   age_range: { type: "string" },
                   description: { type: "string" },
-                  cost: { type: "string" }
+                  cost: { type: "string" },
+                  registration_url: { type: "string" }
                 }
               }
             }
