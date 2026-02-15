@@ -145,7 +145,7 @@ export default function Meals() {
   const parseMealFromTextMutation = useMutation({
     mutationFn: async (mealText) => {
       const result = await base44.integrations.Core.InvokeLLM({
-        prompt: `Parse this recipe/meal description and extract the following information. Return as JSON:\n\n${mealText}`,
+        prompt: `Parse this recipe/meal description and extract the following information. If nutrition facts are provided, extract them. Return as JSON:\n\n${mealText}`,
         response_json_schema: {
           type: "object",
           properties: {
@@ -156,7 +156,19 @@ export default function Meals() {
             cook_time: { type: "number", description: "Cook time in minutes" },
             servings: { type: "number", description: "Number of servings" },
             cooking_method: { type: "string", enum: ["oven", "stovetop", "microwave"], description: "Primary cooking method" },
-            cooking_temperature_or_heat: { type: "string", description: "Temperature or heat level" }
+            cooking_temperature_or_heat: { type: "string", description: "Temperature or heat level" },
+            nutrition: {
+              type: "object",
+              description: "Nutrition facts per serving if provided",
+              properties: {
+                calories: { type: "number" },
+                protein_g: { type: "number" },
+                carbs_g: { type: "number" },
+                fat_g: { type: "number" },
+                fiber_g: { type: "number" },
+                sugar_g: { type: "number" }
+              }
+            }
           }
         }
       });
@@ -172,6 +184,7 @@ export default function Meals() {
         servings: parsedData.servings || '',
         cooking_method: parsedData.cooking_method || '',
         cooking_temperature_or_heat: parsedData.cooking_temperature_or_heat || '',
+        nutrition: parsedData.nutrition || undefined,
         type: 'dinner'
       });
       setPastedMealText('');
