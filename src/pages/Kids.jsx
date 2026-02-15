@@ -9,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Plus, Calendar as CalendarIcon, MapPin, DollarSign, Clock, Sparkles, Users } from 'lucide-react';
+import { Plus, Calendar as CalendarIcon, MapPin, DollarSign, Clock, Sparkles, Users, Trash2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, parseISO } from 'date-fns';
 
@@ -30,6 +30,13 @@ export default function Kids() {
       queryClient.invalidateQueries(['kidsActivities']);
       setShowDialog(false);
       setNewActivity({});
+    },
+  });
+
+  const deleteActivityMutation = useMutation({
+    mutationFn: (id) => base44.entities.KidsActivity.delete(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['kidsActivities']);
     },
   });
 
@@ -145,9 +152,19 @@ export default function Kids() {
                     <CardContent className="p-5">
                       <div className="flex items-start justify-between mb-3">
                         <h3 className="font-semibold text-gray-900 text-lg pr-2">{activity.title}</h3>
-                        <Badge className={typeColors[activity.type] || 'bg-gray-100 text-gray-700'}>
-                          {activity.type?.replace('_', ' ')}
-                        </Badge>
+                        <div className="flex items-center gap-2">
+                          <Badge className={typeColors[activity.type] || 'bg-gray-100 text-gray-700'}>
+                            {activity.type?.replace('_', ' ')}
+                          </Badge>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 text-gray-400 hover:text-red-600"
+                            onClick={() => deleteActivityMutation.mutate(activity.id)}
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </div>
                       </div>
                       
                       {activity.date && (
