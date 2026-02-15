@@ -969,7 +969,7 @@ export default function Meals() {
               <div>
                 <label className="text-sm font-medium text-gray-700 mb-2 block">Protein Type(s)</label>
                 <div className="flex flex-wrap gap-2">
-                  {['fish', 'beef', 'chicken', 'pork', 'turkey', 'vegetarian'].map(protein => {
+                  {['fish', 'beef', 'chicken', 'pork', 'turkey', 'beans', 'vegetarian'].map(protein => {
                     const proteins = newMeal.protein_type ? newMeal.protein_type.split(',').map(p => p.trim()) : [];
                     const isSelected = proteins.includes(protein);
                     return (
