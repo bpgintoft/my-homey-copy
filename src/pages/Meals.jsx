@@ -115,6 +115,20 @@ export default function Meals() {
     },
   });
 
+  const updateGroceryQuantityMutation = useMutation({
+    mutationFn: ({ id, quantity }) => base44.entities.GroceryItem.update(id, { quantity: quantity.toString() }),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['groceries']);
+    },
+  });
+
+  const deleteGroceryItemMutation = useMutation({
+    mutationFn: (id) => base44.entities.GroceryItem.delete(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['groceries']);
+    },
+  });
+
   const generateMealPlanMutation = useMutation({
     mutationFn: async () => {
       const result = await base44.integrations.Core.InvokeLLM({
