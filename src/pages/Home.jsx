@@ -41,32 +41,40 @@ export default function Home() {
       description: 'Weekly meals & grocery lists',
       icon: UtensilsCrossed, 
       href: 'Meals', 
-      bgColor: 'bg-[#FF9DBD]',
-      stat: `${thisWeekMeals} meals planned`
+      gradient: 'from-[#FF6B9D] via-[#FF85B0] to-[#FFA5C4]',
+      stat: `${thisWeekMeals} meals planned`,
+      iconBg: 'bg-gradient-to-br from-white to-pink-100',
+      iconColor: 'text-pink-600'
     },
     { 
       title: 'Kids Activities', 
       description: 'Events, programs & reminders',
       icon: Calendar, 
       href: 'Kids', 
-      bgColor: 'bg-[#7DD3FC]',
-      stat: `${upcomingEvents} upcoming`
+      gradient: 'from-[#4FC3F7] via-[#6DD5FA] to-[#89E7FE]',
+      stat: `${upcomingEvents} upcoming`,
+      iconBg: 'bg-gradient-to-br from-white to-blue-100',
+      iconColor: 'text-blue-600'
     },
     { 
       title: 'House', 
       description: 'Rooms, appliances & organization',
       icon: HomeIcon, 
       href: 'House', 
-      bgColor: 'bg-[#5EEAD4]',
-      stat: `${totalAppliances} appliances`
+      gradient: 'from-[#26E2A3] via-[#4EEEB3] to-[#6FFAC4]',
+      stat: `${totalAppliances} appliances`,
+      iconBg: 'bg-gradient-to-br from-white to-emerald-100',
+      iconColor: 'text-emerald-600'
     },
     { 
       title: 'History', 
       description: 'Property history & details',
       icon: History, 
       href: 'History', 
-      bgColor: 'bg-[#FDBA74]',
-      stat: 'Est. 1927'
+      gradient: 'from-[#FFB347] via-[#FFC870] to-[#FFDA94]',
+      stat: 'Est. 1927',
+      iconBg: 'bg-gradient-to-br from-white to-amber-100',
+      iconColor: 'text-amber-600'
     },
   ];
 
@@ -108,7 +116,7 @@ export default function Home() {
         </div>
 
         {/* Main Sections */}
-        <div className="grid grid-cols-2 gap-6 pb-24">
+        <div className="grid grid-cols-2 gap-4 pb-24">
           {sections.map((section, i) => (
             <motion.div
               key={section.title}
@@ -117,15 +125,18 @@ export default function Home() {
               transition={{ duration: 0.4, delay: i * 0.1 }}
             >
               <Link to={createPageUrl(section.href)}>
-                <div className={`group cursor-pointer ${section.bgColor} rounded-[40px] p-8 shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:shadow-[0_12px_40px_rgb(0,0,0,0.18)] hover:scale-[1.02] transition-all duration-300 aspect-square flex flex-col items-center justify-center relative overflow-hidden`}>
-                  <div className="absolute inset-0 opacity-10 bg-white rounded-[40px]"></div>
-                  <div className="relative z-10 flex flex-col items-center justify-center h-full w-full">
-                    <div className="mb-6 transform group-hover:scale-110 transition-transform duration-300">
-                      <section.icon className="w-24 h-24 text-white drop-shadow-lg" strokeWidth={1.5} />
+                <Card className={`group cursor-pointer border-0 shadow-lg hover:shadow-2xl hover:scale-105 transition-all duration-300 overflow-hidden h-full bg-gradient-to-br ${section.gradient}`}>
+                  <CardContent className="p-5 flex flex-col h-full relative">
+                    <div className={`w-16 h-16 rounded-3xl ${section.iconBg} shadow-md flex items-center justify-center mb-4 group-hover:rotate-6 transition-transform duration-300`}>
+                      <section.icon className={`w-8 h-8 ${section.iconColor}`} strokeWidth={2.5} />
                     </div>
-                    <h3 className="text-2xl font-bold text-white text-center drop-shadow-md">{section.title}</h3>
-                  </div>
-                </div>
+                    <h3 className="text-lg font-bold text-white mb-2 drop-shadow-sm">{section.title}</h3>
+                    <p className="text-sm text-white/90 font-medium drop-shadow-sm">{section.stat}</p>
+                    <div className="absolute bottom-3 right-3 opacity-20">
+                      <section.icon className="w-16 h-16 text-white" strokeWidth={1} />
+                    </div>
+                  </CardContent>
+                </Card>
               </Link>
             </motion.div>
           ))}
