@@ -477,6 +477,26 @@ export default function Meals() {
                 <SelectItem value="snack">Snack</SelectItem>
               </SelectContent>
             </Select>
+            <Select
+              value={newMeal.cooking_method || ''}
+              onValueChange={(value) => setNewMeal({ ...newMeal, cooking_method: value })}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Cooking method (optional)" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="oven">Oven</SelectItem>
+                <SelectItem value="stovetop">Stovetop</SelectItem>
+                <SelectItem value="microwave">Microwave</SelectItem>
+              </SelectContent>
+            </Select>
+            {newMeal.cooking_method && newMeal.cooking_method !== 'microwave' && (
+              <Input
+                placeholder={newMeal.cooking_method === 'oven' ? 'Temperature (e.g., 350°F)' : 'Heat level (1-10)'}
+                value={newMeal.cooking_temperature_or_heat || ''}
+                onChange={(e) => setNewMeal({ ...newMeal, cooking_temperature_or_heat: e.target.value })}
+              />
+            )}
             <Textarea
               placeholder="Ingredients (one per line)"
               value={newMeal.ingredients?.join('\n') || ''}
