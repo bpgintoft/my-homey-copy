@@ -502,6 +502,19 @@ export default function Meals() {
                               View Recipe <ExternalLink className="w-4 h-4" />
                             </a>
                           )}
+                          {meal.nutrition && (
+                            <div className="bg-gray-50 p-3 rounded-lg">
+                              <h4 className="font-medium text-gray-900 mb-2 text-sm">Nutrition (per serving)</h4>
+                              <div className="grid grid-cols-2 gap-2 text-sm text-gray-600">
+                                <div><span className="font-medium">{meal.nutrition.calories}</span> cal</div>
+                                <div><span className="font-medium">{meal.nutrition.protein_g}g</span> protein</div>
+                                <div><span className="font-medium">{meal.nutrition.carbs_g}g</span> carbs</div>
+                                <div><span className="font-medium">{meal.nutrition.fat_g}g</span> fat</div>
+                                {meal.nutrition.fiber_g && <div><span className="font-medium">{meal.nutrition.fiber_g}g</span> fiber</div>}
+                                {meal.nutrition.sugar_g && <div><span className="font-medium">{meal.nutrition.sugar_g}g</span> sugar</div>}
+                              </div>
+                            </div>
+                          )}
                           <div className="flex gap-2">
                             <Button
                               onClick={(e) => { e.stopPropagation(); setEditingMeal(meal); setNewMeal(meal); setShowMealDialog(true); }}
