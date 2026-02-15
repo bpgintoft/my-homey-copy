@@ -259,11 +259,12 @@ export default function Meals() {
             </h2>
 
             <div className="space-y-4">
-              <div className="flex gap-3 items-start">
+              <div className="flex flex-wrap gap-3 items-start">
                 <Button
                   onClick={() => setShowFilters(!showFilters)}
                   variant="outline"
                   className="border-pink-200 text-pink-600 hover:bg-pink-50"
+                  size="sm"
                 >
                   Filter
                 </Button>
@@ -272,6 +273,7 @@ export default function Meals() {
                   disabled={generateMealPlanMutation.isPending}
                   variant="outline"
                   className="border-pink-200 text-pink-600 hover:bg-pink-50"
+                  size="sm"
                 >
                   <Sparkles className="w-4 h-4 mr-2" />
                   {generateMealPlanMutation.isPending ? 'Generating...' : 'AI Meal Idea'}
@@ -279,6 +281,7 @@ export default function Meals() {
                 <Button
                   onClick={() => setShowMealDialog(true)}
                   className="bg-gradient-to-r from-[#E91E8C] to-[#D01576] text-white"
+                  size="sm"
                 >
                   <Plus className="w-4 h-4 mr-2" />
                   Add Meal
