@@ -497,12 +497,12 @@ export default function Meals() {
             </div>
 
             <Dialog open={!!generatedMeal} onOpenChange={(open) => !open && setGeneratedMeal(null)}>
-            <DialogContent className="max-w-2xl">
-            <DialogHeader>
-            <DialogTitle>AI-Generated Meal</DialogTitle>
-            </DialogHeader>
-            {generatedMeal && (
-            <div className="space-y-4">
+              <DialogContent className="max-w-2xl max-h-[90vh] flex flex-col">
+                <DialogHeader>
+                  <DialogTitle>AI-Generated Meal</DialogTitle>
+                </DialogHeader>
+                {generatedMeal && (
+                  <div className="space-y-4 overflow-y-auto flex-1">
               <div>
                 <h3 className="font-semibold text-lg text-gray-900 mb-2">{generatedMeal.name}</h3>
                 <div className="flex flex-wrap gap-2 mb-4">
