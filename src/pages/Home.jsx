@@ -70,21 +70,26 @@ export default function Home() {
     <div className="min-h-screen bg-[#F5F5F7]">
       {/* Header */}
       <div className="relative overflow-hidden">
-        <div className="relative h-40">
-          <img 
-            src={heroBanner} 
-            alt="Family Welcome"
-            className="w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/20 to-transparent" />
-          <div className="absolute top-0 left-0 right-0 container mx-auto px-6 py-6">
-            <h1 className="text-3xl font-bold text-white mb-2 drop-shadow-lg">
+        <style>{`
+          .banner-bg {
+            background: linear-gradient(135deg, #FFC0E3 0%, #FFE5B4 25%, #D4F1F4 50%, #E6F3FF 75%, #FFE8D6 100%);
+            background-size: 400% 400%;
+          }
+        `}</style>
+        <div className="relative h-48 banner-bg flex items-center justify-between px-6 md:px-12">
+          <div className="flex-1">
+            <h1 className="text-4xl font-bold text-gray-800 mb-2">
               Welcome Home
             </h1>
-            <p className="text-white drop-shadow-md">
+            <p className="text-gray-700 text-lg">
               1934 Church St
             </p>
           </div>
+          <img 
+            src={familyImage} 
+            alt="Family Welcome"
+            className="h-40 w-auto object-contain"
+          />
         </div>
       </div>
 
