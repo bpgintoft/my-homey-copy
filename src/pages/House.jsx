@@ -73,13 +73,27 @@ export default function House() {
 
   return (
     <div className="min-h-screen bg-[#F5F5F7]">
-      <div className="bg-gradient-to-r from-[#00D9A3] to-[#00B386] text-white py-12">
-        <div className="container mx-auto px-6">
-          <div className="flex items-center gap-3 mb-3">
-            <HomeIcon className="w-8 h-8" />
-            <h1 className="text-4xl font-bold">House</h1>
+      <div className="relative overflow-hidden">
+        <style>{`
+          .house-banner-bg {
+            background: linear-gradient(135deg, #E8F5F0 0%, #D4EFE8 50%, #C0E9E0 100%);
+            background-size: 400% 400%;
+          }
+        `}</style>
+        <div className="relative h-40 md:h-48 house-banner-bg flex items-center justify-between px-4 md:px-12 gap-0">
+          <div className="flex-1">
+            <h1 className="text-2xl md:text-4xl font-bold text-gray-800 mb-1 md:mb-2">
+              House
+            </h1>
+            <p className="text-sm md:text-lg text-gray-700">
+              Rooms, appliances & organization
+            </p>
           </div>
-          <p className="text-white/90 text-lg">Rooms, appliances & organization</p>
+          <img 
+            src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/e7138b18e_familyappliances.png" 
+            alt="Family with appliances"
+            className="h-40 md:h-56 w-auto object-cover flex-shrink-0"
+          />
         </div>
       </div>
 
