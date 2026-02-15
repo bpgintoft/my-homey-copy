@@ -576,9 +576,9 @@ export default function Meals() {
                               <Calendar className="w-4 h-4 mr-2" />
                               Add to Plan
                             </Button>
-                            </div>
-                            </div>
-                            )}
+                          </div>
+                        </div>
+                      )}
                     </CardContent>
                   </Card>
                 </motion.div>
