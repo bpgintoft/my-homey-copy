@@ -103,7 +103,7 @@ export default function Kids() {
       <div className="relative overflow-hidden">
         <style>{`
           .kids-banner-bg {
-            background: linear-gradient(135deg, #5FC8FF 0%, #3DB8FF 50%, #1FA8FF 100%);
+            background: linear-gradient(135deg, #D0E8F2 0%, #B8E0EB 50%, #A0D8E3 100%);
             background-size: 400% 400%;
           }
         `}</style>
