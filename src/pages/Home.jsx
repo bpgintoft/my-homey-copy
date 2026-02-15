@@ -14,7 +14,6 @@ import {
 } from 'lucide-react';
 import { Card, CardContent } from "@/components/ui/card";
 import { motion } from 'framer-motion';
-import VoiceAssistant from '../components/VoiceAssistant';
 
 export default function Home() {
   const { data: mealPlans } = useQuery({
@@ -81,8 +80,6 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-[#F5F5F7]">
-      <VoiceAssistant />
-      
       {/* Header */}
       <div className="bg-gradient-to-br from-[#00D9A3] to-[#00B386] py-8">
         <div className="container mx-auto px-6">
