@@ -254,6 +254,33 @@ export default function Meals() {
     },
   });
 
+  const calculateDailyNutrients = (dayMeals) => {
+    if (!dayMeals || dayMeals.length === 0) return null;
+
+    const totals = {
+      calories: 0,
+      protein_g: 0,
+      carbs_g: 0,
+      fat_g: 0,
+      fiber_g: 0,
+      sugar_g: 0
+    };
+
+    dayMeals.forEach(plan => {
+      const meal = meals.find(m => m.id === plan.meal_id);
+      if (meal?.nutrition) {
+        totals.calories += meal.nutrition.calories || 0;
+        totals.protein_g += meal.nutrition.protein_g || 0;
+        totals.carbs_g += meal.nutrition.carbs_g || 0;
+        totals.fat_g += meal.nutrition.fat_g || 0;
+        totals.fiber_g += meal.nutrition.fiber_g || 0;
+        totals.sugar_g += meal.nutrition.sugar_g || 0;
+      }
+    });
+
+    return totals;
+  };
+
   const kidFriendlyMeals = meals.filter(m => m.kid_friendly);
 
   const filteredMeals = kidFriendlyMeals.filter(meal => {
