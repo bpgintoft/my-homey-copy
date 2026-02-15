@@ -100,13 +100,27 @@ export default function Kids() {
 
   return (
     <div className="min-h-screen bg-[#F5F5F7]">
-      <div className="bg-gradient-to-r from-[#0AACFF] to-[#0890D9] text-white py-12">
-        <div className="container mx-auto px-6">
-          <div className="flex items-center gap-3 mb-3">
-            <Users className="w-8 h-8" />
-            <h1 className="text-4xl font-bold">Kids Activities</h1>
+      <div className="relative overflow-hidden">
+        <style>{`
+          .kids-banner-bg {
+            background: linear-gradient(135deg, #D0E8F2 0%, #B8E0EB 50%, #A0D8E3 100%);
+            background-size: 400% 400%;
+          }
+        `}</style>
+        <div className="relative h-40 md:h-48 kids-banner-bg flex items-center justify-between px-4 md:px-12 gap-0">
+          <div className="flex-1">
+            <h1 className="text-2xl md:text-4xl font-bold text-gray-800 mb-1 md:mb-2">
+              Kids Activities
+            </h1>
+            <p className="text-sm md:text-lg text-gray-700">
+              Events, programs & fun for the family
+            </p>
           </div>
-          <p className="text-white/90 text-lg">Events, programs & fun for the family</p>
+          <img 
+            src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/5317f8746_familyplaying.png" 
+            alt="Family Playing"
+            className="h-40 md:h-56 w-auto object-cover flex-shrink-0"
+          />
         </div>
       </div>
 
