@@ -25,7 +25,7 @@ export default function ProteinTypeFilter({ selectedProteins, onSelectionChange 
     <motion.div
       initial={{ opacity: 0, y: -10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="flex gap-2 overflow-x-auto pb-2"
+      className="flex gap-1 overflow-x-auto pb-2"
     >
       {proteinTypes.map(({ key, emoji }) => (
         <button
