@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Plus, ChefHat, ShoppingCart, Calendar, Clock, Users, Sparkles, Trash2, ExternalLink, BarChart3, Beef, Fish, Leaf, Drumstick } from 'lucide-react';
+import { Plus, ChefHat, ShoppingCart, Calendar, Clock, Users, Sparkles, Trash2, ExternalLink, BarChart3, Beef, Fish, Leaf, Drumstick, Star, ChevronDown, ChevronUp } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function Meals() {
@@ -30,6 +30,7 @@ export default function Meals() {
     const [appliedProteins, setAppliedProteins] = useState([]);
             const [appliedMealTypes, setAppliedMealTypes] = useState([]);
             const [uploadingImage, setUploadingImage] = useState(false);
+            const [expandedSections, setExpandedSections] = useState({});
             const queryClient = useQueryClient();
 
   const { data: meals = [] } = useQuery({
@@ -78,6 +79,13 @@ export default function Meals() {
       setShowMealDialog(false);
       setEditingMeal(null);
       setNewMeal({});
+    },
+  });
+
+  const updateMealRatingMutation = useMutation({
+    mutationFn: ({ id, rating }) => base44.entities.Meal.update(id, { rating }),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['meals']);
     },
   });
 
@@ -316,6 +324,13 @@ export default function Meals() {
     setUploadingImage(false);
   };
 
+  const toggleSection = (mealId, section) => {
+    setExpandedSections(prev => ({
+      ...prev,
+      [`${mealId}-${section}`]: !prev[`${mealId}-${section}`]
+    }));
+  };
+
   React.useEffect(() => {
     if (!showMealDialog) return;
 
@@ -509,10 +524,27 @@ export default function Meals() {
                               {meal.servings || 4}
                             </div>
                           </div>
+                          <div className="flex items-center gap-0.5 mt-2" onClick={(e) => e.stopPropagation()}>
+                            {[1, 2, 3, 4, 5].map((star) => (
+                              <button
+                                key={star}
+                                onClick={() => updateMealRatingMutation.mutate({ id: meal.id, rating: star })}
+                                className="transition-colors"
+                              >
+                                <Star
+                                  className={`w-4 h-4 ${
+                                    star <= (meal.rating || 0)
+                                      ? 'fill-yellow-400 text-yellow-400'
+                                      : 'text-gray-300'
+                                  }`}
+                                />
+                              </button>
+                            ))}
+                          </div>
                         </div>
                       </div>
                       {expandedMealId === meal.id && (
-                        <div className="space-y-4 pt-4 border-t border-gray-200">
+                        <div className="space-y-3 pt-4 border-t border-gray-200">
                           {meal.photo_url && (
                             <div className="w-full h-48 rounded-lg overflow-hidden">
                               <img src={meal.photo_url} alt={meal.name} className="w-full h-full object-cover" />
@@ -525,32 +557,85 @@ export default function Meals() {
                               {meal.cooking_method === 'microwave' && `Microwave ${meal.cook_time}m`}
                             </div>
                           )}
+
                           {meal.ingredients && (
                             <div>
-                              <h4 className="font-medium text-gray-900 mb-2">Ingredients:</h4>
-                              <ul className="text-sm text-gray-600 space-y-1">
-                                {meal.ingredients.map((ing, idx) => (
-                                  <li key={idx} className="flex gap-2">
-                                    <span className="flex-shrink-0">•</span>
-                                    <span>{ing}</span>
-                                  </li>
-                                ))}
-                              </ul>
+                              <button
+                                onClick={(e) => { e.stopPropagation(); toggleSection(meal.id, 'ingredients'); }}
+                                className="flex items-center justify-between w-full py-2 px-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                              >
+                                <span className="font-medium text-gray-900">Ingredients</span>
+                                {expandedSections[`${meal.id}-ingredients`] ? (
+                                  <ChevronUp className="w-4 h-4 text-gray-500" />
+                                ) : (
+                                  <ChevronDown className="w-4 h-4 text-gray-500" />
+                                )}
+                              </button>
+                              {expandedSections[`${meal.id}-ingredients`] && (
+                                <ul className="text-sm text-gray-600 space-y-1 mt-2 px-3">
+                                  {meal.ingredients.map((ing, idx) => (
+                                    <li key={idx} className="flex gap-2">
+                                      <span className="flex-shrink-0">•</span>
+                                      <span>{ing}</span>
+                                    </li>
+                                  ))}
+                                </ul>
+                              )}
                             </div>
                           )}
+
                           {meal.instructions && (
                             <div>
-                              <h4 className="font-medium text-gray-900 mb-2">Instructions:</h4>
-                              <ul className="text-sm text-gray-600 space-y-1">
-                                {meal.instructions.split(/(?<=[.!?])\s+/).map((sentence, idx) => (
-                                  <li key={idx} className="flex gap-2">
-                                    <span className="flex-shrink-0">•</span>
-                                    <span>{sentence.trim()}</span>
-                                  </li>
-                                ))}
-                              </ul>
+                              <button
+                                onClick={(e) => { e.stopPropagation(); toggleSection(meal.id, 'directions'); }}
+                                className="flex items-center justify-between w-full py-2 px-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                              >
+                                <span className="font-medium text-gray-900">Directions</span>
+                                {expandedSections[`${meal.id}-directions`] ? (
+                                  <ChevronUp className="w-4 h-4 text-gray-500" />
+                                ) : (
+                                  <ChevronDown className="w-4 h-4 text-gray-500" />
+                                )}
+                              </button>
+                              {expandedSections[`${meal.id}-directions`] && (
+                                <ul className="text-sm text-gray-600 space-y-1 mt-2 px-3">
+                                  {meal.instructions.split(/(?<=[.!?])\s+/).map((sentence, idx) => (
+                                    <li key={idx} className="flex gap-2">
+                                      <span className="flex-shrink-0">•</span>
+                                      <span>{sentence.trim()}</span>
+                                    </li>
+                                  ))}
+                                </ul>
+                              )}
                             </div>
                           )}
+
+                          {meal.nutrition && (
+                            <div>
+                              <button
+                                onClick={(e) => { e.stopPropagation(); toggleSection(meal.id, 'nutrition'); }}
+                                className="flex items-center justify-between w-full py-2 px-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                              >
+                                <span className="font-medium text-gray-900">Nutrition (per serving)</span>
+                                {expandedSections[`${meal.id}-nutrition`] ? (
+                                  <ChevronUp className="w-4 h-4 text-gray-500" />
+                                ) : (
+                                  <ChevronDown className="w-4 h-4 text-gray-500" />
+                                )}
+                              </button>
+                              {expandedSections[`${meal.id}-nutrition`] && (
+                                <div className="grid grid-cols-2 gap-2 text-sm text-gray-600 mt-2 px-3">
+                                  <div><span className="font-medium">{meal.nutrition.calories}</span> cal</div>
+                                  <div><span className="font-medium">{meal.nutrition.protein_g}g</span> protein</div>
+                                  <div><span className="font-medium">{meal.nutrition.carbs_g}g</span> carbs</div>
+                                  <div><span className="font-medium">{meal.nutrition.fat_g}g</span> fat</div>
+                                  {meal.nutrition.fiber_g && <div><span className="font-medium">{meal.nutrition.fiber_g}g</span> fiber</div>}
+                                  {meal.nutrition.sugar_g && <div><span className="font-medium">{meal.nutrition.sugar_g}g</span> sugar</div>}
+                                </div>
+                              )}
+                            </div>
+                          )}
+
                           {meal.recipe_url && (
                             <a
                               href={meal.recipe_url}
@@ -561,19 +646,7 @@ export default function Meals() {
                               View Recipe <ExternalLink className="w-4 h-4" />
                             </a>
                           )}
-                          {meal.nutrition && (
-                            <div className="bg-gray-50 p-3 rounded-lg">
-                              <h4 className="font-medium text-gray-900 mb-2 text-sm">Nutrition (per serving)</h4>
-                              <div className="grid grid-cols-2 gap-2 text-sm text-gray-600">
-                                <div><span className="font-medium">{meal.nutrition.calories}</span> cal</div>
-                                <div><span className="font-medium">{meal.nutrition.protein_g}g</span> protein</div>
-                                <div><span className="font-medium">{meal.nutrition.carbs_g}g</span> carbs</div>
-                                <div><span className="font-medium">{meal.nutrition.fat_g}g</span> fat</div>
-                                {meal.nutrition.fiber_g && <div><span className="font-medium">{meal.nutrition.fiber_g}g</span> fiber</div>}
-                                {meal.nutrition.sugar_g && <div><span className="font-medium">{meal.nutrition.sugar_g}g</span> sugar</div>}
-                              </div>
-                            </div>
-                          )}
+
                           <div className="flex gap-2">
                             <Button
                               onClick={(e) => { e.stopPropagation(); setEditingMeal(meal); setNewMeal(meal); setShowMealDialog(true); }}
@@ -711,32 +784,83 @@ export default function Meals() {
                                         {mealDetails.cooking_method === 'microwave' && `Microwave ${mealDetails.cook_time}m`}
                                       </div>
                                     )}
+
                                     {mealDetails?.ingredients && (
                                       <div>
-                                        <h4 className="font-medium text-gray-900 mb-2">Ingredients:</h4>
-                                        <ul className="text-sm text-gray-600 space-y-1">
-                                          {mealDetails.ingredients.map((ing, idx) => (
-                                            <li key={idx} className="flex gap-2">
-                                              <span className="flex-shrink-0">•</span>
-                                              <span>{ing}</span>
-                                            </li>
-                                          ))}
-                                        </ul>
+                                        <button
+                                          onClick={(e) => { e.stopPropagation(); toggleSection(plan.id, 'ingredients'); }}
+                                          className="flex items-center justify-between w-full py-2 px-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                                        >
+                                          <span className="font-medium text-gray-900">Ingredients</span>
+                                          {expandedSections[`${plan.id}-ingredients`] ? (
+                                            <ChevronUp className="w-4 h-4 text-gray-500" />
+                                          ) : (
+                                            <ChevronDown className="w-4 h-4 text-gray-500" />
+                                          )}
+                                        </button>
+                                        {expandedSections[`${plan.id}-ingredients`] && (
+                                          <ul className="text-sm text-gray-600 space-y-1 mt-2 px-3">
+                                            {mealDetails.ingredients.map((ing, idx) => (
+                                              <li key={idx} className="flex gap-2">
+                                                <span className="flex-shrink-0">•</span>
+                                                <span>{ing}</span>
+                                              </li>
+                                            ))}
+                                          </ul>
+                                        )}
                                       </div>
                                     )}
+
                                     {mealDetails?.instructions && (
                                       <div>
-                                        <h4 className="font-medium text-gray-900 mb-2">Instructions:</h4>
-                                        <ul className="text-sm text-gray-600 space-y-1">
-                                          {mealDetails.instructions.split(/(?<=[.!?])\s+/).map((sentence, idx) => (
-                                            <li key={idx} className="flex gap-2">
-                                              <span className="flex-shrink-0">•</span>
-                                              <span>{sentence.trim()}</span>
-                                            </li>
-                                          ))}
-                                        </ul>
+                                        <button
+                                          onClick={(e) => { e.stopPropagation(); toggleSection(plan.id, 'directions'); }}
+                                          className="flex items-center justify-between w-full py-2 px-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                                        >
+                                          <span className="font-medium text-gray-900">Directions</span>
+                                          {expandedSections[`${plan.id}-directions`] ? (
+                                            <ChevronUp className="w-4 h-4 text-gray-500" />
+                                          ) : (
+                                            <ChevronDown className="w-4 h-4 text-gray-500" />
+                                          )}
+                                        </button>
+                                        {expandedSections[`${plan.id}-directions`] && (
+                                          <ul className="text-sm text-gray-600 space-y-1 mt-2 px-3">
+                                            {mealDetails.instructions.split(/(?<=[.!?])\s+/).map((sentence, idx) => (
+                                              <li key={idx} className="flex gap-2">
+                                                <span className="flex-shrink-0">•</span>
+                                                <span>{sentence.trim()}</span>
+                                              </li>
+                                            ))}
+                                          </ul>
+                                        )}
                                       </div>
                                     )}
+
+                                    {mealDetails?.nutrition && (
+                                      <div>
+                                        <button
+                                          onClick={(e) => { e.stopPropagation(); toggleSection(plan.id, 'nutrition'); }}
+                                          className="flex items-center justify-between w-full py-2 px-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                                        >
+                                          <span className="font-medium text-gray-900">Nutrition (per serving)</span>
+                                          {expandedSections[`${plan.id}-nutrition`] ? (
+                                            <ChevronUp className="w-4 h-4 text-gray-500" />
+                                          ) : (
+                                            <ChevronDown className="w-4 h-4 text-gray-500" />
+                                          )}
+                                        </button>
+                                        {expandedSections[`${plan.id}-nutrition`] && (
+                                          <div className="grid grid-cols-2 gap-2 text-sm text-gray-600 mt-2 px-3">
+                                            <div><span className="font-medium">{mealDetails.nutrition.calories}</span> cal</div>
+                                            <div><span className="font-medium">{mealDetails.nutrition.protein_g}g</span> protein</div>
+                                            <div><span className="font-medium">{mealDetails.nutrition.carbs_g}g</span> carbs</div>
+                                            <div><span className="font-medium">{mealDetails.nutrition.fat_g}g</span> fat</div>
+                                          </div>
+                                        )}
+                                      </div>
+                                    )}
+
                                     {mealDetails?.recipe_url && (
                                       <a
                                         href={mealDetails.recipe_url}
@@ -747,17 +871,7 @@ export default function Meals() {
                                         View Recipe <ExternalLink className="w-4 h-4" />
                                       </a>
                                     )}
-                                    {mealDetails?.nutrition && (
-                                      <div className="bg-gray-50 p-2 rounded-lg text-sm">
-                                        <p className="font-medium text-gray-900 mb-1">Nutrition (per serving)</p>
-                                        <div className="grid grid-cols-2 gap-1 text-gray-600 text-xs">
-                                          <div><span className="font-medium">{mealDetails.nutrition.calories}</span> cal</div>
-                                          <div><span className="font-medium">{mealDetails.nutrition.protein_g}g</span> protein</div>
-                                          <div><span className="font-medium">{mealDetails.nutrition.carbs_g}g</span> carbs</div>
-                                          <div><span className="font-medium">{mealDetails.nutrition.fat_g}g</span> fat</div>
-                                        </div>
-                                      </div>
-                                    )}
+
                                     {mealDetails?.ingredients && (
                                       <Button
                                         onClick={(e) => { e.stopPropagation(); addToGroceryListMutation.mutate(mealDetails); }}
