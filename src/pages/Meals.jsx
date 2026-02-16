@@ -10,9 +10,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Plus, ChefHat, ShoppingCart, Calendar, Clock, Users, Sparkles, Trash2, ExternalLink, BarChart3, Beef, Fish, Leaf, Drumstick, Star, ChevronDown, ChevronUp, Coffee, UtensilsCrossed, Utensils, Apple, IceCream, LayoutGrid, List } from 'lucide-react';
+import { Plus, ChefHat, ShoppingCart, Calendar, Clock, Users, Sparkles, Trash2, ExternalLink, BarChart3, Beef, Fish, Leaf, Drumstick, Star, ChevronDown, ChevronUp, Coffee, UtensilsCrossed, Utensils, Apple, IceCream } from 'lucide-react';
 import { motion } from 'framer-motion';
-import WeeklyCalendar from '../components/meals/WeeklyCalendar';
 
 export default function Meals() {
   const [showMealDialog, setShowMealDialog] = useState(false);
@@ -34,8 +33,6 @@ export default function Meals() {
             const [appliedRatings, setAppliedRatings] = useState([]);
             const [uploadingImage, setUploadingImage] = useState(false);
             const [expandedSections, setExpandedSections] = useState({});
-            const [calendarView, setCalendarView] = useState(true);
-            const [shoppingMode, setShoppingMode] = useState(false);
             const queryClient = useQueryClient();
 
   const { data: meals = [] } = useQuery({
@@ -173,16 +170,16 @@ export default function Meals() {
       });
 
   const addToMealPlanMutation = useMutation({
-    mutationFn: async (planData) => {
+    mutationFn: async () => {
       const weekStart = new Date();
       weekStart.setDate(weekStart.getDate() - weekStart.getDay());
       
       await base44.entities.MealPlan.create({
         week_start_date: weekStart.toISOString().split('T')[0],
-        day_of_week: planData?.day_of_week || planSelection.day,
-        meal_type: planData?.meal_type || planSelection.mealType,
-        meal_id: planData?.meal_id || selectedMealForPlan.id,
-        meal_name: planData?.meal_name || selectedMealForPlan.name,
+        day_of_week: planSelection.day,
+        meal_type: planSelection.mealType,
+        meal_id: selectedMealForPlan.id,
+        meal_name: selectedMealForPlan.name,
       });
     },
     onSuccess: () => {
@@ -190,13 +187,6 @@ export default function Meals() {
       setPlanDialog(false);
       setSelectedMealForPlan(null);
       setPlanSelection({ day: '', mealType: '' });
-    },
-  });
-
-  const updateMealPlanMutation = useMutation({
-    mutationFn: ({ id, updates }) => base44.entities.MealPlan.update(id, updates),
-    onSuccess: () => {
-      queryClient.invalidateQueries(['mealPlans']);
     },
   });
 
@@ -272,13 +262,6 @@ export default function Meals() {
 
   const deleteGroceryItemMutation = useMutation({
       mutationFn: (id) => base44.entities.GroceryItem.delete(id),
-      onSuccess: () => {
-        queryClient.invalidateQueries(['groceries']);
-      },
-    });
-
-    const togglePurchasedMutation = useMutation({
-      mutationFn: ({ id, purchased }) => base44.entities.GroceryItem.update(id, { purchased }),
       onSuccess: () => {
         queryClient.invalidateQueries(['groceries']);
       },
@@ -881,36 +864,14 @@ export default function Meals() {
 
           <TabsContent value="plan">
             <div className="space-y-4">
-              <div className="flex gap-2">
-                <Button
-                  onClick={() => addAllWeeklyIngredientsToGroceryMutation.mutate()}
-                  disabled={addAllWeeklyIngredientsToGroceryMutation.isPending || mealPlans.length === 0}
-                  className="flex-1 bg-gradient-to-r from-[#E91E8C] to-[#D01576] text-white whitespace-normal h-auto py-3"
-                >
-                  <ShoppingCart className="w-4 h-4 mr-2 flex-shrink-0" />
-                  <span className="text-sm md:text-base">{addAllWeeklyIngredientsToGroceryMutation.isPending ? 'Adding...' : 'Add All Weekly Meal Ingredients to Grocery List'}</span>
-                </Button>
-                <Button
-                  onClick={() => setCalendarView(!calendarView)}
-                  variant="outline"
-                  className="border-pink-200 text-pink-600 hover:bg-pink-50 flex-shrink-0"
-                >
-                  {calendarView ? <List className="w-4 h-4" /> : <LayoutGrid className="w-4 h-4" />}
-                </Button>
-              </div>
-
-              {calendarView ? (
-                <WeeklyCalendar
-                  mealPlans={mealPlans}
-                  meals={meals}
-                  onUpdateMealPlan={(id, updates) => updateMealPlanMutation.mutate({ id, updates })}
-                  onDeleteMealPlan={(id) => deleteFromMealPlanMutation.mutate(id)}
-                  onAddMealToPlan={(planData) => addToMealPlanMutation.mutate(planData)}
-                  expandedSections={expandedSections}
-                  toggleSection={toggleSection}
-                />
-              ) : (
-                <div className="space-y-4">
+              <Button
+                onClick={() => addAllWeeklyIngredientsToGroceryMutation.mutate()}
+                disabled={addAllWeeklyIngredientsToGroceryMutation.isPending || mealPlans.length === 0}
+                className="w-full bg-gradient-to-r from-[#E91E8C] to-[#D01576] text-white whitespace-normal h-auto py-3"
+              >
+                <ShoppingCart className="w-4 h-4 mr-2 flex-shrink-0" />
+                <span className="text-sm md:text-base">{addAllWeeklyIngredientsToGroceryMutation.isPending ? 'Adding...' : 'Add All Weekly Meal Ingredients to Grocery List'}</span>
+              </Button>
               {['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].map(day => {
                 const dayMeals = mealPlans.filter(plan => plan.day_of_week === day);
                 const dailyNutrients = calculateDailyNutrients(dayMeals);
@@ -1114,34 +1075,21 @@ export default function Meals() {
                     </CardContent>
                   </Card>
                 );
-                })}
-                </div>
-                )}
-                </div>
-                </TabsContent>
+              })}
+            </div>
+          </TabsContent>
 
           <TabsContent value="grocery" className="space-y-4">
             {groceries.length > 0 && (
-              <div className="flex gap-2">
-                <Button
-                  onClick={() => setShoppingMode(!shoppingMode)}
-                  className="flex-1 bg-gradient-to-r from-[#E91E8C] to-[#D01576] text-white"
-                >
-                  <ShoppingCart className="w-4 h-4 mr-2" />
-                  {shoppingMode ? 'Exit Shopping Mode' : 'Shopping Mode'}
-                </Button>
-                {!shoppingMode && (
-                  <Button
-                    onClick={() => clearAllGroceriesMutation.mutate()}
-                    disabled={clearAllGroceriesMutation.isPending}
-                    variant="outline"
-                    className="flex-1 border-red-200 text-red-600 hover:bg-red-50"
-                  >
-                    <Trash2 className="w-4 h-4 mr-2" />
-                    {clearAllGroceriesMutation.isPending ? 'Clearing...' : 'Clear List'}
-                  </Button>
-                )}
-              </div>
+              <Button
+                onClick={() => clearAllGroceriesMutation.mutate()}
+                disabled={clearAllGroceriesMutation.isPending}
+                variant="outline"
+                className="w-full border-red-200 text-red-600 hover:bg-red-50"
+              >
+                <Trash2 className="w-4 h-4 mr-2" />
+                {clearAllGroceriesMutation.isPending ? 'Clearing...' : 'Clear Entire Grocery List'}
+              </Button>
             )}
             {groceries.length === 0 ? (
               <Card className="bg-white border-0 shadow-sm p-8 text-center">
@@ -1149,68 +1097,6 @@ export default function Meals() {
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">Grocery List</h3>
                 <p className="text-gray-500">No items yet - add ingredients from your meal plan</p>
               </Card>
-            ) : shoppingMode ? (
-              <div className="space-y-4">
-                {[
-                  { key: 'produce', label: 'Produce', emoji: '🥬' },
-                  { key: 'meat_seafood', label: 'Meat & Seafood', emoji: '🥩' },
-                  { key: 'dairy_eggs', label: 'Dairy & Eggs', emoji: '🥛' },
-                  { key: 'bakery', label: 'Bakery', emoji: '🥖' },
-                  { key: 'pantry', label: 'Pantry & Dry Goods', emoji: '🥫' },
-                  { key: 'frozen', label: 'Frozen Foods', emoji: '❄️' },
-                  { key: 'beverages', label: 'Beverages', emoji: '🥤' },
-                  { key: 'deli', label: 'Deli', emoji: '🧀' },
-                  { key: 'other', label: 'Other', emoji: '🛒' }
-                ].map(({ key, label, emoji }) => {
-                  const categoryItems = groceries.filter(item => item.category === key);
-                  const unpurchased = categoryItems.filter(item => !item.purchased);
-                  const purchased = categoryItems.filter(item => item.purchased);
-                  if (categoryItems.length === 0) return null;
-
-                  return (
-                    <Card key={key} className="bg-white border-0 shadow-sm">
-                      <CardContent className="p-5">
-                        <h3 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                          <span className="text-2xl">{emoji}</span>
-                          <span className="text-lg">{label}</span>
-                        </h3>
-                        <div className="space-y-2">
-                          {unpurchased.map((item) => (
-                            <div 
-                              key={item.id} 
-                              onClick={() => togglePurchasedMutation.mutate({ id: item.id, purchased: true })}
-                              className="flex items-center gap-4 bg-white border-2 border-gray-200 p-4 rounded-xl cursor-pointer hover:bg-pink-50 hover:border-pink-300 transition-all active:scale-98"
-                            >
-                              <div className="w-7 h-7 rounded-full border-2 border-gray-300 flex-shrink-0"></div>
-                              <div className="flex-1">
-                                <div className="text-base font-medium text-gray-900">{item.name}</div>
-                                <div className="text-sm text-gray-500">Qty: {item.quantity || 1}</div>
-                              </div>
-                            </div>
-                          ))}
-                          {purchased.map((item) => (
-                            <div 
-                              key={item.id} 
-                              onClick={() => togglePurchasedMutation.mutate({ id: item.id, purchased: false })}
-                              className="flex items-center gap-4 bg-gray-50 p-4 rounded-xl cursor-pointer hover:bg-gray-100 transition-all opacity-60"
-                            >
-                              <div className="w-7 h-7 rounded-full bg-green-500 flex-shrink-0 flex items-center justify-center">
-                                <svg className="w-4 h-4 text-white" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
-                                  <path d="M5 13l4 4L19 7"></path>
-                                </svg>
-                              </div>
-                              <div className="flex-1">
-                                <div className="text-base font-medium text-gray-500 line-through">{item.name}</div>
-                                <div className="text-sm text-gray-400">Qty: {item.quantity || 1}</div>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      </CardContent>
-                    </Card>
-                  );
-                })}
-              </div>
             ) : (
               <div className="space-y-4">
                 {[
