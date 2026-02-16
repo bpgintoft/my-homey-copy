@@ -556,7 +556,6 @@ export default function Meals() {
                                 {getProteinIcon(meal.protein_type)}
                               </div>
                             )}
-                            {getMealTypeIcon(meal.type)}
                             <Popover>
                               <PopoverTrigger asChild>
                                 <button
@@ -587,6 +586,7 @@ export default function Meals() {
                                 </div>
                               </PopoverContent>
                             </Popover>
+                            {getMealTypeIcon(meal.type)}
                           </div>
                         </div>
                       </div>
