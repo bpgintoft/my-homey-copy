@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Plus, ChefHat, ShoppingCart, Calendar, Clock, Users, Sparkles, Trash2, ExternalLink, BarChart3, Beef, Fish, Leaf, Drumstick, Star, ChevronDown, ChevronUp } from 'lucide-react';
+import { Plus, ChefHat, ShoppingCart, Calendar, Clock, Users, Sparkles, Trash2, ExternalLink, BarChart3, Beef, Fish, Leaf, Drumstick, Star, ChevronDown, ChevronUp, Sunrise, Sun, Moon, Cookie, IceCream } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function Meals() {
@@ -323,6 +323,18 @@ export default function Meals() {
     return null;
   };
 
+  const getMealTypeIcon = (mealType) => {
+    if (!mealType) return null;
+    const types = mealType.toLowerCase().split(',').map(t => t.trim());
+    const type = types[0];
+    if (type === 'breakfast') return <Sunrise className="w-4 h-4 text-orange-500" />;
+    if (type === 'lunch') return <Sun className="w-4 h-4 text-yellow-500" />;
+    if (type === 'dinner') return <Moon className="w-4 h-4 text-indigo-500" />;
+    if (type === 'snack') return <Cookie className="w-4 h-4 text-amber-600" />;
+    if (type === 'dessert') return <IceCream className="w-4 h-4 text-pink-500" />;
+    return null;
+  };
+
   const handleImageUpload = async (file) => {
     if (!file) return;
     setUploadingImage(true);
@@ -540,9 +552,7 @@ export default function Meals() {
                                 {getProteinIcon(meal.protein_type)}
                               </div>
                             )}
-                            <Badge className="bg-pink-100 text-pink-700 border-0 text-xs">
-                              {meal.type}
-                            </Badge>
+                            {getMealTypeIcon(meal.type)}
                             <div className="flex items-center gap-1 text-xs text-gray-500">
                               <Clock className="w-3 h-3" />
                               {(meal.prep_time || 0) + (meal.cook_time || 0)}m
