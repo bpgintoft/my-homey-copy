@@ -320,6 +320,7 @@ export default function Meals() {
     if (type.includes('vegetarian')) return <span className="text-xl">🥬</span>;
     if (type.includes('pork')) return <span className="text-xl">🍖</span>;
     if (type.includes('turkey')) return <span className="text-xl">🦃</span>;
+    if (type.includes('eggs')) return <span className="text-xl">🥚</span>;
     return null;
   };
 
@@ -455,7 +456,7 @@ export default function Meals() {
                   <div>
                     <p className="text-sm font-medium text-gray-700 mb-2">Protein Type</p>
                     <div className="flex flex-wrap gap-2">
-                      {['fish', 'beef', 'chicken', 'pork', 'turkey', 'beans', 'vegetarian'].map(protein => (
+                      {['fish', 'beef', 'chicken', 'pork', 'turkey', 'beans', 'eggs', 'vegetarian'].map(protein => (
                         <button
                           key={protein}
                           onClick={() => setSelectedProteins(prev => 
@@ -1164,7 +1165,7 @@ export default function Meals() {
               <div>
                 <label className="text-sm font-medium text-gray-700 mb-2 block">Protein Type(s)</label>
                 <div className="flex flex-wrap gap-2">
-                  {['fish', 'beef', 'chicken', 'pork', 'turkey', 'beans', 'vegetarian'].map(protein => {
+                  {['fish', 'beef', 'chicken', 'pork', 'turkey', 'beans', 'eggs', 'vegetarian'].map(protein => {
                     const proteins = newMeal.protein_type ? newMeal.protein_type.split(',').map(p => p.trim()) : [];
                     const isSelected = proteins.includes(protein);
                     return (
