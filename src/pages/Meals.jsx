@@ -13,6 +13,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Plus, ChefHat, ShoppingCart, Calendar, Clock, Users, Sparkles, Trash2, ExternalLink, BarChart3, Beef, Fish, Leaf, Drumstick, Star, ChevronDown, ChevronUp, Coffee, UtensilsCrossed, Utensils, Apple, IceCream } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { getThumbnailUrl, getMediumUrl } from '../components/imageHelpers';
+import ProteinTypeFilter from '../components/ProteinTypeFilter';
 
 export default function Meals() {
   const [showMealDialog, setShowMealDialog] = useState(false);
