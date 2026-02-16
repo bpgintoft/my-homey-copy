@@ -425,7 +425,7 @@ export default function Meals() {
     const proteinMatch = appliedProteins.length === 0 || (meal.protein_type && appliedProteins.some(p => meal.protein_type.split(',').map(x => x.trim()).includes(p)));
     const typeMatch = appliedMealTypes.length === 0 || appliedMealTypes.some(t => meal.type.split(',').map(x => x.trim()).includes(t));
     const ratingMatch = appliedRatings.length === 0 || appliedRatings.includes(meal.rating || 0);
-    const favoritesMatch = !showFavoritesOnly || (meal.rating === 5);
+    const favoritesMatch = !showFavoritesOnly || (meal.rating >= 4);
     return proteinMatch && typeMatch && ratingMatch && favoritesMatch;
   });
 
