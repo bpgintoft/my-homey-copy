@@ -893,7 +893,7 @@ export default function Meals() {
                         <Button
                           onClick={() => addAllWeeklyIngredientsToGroceryMutation.mutate()}
                           disabled={addAllWeeklyIngredientsToGroceryMutation.isPending || mealPlans.length === 0}
-                          className="flex-1 bg-gradient-to-r from-[#E91E8C] to-[#D01576] text-white whitespace-normal h-auto py-3"
+                          className="flex-1 bg-gradient-to-r from-[#E91E8C] to-[#D01576] text-white whitespace-normal h-auto py-1.5"
                         >
                           <ShoppingCart className="w-4 h-4 mr-2 flex-shrink-0" />
                           <span className="text-sm md:text-base">{addAllWeeklyIngredientsToGroceryMutation.isPending ? 'Adding...' : 'Add All Weekly Meal Ingredients to Grocery List'}</span>
@@ -902,7 +902,7 @@ export default function Meals() {
                           onClick={() => mealPlans.forEach(plan => deleteFromMealPlanMutation.mutate(plan.id))}
                           disabled={deleteFromMealPlanMutation.isPending || mealPlans.length === 0}
                           variant="outline"
-                          className="max-w-20 border-red-200 text-red-600 hover:bg-red-50 text-xs h-auto py-3 whitespace-normal"
+                          className="max-w-20 border-red-200 text-red-600 hover:bg-red-50 text-xs h-auto py-1.5 whitespace-normal"
                         >
                           Clear Plan
                         </Button>
