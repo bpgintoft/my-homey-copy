@@ -902,6 +902,7 @@ export default function Meals() {
                   toggleSection={toggleSection}
                 />
               ) : (
+                <div className="space-y-4">
               {['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].map(day => {
                 const dayMeals = mealPlans.filter(plan => plan.day_of_week === day);
                 const dailyNutrients = calculateDailyNutrients(dayMeals);
