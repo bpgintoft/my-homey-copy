@@ -129,10 +129,10 @@ export default function Meals() {
 
   const cleanIngredientName = (ingredient) => {
     return ingredient
-      // Remove everything up to and including the measurement unit
-      .replace(/^.*?\b(cups?|tbsp|tablespoons?|tsp|teaspoons?|oz|ounces?|lbs?|pounds?|g|grams?|kg|kilograms?|ml|milliliters?|l|liters?|cans?|packages?|boxes?|jars?|containers?)\b\s*/i, '')
-      // Remove any remaining leading numbers, fractions, dashes, "to", "of"
-      .replace(/^[\d\s\/\-]*(to|of)?\s*/gi, '')
+      // Remove everything up to and including measurement units (greedy match to catch all preceding numbers/fractions)
+      .replace(/^.*?(cups?|tbsp|tablespoons?|tsp|teaspoons?|oz|ounces?|lbs?|pounds?|g|grams?|kg|kilograms?|ml|milliliters?|l|liters?|cans?|packages?|boxes?|jars?|containers?)\s+/i, '')
+      // Remove any remaining leading numbers, fractions, "to", "of", slashes, dashes
+      .replace(/^[\/\d\s\-]*(to|of)?\s*/gi, '')
       // Remove parenthetical info
       .replace(/\(.*?\)/g, '')
       .trim();
@@ -261,11 +261,18 @@ export default function Meals() {
   });
 
   const deleteGroceryItemMutation = useMutation({
-    mutationFn: (id) => base44.entities.GroceryItem.delete(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries(['groceries']);
-    },
-  });
+      mutationFn: (id) => base44.entities.GroceryItem.delete(id),
+      onSuccess: () => {
+        queryClient.invalidateQueries(['groceries']);
+      },
+    });
+
+    const updateGroceryNameMutation = useMutation({
+      mutationFn: ({ id, name }) => base44.entities.GroceryItem.update(id, { name }),
+      onSuccess: () => {
+        queryClient.invalidateQueries(['groceries']);
+      },
+    });
 
   const generateMealPlanMutation = useMutation({
     mutationFn: async () => {
@@ -1037,7 +1044,12 @@ export default function Meals() {
                           {categoryItems.map((item) => (
                             <div key={item.id} className="flex items-center justify-between bg-gray-50 p-3 rounded-lg">
                               <div className="flex-1">
-                                <div className="text-sm font-medium text-gray-900">{item.name}</div>
+                                <input
+                                  type="text"
+                                  value={item.name}
+                                  onChange={(e) => updateGroceryNameMutation.mutate({ id: item.id, name: e.target.value })}
+                                  className="text-sm font-medium text-gray-900 bg-transparent border-none outline-none w-full focus:bg-white focus:px-2 focus:py-1 focus:rounded transition-all"
+                                />
                               </div>
                               <div className="flex items-center gap-3">
                                 <div className="flex items-center gap-2 bg-white border border-gray-200 rounded-lg">
