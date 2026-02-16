@@ -730,7 +730,7 @@ export default function Meals() {
                         <div className="space-y-3 pt-4 border-t border-gray-200">
                           {meal.photo_url && (
                             <div className="w-full h-48 rounded-lg overflow-hidden">
-                              <img src={meal.photo_url} alt={meal.name} className="w-full h-full object-cover" />
+                              <img src={getMediumUrl(meal.photo_url)} alt={meal.name} className="w-full h-full object-cover" />
                             </div>
                           )}
                           <div className="flex items-center gap-3 text-sm text-gray-600">
