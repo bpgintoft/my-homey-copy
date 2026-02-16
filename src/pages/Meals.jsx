@@ -853,10 +853,10 @@ export default function Meals() {
               <Button
                 onClick={() => addAllWeeklyIngredientsToGroceryMutation.mutate()}
                 disabled={addAllWeeklyIngredientsToGroceryMutation.isPending || mealPlans.length === 0}
-                className="w-full bg-gradient-to-r from-[#E91E8C] to-[#D01576] text-white"
+                className="w-full bg-gradient-to-r from-[#E91E8C] to-[#D01576] text-white whitespace-normal h-auto py-3"
               >
-                <ShoppingCart className="w-4 h-4 mr-2" />
-                {addAllWeeklyIngredientsToGroceryMutation.isPending ? 'Adding...' : 'Add All Weekly Meal Ingredients to Grocery List'}
+                <ShoppingCart className="w-4 h-4 mr-2 flex-shrink-0" />
+                <span className="text-sm md:text-base">{addAllWeeklyIngredientsToGroceryMutation.isPending ? 'Adding...' : 'Add All Weekly Meal Ingredients to Grocery List'}</span>
               </Button>
               {['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].map(day => {
                 const dayMeals = mealPlans.filter(plan => plan.day_of_week === day);
