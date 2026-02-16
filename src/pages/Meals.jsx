@@ -326,13 +326,14 @@ export default function Meals() {
   const getMealTypeIcon = (mealType) => {
     if (!mealType) return null;
     const types = mealType.toLowerCase().split(',').map(t => t.trim());
-    const type = types[0];
-    if (type === 'breakfast') return <Sunrise className="w-4 h-4 text-orange-500" />;
-    if (type === 'lunch') return <Sun className="w-4 h-4 text-yellow-500" />;
-    if (type === 'dinner') return <Moon className="w-4 h-4 text-indigo-500" />;
-    if (type === 'snack') return <Cookie className="w-4 h-4 text-amber-600" />;
-    if (type === 'dessert') return <IceCream className="w-4 h-4 text-pink-500" />;
-    return null;
+    return types.map((type, idx) => {
+      if (type === 'breakfast') return <Sunrise key={idx} className="w-4 h-4 text-orange-500" />;
+      if (type === 'lunch') return <Sun key={idx} className="w-4 h-4 text-yellow-500" />;
+      if (type === 'dinner') return <Moon key={idx} className="w-4 h-4 text-indigo-500" />;
+      if (type === 'snack') return <Cookie key={idx} className="w-4 h-4 text-amber-600" />;
+      if (type === 'dessert') return <IceCream key={idx} className="w-4 h-4 text-pink-500" />;
+      return null;
+    }).filter(Boolean);
   };
 
   const handleImageUpload = async (file) => {
