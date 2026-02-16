@@ -557,14 +557,6 @@ export default function Meals() {
                               </div>
                             )}
                             {getMealTypeIcon(meal.type)}
-                            <div className="flex items-center gap-1 text-xs text-gray-500">
-                              <Clock className="w-3 h-3" />
-                              {(meal.prep_time || 0) + (meal.cook_time || 0)}m
-                            </div>
-                            <div className="flex items-center gap-1 text-xs text-gray-500">
-                              <Users className="w-3 h-3" />
-                              {meal.servings || 4}
-                            </div>
                             <Popover>
                               <PopoverTrigger asChild>
                                 <button
@@ -605,6 +597,16 @@ export default function Meals() {
                               <img src={meal.photo_url} alt={meal.name} className="w-full h-full object-cover" />
                             </div>
                           )}
+                          <div className="flex items-center gap-3 text-sm text-gray-600">
+                            <div className="flex items-center gap-1">
+                              <Clock className="w-4 h-4" />
+                              {(meal.prep_time || 0) + (meal.cook_time || 0)} min
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <Users className="w-4 h-4" />
+                              {meal.servings || 4} servings
+                            </div>
+                          </div>
                           {meal.cooking_method && (
                             <div className="bg-orange-100 text-orange-700 text-xs px-3 py-1 rounded-full font-medium w-fit">
                               {meal.cooking_method === 'oven' && `${meal.cooking_temperature_or_heat} • ${meal.cook_time}m`}
