@@ -479,7 +479,7 @@ export default function Meals() {
                             <img src={meal.photo_url} alt={meal.name} className="w-full h-full object-cover" />
                           </div>
                         )}
-                        <div className="flex-1">
+                        <div className="flex-1 min-w-0">
                           <div className="flex items-start justify-between gap-2 mb-2">
                             <h3 className="font-semibold text-gray-900 truncate min-w-0 flex-1">{meal.name}</h3>
                             <div className="flex flex-col items-center gap-1 flex-shrink-0">
