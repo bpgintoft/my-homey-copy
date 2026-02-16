@@ -128,11 +128,13 @@ export default function Meals() {
   });
 
   const cleanIngredientName = (ingredient) => {
-    // Remove measurements and quantities (numbers, fractions, units)
     return ingredient
-      .replace(/^\d+(\.\d+)?\/?\d*\s*(cups?|tbsp|tsp|teaspoons?|tablespoons?|oz|ounces?|lbs?|pounds?|g|grams?|kg|kilograms?|ml|l|liters?|can|cans|package|packages?|box|boxes?)?\s*/gi, '')
-      .replace(/^\d+(\.\d+)?\s*/g, '')
-      .replace(/\(.*?\)/g, '') // Remove parenthetical info
+      // Remove everything up to and including the measurement unit
+      .replace(/^.*?\b(cups?|tbsp|tablespoons?|tsp|teaspoons?|oz|ounces?|lbs?|pounds?|g|grams?|kg|kilograms?|ml|milliliters?|l|liters?|cans?|packages?|boxes?|jars?|containers?)\b\s*/i, '')
+      // Remove any remaining leading numbers, fractions, dashes, "to", "of"
+      .replace(/^[\d\s\/\-]*(to|of)?\s*/gi, '')
+      // Remove parenthetical info
+      .replace(/\(.*?\)/g, '')
       .trim();
   };
 
