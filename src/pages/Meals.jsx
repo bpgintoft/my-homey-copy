@@ -551,23 +551,36 @@ export default function Meals() {
                               <Users className="w-3 h-3" />
                               {meal.servings || 4}
                             </div>
-                          </div>
-                          <div className="flex items-center gap-0.5 mt-2" onClick={(e) => e.stopPropagation()}>
-                            {[1, 2, 3, 4, 5].map((star) => (
-                              <button
-                                key={star}
-                                onClick={() => updateMealRatingMutation.mutate({ id: meal.id, rating: star, currentRating: meal.rating || 0 })}
-                                className="transition-colors"
-                              >
-                                <Star
-                                  className={`w-4 h-4 ${
-                                    star <= (meal.rating || 0)
-                                      ? 'fill-yellow-400 text-yellow-400'
-                                      : 'text-gray-300'
-                                  }`}
-                                />
-                              </button>
-                            ))}
+                            <Popover>
+                              <PopoverTrigger asChild>
+                                <button
+                                  onClick={(e) => e.stopPropagation()}
+                                  className="flex items-center gap-1 px-2 py-1 rounded-full bg-white border border-pink-200 hover:bg-pink-50 transition-colors"
+                                >
+                                  <Star className="w-3 h-3 fill-pink-500 text-pink-500" />
+                                  <span className="text-xs font-medium text-gray-900">{meal.rating || 0}</span>
+                                </button>
+                              </PopoverTrigger>
+                              <PopoverContent className="w-auto p-3" onClick={(e) => e.stopPropagation()}>
+                                <div className="flex items-center gap-1">
+                                  {[1, 2, 3, 4, 5].map((star) => (
+                                    <button
+                                      key={star}
+                                      onClick={() => updateMealRatingMutation.mutate({ id: meal.id, rating: star, currentRating: meal.rating || 0 })}
+                                      className="transition-colors"
+                                    >
+                                      <Star
+                                        className={`w-5 h-5 ${
+                                          star <= (meal.rating || 0)
+                                            ? 'fill-yellow-400 text-yellow-400'
+                                            : 'text-gray-300'
+                                        }`}
+                                      />
+                                    </button>
+                                  ))}
+                                </div>
+                              </PopoverContent>
+                            </Popover>
                           </div>
                         </div>
                       </div>
