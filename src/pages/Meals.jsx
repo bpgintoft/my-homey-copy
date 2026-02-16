@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Plus, ChefHat, ShoppingCart, Calendar, Clock, Users, Sparkles, Trash2, ExternalLink, BarChart3, Beef, Fish, Leaf, Drumstick, Star, ChevronDown, ChevronUp, Sunrise, Sun, Moon, Cookie, IceCream } from 'lucide-react';
+import { Plus, ChefHat, ShoppingCart, Calendar, Clock, Users, Sparkles, Trash2, ExternalLink, BarChart3, Beef, Fish, Leaf, Drumstick, Star, ChevronDown, ChevronUp, Coffee, UtensilsCrossed, Utensils, Apple, IceCream } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function Meals() {
@@ -326,11 +326,14 @@ export default function Meals() {
   const getMealTypeIcon = (mealType) => {
     if (!mealType) return null;
     const types = mealType.toLowerCase().split(',').map(t => t.trim());
-    return types.map((type, idx) => {
-      if (type === 'breakfast') return <Sunrise key={idx} className="w-4 h-4 text-orange-500" />;
-      if (type === 'lunch') return <Sun key={idx} className="w-4 h-4 text-yellow-500" />;
-      if (type === 'dinner') return <Moon key={idx} className="w-4 h-4 text-indigo-500" />;
-      if (type === 'snack') return <Cookie key={idx} className="w-4 h-4 text-amber-600" />;
+    const order = ['breakfast', 'lunch', 'dinner', 'snack', 'dessert'];
+    const sortedTypes = types.sort((a, b) => order.indexOf(a) - order.indexOf(b));
+    
+    return sortedTypes.map((type, idx) => {
+      if (type === 'breakfast') return <Coffee key={idx} className="w-4 h-4 text-orange-600" />;
+      if (type === 'lunch') return <UtensilsCrossed key={idx} className="w-4 h-4 text-blue-600" />;
+      if (type === 'dinner') return <Utensils key={idx} className="w-4 h-4 text-indigo-600" />;
+      if (type === 'snack') return <Apple key={idx} className="w-4 h-4 text-green-600" />;
       if (type === 'dessert') return <IceCream key={idx} className="w-4 h-4 text-pink-500" />;
       return null;
     }).filter(Boolean);
