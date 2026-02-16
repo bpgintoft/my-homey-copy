@@ -127,6 +127,15 @@ export default function Meals() {
     }
   });
 
+  const cleanIngredientName = (ingredient) => {
+    // Remove measurements and quantities (numbers, fractions, units)
+    return ingredient
+      .replace(/^\d+(\.\d+)?\/?\d*\s*(cups?|tbsp|tsp|teaspoons?|tablespoons?|oz|ounces?|lbs?|pounds?|g|grams?|kg|kilograms?|ml|l|liters?|can|cans|package|packages?|box|boxes?)?\s*/gi, '')
+      .replace(/^\d+(\.\d+)?\s*/g, '')
+      .replace(/\(.*?\)/g, '') // Remove parenthetical info
+      .trim();
+  };
+
   const addToGroceryListMutation = useMutation({
         mutationFn: async (meal) => {
           const filteredIngredients = filterStaples(meal.ingredients || []);
@@ -134,14 +143,17 @@ export default function Meals() {
           weekStart.setDate(weekStart.getDate() - weekStart.getDay());
 
           for (const ingredient of filteredIngredients) {
-            const existing = groceries.find(g => g.name.toLowerCase() === ingredient.toLowerCase());
+            const cleanedName = cleanIngredientName(ingredient);
+            if (!cleanedName) continue;
+
+            const existing = groceries.find(g => g.name.toLowerCase() === cleanedName.toLowerCase());
             if (existing) {
               const qty = parseInt(existing.quantity) || 1;
               await base44.entities.GroceryItem.update(existing.id, { quantity: (qty + 1).toString() });
             } else {
-              const category = await categorizeMutation.mutateAsync(ingredient);
+              const category = await categorizeMutation.mutateAsync(cleanedName);
               await base44.entities.GroceryItem.create({
-                name: ingredient,
+                name: cleanedName,
                 category: category || 'other',
                 quantity: '1',
                 purchased: false,
