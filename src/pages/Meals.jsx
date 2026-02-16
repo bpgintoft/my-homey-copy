@@ -26,9 +26,11 @@ export default function Meals() {
     const [generatedMeal, setGeneratedMeal] = useState(null);
     const [selectedProteins, setSelectedProteins] = useState([]);
     const [selectedMealTypes, setSelectedMealTypes] = useState([]);
+    const [selectedRatings, setSelectedRatings] = useState([]);
     const [showFilters, setShowFilters] = useState(false);
     const [appliedProteins, setAppliedProteins] = useState([]);
             const [appliedMealTypes, setAppliedMealTypes] = useState([]);
+            const [appliedRatings, setAppliedRatings] = useState([]);
             const [uploadingImage, setUploadingImage] = useState(false);
             const [expandedSections, setExpandedSections] = useState({});
             const queryClient = useQueryClient();
@@ -83,7 +85,10 @@ export default function Meals() {
   });
 
   const updateMealRatingMutation = useMutation({
-    mutationFn: ({ id, rating }) => base44.entities.Meal.update(id, { rating }),
+    mutationFn: ({ id, rating, currentRating }) => {
+      const newRating = currentRating === rating ? 0 : rating;
+      return base44.entities.Meal.update(id, { rating: newRating });
+    },
     onSuccess: () => {
       queryClient.invalidateQueries(['meals']);
     },
@@ -294,12 +299,14 @@ export default function Meals() {
   const filteredMeals = kidFriendlyMeals.filter(meal => {
     const proteinMatch = appliedProteins.length === 0 || (meal.protein_type && appliedProteins.some(p => meal.protein_type.split(',').map(x => x.trim()).includes(p)));
     const typeMatch = appliedMealTypes.length === 0 || appliedMealTypes.some(t => meal.type.split(',').map(x => x.trim()).includes(t));
-    return proteinMatch && typeMatch;
+    const ratingMatch = appliedRatings.length === 0 || appliedRatings.includes(meal.rating || 0);
+    return proteinMatch && typeMatch && ratingMatch;
   });
 
   const handleSaveFilters = () => {
     setAppliedProteins(selectedProteins);
     setAppliedMealTypes(selectedMealTypes);
+    setAppliedRatings(selectedRatings);
     setShowFilters(false);
   };
 
@@ -469,6 +476,27 @@ export default function Meals() {
                       ))}
                     </div>
                   </div>
+                  <div>
+                    <p className="text-sm font-medium text-gray-700 mb-2">Star Rating</p>
+                    <div className="flex flex-wrap gap-2">
+                      {[5, 4, 3, 2, 1].map(rating => (
+                        <button
+                          key={rating}
+                          onClick={() => setSelectedRatings(prev =>
+                            prev.includes(rating) ? prev.filter(r => r !== rating) : [...prev, rating]
+                          )}
+                          className={`px-3 py-1 rounded-full text-sm font-medium transition-all flex items-center gap-1 ${
+                            selectedRatings.includes(rating)
+                              ? 'bg-pink-600 text-white'
+                              : 'bg-white text-pink-700 border border-pink-200 hover:bg-pink-100'
+                          }`}
+                        >
+                          <Star className="w-3 h-3 fill-current" />
+                          {rating}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
                   <Button
                     onClick={handleSaveFilters}
                     className="bg-gradient-to-r from-[#E91E8C] to-[#D01576] text-white"
@@ -528,7 +556,7 @@ export default function Meals() {
                             {[1, 2, 3, 4, 5].map((star) => (
                               <button
                                 key={star}
-                                onClick={() => updateMealRatingMutation.mutate({ id: meal.id, rating: star })}
+                                onClick={() => updateMealRatingMutation.mutate({ id: meal.id, rating: star, currentRating: meal.rating || 0 })}
                                 className="transition-colors"
                               >
                                 <Star
