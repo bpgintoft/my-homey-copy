@@ -470,6 +470,7 @@ export default function Meals() {
                   key={meal.id}
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
+                  className="min-w-0"
                 >
                   <Card className="bg-white border-0 shadow-sm hover:shadow-md transition-shadow cursor-pointer overflow-hidden" onClick={() => setExpandedMealId(expandedMealId === meal.id ? null : meal.id)}>
                     <CardContent className="p-4">
