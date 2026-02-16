@@ -109,6 +109,24 @@ export default function Meals() {
     },
   });
 
+  const categorizeMutation = useMutation({
+    mutationFn: async (ingredient) => {
+      const result = await base44.integrations.Core.InvokeLLM({
+        prompt: `Categorize this grocery item: "${ingredient}". Return only the category key.`,
+        response_json_schema: {
+          type: "object",
+          properties: {
+            category: {
+              type: "string",
+              enum: ["produce", "meat_seafood", "dairy_eggs", "bakery", "pantry", "frozen", "beverages", "deli", "other"]
+            }
+          }
+        }
+      });
+      return result.category;
+    }
+  });
+
   const addToGroceryListMutation = useMutation({
         mutationFn: async (meal) => {
           const filteredIngredients = filterStaples(meal.ingredients || []);
@@ -121,9 +139,10 @@ export default function Meals() {
               const qty = parseInt(existing.quantity) || 1;
               await base44.entities.GroceryItem.update(existing.id, { quantity: (qty + 1).toString() });
             } else {
+              const category = await categorizeMutation.mutateAsync(ingredient);
               await base44.entities.GroceryItem.create({
                 name: ingredient,
-                category: 'other',
+                category: category || 'other',
                 quantity: '1',
                 purchased: false,
                 week_start_date: weekStart.toISOString().split('T')[0],
@@ -978,54 +997,76 @@ export default function Meals() {
                 <p className="text-gray-500">No items yet - add ingredients from your meal plan</p>
               </Card>
             ) : (
-              <Card className="bg-white border-0 shadow-sm">
-                <CardContent className="p-5">
-                  <div className="space-y-3">
-                    {groceries.map((item) => (
-                      <div key={item.id} className="flex items-center justify-between bg-gray-50 p-3 rounded-lg">
-                        <div className="flex-1">
-                          <div className="text-sm font-medium text-gray-900">{item.name}</div>
-                          <div className="text-xs text-gray-500 capitalize">{item.category}</div>
+              <div className="space-y-4">
+                {[
+                  { key: 'produce', label: 'Produce', emoji: '🥬' },
+                  { key: 'meat_seafood', label: 'Meat & Seafood', emoji: '🥩' },
+                  { key: 'dairy_eggs', label: 'Dairy & Eggs', emoji: '🥛' },
+                  { key: 'bakery', label: 'Bakery', emoji: '🥖' },
+                  { key: 'pantry', label: 'Pantry & Dry Goods', emoji: '🥫' },
+                  { key: 'frozen', label: 'Frozen Foods', emoji: '❄️' },
+                  { key: 'beverages', label: 'Beverages', emoji: '🥤' },
+                  { key: 'deli', label: 'Deli', emoji: '🧀' },
+                  { key: 'other', label: 'Other', emoji: '🛒' }
+                ].map(({ key, label, emoji }) => {
+                  const categoryItems = groceries.filter(item => item.category === key);
+                  if (categoryItems.length === 0) return null;
+
+                  return (
+                    <Card key={key} className="bg-white border-0 shadow-sm">
+                      <CardContent className="p-5">
+                        <h3 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                          <span className="text-xl">{emoji}</span>
+                          {label}
+                        </h3>
+                        <div className="space-y-2">
+                          {categoryItems.map((item) => (
+                            <div key={item.id} className="flex items-center justify-between bg-gray-50 p-3 rounded-lg">
+                              <div className="flex-1">
+                                <div className="text-sm font-medium text-gray-900">{item.name}</div>
+                              </div>
+                              <div className="flex items-center gap-3">
+                                <div className="flex items-center gap-2 bg-white border border-gray-200 rounded-lg">
+                                  <button
+                                    onClick={() => {
+                                      const qty = parseInt(item.quantity) || 0;
+                                      if (qty > 0) {
+                                        updateGroceryQuantityMutation.mutate({ id: item.id, quantity: qty - 1 });
+                                      }
+                                    }}
+                                    disabled={updateGroceryQuantityMutation.isPending}
+                                    className="px-2 py-1 text-gray-500 hover:text-gray-900"
+                                  >
+                                    −
+                                  </button>
+                                  <span className="w-8 text-center font-medium text-sm">{item.quantity || 1}</span>
+                                  <button
+                                    onClick={() => {
+                                      const qty = parseInt(item.quantity) || 0;
+                                      updateGroceryQuantityMutation.mutate({ id: item.id, quantity: qty + 1 });
+                                    }}
+                                    disabled={updateGroceryQuantityMutation.isPending}
+                                    className="px-2 py-1 text-gray-500 hover:text-gray-900"
+                                  >
+                                    +
+                                  </button>
+                                </div>
+                                <button
+                                  onClick={() => deleteGroceryItemMutation.mutate(item.id)}
+                                  disabled={deleteGroceryItemMutation.isPending}
+                                  className="text-gray-400 hover:text-red-500 transition-colors p-1"
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </button>
+                              </div>
+                            </div>
+                          ))}
                         </div>
-                        <div className="flex items-center gap-3">
-                          <div className="flex items-center gap-2 bg-white border border-gray-200 rounded-lg">
-                            <button
-                              onClick={() => {
-                                const qty = parseInt(item.quantity) || 0;
-                                if (qty > 0) {
-                                  updateGroceryQuantityMutation.mutate({ id: item.id, quantity: qty - 1 });
-                                }
-                              }}
-                              disabled={updateGroceryQuantityMutation.isPending}
-                              className="px-2 py-1 text-gray-500 hover:text-gray-900"
-                            >
-                              −
-                            </button>
-                            <span className="w-8 text-center font-medium text-sm">{item.quantity || 1}</span>
-                            <button
-                              onClick={() => {
-                                const qty = parseInt(item.quantity) || 0;
-                                updateGroceryQuantityMutation.mutate({ id: item.id, quantity: qty + 1 });
-                              }}
-                              disabled={updateGroceryQuantityMutation.isPending}
-                              className="px-2 py-1 text-gray-500 hover:text-gray-900"
-                            >
-                              +
-                            </button>
-                          </div>
-                          <button
-                            onClick={() => deleteGroceryItemMutation.mutate(item.id)}
-                            disabled={deleteGroceryItemMutation.isPending}
-                            className="text-gray-400 hover:text-red-500 transition-colors p-1"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
+                      </CardContent>
+                    </Card>
+                  );
+                })}
+              </div>
             )}
             </TabsContent>
             </Tabs>
