@@ -10,8 +10,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Plus, ChefHat, ShoppingCart, Calendar, Clock, Users, Sparkles, Trash2, ExternalLink, BarChart3, Beef, Fish, Leaf, Drumstick, Star, ChevronDown, ChevronUp, Coffee, UtensilsCrossed, Utensils, Apple, IceCream } from 'lucide-react';
+import { Plus, ChefHat, ShoppingCart, Calendar, Clock, Users, Sparkles, Trash2, ExternalLink, BarChart3, Beef, Fish, Leaf, Drumstick, Star, ChevronDown, ChevronUp, Coffee, UtensilsCrossed, Utensils, Apple, IceCream, LayoutGrid, List } from 'lucide-react';
 import { motion } from 'framer-motion';
+import WeeklyCalendar from '../components/meals/WeeklyCalendar';
 
 export default function Meals() {
   const [showMealDialog, setShowMealDialog] = useState(false);
@@ -33,6 +34,7 @@ export default function Meals() {
             const [appliedRatings, setAppliedRatings] = useState([]);
             const [uploadingImage, setUploadingImage] = useState(false);
             const [expandedSections, setExpandedSections] = useState({});
+            const [calendarView, setCalendarView] = useState(true);
             const queryClient = useQueryClient();
 
   const { data: meals = [] } = useQuery({
@@ -170,16 +172,16 @@ export default function Meals() {
       });
 
   const addToMealPlanMutation = useMutation({
-    mutationFn: async () => {
+    mutationFn: async (planData) => {
       const weekStart = new Date();
       weekStart.setDate(weekStart.getDate() - weekStart.getDay());
       
       await base44.entities.MealPlan.create({
         week_start_date: weekStart.toISOString().split('T')[0],
-        day_of_week: planSelection.day,
-        meal_type: planSelection.mealType,
-        meal_id: selectedMealForPlan.id,
-        meal_name: selectedMealForPlan.name,
+        day_of_week: planData?.day_of_week || planSelection.day,
+        meal_type: planData?.meal_type || planSelection.mealType,
+        meal_id: planData?.meal_id || selectedMealForPlan.id,
+        meal_name: planData?.meal_name || selectedMealForPlan.name,
       });
     },
     onSuccess: () => {
@@ -187,6 +189,13 @@ export default function Meals() {
       setPlanDialog(false);
       setSelectedMealForPlan(null);
       setPlanSelection({ day: '', mealType: '' });
+    },
+  });
+
+  const updateMealPlanMutation = useMutation({
+    mutationFn: ({ id, updates }) => base44.entities.MealPlan.update(id, updates),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['mealPlans']);
     },
   });
 
@@ -864,14 +873,35 @@ export default function Meals() {
 
           <TabsContent value="plan">
             <div className="space-y-4">
-              <Button
-                onClick={() => addAllWeeklyIngredientsToGroceryMutation.mutate()}
-                disabled={addAllWeeklyIngredientsToGroceryMutation.isPending || mealPlans.length === 0}
-                className="w-full bg-gradient-to-r from-[#E91E8C] to-[#D01576] text-white whitespace-normal h-auto py-3"
-              >
-                <ShoppingCart className="w-4 h-4 mr-2 flex-shrink-0" />
-                <span className="text-sm md:text-base">{addAllWeeklyIngredientsToGroceryMutation.isPending ? 'Adding...' : 'Add All Weekly Meal Ingredients to Grocery List'}</span>
-              </Button>
+              <div className="flex gap-2">
+                <Button
+                  onClick={() => addAllWeeklyIngredientsToGroceryMutation.mutate()}
+                  disabled={addAllWeeklyIngredientsToGroceryMutation.isPending || mealPlans.length === 0}
+                  className="flex-1 bg-gradient-to-r from-[#E91E8C] to-[#D01576] text-white whitespace-normal h-auto py-3"
+                >
+                  <ShoppingCart className="w-4 h-4 mr-2 flex-shrink-0" />
+                  <span className="text-sm md:text-base">{addAllWeeklyIngredientsToGroceryMutation.isPending ? 'Adding...' : 'Add All Weekly Meal Ingredients to Grocery List'}</span>
+                </Button>
+                <Button
+                  onClick={() => setCalendarView(!calendarView)}
+                  variant="outline"
+                  className="border-pink-200 text-pink-600 hover:bg-pink-50 flex-shrink-0"
+                >
+                  {calendarView ? <List className="w-4 h-4" /> : <LayoutGrid className="w-4 h-4" />}
+                </Button>
+              </div>
+
+              {calendarView ? (
+                <WeeklyCalendar
+                  mealPlans={mealPlans}
+                  meals={meals}
+                  onUpdateMealPlan={(id, updates) => updateMealPlanMutation.mutate({ id, updates })}
+                  onDeleteMealPlan={(id) => deleteFromMealPlanMutation.mutate(id)}
+                  onAddMealToPlan={(planData) => addToMealPlanMutation.mutate(planData)}
+                  expandedSections={expandedSections}
+                  toggleSection={toggleSection}
+                />
+              ) : (
               {['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].map(day => {
                 const dayMeals = mealPlans.filter(plan => plan.day_of_week === day);
                 const dailyNutrients = calculateDailyNutrients(dayMeals);
@@ -1075,9 +1105,11 @@ export default function Meals() {
                     </CardContent>
                   </Card>
                 );
-              })}
-            </div>
-          </TabsContent>
+                })}
+                </div>
+                )}
+                </div>
+                </TabsContent>
 
           <TabsContent value="grocery" className="space-y-4">
             {groceries.length > 0 && (
