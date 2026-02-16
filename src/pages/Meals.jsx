@@ -51,11 +51,26 @@ export default function Meals() {
   });
 
   const staples = [
-    'salt', 'pepper', 'butter', 'oil', 'olive oil', 'vegetable oil', 'garlic', 'onion',
-    'water', 'milk', 'sugar', 'flour', 'eggs', 'baking powder', 'baking soda', 'vanilla extract',
-    'cinnamon', 'paprika', 'cumin', 'oregano', 'basil', 'thyme', 'rosemary', 'parsley',
-    'honey', 'soy sauce', 'vinegar', 'lemon juice', 'lime juice', 'worcestershire sauce',
-    'hot sauce', 'mayonnaise', 'ketchup', 'mustard', 'cornstarch'
+    // Basic seasonings
+    'salt', 'pepper', 'black pepper', 'sea salt', 'kosher salt', 'garlic salt', 'onion powder', 'garlic powder',
+    // Oils and fats
+    'butter', 'oil', 'olive oil', 'vegetable oil', 'canola oil', 'coconut oil', 'cooking spray',
+    // Basic produce
+    'garlic', 'onion', 'onions', 'lemon', 'lime',
+    // Liquids
+    'water', 'milk', 'broth', 'stock', 'chicken broth', 'beef broth', 'vegetable broth',
+    // Baking basics
+    'sugar', 'brown sugar', 'flour', 'all-purpose flour', 'baking powder', 'baking soda', 'vanilla extract', 'vanilla', 'yeast',
+    // Herbs and spices
+    'cinnamon', 'paprika', 'cumin', 'oregano', 'basil', 'thyme', 'rosemary', 'parsley', 'dill', 'sage', 'bay leaf', 'bay leaves',
+    'chili powder', 'cayenne', 'ginger', 'nutmeg', 'cloves', 'cardamom', 'turmeric', 'coriander', 'red pepper flakes', 'italian seasoning',
+    // Condiments and sauces
+    'honey', 'soy sauce', 'vinegar', 'balsamic vinegar', 'apple cider vinegar', 'white vinegar', 'rice vinegar',
+    'lemon juice', 'lime juice', 'worcestershire sauce', 'hot sauce', 'mayonnaise', 'ketchup', 'mustard', 'dijon mustard',
+    // Starches and grains
+    'rice', 'white rice', 'brown rice', 'pasta', 'bread', 'breadcrumbs', 'panko',
+    // Other basics
+    'eggs', 'cornstarch', 'corn starch', 'tomato paste', 'chicken stock', 'beef stock'
   ];
 
   const filterStaples = (ingredients) => {
