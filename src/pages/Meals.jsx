@@ -902,7 +902,7 @@ export default function Meals() {
                           onClick={() => mealPlans.forEach(plan => deleteFromMealPlanMutation.mutate(plan.id))}
                           disabled={deleteFromMealPlanMutation.isPending || mealPlans.length === 0}
                           variant="outline"
-                          className="border-red-200 text-red-600 hover:bg-red-50"
+                          className="max-w-20 border-red-200 text-red-600 hover:bg-red-50 text-xs h-auto py-3 whitespace-normal"
                         >
                           Clear Plan
                         </Button>
