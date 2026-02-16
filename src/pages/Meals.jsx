@@ -888,15 +888,25 @@ export default function Meals() {
           </TabsContent>
 
           <TabsContent value="plan">
-            <div className="space-y-4">
-              <Button
-                onClick={() => addAllWeeklyIngredientsToGroceryMutation.mutate()}
-                disabled={addAllWeeklyIngredientsToGroceryMutation.isPending || mealPlans.length === 0}
-                className="w-full bg-gradient-to-r from-[#E91E8C] to-[#D01576] text-white whitespace-normal h-auto py-3"
-              >
-                <ShoppingCart className="w-4 h-4 mr-2 flex-shrink-0" />
-                <span className="text-sm md:text-base">{addAllWeeklyIngredientsToGroceryMutation.isPending ? 'Adding...' : 'Add All Weekly Meal Ingredients to Grocery List'}</span>
-              </Button>
+                    <div className="space-y-4">
+                      <div className="flex gap-2">
+                        <Button
+                          onClick={() => addAllWeeklyIngredientsToGroceryMutation.mutate()}
+                          disabled={addAllWeeklyIngredientsToGroceryMutation.isPending || mealPlans.length === 0}
+                          className="flex-1 bg-gradient-to-r from-[#E91E8C] to-[#D01576] text-white whitespace-normal h-auto py-3"
+                        >
+                          <ShoppingCart className="w-4 h-4 mr-2 flex-shrink-0" />
+                          <span className="text-sm md:text-base">{addAllWeeklyIngredientsToGroceryMutation.isPending ? 'Adding...' : 'Add All Weekly Meal Ingredients to Grocery List'}</span>
+                        </Button>
+                        <Button
+                          onClick={() => mealPlans.forEach(plan => deleteFromMealPlanMutation.mutate(plan.id))}
+                          disabled={deleteFromMealPlanMutation.isPending || mealPlans.length === 0}
+                          variant="outline"
+                          className="border-red-200 text-red-600 hover:bg-red-50"
+                        >
+                          Clear Plan
+                        </Button>
+                      </div>
               {['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].map(day => {
                 const dayMeals = mealPlans.filter(plan => plan.day_of_week === day);
                 const dailyNutrients = calculateDailyNutrients(dayMeals);
