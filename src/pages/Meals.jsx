@@ -28,6 +28,7 @@ export default function Meals() {
     const [selectedMealTypes, setSelectedMealTypes] = useState([]);
     const [selectedRatings, setSelectedRatings] = useState([]);
     const [showFilters, setShowFilters] = useState(false);
+    const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
     const [appliedProteins, setAppliedProteins] = useState([]);
             const [appliedMealTypes, setAppliedMealTypes] = useState([]);
             const [appliedRatings, setAppliedRatings] = useState([]);
@@ -424,7 +425,8 @@ export default function Meals() {
     const proteinMatch = appliedProteins.length === 0 || (meal.protein_type && appliedProteins.some(p => meal.protein_type.split(',').map(x => x.trim()).includes(p)));
     const typeMatch = appliedMealTypes.length === 0 || appliedMealTypes.some(t => meal.type.split(',').map(x => x.trim()).includes(t));
     const ratingMatch = appliedRatings.length === 0 || appliedRatings.includes(meal.rating || 0);
-    return proteinMatch && typeMatch && ratingMatch;
+    const favoritesMatch = !showFavoritesOnly || (meal.rating === 5);
+    return proteinMatch && typeMatch && ratingMatch && favoritesMatch;
   });
 
   const handleSaveFilters = () => {
@@ -541,7 +543,7 @@ export default function Meals() {
             </h2>
 
             <div className="space-y-4">
-              <div className="flex flex-wrap gap-3 items-start">
+              <div className="flex flex-wrap gap-2 items-start">
                 <Button
                   onClick={() => setShowFilters(!showFilters)}
                   variant="outline"
@@ -551,22 +553,33 @@ export default function Meals() {
                   Filter
                 </Button>
                 <Button
+                  onClick={() => setShowFavoritesOnly(!showFavoritesOnly)}
+                  variant="outline"
+                  className={`${showFavoritesOnly ? 'bg-pink-100 border-pink-300' : 'border-pink-200'} text-pink-600 hover:bg-pink-50`}
+                  size="sm"
+                >
+                  <Star className={`w-4 h-4 mr-1 ${showFavoritesOnly ? 'fill-pink-600' : ''}`} />
+                  Favorites
+                </Button>
+                <Button
                   onClick={() => generateMealPlanMutation.mutate()}
                   disabled={generateMealPlanMutation.isPending}
                   variant="outline"
                   className="border-pink-200 text-pink-600 hover:bg-pink-50"
                   size="sm"
                 >
-                  <Sparkles className="w-4 h-4 mr-2" />
-                  {generateMealPlanMutation.isPending ? 'Generating...' : 'AI Meal Idea'}
+                  <Sparkles className="w-4 h-4 mr-1" />
+                  <span className="hidden sm:inline">AI Meal Idea</span>
+                  <span className="sm:hidden">AI Idea</span>
                 </Button>
                 <Button
                   onClick={() => setShowMealDialog(true)}
                   className="bg-gradient-to-r from-[#E91E8C] to-[#D01576] text-white"
                   size="sm"
                 >
-                  <Plus className="w-4 h-4 mr-2" />
-                  Add Meal
+                  <Plus className="w-4 h-4 mr-1" />
+                  <span className="hidden sm:inline">Add Meal</span>
+                  <span className="sm:hidden">Add</span>
                 </Button>
               </div>
 
