@@ -699,32 +699,44 @@ export default function Meals() {
                                 </div>
                                 {isExpanded && (
                                   <div className="space-y-3 pt-2 border-t border-pink-200">
+                                    {mealDetails?.photo_url && (
+                                      <div className="w-full h-48 rounded-lg overflow-hidden">
+                                        <img src={mealDetails.photo_url} alt={mealDetails.name} className="w-full h-full object-cover" />
+                                      </div>
+                                    )}
+                                    {mealDetails?.cooking_method && (
+                                      <div className="bg-orange-100 text-orange-700 text-xs px-3 py-1 rounded-full font-medium w-fit">
+                                        {mealDetails.cooking_method === 'oven' && `${mealDetails.cooking_temperature_or_heat} • ${mealDetails.cook_time}m`}
+                                        {mealDetails.cooking_method === 'stovetop' && `Heat ${mealDetails.cooking_temperature_or_heat} • ${mealDetails.cook_time}m`}
+                                        {mealDetails.cooking_method === 'microwave' && `Microwave ${mealDetails.cook_time}m`}
+                                      </div>
+                                    )}
                                     {mealDetails?.ingredients && (
-                                                <div>
-                                                  <h4 className="font-medium text-gray-900 mb-2">Ingredients:</h4>
-                                                  <ul className="text-sm text-gray-600 space-y-1">
-                                                    {mealDetails.ingredients.map((ing, idx) => (
-                                                      <li key={idx} className="flex gap-2">
-                                                        <span className="flex-shrink-0">•</span>
-                                                        <span>{ing}</span>
-                                                      </li>
-                                                    ))}
-                                                  </ul>
-                                                </div>
-                                              )}
+                                      <div>
+                                        <h4 className="font-medium text-gray-900 mb-2">Ingredients:</h4>
+                                        <ul className="text-sm text-gray-600 space-y-1">
+                                          {mealDetails.ingredients.map((ing, idx) => (
+                                            <li key={idx} className="flex gap-2">
+                                              <span className="flex-shrink-0">•</span>
+                                              <span>{ing}</span>
+                                            </li>
+                                          ))}
+                                        </ul>
+                                      </div>
+                                    )}
                                     {mealDetails?.instructions && (
-                                                <div>
-                                                  <h4 className="font-medium text-gray-900 mb-2">Instructions:</h4>
-                                                  <ul className="text-sm text-gray-600 space-y-1">
-                                                    {mealDetails.instructions.split(/(?<=[.!?])\s+/).map((sentence, idx) => (
-                                                      <li key={idx} className="flex gap-2">
-                                                        <span className="flex-shrink-0">•</span>
-                                                        <span>{sentence.trim()}</span>
-                                                      </li>
-                                                    ))}
-                                                  </ul>
-                                                </div>
-                                              )}
+                                      <div>
+                                        <h4 className="font-medium text-gray-900 mb-2">Instructions:</h4>
+                                        <ul className="text-sm text-gray-600 space-y-1">
+                                          {mealDetails.instructions.split(/(?<=[.!?])\s+/).map((sentence, idx) => (
+                                            <li key={idx} className="flex gap-2">
+                                              <span className="flex-shrink-0">•</span>
+                                              <span>{sentence.trim()}</span>
+                                            </li>
+                                          ))}
+                                        </ul>
+                                      </div>
+                                    )}
                                     {mealDetails?.recipe_url && (
                                       <a
                                         href={mealDetails.recipe_url}
