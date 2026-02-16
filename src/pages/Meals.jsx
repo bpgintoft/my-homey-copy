@@ -975,7 +975,7 @@ export default function Meals() {
                                   <div className="space-y-3 pt-2 border-t border-pink-200">
                                     {mealDetails?.photo_url && (
                                       <div className="w-full h-48 rounded-lg overflow-hidden">
-                                        <img src={mealDetails.photo_url} alt={mealDetails.name} className="w-full h-full object-cover" />
+                                        <img src={getMediumUrl(mealDetails.photo_url)} alt={mealDetails.name} className="w-full h-full object-cover" />
                                       </div>
                                     )}
                                     {mealDetails?.cooking_method && (
