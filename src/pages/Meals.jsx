@@ -279,6 +279,9 @@ export default function Meals() {
           const weekStart = new Date();
           weekStart.setDate(weekStart.getDate() - weekStart.getDay());
 
+          // First, collect and combine all ingredients
+          const ingredientCounts = {};
+
           for (const plan of mealPlans) {
             const mealDetails = meals.find(m => m.id === plan.meal_id);
             if (mealDetails?.ingredients) {
@@ -287,21 +290,32 @@ export default function Meals() {
                 const cleanedName = cleanIngredientName(ingredient);
                 if (!cleanedName) continue;
 
-                const existing = groceries.find(g => g.name.toLowerCase() === cleanedName.toLowerCase());
-                if (existing) {
-                  const qty = parseInt(existing.quantity) || 1;
-                  await base44.entities.GroceryItem.update(existing.id, { quantity: (qty + 1).toString() });
-                } else {
-                  const category = await categorizeMutation.mutateAsync(cleanedName);
-                  await base44.entities.GroceryItem.create({
-                    name: cleanedName,
-                    category: category || 'other',
-                    quantity: '1',
-                    purchased: false,
-                    week_start_date: weekStart.toISOString().split('T')[0],
-                  });
-                }
+                const lowerName = cleanedName.toLowerCase();
+                ingredientCounts[lowerName] = {
+                  name: cleanedName,
+                  count: (ingredientCounts[lowerName]?.count || 0) + 1
+                };
               }
+            }
+          }
+
+          // Now update/create grocery items with combined quantities
+          for (const ingredientData of Object.values(ingredientCounts)) {
+            const existing = groceries.find(g => g.name.toLowerCase() === ingredientData.name.toLowerCase());
+            if (existing) {
+              const qty = parseInt(existing.quantity) || 1;
+              await base44.entities.GroceryItem.update(existing.id, { 
+                quantity: (qty + ingredientData.count).toString() 
+              });
+            } else {
+              const category = await categorizeMutation.mutateAsync(ingredientData.name);
+              await base44.entities.GroceryItem.create({
+                name: ingredientData.name,
+                category: category || 'other',
+                quantity: ingredientData.count.toString(),
+                purchased: false,
+                week_start_date: weekStart.toISOString().split('T')[0],
+              });
             }
           }
         },
