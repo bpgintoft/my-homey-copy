@@ -6,9 +6,9 @@ const proteinTypes = [
   { key: 'beef', emoji: '🥩' },
   { key: 'chicken', emoji: '🍗' },
   { key: 'fish', emoji: '🐟' },
+  { key: 'pork', emoji: '🍖' },
   { key: 'beans', emoji: '🫘' },
   { key: 'vegetarian', emoji: '🥬' },
-  { key: 'pork', emoji: '🍖' },
   { key: 'turkey', emoji: '🦃' },
   { key: 'eggs', emoji: '🥚' }
 ];
