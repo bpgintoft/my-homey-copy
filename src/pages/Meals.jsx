@@ -471,9 +471,9 @@ export default function Meals() {
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                 >
-                  <Card className="bg-white border-0 shadow-sm hover:shadow-md transition-shadow cursor-pointer" onClick={() => setExpandedMealId(expandedMealId === meal.id ? null : meal.id)}>
+                  <Card className="bg-white border-0 shadow-sm hover:shadow-md transition-shadow cursor-pointer overflow-hidden" onClick={() => setExpandedMealId(expandedMealId === meal.id ? null : meal.id)}>
                     <CardContent className="p-4">
-                      <div className="flex gap-3 mb-3">
+                      <div className="flex gap-3 mb-3 overflow-hidden">
                         {meal.photo_url && (
                           <div className="w-16 h-16 flex-shrink-0 rounded-lg overflow-hidden">
                             <img src={meal.photo_url} alt={meal.name} className="w-full h-full object-cover" />
