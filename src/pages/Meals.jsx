@@ -35,6 +35,7 @@ export default function Meals() {
             const [uploadingImage, setUploadingImage] = useState(false);
             const [expandedSections, setExpandedSections] = useState({});
             const [calendarView, setCalendarView] = useState(true);
+            const [shoppingMode, setShoppingMode] = useState(false);
             const queryClient = useQueryClient();
 
   const { data: meals = [] } = useQuery({
@@ -271,6 +272,13 @@ export default function Meals() {
 
   const deleteGroceryItemMutation = useMutation({
       mutationFn: (id) => base44.entities.GroceryItem.delete(id),
+      onSuccess: () => {
+        queryClient.invalidateQueries(['groceries']);
+      },
+    });
+
+    const togglePurchasedMutation = useMutation({
+      mutationFn: ({ id, purchased }) => base44.entities.GroceryItem.update(id, { purchased }),
       onSuccess: () => {
         queryClient.invalidateQueries(['groceries']);
       },
@@ -1114,15 +1122,26 @@ export default function Meals() {
 
           <TabsContent value="grocery" className="space-y-4">
             {groceries.length > 0 && (
-              <Button
-                onClick={() => clearAllGroceriesMutation.mutate()}
-                disabled={clearAllGroceriesMutation.isPending}
-                variant="outline"
-                className="w-full border-red-200 text-red-600 hover:bg-red-50"
-              >
-                <Trash2 className="w-4 h-4 mr-2" />
-                {clearAllGroceriesMutation.isPending ? 'Clearing...' : 'Clear Entire Grocery List'}
-              </Button>
+              <div className="flex gap-2">
+                <Button
+                  onClick={() => setShoppingMode(!shoppingMode)}
+                  className="flex-1 bg-gradient-to-r from-[#E91E8C] to-[#D01576] text-white"
+                >
+                  <ShoppingCart className="w-4 h-4 mr-2" />
+                  {shoppingMode ? 'Exit Shopping Mode' : 'Shopping Mode'}
+                </Button>
+                {!shoppingMode && (
+                  <Button
+                    onClick={() => clearAllGroceriesMutation.mutate()}
+                    disabled={clearAllGroceriesMutation.isPending}
+                    variant="outline"
+                    className="flex-1 border-red-200 text-red-600 hover:bg-red-50"
+                  >
+                    <Trash2 className="w-4 h-4 mr-2" />
+                    {clearAllGroceriesMutation.isPending ? 'Clearing...' : 'Clear List'}
+                  </Button>
+                )}
+              </div>
             )}
             {groceries.length === 0 ? (
               <Card className="bg-white border-0 shadow-sm p-8 text-center">
@@ -1130,6 +1149,68 @@ export default function Meals() {
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">Grocery List</h3>
                 <p className="text-gray-500">No items yet - add ingredients from your meal plan</p>
               </Card>
+            ) : shoppingMode ? (
+              <div className="space-y-4">
+                {[
+                  { key: 'produce', label: 'Produce', emoji: '🥬' },
+                  { key: 'meat_seafood', label: 'Meat & Seafood', emoji: '🥩' },
+                  { key: 'dairy_eggs', label: 'Dairy & Eggs', emoji: '🥛' },
+                  { key: 'bakery', label: 'Bakery', emoji: '🥖' },
+                  { key: 'pantry', label: 'Pantry & Dry Goods', emoji: '🥫' },
+                  { key: 'frozen', label: 'Frozen Foods', emoji: '❄️' },
+                  { key: 'beverages', label: 'Beverages', emoji: '🥤' },
+                  { key: 'deli', label: 'Deli', emoji: '🧀' },
+                  { key: 'other', label: 'Other', emoji: '🛒' }
+                ].map(({ key, label, emoji }) => {
+                  const categoryItems = groceries.filter(item => item.category === key);
+                  const unpurchased = categoryItems.filter(item => !item.purchased);
+                  const purchased = categoryItems.filter(item => item.purchased);
+                  if (categoryItems.length === 0) return null;
+
+                  return (
+                    <Card key={key} className="bg-white border-0 shadow-sm">
+                      <CardContent className="p-5">
+                        <h3 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                          <span className="text-2xl">{emoji}</span>
+                          <span className="text-lg">{label}</span>
+                        </h3>
+                        <div className="space-y-2">
+                          {unpurchased.map((item) => (
+                            <div 
+                              key={item.id} 
+                              onClick={() => togglePurchasedMutation.mutate({ id: item.id, purchased: true })}
+                              className="flex items-center gap-4 bg-white border-2 border-gray-200 p-4 rounded-xl cursor-pointer hover:bg-pink-50 hover:border-pink-300 transition-all active:scale-98"
+                            >
+                              <div className="w-7 h-7 rounded-full border-2 border-gray-300 flex-shrink-0"></div>
+                              <div className="flex-1">
+                                <div className="text-base font-medium text-gray-900">{item.name}</div>
+                                <div className="text-sm text-gray-500">Qty: {item.quantity || 1}</div>
+                              </div>
+                            </div>
+                          ))}
+                          {purchased.map((item) => (
+                            <div 
+                              key={item.id} 
+                              onClick={() => togglePurchasedMutation.mutate({ id: item.id, purchased: false })}
+                              className="flex items-center gap-4 bg-gray-50 p-4 rounded-xl cursor-pointer hover:bg-gray-100 transition-all opacity-60"
+                            >
+                              <div className="w-7 h-7 rounded-full bg-green-500 flex-shrink-0 flex items-center justify-center">
+                                <svg className="w-4 h-4 text-white" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
+                                  <path d="M5 13l4 4L19 7"></path>
+                                </svg>
+                              </div>
+                              <div className="flex-1">
+                                <div className="text-base font-medium text-gray-500 line-through">{item.name}</div>
+                                <div className="text-sm text-gray-400">Qty: {item.quantity || 1}</div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  );
+                })}
+              </div>
             ) : (
               <div className="space-y-4">
                 {[
