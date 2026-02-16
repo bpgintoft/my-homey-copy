@@ -41,7 +41,7 @@ export default function Home() {
       href: 'Meals', 
       count: thisWeekMeals,
       imageKey: 'meals',
-      bgColor: 'bg-gradient-to-br from-pink-200 to-pink-300'
+      bgColor: 'bg-gradient-to-br from-blue-200 to-blue-300'
     },
     { 
       title: 'Kids Activities', 
@@ -55,14 +55,14 @@ export default function Home() {
       href: 'House', 
       count: totalAppliances,
       imageKey: 'house',
-      bgColor: 'bg-gradient-to-br from-green-200 to-green-300'
+      bgColor: 'bg-gradient-to-br from-blue-200 to-blue-300'
     },
     { 
       title: 'History', 
       href: 'History', 
       count: 0,
       imageKey: 'history',
-      bgColor: 'bg-gradient-to-br from-amber-200 to-amber-300'
+      bgColor: 'bg-gradient-to-br from-blue-200 to-blue-300'
     },
   ];
 
