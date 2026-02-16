@@ -582,6 +582,11 @@ export default function Meals() {
                 </Button>
               </div>
 
+              <ProteinTypeFilter 
+                selectedProteins={appliedProteins}
+                onSelectionChange={setAppliedProteins}
+              />
+
               {showFilters && (
                 <motion.div
                   initial={{ opacity: 0, height: 0 }}
