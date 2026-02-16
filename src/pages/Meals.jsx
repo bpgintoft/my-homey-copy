@@ -671,10 +671,10 @@ export default function Meals() {
                     <CardContent className="p-4">
                       <div className="flex gap-3">
                         {meal.photo_url && (
-                          <div className="w-16 h-16 flex-shrink-0 rounded-lg overflow-hidden">
-                            <img src={meal.photo_url} alt={meal.name} className="w-full h-full object-cover" />
-                          </div>
-                        )}
+                            <div className="w-16 h-16 flex-shrink-0 rounded-lg overflow-hidden">
+                              <img src={getThumbnailUrl(meal.photo_url)} alt={meal.name} className="w-full h-full object-cover" />
+                            </div>
+                          )}
                         <div className="flex-1 min-w-0 flex flex-col gap-1">
                           <div className="flex items-start justify-between gap-2">
                             <h3 className="font-semibold text-gray-900 truncate min-w-0 flex-1">{meal.name}</h3>
