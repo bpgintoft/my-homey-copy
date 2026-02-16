@@ -564,12 +564,11 @@ export default function Meals() {
                   onClick={() => generateMealPlanMutation.mutate()}
                   disabled={generateMealPlanMutation.isPending}
                   variant="outline"
-                  className="border-pink-200 text-pink-600 hover:bg-pink-50 px-2 flex-shrink-0 text-xs"
+                  className="border-pink-200 text-pink-600 hover:bg-pink-50 px-2 flex-shrink-0 text-xs whitespace-nowrap"
                   size="sm"
                 >
                   <Sparkles className="w-4 h-4 mr-1" />
-                  <span className="hidden sm:inline">AI Meal Idea</span>
-                  <span className="sm:hidden">AI Meal</span>
+                  AI Meal Idea
                 </Button>
                 <Button
                   onClick={() => setShowMealDialog(true)}
