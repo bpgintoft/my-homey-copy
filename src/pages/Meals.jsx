@@ -490,25 +490,23 @@ export default function Meals() {
                               <Trash2 className="w-4 h-4" />
                             </button>
                           </div>
-                          <div className="flex items-center justify-between gap-2">
-                            <div className="flex flex-wrap gap-2 items-center">
-                              <Badge className="bg-pink-100 text-pink-700 border-0 text-xs">
-                                {meal.type}
-                              </Badge>
-                              <div className="flex items-center gap-1 text-xs text-gray-500">
-                                <Clock className="w-3 h-3" />
-                                {(meal.prep_time || 0) + (meal.cook_time || 0)}m
-                              </div>
-                              <div className="flex items-center gap-1 text-xs text-gray-500">
-                                <Users className="w-3 h-3" />
-                                {meal.servings || 4}
-                              </div>
-                            </div>
+                          <div className="flex items-center gap-2 flex-wrap">
                             {meal.protein_type && (
                               <div className="flex-shrink-0">
                                 {getProteinIcon(meal.protein_type)}
                               </div>
                             )}
+                            <Badge className="bg-pink-100 text-pink-700 border-0 text-xs">
+                              {meal.type}
+                            </Badge>
+                            <div className="flex items-center gap-1 text-xs text-gray-500">
+                              <Clock className="w-3 h-3" />
+                              {(meal.prep_time || 0) + (meal.cook_time || 0)}m
+                            </div>
+                            <div className="flex items-center gap-1 text-xs text-gray-500">
+                              <Users className="w-3 h-3" />
+                              {meal.servings || 4}
+                            </div>
                           </div>
                         </div>
                       </div>
