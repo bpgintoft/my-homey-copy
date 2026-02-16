@@ -7,10 +7,10 @@ const proteinTypes = [
   { key: 'chicken', emoji: '🍗' },
   { key: 'fish', emoji: '🐟' },
   { key: 'pork', emoji: '🍖' },
-  { key: 'beans', emoji: '🫘' },
-  { key: 'vegetarian', emoji: '🥬' },
   { key: 'turkey', emoji: '🦃' },
-  { key: 'eggs', emoji: '🥚' }
+  { key: 'eggs', emoji: '🥚' },
+  { key: 'beans', emoji: '🫘' },
+  { key: 'vegetarian', emoji: '🥬' }
 ];
 
 export default function ProteinTypeFilter({ selectedProteins, onSelectionChange }) {
