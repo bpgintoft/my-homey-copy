@@ -268,11 +268,58 @@ export default function Meals() {
     });
 
     const updateGroceryNameMutation = useMutation({
-      mutationFn: ({ id, name }) => base44.entities.GroceryItem.update(id, { name }),
-      onSuccess: () => {
-        queryClient.invalidateQueries(['groceries']);
-      },
-    });
+        mutationFn: ({ id, name }) => base44.entities.GroceryItem.update(id, { name }),
+        onSuccess: () => {
+          queryClient.invalidateQueries(['groceries']);
+        },
+      });
+
+      const addAllWeeklyIngredientsToGroceryMutation = useMutation({
+        mutationFn: async () => {
+          const weekStart = new Date();
+          weekStart.setDate(weekStart.getDate() - weekStart.getDay());
+
+          for (const plan of mealPlans) {
+            const mealDetails = meals.find(m => m.id === plan.meal_id);
+            if (mealDetails?.ingredients) {
+              const filteredIngredients = filterStaples(mealDetails.ingredients);
+              for (const ingredient of filteredIngredients) {
+                const cleanedName = cleanIngredientName(ingredient);
+                if (!cleanedName) continue;
+
+                const existing = groceries.find(g => g.name.toLowerCase() === cleanedName.toLowerCase());
+                if (existing) {
+                  const qty = parseInt(existing.quantity) || 1;
+                  await base44.entities.GroceryItem.update(existing.id, { quantity: (qty + 1).toString() });
+                } else {
+                  const category = await categorizeMutation.mutateAsync(cleanedName);
+                  await base44.entities.GroceryItem.create({
+                    name: cleanedName,
+                    category: category || 'other',
+                    quantity: '1',
+                    purchased: false,
+                    week_start_date: weekStart.toISOString().split('T')[0],
+                  });
+                }
+              }
+            }
+          }
+        },
+        onSuccess: () => {
+          queryClient.invalidateQueries(['groceries']);
+        },
+      });
+
+      const clearAllGroceriesMutation = useMutation({
+        mutationFn: async () => {
+          for (const item of groceries) {
+            await base44.entities.GroceryItem.delete(item.id);
+          }
+        },
+        onSuccess: () => {
+          queryClient.invalidateQueries(['groceries']);
+        },
+      });
 
   const generateMealPlanMutation = useMutation({
     mutationFn: async () => {
@@ -803,6 +850,14 @@ export default function Meals() {
 
           <TabsContent value="plan">
             <div className="space-y-4">
+              <Button
+                onClick={() => addAllWeeklyIngredientsToGroceryMutation.mutate()}
+                disabled={addAllWeeklyIngredientsToGroceryMutation.isPending || mealPlans.length === 0}
+                className="w-full bg-gradient-to-r from-[#E91E8C] to-[#D01576] text-white"
+              >
+                <ShoppingCart className="w-4 h-4 mr-2" />
+                {addAllWeeklyIngredientsToGroceryMutation.isPending ? 'Adding...' : 'Add All Weekly Meal Ingredients to Grocery List'}
+              </Button>
               {['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].map(day => {
                 const dayMeals = mealPlans.filter(plan => plan.day_of_week === day);
                 const dailyNutrients = calculateDailyNutrients(dayMeals);
@@ -1011,6 +1066,17 @@ export default function Meals() {
           </TabsContent>
 
           <TabsContent value="grocery" className="space-y-4">
+            {groceries.length > 0 && (
+              <Button
+                onClick={() => clearAllGroceriesMutation.mutate()}
+                disabled={clearAllGroceriesMutation.isPending}
+                variant="outline"
+                className="w-full border-red-200 text-red-600 hover:bg-red-50"
+              >
+                <Trash2 className="w-4 h-4 mr-2" />
+                {clearAllGroceriesMutation.isPending ? 'Clearing...' : 'Clear Entire Grocery List'}
+              </Button>
+            )}
             {groceries.length === 0 ? (
               <Card className="bg-white border-0 shadow-sm p-8 text-center">
                 <ShoppingCart className="w-16 h-16 text-gray-300 mx-auto mb-4" />
