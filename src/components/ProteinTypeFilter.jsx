@@ -31,7 +31,7 @@ export default function ProteinTypeFilter({ selectedProteins, onSelectionChange 
         <button
           key={key}
           onClick={() => toggleProtein(key)}
-          className={`flex-shrink-0 relative w-12 h-12 rounded-lg flex items-center justify-center text-2xl transition-all ${
+          className={`flex-shrink-0 relative w-9 h-9 md:w-12 md:h-12 rounded-lg flex items-center justify-center text-lg md:text-2xl transition-all ${
             selectedProteins.includes(key)
               ? 'bg-pink-100 border-2 border-pink-500'
               : 'bg-white border-2 border-gray-200 hover:border-pink-200'
@@ -41,7 +41,7 @@ export default function ProteinTypeFilter({ selectedProteins, onSelectionChange 
           {emoji}
           {selectedProteins.includes(key) && (
             <div className="absolute -top-1 -right-1 bg-pink-500 rounded-full p-0.5 flex items-center justify-center">
-              <Check className="w-3 h-3 text-white" />
+              <Check className="w-2.5 h-2.5 text-white" />
             </div>
           )}
         </button>
