@@ -543,11 +543,11 @@ export default function Meals() {
             </h2>
 
             <div className="space-y-4">
-              <div className="flex gap-1.5 items-start">
+              <div className="flex gap-1.5 items-start overflow-x-auto">
                 <Button
                   onClick={() => setShowFilters(!showFilters)}
                   variant="outline"
-                  className="border-pink-200 text-pink-600 hover:bg-pink-50 px-3"
+                  className="border-pink-200 text-pink-600 hover:bg-pink-50 px-2.5 flex-shrink-0"
                   size="sm"
                 >
                   Filter
@@ -555,7 +555,7 @@ export default function Meals() {
                 <Button
                   onClick={() => setShowFavoritesOnly(!showFavoritesOnly)}
                   variant="outline"
-                  className={`${showFavoritesOnly ? 'bg-pink-100 border-pink-300' : 'border-pink-200'} text-pink-600 hover:bg-pink-50 px-2`}
+                  className={`${showFavoritesOnly ? 'bg-pink-100 border-pink-300' : 'border-pink-200'} text-pink-600 hover:bg-pink-50 px-2 flex-shrink-0`}
                   size="sm"
                 >
                   <Star className={`w-4 h-4 ${showFavoritesOnly ? 'fill-pink-600' : ''}`} />
@@ -565,20 +565,19 @@ export default function Meals() {
                   onClick={() => generateMealPlanMutation.mutate()}
                   disabled={generateMealPlanMutation.isPending}
                   variant="outline"
-                  className="border-pink-200 text-pink-600 hover:bg-pink-50 px-2"
+                  className="border-pink-200 text-pink-600 hover:bg-pink-50 px-2.5 flex-shrink-0"
                   size="sm"
                 >
-                  <Sparkles className="w-4 h-4" />
-                  <span className="hidden sm:inline ml-1">AI Meal Idea</span>
-                  <span className="sm:hidden ml-1">AI</span>
+                  <Sparkles className="w-4 h-4 mr-1" />
+                  AI Meal
                 </Button>
                 <Button
                   onClick={() => setShowMealDialog(true)}
-                  className="bg-gradient-to-r from-[#E91E8C] to-[#D01576] text-white px-3"
+                  className="bg-gradient-to-r from-[#E91E8C] to-[#D01576] text-white px-2.5 flex-shrink-0"
                   size="sm"
                 >
                   <Plus className="w-4 h-4 mr-1" />
-                  Add
+                  Add Meal
                 </Button>
               </div>
 
