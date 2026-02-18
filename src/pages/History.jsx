@@ -67,8 +67,8 @@ export default function History() {
           background-position: 0 0, 7px 7px;
         }
       `}</style>
-      <div className="history-banner-bg text-white py-12">
-        <div className="container mx-auto px-6">
+      <div className="history-banner-bg text-white py-12 relative">
+        <div className="container mx-auto px-6 relative z-10">
           <div className="flex items-center gap-3 mb-3">
             <HistoryIcon className="w-8 h-8" />
             <h1 className="text-4xl font-bold">Property History</h1>

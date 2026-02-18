@@ -97,20 +97,22 @@ export default function Home() {
             background-position: 0 0, 7px 7px;
           }
         `}</style>
-        <div className="relative h-40 md:h-48 banner-bg flex items-center justify-between px-4 md:px-12 gap-0">
-          <div className="flex-1">
-            <h1 className="text-2xl md:text-4xl font-bold text-gray-800 mb-1 md:mb-2">
-              Welcome Home
-            </h1>
-            <p className="text-sm md:text-lg text-gray-700">
-              1934 Church St
-            </p>
+        <div className="relative h-40 md:h-48 banner-bg">
+          <div className="relative z-10 flex items-center justify-between px-4 md:px-12 gap-0 h-full">
+            <div className="flex-1">
+              <h1 className="text-2xl md:text-4xl font-bold text-gray-800 mb-1 md:mb-2">
+                Welcome Home
+              </h1>
+              <p className="text-sm md:text-lg text-gray-700">
+                1934 Church St
+              </p>
+            </div>
+            <img 
+              src={familyImage} 
+              alt="Family Welcome"
+              className="h-40 md:h-56 w-auto object-cover flex-shrink-0"
+            />
           </div>
-          <img 
-            src={familyImage} 
-            alt="Family Welcome"
-            className="h-40 md:h-56 w-auto object-cover flex-shrink-0"
-          />
         </div>
       </div>
 
