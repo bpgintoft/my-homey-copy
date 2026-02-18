@@ -1033,152 +1033,114 @@ export default function Meals() {
                           </Popover>
                         )}
                       </div>
-                      {dayMeals.length === 0 ? (
-                        <p className="text-gray-500 text-sm">No meals planned</p>
-                      ) : (
-                        <div className="space-y-2">
-                          {dayMeals.map(plan => {
-                            const mealDetails = meals.find(m => m.id === plan.meal_id);
-                            const isExpanded = expandedMealId === `plan-${plan.id}`;
-                            return (
-                              <div 
-                                key={plan.id} 
-                                className="bg-pink-50 p-3 rounded-lg space-y-2 cursor-pointer hover:bg-pink-100 transition-colors"
-                                onClick={() => setExpandedMealId(isExpanded ? null : `plan-${plan.id}`)}
-                              >
-                                <div className="flex items-center justify-between">
-                                  <div className="flex-1">
-                                    <div className="text-sm font-medium text-gray-900">{plan.meal_name}</div>
-                                    <div className="text-xs text-gray-500 capitalize">{plan.meal_type}</div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
+                        {['breakfast', 'lunch', 'dinner', 'snack'].map(mealType => {
+                          const mealPlanEntry = dayMeals.find(plan => plan.meal_type === mealType);
+                          const mealForSlot = mealPlanEntry ? meals.find(m => m.id === mealPlanEntry.meal_id) : null;
+                          
+                          const sortedFilteredMealsForPicker = meals
+                            .filter(meal => meal.type.split(',').map(t => t.trim()).includes(mealType))
+                            .sort((a, b) => {
+                              if (a.rating !== b.rating) {
+                                return (b.rating || 0) - (a.rating || 0);
+                              }
+                              return a.name.localeCompare(b.name);
+                            });
+
+                          return (
+                            <div key={mealType} className="bg-gray-50 p-3 rounded-lg border border-gray-200">
+                              <h4 className="text-xs font-semibold text-gray-600 mb-2 capitalize">{mealType}</h4>
+                              {mealForSlot ? (
+                                <div
+                                  className="space-y-2 cursor-pointer hover:bg-gray-100 p-2 rounded-lg -m-2 transition-colors"
+                                  onClick={() => setExpandedMealId(expandedMealId === `plan-${mealPlanEntry.id}` ? null : `plan-${mealPlanEntry.id}`)}
+                                >
+                                  <div className="flex items-center justify-between">
+                                    <div className="flex-1 min-w-0">
+                                      <div className="text-sm font-medium text-gray-900 truncate">{mealForSlot.name}</div>
+                                    </div>
+                                    <button
+                                      onClick={(e) => { e.stopPropagation(); deleteFromMealPlanMutation.mutate(mealPlanEntry.id); }}
+                                      disabled={deleteFromMealPlanMutation.isPending}
+                                      className="text-gray-400 hover:text-red-500 transition-colors p-1 flex-shrink-0"
+                                    >
+                                      <Trash2 className="w-4 h-4" />
+                                    </button>
                                   </div>
-                                  <button
-                                    onClick={(e) => { e.stopPropagation(); deleteFromMealPlanMutation.mutate(plan.id); }}
-                                    disabled={deleteFromMealPlanMutation.isPending}
-                                    className="text-gray-400 hover:text-red-500 transition-colors p-1"
-                                  >
-                                    <Trash2 className="w-4 h-4" />
-                                  </button>
+                                  {expandedMealId === `plan-${mealPlanEntry.id}` && mealForSlot.photo_url && (
+                                    <div className="space-y-2 pt-2 border-t border-gray-200">
+                                      <div className="w-full h-24 rounded-lg overflow-hidden">
+                                        <img src={getThumbnailUrl(mealForSlot.photo_url)} alt={mealForSlot.name} className="w-full h-full object-cover" />
+                                      </div>
+                                      <div className="flex items-center gap-2 text-xs text-gray-500">
+                                        <Clock className="w-3 h-3" />
+                                        {(mealForSlot.prep_time || 0) + (mealForSlot.cook_time || 0)} min
+                                      </div>
+                                    </div>
+                                  )}
                                 </div>
-                                {isExpanded && (
-                                  <div className="space-y-3 pt-2 border-t border-pink-200">
-                                    {mealDetails?.photo_url && (
-                                      <div className="w-full h-48 rounded-lg overflow-hidden">
-                                        <img src={getMediumUrl(mealDetails.photo_url)} alt={mealDetails.name} className="w-full h-full object-cover" />
-                                      </div>
-                                    )}
-                                    {mealDetails?.cooking_method && (
-                                      <div className="bg-orange-100 text-orange-700 text-xs px-3 py-1 rounded-full font-medium w-fit">
-                                        {mealDetails.cooking_method === 'oven' && `${mealDetails.cooking_temperature_or_heat} • ${mealDetails.cook_time}m`}
-                                        {mealDetails.cooking_method === 'stovetop' && `Heat ${mealDetails.cooking_temperature_or_heat} • ${mealDetails.cook_time}m`}
-                                        {mealDetails.cooking_method === 'microwave' && `Microwave ${mealDetails.cook_time}m`}
-                                      </div>
-                                    )}
-
-                                    {mealDetails?.ingredients && (
-                                      <div>
-                                        <button
-                                          onClick={(e) => { e.stopPropagation(); toggleSection(plan.id, 'ingredients'); }}
-                                          className="flex items-center justify-between w-full py-2 px-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
-                                        >
-                                          <span className="font-medium text-gray-900">Ingredients</span>
-                                          {expandedSections[`${plan.id}-ingredients`] ? (
-                                            <ChevronUp className="w-4 h-4 text-gray-500" />
-                                          ) : (
-                                            <ChevronDown className="w-4 h-4 text-gray-500" />
-                                          )}
-                                        </button>
-                                        {expandedSections[`${plan.id}-ingredients`] && (
-                                          <ul className="text-sm text-gray-600 space-y-1 mt-2 px-3">
-                                            {mealDetails.ingredients.map((ing, idx) => (
-                                              <li key={idx} className="flex gap-2">
-                                                <span className="flex-shrink-0">•</span>
-                                                <span>{ing}</span>
-                                              </li>
-                                            ))}
-                                          </ul>
-                                        )}
-                                      </div>
-                                    )}
-
-                                    {mealDetails?.instructions && (
-                                      <div>
-                                        <button
-                                          onClick={(e) => { e.stopPropagation(); toggleSection(plan.id, 'directions'); }}
-                                          className="flex items-center justify-between w-full py-2 px-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
-                                        >
-                                          <span className="font-medium text-gray-900">Directions</span>
-                                          {expandedSections[`${plan.id}-directions`] ? (
-                                            <ChevronUp className="w-4 h-4 text-gray-500" />
-                                          ) : (
-                                            <ChevronDown className="w-4 h-4 text-gray-500" />
-                                          )}
-                                        </button>
-                                        {expandedSections[`${plan.id}-directions`] && (
-                                          <ul className="text-sm text-gray-600 space-y-1 mt-2 px-3">
-                                            {mealDetails.instructions.split(/(?<=[.!?])\s+/).map((sentence, idx) => (
-                                              <li key={idx} className="flex gap-2">
-                                                <span className="flex-shrink-0">•</span>
-                                                <span>{sentence.trim()}</span>
-                                              </li>
-                                            ))}
-                                          </ul>
-                                        )}
-                                      </div>
-                                    )}
-
-                                    {mealDetails?.nutrition && (
-                                      <div>
-                                        <button
-                                          onClick={(e) => { e.stopPropagation(); toggleSection(plan.id, 'nutrition'); }}
-                                          className="flex items-center justify-between w-full py-2 px-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
-                                        >
-                                          <span className="font-medium text-gray-900">Nutrition (per serving)</span>
-                                          {expandedSections[`${plan.id}-nutrition`] ? (
-                                            <ChevronUp className="w-4 h-4 text-gray-500" />
-                                          ) : (
-                                            <ChevronDown className="w-4 h-4 text-gray-500" />
-                                          )}
-                                        </button>
-                                        {expandedSections[`${plan.id}-nutrition`] && (
-                                          <div className="grid grid-cols-2 gap-2 text-sm text-gray-600 mt-2 px-3">
-                                            <div><span className="font-medium">{mealDetails.nutrition.calories}</span> cal</div>
-                                            <div><span className="font-medium">{mealDetails.nutrition.protein_g}g</span> protein</div>
-                                            <div><span className="font-medium">{mealDetails.nutrition.carbs_g}g</span> carbs</div>
-                                            <div><span className="font-medium">{mealDetails.nutrition.fat_g}g</span> fat</div>
-                                          </div>
-                                        )}
-                                      </div>
-                                    )}
-
-                                    {mealDetails?.recipe_url && (
-                                      <a
-                                        href={mealDetails.recipe_url}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="inline-flex items-center gap-2 text-sm text-pink-600 hover:text-pink-700 font-medium"
-                                      >
-                                        View Recipe <ExternalLink className="w-4 h-4" />
-                                      </a>
-                                    )}
-
-                                    {mealDetails?.ingredients && (
-                                      <Button
-                                        onClick={(e) => { e.stopPropagation(); addToGroceryListMutation.mutate(mealDetails); }}
-                                        disabled={addToGroceryListMutation.isPending}
-                                        size="sm"
-                                        className="w-full bg-white text-pink-700 hover:bg-pink-100 border border-pink-200"
-                                      >
-                                        <ShoppingCart className="w-4 h-4 mr-2" />
-                                        {addToGroceryListMutation.isPending ? 'Adding...' : 'Add Ingredients to Grocery'}
-                                      </Button>
-                                    )}
-                                  </div>
-                                )}
-                              </div>
-                            );
-                          })}
-                        </div>
-                      )}
+                              ) : (
+                                <Popover>
+                                  <PopoverTrigger asChild>
+                                    <Button
+                                      variant="ghost"
+                                      size="icon"
+                                      className="w-full h-16 border-2 border-dashed border-gray-300 text-gray-500 hover:bg-gray-100"
+                                    >
+                                      <Plus className="w-6 h-6" />
+                                    </Button>
+                                  </PopoverTrigger>
+                                  <PopoverContent className="w-80 p-0">
+                                    <div className="p-3 border-b border-gray-200">
+                                      <h4 className="font-semibold text-gray-900 capitalize">Add {mealType}</h4>
+                                    </div>
+                                    <div className="max-h-60 overflow-y-auto">
+                                      {sortedFilteredMealsForPicker.length === 0 ? (
+                                        <p className="p-3 text-sm text-gray-500">No {mealType} meal ideas found.</p>
+                                      ) : (
+                                        sortedFilteredMealsForPicker.map(meal => (
+                                          <button
+                                            key={meal.id}
+                                            onClick={async () => {
+                                              const weekStart = new Date();
+                                              weekStart.setDate(weekStart.getDate() - weekStart.getDay());
+                                              await base44.entities.MealPlan.create({
+                                                week_start_date: weekStart.toISOString().split('T')[0],
+                                                day_of_week: day,
+                                                meal_type: mealType,
+                                                meal_id: meal.id,
+                                                meal_name: meal.name,
+                                              });
+                                              queryClient.invalidateQueries(['mealPlans']);
+                                            }}
+                                            className="flex items-center gap-2 p-3 w-full text-left hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-b-0"
+                                          >
+                                            {meal.photo_url && (
+                                              <img src={getThumbnailUrl(meal.photo_url)} alt={meal.name} className="w-10 h-10 rounded-md object-cover flex-shrink-0" />
+                                            )}
+                                            <div className="flex-1 min-w-0">
+                                              <p className="text-sm font-medium text-gray-900 truncate">{meal.name}</p>
+                                              {meal.rating > 0 && (
+                                                <div className="flex items-center gap-1 text-xs text-gray-500">
+                                                  <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
+                                                  <span>{meal.rating}</span>
+                                                </div>
+                                              )}
+                                            </div>
+                                            <div className="flex flex-col items-end gap-1 flex-shrink-0">
+                                              {getMealTypeIcon(meal.type)}
+                                            </div>
+                                          </button>
+                                        ))
+                                      )}
+                                    </div>
+                                  </PopoverContent>
+                                </Popover>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
                     </CardContent>
                   </Card>
                 );
