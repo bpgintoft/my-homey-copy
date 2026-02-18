@@ -101,20 +101,20 @@ export default function House() {
             background-position: 0 0, 7px 7px;
           }
         `}</style>
-        <div className="relative h-64 md:h-80 house-banner-bg overflow-hidden">
-          <div className="relative z-10 h-full flex items-center justify-between px-6 md:px-12">
-            <div className="flex-shrink-0 max-w-[50%]">
-              <h1 className="text-3xl md:text-5xl font-bold text-gray-800 mb-2">
+        <div className="relative h-56 md:h-80 house-banner-bg overflow-hidden">
+          <div className="relative z-10 h-full flex items-center justify-between px-4 md:px-12 gap-2 md:gap-4">
+            <div className="flex-shrink-0">
+              <h1 className="text-xl md:text-5xl font-bold text-gray-800 mb-1 md:mb-2">
                 House
               </h1>
-              <p className="text-base md:text-xl text-gray-700">
+              <p className="text-xs md:text-xl text-gray-700">
                 Rooms, appliances & organization
               </p>
             </div>
             <img 
               src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/e7138b18e_familyappliances.png" 
               alt="Family with appliances"
-              className="h-full w-auto object-contain flex-shrink-0"
+              className="h-3/4 md:h-full w-auto object-contain flex-shrink-0"
             />
           </div>
         </div>
