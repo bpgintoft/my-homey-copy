@@ -53,7 +53,6 @@ import Dashboard from './pages/Dashboard';
 import Documents from './pages/Documents';
 import Family from './pages/Family';
 import History from './pages/History';
-import Home from './pages/Home';
 import HomeDetails from './pages/HomeDetails';
 import House from './pages/House';
 import Kids from './pages/Kids';
@@ -63,6 +62,11 @@ import RoomDetail from './pages/RoomDetail';
 import Rooms from './pages/Rooms';
 import Vendors from './pages/Vendors';
 import Meals from './pages/Meals';
+import Home from './pages/Home';
+import Bryan from './pages/Bryan';
+import Kate from './pages/Kate';
+import Phoenix from './pages/Phoenix';
+import Mara from './pages/Mara';
 import __Layout from './Layout.jsx';
 
 
@@ -73,7 +77,6 @@ export const PAGES = {
     "Documents": Documents,
     "Family": Family,
     "History": History,
-    "Home": Home,
     "HomeDetails": HomeDetails,
     "House": House,
     "Kids": Kids,
@@ -83,6 +86,11 @@ export const PAGES = {
     "Rooms": Rooms,
     "Vendors": Vendors,
     "Meals": Meals,
+    "Home": Home,
+    "Bryan": Bryan,
+    "Kate": Kate,
+    "Phoenix": Phoenix,
+    "Mara": Mara,
 }
 
 export const pagesConfig = {
