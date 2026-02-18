@@ -37,6 +37,8 @@ export default function Meals() {
             const [uploadingImage, setUploadingImage] = useState(false);
             const [expandedSections, setExpandedSections] = useState({});
             const [shoppingMode, setShoppingMode] = useState(false);
+            const [newGroceryItem, setNewGroceryItem] = useState({ name: '', category: 'other' });
+            const [showAddGrocery, setShowAddGrocery] = useState(false);
             const queryClient = useQueryClient();
 
   const { data: meals = [] } = useQuery({
@@ -343,6 +345,24 @@ export default function Meals() {
         },
         onSuccess: () => {
           queryClient.invalidateQueries(['groceries']);
+        },
+      });
+
+      const addManualGroceryMutation = useMutation({
+        mutationFn: async (itemData) => {
+          const weekStart = new Date();
+          weekStart.setDate(weekStart.getDate() - weekStart.getDay());
+          await base44.entities.GroceryItem.create({
+            ...itemData,
+            quantity: '1',
+            purchased: false,
+            week_start_date: weekStart.toISOString().split('T')[0],
+          });
+        },
+        onSuccess: () => {
+          queryClient.invalidateQueries(['groceries']);
+          setNewGroceryItem({ name: '', category: 'other' });
+          setShowAddGrocery(false);
         },
       });
 
@@ -1115,28 +1135,85 @@ export default function Meals() {
           </TabsContent>
 
           <TabsContent value="grocery" className="space-y-4">
-            {groceries.length > 0 && (
-              <div className="flex gap-2">
-                <Button
-                  onClick={() => setShoppingMode(!shoppingMode)}
-                  variant="outline"
-                  className={`flex-1 ${shoppingMode ? 'bg-pink-100 border-pink-300 text-pink-700' : 'border-pink-200 text-pink-600'} hover:bg-pink-50`}
-                >
-                  <ShoppingCart className="w-4 h-4 mr-2" />
-                  {shoppingMode ? 'Exit Shopping Mode' : 'Shopping Mode'}
-                </Button>
-                {!shoppingMode && (
+            <div className="flex gap-2">
+              <Button
+                onClick={() => setShowAddGrocery(!showAddGrocery)}
+                className="bg-gradient-to-r from-[#E91E8C] to-[#D01576] text-white"
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                Add Item
+              </Button>
+              {groceries.length > 0 && (
+                <>
                   <Button
-                    onClick={() => clearAllGroceriesMutation.mutate()}
-                    disabled={clearAllGroceriesMutation.isPending}
+                    onClick={() => setShoppingMode(!shoppingMode)}
                     variant="outline"
-                    className="border-red-200 text-red-600 hover:bg-red-50"
+                    className={`flex-1 ${shoppingMode ? 'bg-pink-100 border-pink-300 text-pink-700' : 'border-pink-200 text-pink-600'} hover:bg-pink-50`}
                   >
-                    <Trash2 className="w-4 h-4 mr-2" />
-                    {clearAllGroceriesMutation.isPending ? 'Clearing...' : 'Clear All'}
+                    <ShoppingCart className="w-4 h-4 mr-2" />
+                    {shoppingMode ? 'Exit Shopping' : 'Shopping'}
                   </Button>
-                )}
-              </div>
+                  {!shoppingMode && (
+                    <Button
+                      onClick={() => clearAllGroceriesMutation.mutate()}
+                      disabled={clearAllGroceriesMutation.isPending}
+                      variant="outline"
+                      className="border-red-200 text-red-600 hover:bg-red-50"
+                    >
+                      <Trash2 className="w-4 h-4 mr-2" />
+                      Clear
+                    </Button>
+                  )}
+                </>
+              )}
+            </div>
+
+            {showAddGrocery && (
+              <Card className="bg-white border-0 shadow-sm">
+                <CardContent className="p-4">
+                  <div className="space-y-3">
+                    <Input
+                      placeholder="Item name"
+                      value={newGroceryItem.name}
+                      onChange={(e) => setNewGroceryItem({ ...newGroceryItem, name: e.target.value })}
+                    />
+                    <Select
+                      value={newGroceryItem.category}
+                      onValueChange={(value) => setNewGroceryItem({ ...newGroceryItem, category: value })}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Category" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="produce">🥬 Produce</SelectItem>
+                        <SelectItem value="meat_seafood">🥩 Meat & Seafood</SelectItem>
+                        <SelectItem value="dairy_eggs">🥛 Dairy & Eggs</SelectItem>
+                        <SelectItem value="bakery">🥖 Bakery</SelectItem>
+                        <SelectItem value="pantry">🥫 Pantry & Dry Goods</SelectItem>
+                        <SelectItem value="frozen">❄️ Frozen Foods</SelectItem>
+                        <SelectItem value="beverages">🥤 Beverages</SelectItem>
+                        <SelectItem value="deli">🧀 Deli</SelectItem>
+                        <SelectItem value="other">🛒 Other</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <div className="flex gap-2">
+                      <Button
+                        onClick={() => addManualGroceryMutation.mutate(newGroceryItem)}
+                        disabled={!newGroceryItem.name || addManualGroceryMutation.isPending}
+                        className="flex-1 bg-gradient-to-r from-[#E91E8C] to-[#D01576] text-white"
+                      >
+                        Add
+                      </Button>
+                      <Button
+                        onClick={() => { setShowAddGrocery(false); setNewGroceryItem({ name: '', category: 'other' }); }}
+                        variant="outline"
+                      >
+                        Cancel
+                      </Button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
             )}
             {groceries.length === 0 ? (
               <Card className="bg-white border-0 shadow-sm p-8 text-center">
