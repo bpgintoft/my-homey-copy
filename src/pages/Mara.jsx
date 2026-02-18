@@ -1,7 +1,17 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { useQuery } from '@tanstack/react-query';
+import { base44 } from '@/api/base44Client';
+import FamilyMemberDetails from '../components/FamilyMemberDetails';
 
 export default function MaraPage() {
+  const { data: familyMembers = [] } = useQuery({
+    queryKey: ['familyMembers'],
+    queryFn: () => base44.entities.FamilyMember.list(),
+  });
+
+  const mara = familyMembers.find(m => m.name === 'Mara');
+
   return (
     <div className="min-h-screen bg-[#F5F5F7]">
       <div className="relative h-64 bg-gradient-to-r from-purple-500 to-purple-600 overflow-hidden">
@@ -17,9 +27,7 @@ export default function MaraPage() {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <p className="text-gray-600">Mara's personal page - Coming soon!</p>
-      </div>
+      {mara && <FamilyMemberDetails memberId={mara.id} memberName="Mara" color="purple" />}
     </div>
   );
 }

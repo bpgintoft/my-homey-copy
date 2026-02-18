@@ -1,7 +1,17 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { useQuery } from '@tanstack/react-query';
+import { base44 } from '@/api/base44Client';
+import FamilyMemberDetails from '../components/FamilyMemberDetails';
 
 export default function PhoenixPage() {
+  const { data: familyMembers = [] } = useQuery({
+    queryKey: ['familyMembers'],
+    queryFn: () => base44.entities.FamilyMember.list(),
+  });
+
+  const phoenix = familyMembers.find(m => m.name === 'Phoenix');
+
   return (
     <div className="min-h-screen bg-[#F5F5F7]">
       <div className="relative h-64 bg-gradient-to-r from-orange-500 to-orange-600 overflow-hidden">
@@ -17,9 +27,7 @@ export default function PhoenixPage() {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <p className="text-gray-600">Phoenix's personal page - Coming soon!</p>
-      </div>
+      {phoenix && <FamilyMemberDetails memberId={phoenix.id} memberName="Phoenix" color="orange" />}
     </div>
   );
 }
