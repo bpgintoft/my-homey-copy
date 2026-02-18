@@ -63,11 +63,6 @@ import RoomDetail from './pages/RoomDetail';
 import Rooms from './pages/Rooms';
 import Vendors from './pages/Vendors';
 import Meals from './pages/Meals';
-import PersonPage from './pages/PersonPage';
-import Bryan from './pages/Bryan';
-import Kate from './pages/Kate';
-import Phoenix from './pages/Phoenix';
-import Mara from './pages/Mara';
 import __Layout from './Layout.jsx';
 
 
@@ -88,11 +83,6 @@ export const PAGES = {
     "Rooms": Rooms,
     "Vendors": Vendors,
     "Meals": Meals,
-    "PersonPage": PersonPage,
-    "Bryan": Bryan,
-    "Kate": Kate,
-    "Phoenix": Phoenix,
-    "Mara": Mara,
 }
 
 export const pagesConfig = {

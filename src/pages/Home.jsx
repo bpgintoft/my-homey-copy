@@ -116,38 +116,59 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Family Members */}
+      {/* Quick Stats */}
       <div className="container mx-auto px-6 -mt-6 relative z-10">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pb-24">
-          {['Bryan', 'Kate', 'Phoenix', 'Mara'].map((name, i) => {
-            const colors = {
-              Bryan: 'from-blue-500 to-cyan-500',
-              Kate: 'from-pink-500 to-rose-500',
-              Phoenix: 'from-orange-500 to-amber-500',
-              Mara: 'from-purple-500 to-violet-500',
-            };
-            
-            return (
-              <motion.div
-                key={name}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: i * 0.1 }}
-              >
-                <Link to={createPageUrl(name)}>
-                  <Card className="border-0 shadow-lg bg-white hover:shadow-2xl transition-all cursor-pointer group hover:scale-105">
-                    <CardContent className="p-6 text-center">
-                      <div className={`w-20 h-20 mx-auto rounded-2xl bg-gradient-to-br ${colors[name]} flex items-center justify-center mb-4`}>
-                        <span className="text-3xl font-bold text-white">{name[0]}</span>
-                      </div>
-                      <h3 className="text-xl font-bold text-gray-900">{name}</h3>
-                      <p className="text-sm text-gray-500 mt-1">Dashboard</p>
-                    </CardContent>
-                  </Card>
-                </Link>
-              </motion.div>
-            );
-          })}
+        <div className="grid grid-cols-3 gap-3 mb-6">
+          <Card className="border-0 shadow-lg bg-white">
+            <CardContent className="p-4 text-center">
+              <div className="text-2xl font-bold text-gray-900">{thisWeekMeals}</div>
+              <div className="text-xs text-gray-500">Meals</div>
+            </CardContent>
+          </Card>
+          <Card className="border-0 shadow-lg bg-white">
+            <CardContent className="p-4 text-center">
+              <div className="text-2xl font-bold text-gray-900">{upcomingEvents}</div>
+              <div className="text-xs text-gray-500">Events</div>
+            </CardContent>
+          </Card>
+          <Card className="border-0 shadow-lg bg-white">
+            <CardContent className="p-4 text-center">
+              <div className="text-2xl font-bold text-gray-900">{totalAppliances}</div>
+              <div className="text-xs text-gray-500">Items</div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Main Sections */}
+        <div className="grid grid-cols-2 gap-4 pb-24">
+          {sections.map((section, i) => (
+            <motion.div
+              key={section.title}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: i * 0.1 }}
+            >
+              <Link to={createPageUrl(section.href)}>
+                <div className="group cursor-pointer hover:scale-105 transition-all duration-300 relative">
+                  {section.count > 0 && (
+                    <div className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-7 h-7 flex items-center justify-center shadow-lg z-10">
+                      {section.count}
+                    </div>
+                  )}
+                  <div className={`rounded-3xl shadow-lg hover:shadow-2xl transition-all ${section.bgColor} p-6 flex flex-col items-center justify-center h-36`}>
+                    {imageUrls[section.imageKey] && (
+                      <img 
+                        src={imageUrls[section.imageKey]} 
+                        alt={section.title}
+                        className="w-32 h-32 object-contain mb-3"
+                      />
+                    )}
+                    <h3 className="text-lg font-bold text-white drop-shadow-lg whitespace-nowrap">{section.title}</h3>
+                  </div>
+                </div>
+              </Link>
+            </motion.div>
+          ))}
         </div>
       </div>
     </div>
