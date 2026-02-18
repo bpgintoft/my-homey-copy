@@ -102,8 +102,8 @@ export default function House() {
           }
         `}</style>
         <div className="relative h-64 md:h-80 house-banner-bg overflow-hidden">
-          <div className="relative z-10 h-full flex items-end md:items-center">
-            <div className="px-6 md:px-12 pb-6 md:pb-0 flex-shrink-0">
+          <div className="relative z-10 h-full flex items-center justify-between px-6 md:px-12">
+            <div className="flex-shrink-0 max-w-[50%]">
               <h1 className="text-3xl md:text-5xl font-bold text-gray-800 mb-2">
                 House
               </h1>
@@ -114,7 +114,7 @@ export default function House() {
             <img 
               src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/e7138b18e_familyappliances.png" 
               alt="Family with appliances"
-              className="absolute right-0 bottom-0 h-full w-auto object-contain"
+              className="h-full w-auto object-contain flex-shrink-0"
             />
           </div>
         </div>
