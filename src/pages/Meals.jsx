@@ -306,16 +306,28 @@ export default function Meals() {
 
           // Use AI to normalize and group ingredients
           const result = await base44.integrations.Core.InvokeLLM({
-            prompt: `You are a grocery list assistant. Normalize these ingredients by removing adjectives (like "chopped", "diced", "shredded", "grilled"), cooking methods, and measurements. Group similar items together (e.g., "shredded lettuce", "chopped lettuce", "head of lettuce" all become "lettuce"). Keep protein cuts specific (e.g., "chicken breast", "chicken thighs" stay separate). Return a JSON object where keys are normalized ingredient names and values are the count of how many times that ingredient appears.\n\nIngredients: ${JSON.stringify(allIngredients)}`,
+            prompt: `You are a grocery list assistant. Process this list of ingredients and return a normalized grocery list.
+
+      Rules:
+      1. Remove adjectives (chopped, diced, shredded, grilled, fried, etc.)
+      2. Remove measurements and quantities
+      3. Remove cooking methods
+      4. Group similar items together (e.g., "shredded lettuce", "chopped lettuce", "head of lettuce" should ALL become just "lettuce")
+      5. Keep protein cuts specific (e.g., "chicken breast", "chicken thighs" stay separate, but "chopped chicken breast" becomes "chicken breast")
+      6. For each unique normalized ingredient, count how many times it appears across all meals
+
+      Ingredients: ${JSON.stringify(allIngredients)}
+
+      Return a flat array of objects with "name" and "count" properties.`,
             response_json_schema: {
               type: "object",
               properties: {
-                ingredients: {
-                  type: "object",
-                  additionalProperties: {
+                items: {
+                  type: "array",
+                  items: {
                     type: "object",
                     properties: {
-                      normalized_name: { type: "string" },
+                      name: { type: "string" },
                       count: { type: "number" }
                     }
                   }
@@ -325,22 +337,19 @@ export default function Meals() {
           });
 
           // Create/update grocery items
-          for (const [key, data] of Object.entries(result.ingredients || {})) {
-            const normalizedName = data.normalized_name;
-            const count = data.count;
-
-            const existing = groceries.find(g => g.name.toLowerCase() === normalizedName.toLowerCase());
+          for (const item of result.items || []) {
+            const existing = groceries.find(g => g.name.toLowerCase() === item.name.toLowerCase());
             if (existing) {
               const qty = parseInt(existing.quantity) || 1;
               await base44.entities.GroceryItem.update(existing.id, { 
-                quantity: (qty + count).toString() 
+                quantity: (qty + item.count).toString() 
               });
             } else {
-              const category = await categorizeMutation.mutateAsync(normalizedName);
+              const category = await categorizeMutation.mutateAsync(item.name);
               await base44.entities.GroceryItem.create({
-                name: normalizedName,
+                name: item.name,
                 category: category || 'other',
-                quantity: count.toString(),
+                quantity: item.count.toString(),
                 purchased: false,
                 week_start_date: weekStart.toISOString().split('T')[0],
               });
