@@ -603,7 +603,7 @@ export default function Meals() {
             background-position: 0 0, 7px 7px;
           }
         `}</style>
-        <div className="relative h-56 md:h-80 meal-banner-bg overflow-hidden">
+        <div className="relative h-48 md:h-80 meal-banner-bg overflow-hidden">
           <div className="relative z-10 h-full flex items-center justify-between px-4 md:px-12 gap-2 md:gap-4">
             <div className="flex-shrink-0">
               <h1 className="text-xl md:text-5xl font-bold text-gray-800 mb-1 md:mb-2">
@@ -616,7 +616,7 @@ export default function Meals() {
             <img 
               src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/9d880a561_familycooking.png" 
               alt="Family Cooking"
-              className="h-3/4 md:h-full w-auto object-contain flex-shrink-0"
+              className="max-h-40 md:max-h-full w-auto object-contain flex-shrink-0"
             />
           </div>
         </div>
