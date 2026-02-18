@@ -25,7 +25,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
   const [editingLink, setEditingLink] = useState(null);
   const [personalNotes, setPersonalNotes] = useState('');
   const [openSections, setOpenSections] = useState({
-    links: true,
+    links: false,
     contacts: false,
     chores: false,
     notes: false,
