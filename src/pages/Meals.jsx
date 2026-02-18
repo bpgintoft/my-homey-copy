@@ -1135,32 +1135,35 @@ export default function Meals() {
           </TabsContent>
 
           <TabsContent value="grocery" className="space-y-4">
-            <div className="flex gap-2">
+            <div className="flex gap-1.5">
               <Button
                 onClick={() => setShowAddGrocery(!showAddGrocery)}
+                size="sm"
                 className="bg-gradient-to-r from-[#E91E8C] to-[#D01576] text-white"
               >
-                <Plus className="w-4 h-4 mr-2" />
-                Add Item
+                <Plus className="w-4 h-4 mr-1" />
+                Add
               </Button>
               {groceries.length > 0 && (
                 <>
                   <Button
                     onClick={() => setShoppingMode(!shoppingMode)}
+                    size="sm"
                     variant="outline"
                     className={`flex-1 ${shoppingMode ? 'bg-pink-100 border-pink-300 text-pink-700' : 'border-pink-200 text-pink-600'} hover:bg-pink-50`}
                   >
-                    <ShoppingCart className="w-4 h-4 mr-2" />
-                    {shoppingMode ? 'Exit Shopping' : 'Shopping'}
+                    <ShoppingCart className="w-4 h-4 mr-1" />
+                    {shoppingMode ? 'Exit' : 'Shop'}
                   </Button>
                   {!shoppingMode && (
                     <Button
                       onClick={() => clearAllGroceriesMutation.mutate()}
                       disabled={clearAllGroceriesMutation.isPending}
+                      size="sm"
                       variant="outline"
                       className="border-red-200 text-red-600 hover:bg-red-50"
                     >
-                      <Trash2 className="w-4 h-4 mr-2" />
+                      <Trash2 className="w-4 h-4 mr-1" />
                       Clear
                     </Button>
                   )}
