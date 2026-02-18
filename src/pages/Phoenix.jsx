@@ -37,6 +37,14 @@ export default function PhoenixPage() {
         }
       `}</style>
       <div className="relative h-64 bg-gradient-to-r from-orange-500 to-orange-600 overflow-hidden phoenix-banner">
+        <div className="absolute right-8 bottom-0 z-10 h-56 w-auto">
+          <img 
+            src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/c6cc47144_E93225ED-A8A4-43D2-B31D-A485DFD15529.png"
+            alt="Phoenix"
+            className="h-full w-auto object-contain"
+            style={{ mixBlendMode: 'multiply' }}
+          />
+        </div>
         <div className="relative z-10 h-full flex flex-col justify-end p-6 sm:p-8">
           <motion.h1 
             initial={{ opacity: 0, y: 20 }}

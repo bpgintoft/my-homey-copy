@@ -63,10 +63,10 @@ import Maintenance from './pages/Maintenance';
 import MaintenanceCalendar from './pages/MaintenanceCalendar';
 import Mara from './pages/Mara';
 import Meals from './pages/Meals';
-import Phoenix from './pages/Phoenix';
 import RoomDetail from './pages/RoomDetail';
 import Rooms from './pages/Rooms';
 import Vendors from './pages/Vendors';
+import Phoenix from './pages/Phoenix';
 import __Layout from './Layout.jsx';
 
 
@@ -87,10 +87,10 @@ export const PAGES = {
     "MaintenanceCalendar": MaintenanceCalendar,
     "Mara": Mara,
     "Meals": Meals,
-    "Phoenix": Phoenix,
     "RoomDetail": RoomDetail,
     "Rooms": Rooms,
     "Vendors": Vendors,
+    "Phoenix": Phoenix,
 }
 
 export const pagesConfig = {
