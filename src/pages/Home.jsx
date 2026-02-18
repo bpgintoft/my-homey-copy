@@ -137,7 +137,7 @@ export default function Home() {
             <Link to={createPageUrl('Bryan')}>
               <Card className="border-0 shadow-lg bg-white hover:shadow-xl transition-shadow cursor-pointer">
                 <CardContent className="py-2 px-2 text-center">
-                  <div className="text-base font-bold text-gray-900">{bryanMember.name}</div>
+                  <div className="text-sm font-bold text-gray-900">{bryanMember.name}</div>
                 </CardContent>
               </Card>
             </Link>
@@ -150,7 +150,7 @@ export default function Home() {
             <Link to={createPageUrl('Kate')}>
               <Card className="border-0 shadow-lg bg-white hover:shadow-xl transition-shadow cursor-pointer">
                 <CardContent className="py-2 px-2 text-center">
-                  <div className="text-base font-bold text-gray-900">{kateMember.name}</div>
+                  <div className="text-sm font-bold text-gray-900">{kateMember.name}</div>
                 </CardContent>
               </Card>
             </Link>
@@ -176,7 +176,7 @@ export default function Home() {
             <Link to={createPageUrl('Mara')}>
               <Card className="border-0 shadow-lg bg-white hover:shadow-xl transition-shadow cursor-pointer">
                 <CardContent className="py-2 px-2 text-center">
-                  <div className="text-base font-bold text-gray-900">{maraMember.name}</div>
+                  <div className="text-sm font-bold text-gray-900">{maraMember.name}</div>
                 </CardContent>
               </Card>
             </Link>
