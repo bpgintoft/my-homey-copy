@@ -292,40 +292,55 @@ export default function Meals() {
           const weekStart = new Date();
           weekStart.setDate(weekStart.getDate() - weekStart.getDay());
 
-          // First, collect and combine all ingredients
-          const ingredientCounts = {};
-
+          // Collect all ingredients from all meal plans
+          const allIngredients = [];
           for (const plan of mealPlans) {
             const mealDetails = meals.find(m => m.id === plan.meal_id);
             if (mealDetails?.ingredients) {
               const filteredIngredients = filterStaples(mealDetails.ingredients);
-              for (const ingredient of filteredIngredients) {
-                const cleanedName = cleanIngredientName(ingredient);
-                if (!cleanedName) continue;
-
-                const lowerName = cleanedName.toLowerCase();
-                ingredientCounts[lowerName] = {
-                  name: cleanedName,
-                  count: (ingredientCounts[lowerName]?.count || 0) + 1
-                };
-              }
+              allIngredients.push(...filteredIngredients);
             }
           }
 
-          // Now update/create grocery items with combined quantities
-          for (const ingredientData of Object.values(ingredientCounts)) {
-            const existing = groceries.find(g => g.name.toLowerCase() === ingredientData.name.toLowerCase());
+          if (allIngredients.length === 0) return;
+
+          // Use AI to normalize and group ingredients
+          const result = await base44.integrations.Core.InvokeLLM({
+            prompt: `You are a grocery list assistant. Normalize these ingredients by removing adjectives (like "chopped", "diced", "shredded", "grilled"), cooking methods, and measurements. Group similar items together (e.g., "shredded lettuce", "chopped lettuce", "head of lettuce" all become "lettuce"). Keep protein cuts specific (e.g., "chicken breast", "chicken thighs" stay separate). Return a JSON object where keys are normalized ingredient names and values are the count of how many times that ingredient appears.\n\nIngredients: ${JSON.stringify(allIngredients)}`,
+            response_json_schema: {
+              type: "object",
+              properties: {
+                ingredients: {
+                  type: "object",
+                  additionalProperties: {
+                    type: "object",
+                    properties: {
+                      normalized_name: { type: "string" },
+                      count: { type: "number" }
+                    }
+                  }
+                }
+              }
+            }
+          });
+
+          // Create/update grocery items
+          for (const [key, data] of Object.entries(result.ingredients || {})) {
+            const normalizedName = data.normalized_name;
+            const count = data.count;
+
+            const existing = groceries.find(g => g.name.toLowerCase() === normalizedName.toLowerCase());
             if (existing) {
               const qty = parseInt(existing.quantity) || 1;
               await base44.entities.GroceryItem.update(existing.id, { 
-                quantity: (qty + ingredientData.count).toString() 
+                quantity: (qty + count).toString() 
               });
             } else {
-              const category = await categorizeMutation.mutateAsync(ingredientData.name);
+              const category = await categorizeMutation.mutateAsync(normalizedName);
               await base44.entities.GroceryItem.create({
-                name: ingredientData.name,
+                name: normalizedName,
                 category: category || 'other',
-                quantity: ingredientData.count.toString(),
+                quantity: count.toString(),
                 purchased: false,
                 week_start_date: weekStart.toISOString().split('T')[0],
               });
