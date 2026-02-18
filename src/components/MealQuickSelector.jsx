@@ -3,6 +3,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Button } from "@/components/ui/button";
 import { Plus, Coffee, UtensilsCrossed, Utensils, Apple, IceCream, Star } from 'lucide-react';
 import { Badge } from "@/components/ui/badge";
+import { getThumbnailUrl } from './imageHelpers';
 
 export default function MealQuickSelector({ meals, onSelectMeal }) {
   const [selectedMealType, setSelectedMealType] = useState(null);
@@ -104,6 +105,11 @@ export default function MealQuickSelector({ meals, onSelectMeal }) {
                     onClick={() => handleMealSelect(meal)}
                     className="w-full flex items-center gap-2 px-2 py-2 rounded-lg hover:bg-pink-50 transition-colors text-left"
                   >
+                    {meal.photo_url && (
+                      <div className="w-12 h-12 flex-shrink-0 rounded-lg overflow-hidden">
+                        <img src={getThumbnailUrl(meal.photo_url)} alt={meal.name} className="w-full h-full object-cover" />
+                      </div>
+                    )}
                     <div className="flex-1 min-w-0">
                       <div className="text-sm font-medium text-gray-900 truncate">{meal.name}</div>
                       <div className="flex items-center gap-1.5 mt-0.5">
