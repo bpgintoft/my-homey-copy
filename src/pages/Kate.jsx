@@ -14,8 +14,29 @@ export default function KatePage() {
 
   return (
     <div className="min-h-screen bg-[#F5F5F7]">
-      <div className="relative h-64 bg-gradient-to-r from-pink-500 to-pink-600 overflow-hidden">
-        <div className="absolute inset-0 bg-black/10"></div>
+      <style>{`
+        .kate-banner::before {
+          content: '';
+          position: absolute;
+          inset: 0;
+          background: 
+            repeating-linear-gradient(
+              45deg,
+              rgba(236, 72, 153, 0.6) 0px,
+              rgba(236, 72, 153, 0.6) 10px,
+              rgba(219, 39, 119, 0.4) 10px,
+              rgba(219, 39, 119, 0.4) 20px,
+              rgba(236, 72, 153, 0.6) 20px,
+              rgba(236, 72, 153, 0.6) 25px,
+              rgba(244, 114, 182, 0.3) 25px,
+              rgba(244, 114, 182, 0.3) 30px
+            ),
+            radial-gradient(circle, rgba(219, 39, 119, 0.4) 2px, transparent 2px);
+          background-size: 100% 100%, 15px 15px;
+          background-position: 0 0, 7px 7px;
+        }
+      `}</style>
+      <div className="relative h-64 bg-gradient-to-r from-pink-500 to-pink-600 overflow-hidden kate-banner">
         <div className="relative z-10 h-full flex flex-col justify-end p-6 sm:p-8">
           <motion.h1 
             initial={{ opacity: 0, y: 20 }}

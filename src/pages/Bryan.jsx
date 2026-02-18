@@ -14,8 +14,29 @@ export default function BryanPage() {
 
   return (
     <div className="min-h-screen bg-[#F5F5F7]">
-      <div className="relative h-64 bg-gradient-to-r from-blue-500 to-blue-600 overflow-hidden">
-        <div className="absolute inset-0 bg-black/10"></div>
+      <style>{`
+        .bryan-banner::before {
+          content: '';
+          position: absolute;
+          inset: 0;
+          background: 
+            repeating-linear-gradient(
+              45deg,
+              rgba(59, 130, 246, 0.6) 0px,
+              rgba(59, 130, 246, 0.6) 10px,
+              rgba(37, 99, 235, 0.4) 10px,
+              rgba(37, 99, 235, 0.4) 20px,
+              rgba(59, 130, 246, 0.6) 20px,
+              rgba(59, 130, 246, 0.6) 25px,
+              rgba(96, 165, 250, 0.3) 25px,
+              rgba(96, 165, 250, 0.3) 30px
+            ),
+            radial-gradient(circle, rgba(37, 99, 235, 0.4) 2px, transparent 2px);
+          background-size: 100% 100%, 15px 15px;
+          background-position: 0 0, 7px 7px;
+        }
+      `}</style>
+      <div className="relative h-64 bg-gradient-to-r from-blue-500 to-blue-600 overflow-hidden bryan-banner">
         <div className="relative z-10 h-full flex flex-col justify-end p-6 sm:p-8">
           <motion.h1 
             initial={{ opacity: 0, y: 20 }}
