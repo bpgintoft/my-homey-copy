@@ -102,8 +102,8 @@ export default function House() {
           }
         `}</style>
         <div className="relative h-40 md:h-48 house-banner-bg">
-          <div className="relative z-10 flex items-center justify-between px-4 md:px-12 gap-0 h-full">
-            <div className="flex-1">
+          <div className="relative z-10 flex items-center justify-between px-4 md:px-12 gap-4 md:gap-6 h-full">
+            <div className="flex-1 min-w-0">
               <h1 className="text-2xl md:text-4xl font-bold text-gray-800 mb-1 md:mb-2">
                 House
               </h1>
@@ -111,6 +111,11 @@ export default function House() {
                 Rooms, appliances & organization
               </p>
             </div>
+            <img 
+              src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/094fab5e4_familyhottub.png" 
+              alt="Family in Hot Tub"
+              className="hidden lg:block h-40 md:h-56 w-auto object-cover flex-shrink-0"
+            />
             <img 
               src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/e7138b18e_familyappliances.png" 
               alt="Family with appliances"
