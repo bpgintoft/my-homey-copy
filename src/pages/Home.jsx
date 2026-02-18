@@ -162,7 +162,7 @@ export default function Home() {
           >
             <Link to={createPageUrl('Phoenix')}>
               <Card className="border-0 shadow-lg bg-white hover:shadow-xl transition-shadow cursor-pointer">
-                <CardContent className="py-2 px-2 text-center">
+                <CardContent className="py-2 px-4 text-center">
                   <div className="text-base font-bold text-gray-900">{phoenixMember.name}</div>
                 </CardContent>
               </Card>
