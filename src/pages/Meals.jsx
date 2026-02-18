@@ -590,6 +590,11 @@ export default function Meals() {
               </p>
             </div>
             <img 
+              src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/d8add9250_familycookingback.png" 
+              alt="Family Cooking Together"
+              className="hidden md:block h-40 md:h-56 w-auto object-cover flex-shrink-0"
+            />
+            <img 
               src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/9d880a561_familycooking.png" 
               alt="Family Cooking"
               className="h-40 md:h-56 w-auto object-cover flex-shrink-0"
