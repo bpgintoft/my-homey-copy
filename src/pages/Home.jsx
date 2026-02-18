@@ -16,6 +16,11 @@ export default function Home() {
   });
   const [familyImage] = useState('https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/7afddfe7e_family.png');
 
+  const { data: familyMembers = [] } = useQuery({
+    queryKey: ['familyMembers'],
+    queryFn: () => base44.entities.FamilyMember.list(),
+  });
+
   const { data: mealPlans } = useQuery({
     queryKey: ['thisWeekMeals'],
     queryFn: () => base44.entities.MealPlan.list(),
@@ -30,6 +35,11 @@ export default function Home() {
     queryKey: ['appliances'],
     queryFn: () => base44.entities.Appliance.list(),
   });
+
+  const bryanMember = familyMembers.find(m => m.name === 'Bryan') || { name: 'Bryan' };
+  const kateMember = familyMembers.find(m => m.name === 'Kate') || { name: 'Kate' };
+  const phoenixMember = familyMembers.find(m => m.name === 'Phoenix') || { name: 'Phoenix' };
+  const maraMember = familyMembers.find(m => m.name === 'Mara') || { name: 'Mara' };
 
   const thisWeekMeals = mealPlans?.length || 0;
   const upcomingEvents = activities?.filter(a => !a.reminder_sent)?.length || 0;
@@ -116,27 +126,65 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Quick Stats */}
+      {/* Family Member Cards */}
       <div className="container mx-auto px-6 -mt-6 relative z-10">
-        <div className="grid grid-cols-3 gap-3 mb-6">
-          <Card className="border-0 shadow-lg bg-white">
-            <CardContent className="p-4 text-center">
-              <div className="text-2xl font-bold text-gray-900">{thisWeekMeals}</div>
-              <div className="text-xs text-gray-500">Meals</div>
-            </CardContent>
-          </Card>
-          <Card className="border-0 shadow-lg bg-white">
-            <CardContent className="p-4 text-center">
-              <div className="text-2xl font-bold text-gray-900">{upcomingEvents}</div>
-              <div className="text-xs text-gray-500">Events</div>
-            </CardContent>
-          </Card>
-          <Card className="border-0 shadow-lg bg-white">
-            <CardContent className="p-4 text-center">
-              <div className="text-2xl font-bold text-gray-900">{totalAppliances}</div>
-              <div className="text-xs text-gray-500">Items</div>
-            </CardContent>
-          </Card>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+          >
+            <Link to={createPageUrl('Bryan')}>
+              <Card className="border-0 shadow-lg bg-white hover:shadow-xl transition-shadow cursor-pointer">
+                <CardContent className="p-4 text-center">
+                  <div className="text-2xl font-bold text-gray-900">{bryanMember.name}</div>
+                  <div className="text-xs text-gray-500">{bryanMember.role || 'Family'}</div>
+                </CardContent>
+              </Card>
+            </Link>
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+          >
+            <Link to={createPageUrl('Kate')}>
+              <Card className="border-0 shadow-lg bg-white hover:shadow-xl transition-shadow cursor-pointer">
+                <CardContent className="p-4 text-center">
+                  <div className="text-2xl font-bold text-gray-900">{kateMember.name}</div>
+                  <div className="text-xs text-gray-500">{kateMember.role || 'Family'}</div>
+                </CardContent>
+              </Card>
+            </Link>
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+          >
+            <Link to={createPageUrl('Phoenix')}>
+              <Card className="border-0 shadow-lg bg-white hover:shadow-xl transition-shadow cursor-pointer">
+                <CardContent className="p-4 text-center">
+                  <div className="text-2xl font-bold text-gray-900">{phoenixMember.name}</div>
+                  <div className="text-xs text-gray-500">{phoenixMember.role || 'Family'}</div>
+                </CardContent>
+              </Card>
+            </Link>
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5 }}
+          >
+            <Link to={createPageUrl('Mara')}>
+              <Card className="border-0 shadow-lg bg-white hover:shadow-xl transition-shadow cursor-pointer">
+                <CardContent className="p-4 text-center">
+                  <div className="text-2xl font-bold text-gray-900">{maraMember.name}</div>
+                  <div className="text-xs text-gray-500">{maraMember.role || 'Family'}</div>
+                </CardContent>
+              </Card>
+            </Link>
+          </motion.div>
         </div>
 
         {/* Main Sections */}
