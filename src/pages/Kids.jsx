@@ -170,28 +170,27 @@ export default function Kids() {
           </TabsList>
 
           <TabsContent value="upcoming" className="space-y-6">
-            <div className="flex justify-between items-center">
-              <h2 className="text-xl font-semibold text-gray-900">
-                {upcomingActivities.length} Upcoming Activities
-              </h2>
-              <div className="flex gap-3">
-                <Button
-                  onClick={() => generateActivitiesMutation.mutate()}
-                  disabled={generateActivitiesMutation.isPending}
-                  variant="outline"
-                  className="border-blue-200 text-blue-600 hover:bg-blue-50"
-                >
-                  <Sparkles className="w-4 h-4 mr-2" />
-                  {generateActivitiesMutation.isPending ? 'Finding...' : 'Find Local Activities'}
-                </Button>
-                <Button
-                  onClick={() => setShowDialog(true)}
-                  className="bg-gradient-to-r from-[#0AACFF] to-[#0890D9] text-white"
-                >
-                  <Plus className="w-4 h-4 mr-2" />
-                  Add Activity
-                </Button>
-              </div>
+            <h2 className="text-xl font-semibold text-gray-900">
+              {upcomingActivities.length} Upcoming Activities
+            </h2>
+
+            <div className="flex gap-3">
+              <Button
+                onClick={() => generateActivitiesMutation.mutate()}
+                disabled={generateActivitiesMutation.isPending}
+                variant="outline"
+                className="border-blue-200 text-blue-600 hover:bg-blue-50"
+              >
+                <Sparkles className="w-4 h-4 mr-2" />
+                {generateActivitiesMutation.isPending ? 'Finding...' : 'Find Local Activities'}
+              </Button>
+              <Button
+                onClick={() => setShowDialog(true)}
+                className="bg-gradient-to-r from-[#0AACFF] to-[#0890D9] text-white"
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                Add Activity
+              </Button>
             </div>
 
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
