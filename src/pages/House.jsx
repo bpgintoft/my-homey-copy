@@ -101,25 +101,20 @@ export default function House() {
             background-position: 0 0, 7px 7px;
           }
         `}</style>
-        <div className="relative h-40 md:h-48 house-banner-bg">
-          <div className="relative z-10 flex items-center justify-between px-4 md:px-12 gap-4 md:gap-6 h-full">
-            <div className="flex-1 min-w-0">
-              <h1 className="text-2xl md:text-4xl font-bold text-gray-800 mb-1 md:mb-2">
+        <div className="relative h-64 md:h-80 house-banner-bg overflow-hidden">
+          <div className="relative z-10 h-full flex items-end md:items-center">
+            <div className="px-6 md:px-12 pb-6 md:pb-0 flex-shrink-0">
+              <h1 className="text-3xl md:text-5xl font-bold text-gray-800 mb-2">
                 House
               </h1>
-              <p className="text-sm md:text-lg text-gray-700">
+              <p className="text-base md:text-xl text-gray-700">
                 Rooms, appliances & organization
               </p>
             </div>
             <img 
-              src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/094fab5e4_familyhottub.png" 
-              alt="Family in Hot Tub"
-              className="hidden lg:block h-40 md:h-56 w-auto object-cover flex-shrink-0"
-            />
-            <img 
               src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/e7138b18e_familyappliances.png" 
               alt="Family with appliances"
-              className="hidden md:block md:h-56 w-auto object-cover flex-shrink-0"
+              className="absolute right-0 bottom-0 h-full w-auto object-contain"
             />
           </div>
         </div>

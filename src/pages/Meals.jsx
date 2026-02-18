@@ -603,25 +603,20 @@ export default function Meals() {
             background-position: 0 0, 7px 7px;
           }
         `}</style>
-        <div className="relative h-40 md:h-48 meal-banner-bg">
-          <div className="relative z-10 flex items-center justify-between px-4 md:px-12 gap-4 md:gap-6 h-full">
-            <div className="flex-1 min-w-0">
-              <h1 className="text-2xl md:text-4xl font-bold text-gray-800 mb-1 md:mb-2">
+        <div className="relative h-64 md:h-80 meal-banner-bg overflow-hidden">
+          <div className="relative z-10 h-full flex items-end md:items-center">
+            <div className="px-6 md:px-12 pb-6 md:pb-0 flex-shrink-0">
+              <h1 className="text-3xl md:text-5xl font-bold text-gray-800 mb-2">
                 Meal Planning
               </h1>
-              <p className="text-sm md:text-lg text-gray-700">
+              <p className="text-base md:text-xl text-gray-700">
                 Kid-friendly meals for the whole family
               </p>
             </div>
             <img 
-              src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/d8add9250_familycookingback.png" 
-              alt="Family Cooking Together"
-              className="hidden lg:block h-40 md:h-56 w-auto object-cover flex-shrink-0"
-            />
-            <img 
               src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/9d880a561_familycooking.png" 
               alt="Family Cooking"
-              className="hidden md:block md:h-56 w-auto object-cover flex-shrink-0"
+              className="absolute right-0 bottom-0 h-full w-auto object-contain"
             />
           </div>
         </div>
