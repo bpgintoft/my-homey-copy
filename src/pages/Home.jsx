@@ -136,9 +136,8 @@ export default function Home() {
           >
             <Link to={createPageUrl('Bryan')}>
               <Card className="border-0 shadow-lg bg-white hover:shadow-xl transition-shadow cursor-pointer">
-                <CardContent className="p-4 text-center">
-                  <div className="text-2xl font-bold text-gray-900">{bryanMember.name}</div>
-                  <div className="text-xs text-gray-500">{bryanMember.role || 'Family'}</div>
+                <CardContent className="p-3 text-center">
+                  <div className="text-lg font-bold text-gray-900">{bryanMember.name}</div>
                 </CardContent>
               </Card>
             </Link>
@@ -150,9 +149,8 @@ export default function Home() {
           >
             <Link to={createPageUrl('Kate')}>
               <Card className="border-0 shadow-lg bg-white hover:shadow-xl transition-shadow cursor-pointer">
-                <CardContent className="p-4 text-center">
-                  <div className="text-2xl font-bold text-gray-900">{kateMember.name}</div>
-                  <div className="text-xs text-gray-500">{kateMember.role || 'Family'}</div>
+                <CardContent className="p-3 text-center">
+                  <div className="text-lg font-bold text-gray-900">{kateMember.name}</div>
                 </CardContent>
               </Card>
             </Link>
@@ -164,9 +162,8 @@ export default function Home() {
           >
             <Link to={createPageUrl('Phoenix')}>
               <Card className="border-0 shadow-lg bg-white hover:shadow-xl transition-shadow cursor-pointer">
-                <CardContent className="p-4 text-center">
-                  <div className="text-2xl font-bold text-gray-900">{phoenixMember.name}</div>
-                  <div className="text-xs text-gray-500">{phoenixMember.role || 'Family'}</div>
+                <CardContent className="p-3 text-center">
+                  <div className="text-lg font-bold text-gray-900">{phoenixMember.name}</div>
                 </CardContent>
               </Card>
             </Link>
@@ -178,9 +175,8 @@ export default function Home() {
           >
             <Link to={createPageUrl('Mara')}>
               <Card className="border-0 shadow-lg bg-white hover:shadow-xl transition-shadow cursor-pointer">
-                <CardContent className="p-4 text-center">
-                  <div className="text-2xl font-bold text-gray-900">{maraMember.name}</div>
-                  <div className="text-xs text-gray-500">{maraMember.role || 'Family'}</div>
+                <CardContent className="p-3 text-center">
+                  <div className="text-lg font-bold text-gray-900">{maraMember.name}</div>
                 </CardContent>
               </Card>
             </Link>
