@@ -108,7 +108,7 @@ export default function House() {
                 House
               </h1>
               <p className="text-sm md:text-lg text-gray-700">
-                Rooms, appliances & organization
+                Rooms, appliances&nbsp;& organization
               </p>
             </div>
             <img 
