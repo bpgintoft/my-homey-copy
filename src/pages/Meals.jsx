@@ -1341,7 +1341,27 @@ export default function Meals() {
                                   />
                                 )}
                               </div>
-                              {!shoppingMode && (
+                              {shoppingMode ? (
+                                <div className="flex items-center gap-2">
+                                  <Button
+                                    onClick={() => deleteGroceryItemMutation.mutate(item.id)}
+                                    disabled={deleteGroceryItemMutation.isPending}
+                                    size="sm"
+                                    variant="outline"
+                                    className="text-xs border-red-200 text-red-600 hover:bg-red-50"
+                                  >
+                                    Delete
+                                  </Button>
+                                  <Button
+                                    onClick={() => updateGroceryNameMutation.mutate({ id: item.id, name: item.name })}
+                                    size="sm"
+                                    variant="outline"
+                                    className="text-xs border-blue-200 text-blue-600 hover:bg-blue-50"
+                                  >
+                                    Keep
+                                  </Button>
+                                </div>
+                              ) : (
                                 <div className="flex items-center gap-3">
                                   <div className="flex items-center gap-2 bg-white border border-gray-200 rounded-lg">
                                     <button
