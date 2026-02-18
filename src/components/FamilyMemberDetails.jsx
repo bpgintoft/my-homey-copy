@@ -9,7 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { Plus, Trash2, ExternalLink, CheckCircle2, Circle, Loader2, ChevronDown } from 'lucide-react';
+import { Plus, Trash2, ExternalLink, CheckCircle2, Circle, Loader2, ChevronDown, Edit2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function FamilyMemberDetails({ memberId, memberName, color = 'blue' }) {
@@ -18,10 +18,11 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
   const [newChore, setNewChore] = useState({ title: '', frequency: 'daily' });
   const [newMilestone, setNewMilestone] = useState({ title: '', date: '', description: '' });
   const [newContact, setNewContact] = useState({ name: '', type: 'other', phone: '', email: '', linked_to_member_ids: ['Everyone'] });
-  const [newLink, setNewLink] = useState({ url: '', title: '' });
+  const [newLink, setNewLink] = useState({ url: '', title: '', category: '' });
   const [quickLinkUrl, setQuickLinkUrl] = useState('');
   const [showTitleDialog, setShowTitleDialog] = useState(false);
   const [categorizingLink, setCategorizingLink] = useState(false);
+  const [editingLink, setEditingLink] = useState(null);
   const [personalNotes, setPersonalNotes] = useState('');
   const [openSections, setOpenSections] = useState({
     links: true,
@@ -115,6 +116,10 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
 
   const createLinkMutation = useMutation({
     mutationFn: async (data) => {
+      if (data.category) {
+        return base44.entities.FamilyMemberLink.create(data);
+      }
+      
       setCategorizingLink(true);
       const result = await base44.integrations.Core.InvokeLLM({
         prompt: `Categorize this URL: ${data.url}. Title: ${data.title || 'No title provided'}. Return the most appropriate category from: school, sports_extracurriculars, medical, social, shopping, entertainment, other. Also suggest a title if none was provided.`,
@@ -138,8 +143,16 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
       queryClient.invalidateQueries(['links', memberId]);
       setDialogOpen({ ...dialogOpen, link: false });
       setShowTitleDialog(false);
-      setNewLink({ url: '', title: '' });
+      setNewLink({ url: '', title: '', category: '' });
       setQuickLinkUrl('');
+    },
+  });
+
+  const updateLinkMutation = useMutation({
+    mutationFn: ({ id, data }) => base44.entities.FamilyMemberLink.update(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['links', memberId]);
+      setEditingLink(null);
     },
   });
 
@@ -216,7 +229,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
               <Dialog open={showTitleDialog} onOpenChange={setShowTitleDialog}>
                 <DialogContent>
                   <DialogHeader>
-                    <DialogTitle>Add Link Title</DialogTitle>
+                    <DialogTitle>Add Link Details</DialogTitle>
                   </DialogHeader>
                   <div className="space-y-4">
                     <Input
@@ -224,10 +237,17 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                       value={newLink.title}
                       onChange={(e) => setNewLink({ ...newLink, title: e.target.value })}
                     />
+                    <Input
+                      placeholder="Enter category (e.g., school, sports, medical...)"
+                      value={newLink.category}
+                      onChange={(e) => setNewLink({ ...newLink, category: e.target.value })}
+                    />
+                    <p className="text-xs text-gray-500">Leave category blank for AI to categorize automatically</p>
                     <Button
                       onClick={() => createLinkMutation.mutate({
                         url: quickLinkUrl,
                         title: newLink.title,
+                        category: newLink.category,
                         assigned_to_member_id: memberId,
                         assigned_to_name: memberName,
                       })}
@@ -236,6 +256,45 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                       {categorizingLink ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Categorizing...</> : 'Add Link'}
                     </Button>
                   </div>
+                </DialogContent>
+              </Dialog>
+
+              <Dialog open={!!editingLink} onOpenChange={(open) => !open && setEditingLink(null)}>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Edit Link</DialogTitle>
+                  </DialogHeader>
+                  {editingLink && (
+                    <div className="space-y-4">
+                      <Input
+                        placeholder="Title"
+                        value={editingLink.title || ''}
+                        onChange={(e) => setEditingLink({ ...editingLink, title: e.target.value })}
+                      />
+                      <Input
+                        placeholder="URL"
+                        value={editingLink.url || ''}
+                        onChange={(e) => setEditingLink({ ...editingLink, url: e.target.value })}
+                      />
+                      <Input
+                        placeholder="Category (e.g., school, sports, medical...)"
+                        value={editingLink.category || ''}
+                        onChange={(e) => setEditingLink({ ...editingLink, category: e.target.value })}
+                      />
+                      <Button
+                        onClick={() => updateLinkMutation.mutate({
+                          id: editingLink.id,
+                          data: {
+                            title: editingLink.title,
+                            url: editingLink.url,
+                            category: editingLink.category,
+                          }
+                        })}
+                      >
+                        Save Changes
+                      </Button>
+                    </div>
+                  )}
                 </DialogContent>
               </Dialog>
 
@@ -252,9 +311,14 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                             <ExternalLink className="w-4 h-4" />
                             {link.title || link.url}
                           </a>
-                          <Button variant="ghost" size="sm" onClick={() => deleteLinkMutation.mutate(link.id)}>
-                            <Trash2 className="w-4 h-4 text-red-500" />
-                          </Button>
+                          <div className="flex gap-1">
+                            <Button variant="ghost" size="sm" onClick={() => setEditingLink(link)}>
+                              <Edit2 className="w-4 h-4 text-gray-500" />
+                            </Button>
+                            <Button variant="ghost" size="sm" onClick={() => deleteLinkMutation.mutate(link.id)}>
+                              <Trash2 className="w-4 h-4 text-red-500" />
+                            </Button>
+                          </div>
                         </div>
                       ))}
                     </div>
