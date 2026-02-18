@@ -128,7 +128,7 @@ export default function Home() {
 
       {/* Family Member Cards */}
       <div className="container mx-auto px-6 -mt-6 relative z-10">
-        <div className="grid grid-cols-4 gap-3 mb-6">
+        <div className="grid grid-cols-4 gap-2 mb-6">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
