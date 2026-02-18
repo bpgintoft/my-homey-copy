@@ -145,7 +145,7 @@ export default function Kids() {
             <img 
               src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/5317f8746_familyplaying.png" 
               alt="Family Playing"
-              className="h-40 md:h-56 w-auto object-cover flex-shrink-0"
+              className="hidden md:block md:h-56 w-auto object-cover flex-shrink-0"
             />
           </div>
         </div>
