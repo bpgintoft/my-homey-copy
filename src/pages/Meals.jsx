@@ -39,8 +39,6 @@ export default function Meals() {
             const [shoppingMode, setShoppingMode] = useState(false);
             const [newGroceryItem, setNewGroceryItem] = useState({ name: '', category: 'other' });
             const [showAddGrocery, setShowAddGrocery] = useState(false);
-            const [quickAddPopover, setQuickAddPopover] = useState(null);
-            const [quickAddMealType, setQuickAddMealType] = useState('');
             const queryClient = useQueryClient();
 
   const { data: meals = [] } = useQuery({
@@ -195,26 +193,6 @@ export default function Meals() {
       setPlanDialog(false);
       setSelectedMealForPlan(null);
       setPlanSelection({ day: '', mealType: '' });
-    },
-  });
-
-  const quickAddToMealPlanMutation = useMutation({
-    mutationFn: async ({ day, mealType, meal }) => {
-      const weekStart = new Date();
-      weekStart.setDate(weekStart.getDate() - weekStart.getDay());
-      
-      await base44.entities.MealPlan.create({
-        week_start_date: weekStart.toISOString().split('T')[0],
-        day_of_week: day,
-        meal_type: mealType,
-        meal_id: meal.id,
-        meal_name: meal.name,
-      });
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries(['mealPlans']);
-      setQuickAddPopover(null);
-      setQuickAddMealType('');
     },
   });
 
@@ -497,8 +475,6 @@ export default function Meals() {
     return proteinMatch && typeMatch && ratingMatch && favoritesMatch;
   });
 
-  const sortedMealsForQuickAdd = [...kidFriendlyMeals].sort((a, b) => (b.rating || 0) - (a.rating || 0));
-
   const handleSaveFilters = () => {
     setAppliedProteins(selectedProteins);
     setAppliedMealTypes(selectedMealTypes);
@@ -603,20 +579,20 @@ export default function Meals() {
             background-position: 0 0, 7px 7px;
           }
         `}</style>
-        <div className="relative h-48 md:h-80 meal-banner-bg overflow-hidden">
-          <div className="relative z-10 h-full flex items-center justify-between px-4 md:px-12 gap-2 md:gap-4">
-            <div className="flex-shrink-0">
-              <h1 className="text-xl md:text-5xl font-bold text-gray-800 mb-1 md:mb-2">
+        <div className="relative h-40 md:h-48 meal-banner-bg">
+          <div className="relative z-10 flex items-center justify-between px-4 md:px-12 gap-0 h-full">
+            <div className="flex-1">
+              <h1 className="text-2xl md:text-4xl font-bold text-gray-800 mb-1 md:mb-2">
                 Meal Planning
               </h1>
-              <p className="text-xs md:text-xl text-gray-700">
+              <p className="text-sm md:text-lg text-gray-700">
                 Kid-friendly meals for the whole family
               </p>
             </div>
             <img 
               src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/9d880a561_familycooking.png" 
               alt="Family Cooking"
-              className="max-h-40 md:max-h-full w-auto object-contain flex-shrink-0"
+              className="h-40 md:h-56 w-auto object-cover flex-shrink-0"
             />
           </div>
         </div>
@@ -1005,123 +981,55 @@ export default function Meals() {
                   <Card key={day} className="bg-white border-0 shadow-sm">
                     <CardContent className="p-5">
                       <div className="flex items-center justify-between mb-3">
-                       <h3 className="font-semibold text-gray-900 capitalize">{day}</h3>
-                       <div className="flex items-center gap-2">
-                         <Popover open={quickAddPopover === day} onOpenChange={(open) => setQuickAddPopover(open ? day : null)}>
-                           <PopoverTrigger asChild>
-                             <Button 
-                               variant="outline" 
-                               size="sm"
-                               className="border-pink-200 text-pink-600 hover:bg-pink-50"
-                             >
-                               <Plus className="w-4 h-4" />
-                             </Button>
-                           </PopoverTrigger>
-                           <PopoverContent className="w-80 p-0" align="end">
-                             <div className="space-y-3 p-4">
-                               <div>
-                                 <label className="text-sm font-medium text-gray-900 mb-2 block">Meal Type</label>
-                                 <Select value={quickAddMealType} onValueChange={setQuickAddMealType}>
-                                   <SelectTrigger>
-                                     <SelectValue placeholder="Select meal type" />
-                                   </SelectTrigger>
-                                   <SelectContent>
-                                     <SelectItem value="breakfast">Breakfast</SelectItem>
-                                     <SelectItem value="lunch">Lunch</SelectItem>
-                                     <SelectItem value="dinner">Dinner</SelectItem>
-                                     <SelectItem value="snack">Snack</SelectItem>
-                                   </SelectContent>
-                                 </Select>
-                               </div>
-                               {quickAddMealType && (
-                                 <div className="max-h-72 overflow-y-auto space-y-2">
-                                   {sortedMealsForQuickAdd.map(meal => (
-                                     <button
-                                       key={meal.id}
-                                       onClick={() => quickAddToMealPlanMutation.mutate({ day, mealType: quickAddMealType, meal })}
-                                       disabled={quickAddToMealPlanMutation.isPending}
-                                       className="w-full flex items-center gap-3 p-2 rounded-lg hover:bg-pink-50 transition-colors text-left"
-                                     >
-                                       {meal.photo_url && (
-                                         <div className="w-10 h-10 flex-shrink-0 rounded overflow-hidden">
-                                           <img src={getThumbnailUrl(meal.photo_url)} alt={meal.name} className="w-full h-full object-cover" />
-                                         </div>
-                                       )}
-                                       <div className="flex-1 min-w-0">
-                                         <div className="font-medium text-sm text-gray-900 truncate">{meal.name}</div>
-                                         <div className="flex items-center gap-2 mt-0.5">
-                                           {meal.rating > 0 && (
-                                             <div className="flex items-center gap-1">
-                                               <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
-                                               <span className="text-xs text-gray-600">{meal.rating}</span>
-                                             </div>
-                                           )}
-                                           {meal.protein_type && (
-                                             <div className="flex-shrink-0 text-sm">
-                                               {getProteinIcon(meal.protein_type)}
-                                             </div>
-                                           )}
-                                           <div className="flex items-center gap-1">
-                                             {getMealTypeIcon(meal.type)}
-                                           </div>
-                                         </div>
-                                       </div>
-                                     </button>
-                                   ))}
-                                 </div>
-                               )}
-                             </div>
-                           </PopoverContent>
-                         </Popover>
-                         {dailyNutrients && dayMeals.length > 0 && (
-                           <Popover>
-                             <PopoverTrigger asChild>
-                               <Button 
-                                 variant="outline" 
-                                 size="sm"
-                                 className="border-pink-200 text-pink-600 hover:bg-pink-50"
-                               >
-                                 <BarChart3 className="w-4 h-4 mr-2" />
-                                 Daily Nutrients
-                               </Button>
-                             </PopoverTrigger>
-                             <PopoverContent className="w-72">
-                               <div className="space-y-3">
-                                 <h4 className="font-semibold text-gray-900">Daily Total ({dayMeals.length} meal{dayMeals.length !== 1 ? 's' : ''})</h4>
-                                 <div className="grid grid-cols-2 gap-3 text-sm">
-                                   <div>
-                                     <div className="text-gray-500">Calories</div>
-                                     <div className="text-lg font-bold text-gray-900">{dailyNutrients.calories}</div>
-                                   </div>
-                                   <div>
-                                     <div className="text-gray-500">Protein</div>
-                                     <div className="text-lg font-bold text-gray-900">{dailyNutrients.protein_g}g</div>
-                                   </div>
-                                   <div>
-                                     <div className="text-gray-500">Carbs</div>
-                                     <div className="text-lg font-bold text-gray-900">{dailyNutrients.carbs_g}g</div>
-                                   </div>
-                                   <div>
-                                     <div className="text-gray-500">Fat</div>
-                                     <div className="text-lg font-bold text-gray-900">{dailyNutrients.fat_g}g</div>
-                                   </div>
-                                   <div>
-                                     <div className="text-gray-500">Fiber</div>
-                                     <div className="text-lg font-bold text-gray-900">{dailyNutrients.fiber_g}g</div>
-                                   </div>
-                                   <div>
-                                     <div className="text-gray-500">Sugar</div>
-                                     <div className="text-lg font-bold text-gray-900">{dailyNutrients.sugar_g}g</div>
-                                   </div>
-                                 </div>
-                               </div>
-                             </PopoverContent>
-                           </Popover>
-                         )}
-                       </div>
+                        <h3 className="font-semibold text-gray-900 capitalize">{day}</h3>
+                        {dailyNutrients && dayMeals.length > 0 && (
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <Button 
+                                variant="outline" 
+                                size="sm"
+                                className="border-pink-200 text-pink-600 hover:bg-pink-50"
+                              >
+                                <BarChart3 className="w-4 h-4 mr-2" />
+                                Daily Nutrients
+                              </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-72">
+                              <div className="space-y-3">
+                                <h4 className="font-semibold text-gray-900">Daily Total ({dayMeals.length} meal{dayMeals.length !== 1 ? 's' : ''})</h4>
+                                <div className="grid grid-cols-2 gap-3 text-sm">
+                                  <div>
+                                    <div className="text-gray-500">Calories</div>
+                                    <div className="text-lg font-bold text-gray-900">{dailyNutrients.calories}</div>
+                                  </div>
+                                  <div>
+                                    <div className="text-gray-500">Protein</div>
+                                    <div className="text-lg font-bold text-gray-900">{dailyNutrients.protein_g}g</div>
+                                  </div>
+                                  <div>
+                                    <div className="text-gray-500">Carbs</div>
+                                    <div className="text-lg font-bold text-gray-900">{dailyNutrients.carbs_g}g</div>
+                                  </div>
+                                  <div>
+                                    <div className="text-gray-500">Fat</div>
+                                    <div className="text-lg font-bold text-gray-900">{dailyNutrients.fat_g}g</div>
+                                  </div>
+                                  <div>
+                                    <div className="text-gray-500">Fiber</div>
+                                    <div className="text-lg font-bold text-gray-900">{dailyNutrients.fiber_g}g</div>
+                                  </div>
+                                  <div>
+                                    <div className="text-gray-500">Sugar</div>
+                                    <div className="text-lg font-bold text-gray-900">{dailyNutrients.sugar_g}g</div>
+                                  </div>
+                                </div>
+                              </div>
+                            </PopoverContent>
+                          </Popover>
+                        )}
                       </div>
                       {dayMeals.length === 0 ? (
-                       <p className="text-gray-500 text-sm">No meals planned</p>
+                        <p className="text-gray-500 text-sm">No meals planned</p>
                       ) : (
                         <div className="space-y-2">
                           {dayMeals.map(plan => {
