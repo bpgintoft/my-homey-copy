@@ -556,6 +556,27 @@ export default function Meals() {
         <style>{`
           .meal-banner-bg {
             background: #E8A8D0;
+            position: relative;
+          }
+          .meal-banner-bg::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: 
+              repeating-linear-gradient(
+                45deg,
+                rgba(232, 168, 208, 0.6) 0px,
+                rgba(232, 168, 208, 0.6) 10px,
+                rgba(200, 120, 160, 0.4) 10px,
+                rgba(200, 120, 160, 0.4) 20px,
+                rgba(232, 168, 208, 0.6) 20px,
+                rgba(232, 168, 208, 0.6) 25px,
+                rgba(255, 200, 230, 0.3) 25px,
+                rgba(255, 200, 230, 0.3) 30px
+              ),
+              radial-gradient(circle, rgba(200, 120, 160, 0.4) 2px, transparent 2px);
+            background-size: 100% 100%, 15px 15px;
+            background-position: 0 0, 7px 7px;
           }
         `}</style>
         <div className="relative h-40 md:h-48 meal-banner-bg flex items-center justify-between px-4 md:px-12 gap-0">

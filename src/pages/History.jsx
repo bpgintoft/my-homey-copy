@@ -41,7 +41,33 @@ export default function History() {
 
   return (
     <div className="min-h-screen bg-[#F5F5F7]">
-      <div className="bg-gradient-to-r from-[#FFB800] to-[#E5A200] text-white py-12">
+      <style>{`
+        .history-banner-bg {
+          background: linear-gradient(to right, #FFB800, #E5A200);
+          position: relative;
+        }
+        .history-banner-bg::before {
+          content: '';
+          position: absolute;
+          inset: 0;
+          background: 
+            repeating-linear-gradient(
+              45deg,
+              rgba(255, 184, 0, 0.6) 0px,
+              rgba(255, 184, 0, 0.6) 10px,
+              rgba(200, 130, 0, 0.4) 10px,
+              rgba(200, 130, 0, 0.4) 20px,
+              rgba(255, 184, 0, 0.6) 20px,
+              rgba(255, 184, 0, 0.6) 25px,
+              rgba(255, 210, 80, 0.3) 25px,
+              rgba(255, 210, 80, 0.3) 30px
+            ),
+            radial-gradient(circle, rgba(200, 130, 0, 0.4) 2px, transparent 2px);
+          background-size: 100% 100%, 15px 15px;
+          background-position: 0 0, 7px 7px;
+        }
+      `}</style>
+      <div className="history-banner-bg text-white py-12">
         <div className="container mx-auto px-6">
           <div className="flex items-center gap-3 mb-3">
             <HistoryIcon className="w-8 h-8" />

@@ -104,6 +104,27 @@ export default function Kids() {
         <style>{`
           .kids-banner-bg {
             background: #C5DFF0;
+            position: relative;
+          }
+          .kids-banner-bg::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: 
+              repeating-linear-gradient(
+                45deg,
+                rgba(197, 223, 240, 0.6) 0px,
+                rgba(197, 223, 240, 0.6) 10px,
+                rgba(140, 180, 210, 0.4) 10px,
+                rgba(140, 180, 210, 0.4) 20px,
+                rgba(197, 223, 240, 0.6) 20px,
+                rgba(197, 223, 240, 0.6) 25px,
+                rgba(220, 235, 245, 0.3) 25px,
+                rgba(220, 235, 245, 0.3) 30px
+              ),
+              radial-gradient(circle, rgba(140, 180, 210, 0.4) 2px, transparent 2px);
+            background-size: 100% 100%, 15px 15px;
+            background-position: 0 0, 7px 7px;
           }
         `}</style>
         <div className="relative h-40 md:h-48 kids-banner-bg flex items-center justify-between px-4 md:px-12 gap-0">
