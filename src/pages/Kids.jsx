@@ -9,13 +9,14 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Plus, Calendar as CalendarIcon, MapPin, DollarSign, Clock, Sparkles, Users, Trash2, ExternalLink, UserPlus } from 'lucide-react';
+import { Plus, Calendar as CalendarIcon, MapPin, DollarSign, Clock, Sparkles, Users, Trash2, ExternalLink, UserPlus, Edit2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, parseISO } from 'date-fns';
 
 export default function Kids() {
   const [showDialog, setShowDialog] = useState(false);
   const [newActivity, setNewActivity] = useState({});
+  const [editingActivity, setEditingActivity] = useState(null);
   const [currentDate, setCurrentDate] = useState(new Date());
   const queryClient = useQueryClient();
 
@@ -37,6 +38,16 @@ export default function Kids() {
     mutationFn: (id) => base44.entities.KidsActivity.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries(['kidsActivities']);
+    },
+  });
+
+  const updateActivityMutation = useMutation({
+    mutationFn: ({ id, data }) => base44.entities.KidsActivity.update(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['kidsActivities']);
+      setShowDialog(false);
+      setEditingActivity(null);
+      setNewActivity({});
     },
   });
 
@@ -206,6 +217,18 @@ export default function Kids() {
                           <Button
                             variant="ghost"
                             size="icon"
+                            className="h-8 w-8 text-gray-400 hover:text-blue-600"
+                            onClick={() => {
+                              setEditingActivity(activity);
+                              setNewActivity(activity);
+                              setShowDialog(true);
+                            }}
+                          >
+                            <Edit2 className="w-4 h-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
                             className="h-8 w-8 text-gray-400 hover:text-red-600"
                             onClick={() => deleteActivityMutation.mutate(activity.id)}
                           >
@@ -352,10 +375,16 @@ export default function Kids() {
         </Tabs>
       </div>
 
-      <Dialog open={showDialog} onOpenChange={setShowDialog}>
+      <Dialog open={showDialog} onOpenChange={(open) => {
+        setShowDialog(open);
+        if (!open) {
+          setEditingActivity(null);
+          setNewActivity({});
+        }
+      }}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>Add Activity</DialogTitle>
+            <DialogTitle>{editingActivity ? 'Edit Activity' : 'Add Activity'}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <Input
@@ -416,11 +445,17 @@ export default function Kids() {
               rows={3}
             />
             <Button
-              onClick={() => createActivityMutation.mutate(newActivity)}
+              onClick={() => {
+                if (editingActivity) {
+                  updateActivityMutation.mutate({ id: editingActivity.id, data: newActivity });
+                } else {
+                  createActivityMutation.mutate(newActivity);
+                }
+              }}
               disabled={!newActivity.title || !newActivity.type}
               className="w-full bg-gradient-to-r from-[#0AACFF] to-[#0890D9] text-white"
             >
-              Add Activity
+              {editingActivity ? 'Update Activity' : 'Add Activity'}
             </Button>
           </div>
         </DialogContent>
