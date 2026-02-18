@@ -174,19 +174,19 @@ export default function Kids() {
               {upcomingActivities.length} Upcoming Activities
             </h2>
 
-            <div className="flex gap-3">
+            <div className="flex flex-col sm:flex-row gap-3">
               <Button
                 onClick={() => generateActivitiesMutation.mutate()}
                 disabled={generateActivitiesMutation.isPending}
                 variant="outline"
-                className="border-blue-200 text-blue-600 hover:bg-blue-50"
+                className="border-blue-200 text-blue-600 hover:bg-blue-50 w-full sm:w-auto"
               >
                 <Sparkles className="w-4 h-4 mr-2" />
                 {generateActivitiesMutation.isPending ? 'Finding...' : 'Find Local Activities'}
               </Button>
               <Button
                 onClick={() => setShowDialog(true)}
-                className="bg-gradient-to-r from-[#0AACFF] to-[#0890D9] text-white"
+                className="bg-gradient-to-r from-[#0AACFF] to-[#0890D9] text-white w-full sm:w-auto"
               >
                 <Plus className="w-4 h-4 mr-2" />
                 Add Activity
