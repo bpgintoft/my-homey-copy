@@ -14,6 +14,7 @@ import { Plus, ChefHat, ShoppingCart, Calendar, Clock, Users, Sparkles, Trash2, 
 import { motion } from 'framer-motion';
 import { getThumbnailUrl, getMediumUrl } from '../components/imageHelpers';
 import ProteinTypeFilter from '../components/ProteinTypeFilter';
+import MealQuickSelector from '../components/MealQuickSelector';
 
 export default function Meals() {
   const [showMealDialog, setShowMealDialog] = useState(false);
@@ -986,7 +987,17 @@ export default function Meals() {
                   <Card key={day} className="bg-white border-0 shadow-sm">
                     <CardContent className="p-5">
                       <div className="flex items-center justify-between mb-3">
-                        <h3 className="font-semibold text-gray-900 capitalize">{day}</h3>
+                        <div className="flex items-center gap-2">
+                          <h3 className="font-semibold text-gray-900 capitalize">{day}</h3>
+                          <MealQuickSelector
+                            meals={kidFriendlyMeals}
+                            onSelectMeal={(meal, mealType) => {
+                              setSelectedMealForPlan(meal);
+                              setPlanSelection({ day, mealType });
+                              addToMealPlanMutation.mutate();
+                            }}
+                          />
+                        </div>
                         {dailyNutrients && dayMeals.length > 0 && (
                           <Popover>
                             <PopoverTrigger asChild>
