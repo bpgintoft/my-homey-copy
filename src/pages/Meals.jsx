@@ -1213,10 +1213,10 @@ export default function Meals() {
                     onClick={() => setShoppingMode(!shoppingMode)}
                     size="sm"
                     variant="outline"
-                    className={`flex-1 ${shoppingMode ? 'bg-pink-100 border-pink-300 text-pink-700' : 'border-pink-200 text-pink-600'} hover:bg-pink-50`}
+                    className={`flex-1 ${shoppingMode ? 'bg-pink-100 border-pink-300 text-pink-700' : 'border-pink-200 text-pink-600'} hover:bg-pink-50 whitespace-nowrap`}
                   >
-                    <ShoppingCart className="w-4 h-4 mr-1" />
-                    {shoppingMode ? 'Exit' : 'Shop'}
+                    <ShoppingCart className="w-4 h-4 mr-1 flex-shrink-0" />
+                    {shoppingMode ? 'Exit' : 'Shopping Mode'}
                   </Button>
                   {!shoppingMode && (
                     <Button
