@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import FamilyMemberDetails from '../components/FamilyMemberDetails';
+import SchoolProgramSection from '../components/SchoolProgramSection';
 
 export default function PhoenixPage() {
   const { data: familyMembers = [] } = useQuery({
