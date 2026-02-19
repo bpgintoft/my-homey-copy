@@ -22,6 +22,7 @@ export default function SchoolProgramSection({ memberId, memberName, programTitl
   const [editingWebsite, setEditingWebsite] = useState(false);
   const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
   const fileInputRef = React.useRef(null);
+  const pasteInputRef = React.useRef(null);
 
   // Fetch school program data
   const { data: program } = useQuery({
@@ -160,14 +161,19 @@ export default function SchoolProgramSection({ memberId, memberName, programTitl
     }
   };
 
-  const handlePastePhoto = async () => {
-    try {
-      const items = await navigator.clipboard.read();
-      for (let item of items) {
-        if (item.types.includes('image/png') || item.types.includes('image/jpeg') || item.types.includes('image/webp')) {
-          const imageBlob = await item.getType(item.types.find(t => t.startsWith('image/')));
-          const file = new File([imageBlob], `pasted-image-${Date.now()}.png`, { type: imageBlob.type });
-          
+  const handlePastePhoto = () => {
+    pasteInputRef.current?.focus();
+  };
+
+  const handlePasteInput = async (e) => {
+    const items = e.clipboardData?.items;
+    if (!items) return;
+    
+    for (let item of items) {
+      if (item.type.indexOf('image') !== -1) {
+        e.preventDefault();
+        const file = item.getAsFile();
+        if (file) {
           setIsUploadingPhoto(true);
           try {
             const { file_url } = await base44.integrations.Core.UploadFile({ file });
@@ -179,11 +185,9 @@ export default function SchoolProgramSection({ memberId, memberName, programTitl
           } finally {
             setIsUploadingPhoto(false);
           }
-          break;
         }
+        break;
       }
-    } catch (err) {
-      console.error('Failed to paste image:', err);
     }
   };
 
@@ -459,6 +463,13 @@ export default function SchoolProgramSection({ memberId, memberName, programTitl
                   accept="image/*"
                   onChange={handlePhotoUpload}
                   className="hidden"
+                />
+                <input
+                  ref={pasteInputRef}
+                  type="text"
+                  onPaste={handlePasteInput}
+                  className="hidden"
+                  readOnly
                 />
               </div>
               {program.photos && program.photos.length > 0 ? (
