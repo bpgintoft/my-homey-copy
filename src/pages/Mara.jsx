@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { base44 } from '@/api/base44Client';
 import { useSwipe } from '../components/useSwipe';
+import SchoolProgramSection from '../components/SchoolProgramSection';
 import FamilyMemberDetails from '../components/FamilyMemberDetails';
 
 export default function MaraPage() {
@@ -80,6 +81,7 @@ export default function MaraPage() {
 
       {mara && (
         <div className="max-w-2xl mx-auto px-4 sm:px-6 py-6 space-y-4">
+          <SchoolProgramSection memberId={mara.id} memberName="Mara" programTitle="Bright Horizons" />
           <FamilyMemberDetails memberId={mara.id} memberName="Mara" color="purple" />
         </div>
       )}

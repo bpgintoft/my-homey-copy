@@ -11,7 +11,7 @@ import { Plus, Trash2, ChevronDown, Edit2 } from 'lucide-react';
 const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'];
 const dayLabels = ['M', 'T', 'W', 'Th', 'F'];
 
-export default function SchoolProgramSection({ memberId, memberName }) {
+export default function SchoolProgramSection({ memberId, memberName, programTitle = 'Right at School' }) {
   const queryClient = useQueryClient();
   const [openSections, setOpenSections] = useState({ schoolProgram: false });
   const [editingTitle, setEditingTitle] = useState(null);
@@ -42,7 +42,7 @@ export default function SchoolProgramSection({ memberId, memberName }) {
   const handleCreateProgram = () => {
     createProgramMutation.mutate({
       family_member_id: memberId,
-      title: 'Right at School',
+      title: programTitle,
       url: '',
       schedule: { monday: '', tuesday: '', wednesday: '', thursday: '', friday: '' },
       passcodes: [],
@@ -153,9 +153,9 @@ export default function SchoolProgramSection({ memberId, memberName }) {
     >
       <Card>
         <CollapsibleTrigger className="w-full">
-          <CardHeader className="flex flex-row items-center justify-between cursor-pointer hover:bg-gray-50 transition-colors">
-            <CardTitle className="flex items-center gap-2">
-              Right at School
+                <CardHeader className="flex flex-row items-center justify-between cursor-pointer hover:bg-gray-50 transition-colors">
+                  <CardTitle className="flex items-center gap-2">
+                    {programTitle}
               <ChevronDown className={`w-5 h-5 transition-transform ${openSections.schoolProgram ? 'rotate-180' : ''}`} />
             </CardTitle>
           </CardHeader>
