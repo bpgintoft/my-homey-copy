@@ -201,7 +201,7 @@ export default function SchoolProgramSection({ memberId, memberName }) {
                   <thead>
                     <tr>
                       {dayLabels.map((label) => (
-                        <th key={label} className="border border-gray-300 p-2 text-center text-sm font-medium">
+                        <th key={label} className="border border-gray-300 p-1.5 sm:p-2 text-center text-xs sm:text-sm font-medium">
                           {label}
                         </th>
                       ))}
@@ -212,7 +212,7 @@ export default function SchoolProgramSection({ memberId, memberName }) {
                       {days.map((day) => (
                         <td
                           key={day}
-                          className="border border-gray-300 p-2 text-center text-sm cursor-pointer hover:bg-gray-100"
+                          className="border border-gray-300 p-1.5 sm:p-2 text-center text-xs sm:text-sm cursor-pointer hover:bg-gray-100 break-words"
                           onClick={() => setEditingCell(day)}
                         >
                           {editingCell === day ? (
