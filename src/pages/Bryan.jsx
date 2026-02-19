@@ -1,16 +1,32 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { motion } from 'framer-motion';
 import { useQuery } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
+import { createPageUrl } from '@/utils';
 import { base44 } from '@/api/base44Client';
+import { useSwipe } from '../components/useSwipe';
 import FamilyMemberDetails from '../components/FamilyMemberDetails';
 
 export default function BryanPage() {
+  const navigate = useNavigate();
+  const bannerRef = useRef(null);
+  
   const { data: familyMembers = [] } = useQuery({
     queryKey: ['familyMembers'],
     queryFn: () => base44.entities.FamilyMember.list(),
   });
 
   const bryan = familyMembers.find(m => m.name === 'Bryan');
+
+  const handleSwipe = (direction) => {
+    if (direction === 'left') {
+      navigate(createPageUrl('Kate'));
+    } else if (direction === 'right') {
+      navigate(createPageUrl('Mara'));
+    }
+  };
+
+  useSwipe(handleSwipe, bannerRef);
 
   return (
     <div className="min-h-screen bg-[#F5F5F7]">
@@ -40,7 +56,7 @@ export default function BryanPage() {
           background-position: 0 0, 7px 7px;
         }
       `}</style>
-      <div className="relative h-64 overflow-hidden bryan-banner">
+      <div ref={bannerRef} className="relative h-64 overflow-hidden bryan-banner">
         <div className="relative z-10 h-full flex items-center px-6 sm:px-8">
           <motion.h1 
             initial={{ opacity: 0, x: -50 }}
