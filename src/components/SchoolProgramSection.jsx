@@ -22,7 +22,7 @@ export default function SchoolProgramSection({ memberId, memberName, programTitl
   const [editingWebsite, setEditingWebsite] = useState(false);
   const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
   const fileInputRef = React.useRef(null);
-  const pasteInputRef = React.useRef(null);
+  const pasteZoneRef = React.useRef(null);
 
   // Fetch school program data
   const { data: program } = useQuery({
@@ -161,15 +161,25 @@ export default function SchoolProgramSection({ memberId, memberName, programTitl
     }
   };
 
-  const handlePastePhoto = async () => {
-    try {
-      const items = await navigator.clipboard.read();
-      for (let item of items) {
-        const imageType = item.types.find(type => type.startsWith('image/'));
-        if (imageType) {
-          const blob = await item.getType(imageType);
-          const file = new File([blob], `pasted-image-${Date.now()}.png`, { type: imageType });
-          
+  const handlePastePhoto = () => {
+    pasteZoneRef.current?.focus();
+  };
+
+  const handlePasteZoneKeyDown = (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'v') {
+      e.preventDefault();
+    }
+  };
+
+  const handlePasteEvent = async (e) => {
+    e.preventDefault();
+    const items = e.clipboardData?.items;
+    if (!items) return;
+
+    for (let item of items) {
+      if (item.type.indexOf('image') !== -1) {
+        const file = item.getAsFile();
+        if (file) {
           setIsUploadingPhoto(true);
           try {
             const { file_url } = await base44.integrations.Core.UploadFile({ file });
@@ -181,11 +191,9 @@ export default function SchoolProgramSection({ memberId, memberName, programTitl
           } finally {
             setIsUploadingPhoto(false);
           }
-          return;
         }
+        break;
       }
-    } catch (err) {
-      console.error('Clipboard paste failed:', err);
     }
   };
 
@@ -463,6 +471,13 @@ export default function SchoolProgramSection({ memberId, memberName, programTitl
                   className="hidden"
                 />
               </div>
+              <div
+                ref={pasteZoneRef}
+                contentEditable
+                onPaste={handlePasteEvent}
+                onKeyDown={handlePasteZoneKeyDown}
+                className="hidden"
+              />
               {program.photos && program.photos.length > 0 ? (
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                   {program.photos.map((photoUrl, index) => (
