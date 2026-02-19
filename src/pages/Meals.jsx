@@ -1351,13 +1351,6 @@ export default function Meals() {
                                   className={`text-sm font-medium bg-transparent border-none outline-none w-full focus:bg-white focus:px-2 focus:py-1 focus:rounded transition-all ${item.purchased ? 'line-through text-gray-400' : 'text-gray-900'}`}
                                 />
                               </div>
-                              <button
-                                onClick={() => deleteGroceryItemMutation.mutate(item.id)}
-                                disabled={deleteGroceryItemMutation.isPending}
-                                className="text-gray-400 hover:text-red-500 transition-colors p-1"
-                              >
-                                <Trash2 className="w-4 h-4" />
-                              </button>
                               <div className="flex items-center gap-1 bg-white border border-gray-200 rounded-lg">
                                 <button
                                   onClick={() => {
@@ -1383,6 +1376,13 @@ export default function Meals() {
                                   +
                                 </button>
                               </div>
+                              <button
+                                onClick={() => deleteGroceryItemMutation.mutate(item.id)}
+                                disabled={deleteGroceryItemMutation.isPending}
+                                className="text-gray-400 hover:text-red-500 transition-colors p-1"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
                             </div>
                           ))}
                         </div>
