@@ -273,7 +273,7 @@ export default function SchoolProgramSection({ memberId, memberName }) {
                       {days.map((day) => (
                         <td
                           key={day}
-                          className="border border-gray-300 p-1 sm:p-2 text-center text-xs sm:text-sm cursor-pointer hover:bg-gray-100 break-words"
+                          className="border border-gray-300 p-1 sm:p-2 text-center text-[10px] sm:text-xs cursor-pointer hover:bg-gray-100 break-words"
                           onClick={() => setEditingCell(day)}
                         >
                           {editingCell === day ? (
