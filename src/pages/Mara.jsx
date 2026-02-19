@@ -57,7 +57,7 @@ export default function MaraPage() {
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="absolute right-0 top-1 h-60 w-auto object-contain"
+            className="absolute right-0 top-1 h-80 w-auto object-contain"
           />
         </div>
       </div>
