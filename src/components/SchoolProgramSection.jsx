@@ -397,7 +397,33 @@ export default function SchoolProgramSection({ memberId, memberName, programTitl
             </div>
 
             {/* Photos Section */}
-            <div className="border-t pt-4 space-y-3">
+            <div 
+              className="border-t pt-4 space-y-3"
+              onPaste={async (e) => {
+                const items = e.clipboardData?.items;
+                if (!items) return;
+                
+                for (let item of items) {
+                  if (item.type.indexOf('image') !== -1) {
+                    e.preventDefault();
+                    const file = item.getAsFile();
+                    if (file) {
+                      setIsUploadingPhoto(true);
+                      try {
+                        const { file_url } = await base44.integrations.Core.UploadFile({ file });
+                        const updatedPhotos = [...(program.photos || []), file_url];
+                        updateProgramMutation.mutate({
+                          id: program.id,
+                          data: { photos: updatedPhotos },
+                        });
+                      } finally {
+                        setIsUploadingPhoto(false);
+                      }
+                    }
+                  }
+                }
+              }}
+            >
               <div className="flex items-center justify-between">
                 <h4 className="text-sm font-semibold">Photos</h4>
                 <Button
