@@ -27,6 +27,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
   const [showTitleDialog, setShowTitleDialog] = useState(false);
   const [categorizingLink, setCategorizingLink] = useState(false);
   const [editingLink, setEditingLink] = useState(null);
+  const [expandedLinkId, setExpandedLinkId] = useState(null);
   const [personalNotes, setPersonalNotes] = useState('');
   const [openSections, setOpenSections] = useState({
     links: false,
