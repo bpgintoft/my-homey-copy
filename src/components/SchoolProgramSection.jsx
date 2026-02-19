@@ -161,19 +161,15 @@ export default function SchoolProgramSection({ memberId, memberName, programTitl
     }
   };
 
-  const handlePastePhoto = () => {
-    pasteInputRef.current?.focus();
-  };
-
-  const handlePasteInput = async (e) => {
-    const items = e.clipboardData?.items;
-    if (!items) return;
-    
-    for (let item of items) {
-      if (item.type.indexOf('image') !== -1) {
-        e.preventDefault();
-        const file = item.getAsFile();
-        if (file) {
+  const handlePastePhoto = async () => {
+    try {
+      const items = await navigator.clipboard.read();
+      for (let item of items) {
+        const imageType = item.types.find(type => type.startsWith('image/'));
+        if (imageType) {
+          const blob = await item.getType(imageType);
+          const file = new File([blob], `pasted-image-${Date.now()}.png`, { type: imageType });
+          
           setIsUploadingPhoto(true);
           try {
             const { file_url } = await base44.integrations.Core.UploadFile({ file });
@@ -185,9 +181,11 @@ export default function SchoolProgramSection({ memberId, memberName, programTitl
           } finally {
             setIsUploadingPhoto(false);
           }
+          return;
         }
-        break;
       }
+    } catch (err) {
+      console.error('Clipboard paste failed:', err);
     }
   };
 
@@ -463,13 +461,6 @@ export default function SchoolProgramSection({ memberId, memberName, programTitl
                   accept="image/*"
                   onChange={handlePhotoUpload}
                   className="hidden"
-                />
-                <input
-                  ref={pasteInputRef}
-                  type="text"
-                  onPaste={handlePasteInput}
-                  className="hidden"
-                  readOnly
                 />
               </div>
               {program.photos && program.photos.length > 0 ? (
