@@ -6,12 +6,25 @@ import FamilyMemberDetails from '../components/FamilyMemberDetails';
 import SchoolProgramSection from '../components/SchoolProgramSection';
 
 export default function PhoenixPage() {
+  const navigate = useNavigate();
+  const bannerRef = useRef(null);
+  
   const { data: familyMembers = [] } = useQuery({
     queryKey: ['familyMembers'],
     queryFn: () => base44.entities.FamilyMember.list(),
   });
 
   const phoenix = familyMembers.find(m => m.name === 'Phoenix');
+
+  const handleSwipe = (direction) => {
+    if (direction === 'left') {
+      navigate(createPageUrl('Mara'));
+    } else if (direction === 'right') {
+      navigate(createPageUrl('Kate'));
+    }
+  };
+
+  useSwipe(handleSwipe, bannerRef);
 
   return (
     <div className="min-h-screen bg-[#F5F5F7]">
@@ -41,7 +54,7 @@ export default function PhoenixPage() {
           background-position: 0 0, 7px 7px;
         }
       `}</style>
-      <div className="relative h-64 overflow-hidden phoenix-banner">
+      <div ref={bannerRef} className="relative h-64 overflow-hidden phoenix-banner">
         <div className="relative z-10 h-full flex items-center px-6 sm:px-8">
           <motion.h1 
             initial={{ opacity: 0, x: -50 }}
