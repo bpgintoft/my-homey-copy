@@ -22,6 +22,7 @@ export default function SchoolProgramSection({ memberId, memberName, programTitl
   const [editingWebsite, setEditingWebsite] = useState(false);
   const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
   const fileInputRef = React.useRef(null);
+  const pasteInputRef = React.useRef(null);
 
   // Fetch school program data
   const { data: program } = useQuery({
@@ -160,26 +161,25 @@ export default function SchoolProgramSection({ memberId, memberName, programTitl
     }
   };
 
-  React.useEffect(() => {
-    const handlePaste = (e) => {
-      const items = e.clipboardData?.items;
-      if (!items) return;
+  const handlePasteClick = () => {
+    pasteInputRef.current?.focus();
+  };
 
-      for (let item of items) {
-        if (item.type.startsWith('image/')) {
-          const blob = item.getAsFile();
-          if (blob) {
-            handlePhotoUploadDirect(blob);
-            e.preventDefault();
-          }
-          return;
+  const handlePasteEvent = (e) => {
+    const items = e.clipboardData?.items;
+    if (!items) return;
+
+    for (let item of items) {
+      if (item.type.startsWith('image/')) {
+        const blob = item.getAsFile();
+        if (blob) {
+          handlePhotoUploadDirect(blob);
+          e.preventDefault();
         }
+        return;
       }
-    };
-
-    document.addEventListener('paste', handlePaste);
-    return () => document.removeEventListener('paste', handlePaste);
-  }, [program]);
+    }
+  };
 
   const handlePhotoUploadDirect = async (file) => {
     if (!file || !program) return;
@@ -436,18 +436,32 @@ export default function SchoolProgramSection({ memberId, memberName, programTitl
             <div className="border-t pt-4 space-y-3">
               <div className="flex items-center justify-between gap-2">
                 <h4 className="text-sm font-semibold">Photos</h4>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => fileInputRef.current?.click()}
-                  disabled={isUploadingPhoto}
-                >
-                  {isUploadingPhoto ? (
-                    <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Uploading...</>
-                  ) : (
-                    <><Upload className="w-4 h-4 mr-2" />Add Photo</>
-                  )}
-                </Button>
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handlePasteClick}
+                    disabled={isUploadingPhoto}
+                  >
+                    {isUploadingPhoto ? (
+                      <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Uploading...</>
+                    ) : (
+                      <>Paste</>
+                    )}
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={isUploadingPhoto}
+                  >
+                    {isUploadingPhoto ? (
+                      <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Uploading...</>
+                    ) : (
+                      <><Upload className="w-4 h-4 mr-2" />Add Photo</>
+                    )}
+                  </Button>
+                </div>
                 <input
                   ref={fileInputRef}
                   type="file"
@@ -455,8 +469,14 @@ export default function SchoolProgramSection({ memberId, memberName, programTitl
                   onChange={handlePhotoUpload}
                   className="hidden"
                 />
+                <input
+                  ref={pasteInputRef}
+                  type="text"
+                  onPaste={handlePasteEvent}
+                  className="hidden"
+                  placeholder="Paste area"
+                />
               </div>
-              <p className="text-xs text-gray-500">Copy an image and paste it here with Ctrl+V (or Cmd+V)</p>
               {program.photos && program.photos.length > 0 ? (
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                   {program.photos.map((photoUrl, index) => (
