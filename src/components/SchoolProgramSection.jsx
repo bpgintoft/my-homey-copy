@@ -244,7 +244,7 @@ export default function SchoolProgramSection({ memberId, memberName }) {
               <div className="space-y-2">
                 {program.passcodes && program.passcodes.map((passcode, index) => (
                   <div key={index} className="flex items-center justify-between p-2 bg-gray-50 rounded text-sm">
-                    <div className="flex-1">
+                    <div className="flex items-center gap-2">
                       <div className="font-medium">{passcode.name}</div>
                       <div className="text-gray-600 font-mono">{passcode.code}</div>
                     </div>
@@ -252,7 +252,7 @@ export default function SchoolProgramSection({ memberId, memberName }) {
                       variant="ghost"
                       size="sm"
                       onClick={() => handleDeletePasscode(index)}
-                      className="h-7 w-7 p-0"
+                      className="h-7 w-7 p-0 flex-shrink-0"
                     >
                       <Trash2 className="w-3 h-3 text-red-500" />
                     </Button>
