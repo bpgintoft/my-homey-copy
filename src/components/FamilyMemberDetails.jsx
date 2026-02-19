@@ -458,36 +458,38 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                   <p className="text-sm text-gray-500">No contacts yet</p>
                 ) : (
                   contacts.map((contact) => {
-                    const isExpanded = expandedContactId === contact.id;
-                    const isEditing = editingContact?.id === contact.id;
+                  const isExpanded = expandedContactId === contact.id;
+                  const isEditing = editingContact?.id === contact.id;
 
-                    return (
-                      <div key={contact.id} className="bg-gray-50 rounded-lg overflow-hidden">
-                        <div 
-                          className="flex items-center justify-between p-3 cursor-pointer hover:bg-gray-100"
-                          onClick={() => setExpandedContactId(isExpanded ? null : contact.id)}
-                        >
-                          <div>
-                            <div className="font-medium">{contact.name}</div>
-                            {contact.type && <div className="text-xs text-gray-500">{contact.type}</div>}
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <Button 
-                              variant="ghost" 
-                              size="sm" 
-                              onClick={(e) => { e.stopPropagation(); setEditingContact(contact); }}
-                            >
-                              <Edit2 className="w-4 h-4 text-gray-500" />
-                            </Button>
-                            <Button 
-                              variant="ghost" 
-                              size="sm" 
-                              onClick={(e) => { e.stopPropagation(); deleteContactMutation.mutate(contact.id); }}
-                            >
-                              <Trash2 className="w-4 h-4 text-red-500" />
-                            </Button>
-                          </div>
+                  return (
+                    <div key={contact.id} className="bg-gray-50 rounded-lg overflow-hidden">
+                      <div 
+                        className="flex items-center gap-2 p-3 cursor-pointer hover:bg-gray-100"
+                        onClick={() => setExpandedContactId(isExpanded ? null : contact.id)}
+                      >
+                        <div className="flex-1 min-w-0">
+                          <div className="font-medium">{contact.name}</div>
+                          {contact.type && <div className="text-xs text-gray-500">{contact.type}</div>}
                         </div>
+                        <div className="flex gap-0.5 flex-shrink-0">
+                          <Button 
+                            variant="ghost" 
+                            size="icon"
+                            className="h-7 w-7"
+                            onClick={(e) => { e.stopPropagation(); setEditingContact(contact); }}
+                          >
+                            <Edit2 className="w-3 h-3 text-gray-500" />
+                          </Button>
+                          <Button 
+                            variant="ghost" 
+                            size="icon"
+                            className="h-7 w-7"
+                            onClick={(e) => { e.stopPropagation(); deleteContactMutation.mutate(contact.id); }}
+                          >
+                            <Trash2 className="w-3 h-3 text-red-500" />
+                          </Button>
+                        </div>
+                      </div>
 
                         {isExpanded && (
                           <div className="px-3 pb-3 space-y-2 border-t border-gray-200 pt-2">
