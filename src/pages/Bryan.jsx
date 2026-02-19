@@ -62,7 +62,11 @@ export default function BryanPage() {
         </div>
       </div>
 
-      {bryan && <FamilyMemberDetails memberId={bryan.id} memberName="Bryan" color="blue" />}
+      {bryan && (
+        <div className="max-w-2xl mx-auto px-4 sm:px-6 py-6 space-y-4">
+          <FamilyMemberDetails memberId={bryan.id} memberName="Bryan" color="blue" />
+        </div>
+      )}
     </div>
   );
 }

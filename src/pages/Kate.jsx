@@ -62,7 +62,11 @@ export default function KatePage() {
         </div>
       </div>
 
-      {kate && <FamilyMemberDetails memberId={kate.id} memberName="Kate" color="pink" />}
+      {kate && (
+        <div className="max-w-2xl mx-auto px-4 sm:px-6 py-6 space-y-4">
+          <FamilyMemberDetails memberId={kate.id} memberName="Kate" color="pink" />
+        </div>
+      )}
     </div>
   );
 }
