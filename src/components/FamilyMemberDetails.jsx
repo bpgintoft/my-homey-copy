@@ -212,7 +212,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
   }, {});
 
   return (
-    <div className="space-y-4 p-6">
+    <div className="space-y-4">
       {/* Important Links */}
       <Collapsible 
         open={openSections.links} 
