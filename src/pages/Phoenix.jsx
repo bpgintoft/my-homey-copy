@@ -40,7 +40,7 @@ export default function PhoenixPage() {
       <div className="relative h-64 bg-gradient-to-r from-orange-500 to-orange-600 overflow-hidden phoenix-banner">
         <div className="absolute right-0 bottom-0 z-20 h-60 flex items-end justify-end">
           <img 
-            src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/bce10fc11_Phoenixpage.png"
+            src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/c5d7a407a_Phoenixpage.png"
             alt="Phoenix"
             className="h-full w-auto object-contain"
             style={{ mixBlendMode: 'multiply' }}
