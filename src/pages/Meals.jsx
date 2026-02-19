@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Plus, ChefHat, ShoppingCart, Calendar, Clock, Users, Sparkles, Trash2, ExternalLink, BarChart3, Beef, Fish, Leaf, Drumstick, Star, ChevronDown, ChevronUp, Coffee, UtensilsCrossed, Utensils, Apple, IceCream, Pin } from 'lucide-react';
+import { Plus, ChefHat, ShoppingCart, Calendar, Clock, Users, Sparkles, Trash2, ExternalLink, BarChart3, Beef, Fish, Leaf, Drumstick, Star, ChevronDown, ChevronUp, Coffee, UtensilsCrossed, Utensils, Apple, IceCream } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { getThumbnailUrl, getMediumUrl } from '../components/imageHelpers';
 import ProteinTypeFilter from '../components/ProteinTypeFilter';
@@ -38,7 +38,7 @@ export default function Meals() {
             const [uploadingImage, setUploadingImage] = useState(false);
             const [expandedSections, setExpandedSections] = useState({});
             const [shoppingMode, setShoppingMode] = useState(false);
-            const [newGroceryItem, setNewGroceryItem] = useState({ name: '', is_staple: false });
+            const [newGroceryItem, setNewGroceryItem] = useState({ name: '', category: 'other' });
             const [showAddGrocery, setShowAddGrocery] = useState(false);
             const queryClient = useQueryClient();
 
@@ -275,15 +275,7 @@ export default function Meals() {
     });
 
     const togglePurchasedMutation = useMutation({
-      mutationFn: async ({ id, purchased, is_staple }) => {
-        if (!is_staple && purchased) {
-          // Non-staple items get deleted when checked off
-          await base44.entities.GroceryItem.delete(id);
-        } else {
-          // Staple items just toggle purchased status
-          await base44.entities.GroceryItem.update(id, { purchased });
-        }
-      },
+      mutationFn: ({ id, purchased }) => base44.entities.GroceryItem.update(id, { purchased }),
       onSuccess: () => {
         queryClient.invalidateQueries(['groceries']);
       },
@@ -291,13 +283,6 @@ export default function Meals() {
 
     const updateGroceryNameMutation = useMutation({
         mutationFn: ({ id, name }) => base44.entities.GroceryItem.update(id, { name }),
-        onSuccess: () => {
-          queryClient.invalidateQueries(['groceries']);
-        },
-      });
-
-      const toggleStapleMutation = useMutation({
-        mutationFn: ({ id, is_staple }) => base44.entities.GroceryItem.update(id, { is_staple }),
         onSuccess: () => {
           queryClient.invalidateQueries(['groceries']);
         },
@@ -392,22 +377,16 @@ export default function Meals() {
         mutationFn: async (itemData) => {
           const weekStart = new Date();
           weekStart.setDate(weekStart.getDate() - weekStart.getDay());
-          
-          // Auto-categorize with AI
-          const category = await categorizeMutation.mutateAsync(itemData.name);
-          
           await base44.entities.GroceryItem.create({
-            name: itemData.name,
-            category: category || 'other',
+            ...itemData,
             quantity: '1',
             purchased: false,
-            is_staple: itemData.is_staple || false,
             week_start_date: weekStart.toISOString().split('T')[0],
           });
         },
         onSuccess: () => {
           queryClient.invalidateQueries(['groceries']);
-          setNewGroceryItem({ name: '', is_staple: false });
+          setNewGroceryItem({ name: '', category: 'other' });
           setShowAddGrocery(false);
         },
       });
@@ -1256,41 +1235,51 @@ export default function Meals() {
             </div>
 
             {showAddGrocery && (
-             <Card className="bg-white border-0 shadow-sm">
-               <CardContent className="p-4">
-                 <div className="space-y-3">
-                   <Input
-                     placeholder="Item name"
-                     value={newGroceryItem.name}
-                     onChange={(e) => setNewGroceryItem({ ...newGroceryItem, name: e.target.value })}
-                   />
-                   <label className="flex items-center gap-2 text-sm">
-                     <input
-                       type="checkbox"
-                       checked={newGroceryItem.is_staple}
-                       onChange={(e) => setNewGroceryItem({ ...newGroceryItem, is_staple: e.target.checked })}
-                       className="w-4 h-4 rounded border-gray-300 text-pink-600 focus:ring-pink-500"
-                     />
-                     <span className="text-gray-700">Common item (stays on list when checked)</span>
-                   </label>
-                   <div className="flex gap-2">
-                     <Button
-                       onClick={() => addManualGroceryMutation.mutate(newGroceryItem)}
-                       disabled={!newGroceryItem.name || addManualGroceryMutation.isPending}
-                       className="flex-1 bg-gradient-to-r from-[#E91E8C] to-[#D01576] text-white"
-                     >
-                       {addManualGroceryMutation.isPending ? 'Adding...' : 'Add'}
-                     </Button>
-                     <Button
-                       onClick={() => { setShowAddGrocery(false); setNewGroceryItem({ name: '', is_staple: false }); }}
-                       variant="outline"
-                     >
-                       Cancel
-                     </Button>
-                   </div>
-                 </div>
-               </CardContent>
-             </Card>
+              <Card className="bg-white border-0 shadow-sm">
+                <CardContent className="p-4">
+                  <div className="space-y-3">
+                    <Input
+                      placeholder="Item name"
+                      value={newGroceryItem.name}
+                      onChange={(e) => setNewGroceryItem({ ...newGroceryItem, name: e.target.value })}
+                    />
+                    <Select
+                      value={newGroceryItem.category}
+                      onValueChange={(value) => setNewGroceryItem({ ...newGroceryItem, category: value })}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Category" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="produce">🥬 Produce</SelectItem>
+                        <SelectItem value="meat_seafood">🥩 Meat & Seafood</SelectItem>
+                        <SelectItem value="dairy_eggs">🥛 Dairy & Eggs</SelectItem>
+                        <SelectItem value="bakery">🥖 Bakery</SelectItem>
+                        <SelectItem value="pantry">🥫 Pantry & Dry Goods</SelectItem>
+                        <SelectItem value="frozen">❄️ Frozen Foods</SelectItem>
+                        <SelectItem value="beverages">🥤 Beverages</SelectItem>
+                        <SelectItem value="deli">🧀 Deli</SelectItem>
+                        <SelectItem value="other">🛒 Other</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <div className="flex gap-2">
+                      <Button
+                        onClick={() => addManualGroceryMutation.mutate(newGroceryItem)}
+                        disabled={!newGroceryItem.name || addManualGroceryMutation.isPending}
+                        className="flex-1 bg-gradient-to-r from-[#E91E8C] to-[#D01576] text-white"
+                      >
+                        Add
+                      </Button>
+                      <Button
+                        onClick={() => { setShowAddGrocery(false); setNewGroceryItem({ name: '', category: 'other' }); }}
+                        variant="outline"
+                      >
+                        Cancel
+                      </Button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
             )}
             {groceries.length === 0 ? (
               <Card className="bg-white border-0 shadow-sm p-8 text-center">
@@ -1322,83 +1311,94 @@ export default function Meals() {
                           {label}
                         </h3>
                         <div className="space-y-2">
-                        {categoryItems.map((item) => (
-                          <div key={item.id} className={`flex items-center gap-3 p-3 rounded-lg transition-all ${
-                            shoppingMode 
-                              ? item.purchased 
-                                ? 'bg-gray-100' 
-                                : 'bg-white border-2 border-pink-200' 
-                              : 'bg-gray-50'
-                          }`}>
-                            {shoppingMode && (
-                              <input
-                                type="checkbox"
-                                checked={item.purchased || false}
-                                onChange={(e) => togglePurchasedMutation.mutate({ id: item.id, purchased: e.target.checked, is_staple: item.is_staple })}
-                                className="w-5 h-5 rounded border-gray-300 text-pink-600 focus:ring-pink-500 cursor-pointer"
-                              />
-                            )}
-                            <div className="flex-1 min-w-0">
-                              {shoppingMode ? (
-                                <div className={`text-sm font-medium flex items-center gap-2 ${item.purchased ? 'line-through text-gray-400' : 'text-gray-900'}`}>
-                                  {item.is_staple && <Pin className="w-3 h-3 text-pink-500 flex-shrink-0" />}
-                                  <span>{item.name} {item.quantity && parseInt(item.quantity) > 1 ? `(${item.quantity})` : ''}</span>
-                                </div>
-                              ) : (
-                                <div className="flex items-center gap-2">
-                                  <button
-                                    onClick={() => toggleStapleMutation.mutate({ id: item.id, is_staple: !item.is_staple })}
-                                    className="flex-shrink-0"
-                                  >
-                                    <Pin className={`w-3 h-3 transition-colors ${item.is_staple ? 'text-pink-500' : 'text-gray-300 hover:text-pink-400'}`} />
-                                  </button>
+                          {categoryItems.map((item) => (
+                            <div key={item.id} className={`flex items-center gap-3 p-3 rounded-lg transition-all ${
+                              shoppingMode 
+                                ? item.purchased 
+                                  ? 'bg-gray-100' 
+                                  : 'bg-white border-2 border-pink-200' 
+                                : 'bg-gray-50'
+                            }`}>
+                              {shoppingMode && (
+                                <input
+                                  type="checkbox"
+                                  checked={item.purchased || false}
+                                  onChange={(e) => togglePurchasedMutation.mutate({ id: item.id, purchased: e.target.checked })}
+                                  className="w-5 h-5 rounded border-gray-300 text-pink-600 focus:ring-pink-500 cursor-pointer"
+                                />
+                              )}
+                              <div className="flex-1 min-w-0">
+                                {shoppingMode ? (
+                                  <div className={`text-sm font-medium ${item.purchased ? 'line-through text-gray-400' : 'text-gray-900'}`}>
+                                    {item.name} {item.quantity && parseInt(item.quantity) > 1 ? `(${item.quantity})` : ''}
+                                  </div>
+                                ) : (
                                   <input
                                     type="text"
                                     value={item.name}
                                     onChange={(e) => updateGroceryNameMutation.mutate({ id: item.id, name: e.target.value })}
                                     className="text-sm font-medium text-gray-900 bg-transparent border-none outline-none w-full focus:bg-white focus:px-2 focus:py-1 focus:rounded transition-all"
                                   />
+                                )}
+                              </div>
+                              {shoppingMode ? (
+                                <div className="flex items-center gap-2">
+                                  <Button
+                                    onClick={() => deleteGroceryItemMutation.mutate(item.id)}
+                                    disabled={deleteGroceryItemMutation.isPending}
+                                    size="sm"
+                                    variant="outline"
+                                    className="text-xs border-red-200 text-red-600 hover:bg-red-50"
+                                  >
+                                    Delete
+                                  </Button>
+                                  <Button
+                                    onClick={() => updateGroceryNameMutation.mutate({ id: item.id, name: item.name })}
+                                    size="sm"
+                                    variant="outline"
+                                    className="text-xs border-blue-200 text-blue-600 hover:bg-blue-50"
+                                  >
+                                    Keep
+                                  </Button>
+                                </div>
+                              ) : (
+                                <div className="flex items-center gap-3">
+                                  <div className="flex items-center gap-2 bg-white border border-gray-200 rounded-lg">
+                                    <button
+                                      onClick={() => {
+                                        const qty = parseInt(item.quantity) || 0;
+                                        if (qty > 0) {
+                                          updateGroceryQuantityMutation.mutate({ id: item.id, quantity: qty - 1 });
+                                        }
+                                      }}
+                                      disabled={updateGroceryQuantityMutation.isPending}
+                                      className="px-2 py-1 text-gray-500 hover:text-gray-900"
+                                    >
+                                      −
+                                    </button>
+                                    <span className="w-8 text-center font-medium text-sm">{item.quantity || 1}</span>
+                                    <button
+                                      onClick={() => {
+                                        const qty = parseInt(item.quantity) || 0;
+                                        updateGroceryQuantityMutation.mutate({ id: item.id, quantity: qty + 1 });
+                                      }}
+                                      disabled={updateGroceryQuantityMutation.isPending}
+                                      className="px-2 py-1 text-gray-500 hover:text-gray-900"
+                                    >
+                                      +
+                                    </button>
+                                  </div>
+                                  <button
+                                    onClick={() => deleteGroceryItemMutation.mutate(item.id)}
+                                    disabled={deleteGroceryItemMutation.isPending}
+                                    className="text-gray-400 hover:text-red-500 transition-colors p-1"
+                                  >
+                                    <Trash2 className="w-4 h-4" />
+                                  </button>
                                 </div>
                               )}
                             </div>
-                            {!shoppingMode && (
-                              <div className="flex items-center gap-3">
-                                <div className="flex items-center gap-2 bg-white border border-gray-200 rounded-lg">
-                                  <button
-                                    onClick={() => {
-                                      const qty = parseInt(item.quantity) || 0;
-                                      if (qty > 0) {
-                                        updateGroceryQuantityMutation.mutate({ id: item.id, quantity: qty - 1 });
-                                      }
-                                    }}
-                                    disabled={updateGroceryQuantityMutation.isPending}
-                                    className="px-2 py-1 text-gray-500 hover:text-gray-900"
-                                  >
-                                    −
-                                  </button>
-                                  <span className="w-8 text-center font-medium text-sm">{item.quantity || 1}</span>
-                                  <button
-                                    onClick={() => {
-                                      const qty = parseInt(item.quantity) || 0;
-                                      updateGroceryQuantityMutation.mutate({ id: item.id, quantity: qty + 1 });
-                                    }}
-                                    disabled={updateGroceryQuantityMutation.isPending}
-                                    className="px-2 py-1 text-gray-500 hover:text-gray-900"
-                                  >
-                                    +
-                                  </button>
-                                </div>
-                                <button
-                                  onClick={() => deleteGroceryItemMutation.mutate(item.id)}
-                                  disabled={deleteGroceryItemMutation.isPending}
-                                  className="text-gray-400 hover:text-red-500 transition-colors p-1"
-                                >
-                                  <Trash2 className="w-4 h-4" />
-                                </button>
-                              </div>
-                            )}
-                          </div>
-                        ))}
+                          ))}
                         </div>
                       </CardContent>
                     </Card>
