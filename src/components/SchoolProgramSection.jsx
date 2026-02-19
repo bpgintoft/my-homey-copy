@@ -6,7 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { Plus, Trash2, ChevronDown, Edit2, Upload, Loader2 } from 'lucide-react';
+import { Plus, Trash2, ChevronDown, Edit2, Upload, Loader2, X } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'];
 const dayLabels = ['M', 'T', 'W', 'Th', 'F'];
@@ -21,6 +22,8 @@ export default function SchoolProgramSection({ memberId, memberName, programTitl
   const [isAddingPasscode, setIsAddingPasscode] = useState(false);
   const [editingWebsite, setEditingWebsite] = useState(false);
   const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
+  const [selectedPhotoIndex, setSelectedPhotoIndex] = useState(null);
+  const [photoZoom, setPhotoZoom] = useState(1);
   const fileInputRef = React.useRef(null);
 
   // Fetch school program data
@@ -464,25 +467,59 @@ export default function SchoolProgramSection({ memberId, memberName, programTitl
                 className="text-xs"
               />
               {program.photos && program.photos.length > 0 ? (
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                  {program.photos.map((photoUrl, index) => (
-                    <div key={index} className="relative group">
-                      <img
-                        src={photoUrl}
-                        alt={`Program photo ${index + 1}`}
-                        className="w-full h-24 object-cover rounded-lg"
-                      />
+                <>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                    {program.photos.map((photoUrl, index) => (
+                      <div key={index} className="relative group cursor-pointer">
+                        <img
+                          src={photoUrl}
+                          alt={`Program photo ${index + 1}`}
+                          className="w-full h-24 object-cover rounded-lg hover:opacity-75 transition-opacity"
+                          onClick={() => {
+                            setSelectedPhotoIndex(index);
+                            setPhotoZoom(1);
+                          }}
+                        />
+                        <Button
+                          variant="destructive"
+                          size="sm"
+                          onClick={() => handleDeletePhoto(index)}
+                          className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity h-7 w-7 p-0"
+                        >
+                          <Trash2 className="w-3 h-3" />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+
+                  {selectedPhotoIndex !== null && (
+                    <div className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center" onClick={() => setSelectedPhotoIndex(null)}>
                       <Button
-                        variant="destructive"
-                        size="sm"
-                        onClick={() => handleDeletePhoto(index)}
-                        className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity h-7 w-7 p-0"
+                        variant="ghost"
+                        size="icon"
+                        className="absolute top-4 right-4 text-white hover:bg-white/20"
+                        onClick={() => setSelectedPhotoIndex(null)}
                       >
-                        <Trash2 className="w-3 h-3" />
+                        <X className="w-6 h-6" />
                       </Button>
+                      <motion.img
+                        src={program.photos[selectedPhotoIndex]}
+                        alt="Full screen photo"
+                        className="max-w-[90vw] max-h-[90vh] object-contain"
+                        initial={{ scale: 1 }}
+                        animate={{ scale: photoZoom }}
+                        transition={{ type: 'spring', damping: 20 }}
+                        onClick={(e) => e.stopPropagation()}
+                        onWheel={(e) => {
+                          e.preventDefault();
+                          const newZoom = photoZoom + (e.deltaY > 0 ? -0.1 : 0.1);
+                          setPhotoZoom(Math.max(1, Math.min(newZoom, 3)));
+                        }}
+                        style={{ touchAction: 'pinch-zoom' }}
+                      />
                     </div>
-                  ))}
-                </div>
+                  )}
+                </>
               ) : (
                 <p className="text-sm text-gray-500">No photos yet</p>
               )}
