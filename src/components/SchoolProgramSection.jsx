@@ -19,6 +19,7 @@ export default function SchoolProgramSection({ memberId, memberName }) {
   const [editingPasscode, setEditingPasscode] = useState(null);
   const [newPasscode, setNewPasscode] = useState({ name: '', code: '' });
   const [isAddingPasscode, setIsAddingPasscode] = useState(false);
+  const [editingWebsite, setEditingWebsite] = useState(false);
 
   // Fetch school program data
   const { data: program } = useQuery({
