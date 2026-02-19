@@ -15,6 +15,10 @@ export default function KatePage() {
   return (
     <div className="min-h-screen bg-[#F5F5F7]">
       <style>{`
+        .kate-banner {
+          background: linear-gradient(135deg, #A7F3D0 0%, #6EE7B7 50%, #34D399 100%);
+          position: relative;
+        }
         .kate-banner::before {
           content: '';
           position: absolute;
@@ -22,29 +26,39 @@ export default function KatePage() {
           background: 
             repeating-linear-gradient(
               45deg,
-              rgba(236, 72, 153, 0.6) 0px,
-              rgba(236, 72, 153, 0.6) 10px,
-              rgba(219, 39, 119, 0.4) 10px,
-              rgba(219, 39, 119, 0.4) 20px,
-              rgba(236, 72, 153, 0.6) 20px,
-              rgba(236, 72, 153, 0.6) 25px,
-              rgba(244, 114, 182, 0.3) 25px,
-              rgba(244, 114, 182, 0.3) 30px
+              rgba(167, 243, 208, 0.6) 0px,
+              rgba(167, 243, 208, 0.6) 10px,
+              rgba(52, 211, 153, 0.4) 10px,
+              rgba(52, 211, 153, 0.4) 20px,
+              rgba(167, 243, 208, 0.6) 20px,
+              rgba(167, 243, 208, 0.6) 25px,
+              rgba(110, 231, 183, 0.3) 25px,
+              rgba(110, 231, 183, 0.3) 30px
             ),
-            radial-gradient(circle, rgba(219, 39, 119, 0.4) 2px, transparent 2px);
+            radial-gradient(circle, rgba(52, 211, 153, 0.4) 2px, transparent 2px);
           background-size: 100% 100%, 15px 15px;
           background-position: 0 0, 7px 7px;
         }
       `}</style>
-      <div className="relative h-64 bg-gradient-to-r from-pink-500 to-pink-600 overflow-hidden kate-banner">
-        <div className="relative z-10 h-full flex flex-col justify-end p-6 sm:p-8">
+      <div className="relative h-64 overflow-hidden kate-banner">
+        <div className="relative z-10 h-full flex items-center px-6 sm:px-8">
           <motion.h1 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-4xl sm:text-5xl font-bold text-white"
+            initial={{ opacity: 0, x: -50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6 }}
+            className="text-5xl sm:text-7xl font-bold text-white drop-shadow-lg"
+            style={{ textShadow: '3px 3px 6px rgba(0,0,0,0.3)' }}
           >
             Kate
           </motion.h1>
+          <motion.img
+            src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/6d06cb23a_Katepage.png"
+            alt="Kate"
+            initial={{ opacity: 0, x: 50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="absolute right-0 top-1 h-80 w-auto object-contain"
+          />
         </div>
       </div>
 
