@@ -160,23 +160,26 @@ export default function SchoolProgramSection({ memberId, memberName, programTitl
     }
   };
 
-  const handlePasteClick = async () => {
-    try {
-      const items = await navigator.clipboard.read();
-      for (const item of items) {
-        if (item.types.some(type => type.startsWith('image/'))) {
-          const imageType = item.types.find(type => type.startsWith('image/'));
-          const blob = await item.getType(imageType);
-          const file = new File([blob], `pasted-image-${Date.now()}.png`, { type: imageType });
-          handlePhotoUploadDirect(file);
+  React.useEffect(() => {
+    const handlePaste = (e) => {
+      const items = e.clipboardData?.items;
+      if (!items) return;
+
+      for (let item of items) {
+        if (item.type.startsWith('image/')) {
+          const blob = item.getAsFile();
+          if (blob) {
+            handlePhotoUploadDirect(blob);
+            e.preventDefault();
+          }
           return;
         }
       }
-      console.warn('No image found in clipboard');
-    } catch (err) {
-      console.error('Clipboard read failed:', err);
-    }
-  };
+    };
+
+    document.addEventListener('paste', handlePaste);
+    return () => document.removeEventListener('paste', handlePaste);
+  }, [program]);
 
   const handlePhotoUploadDirect = async (file) => {
     if (!file || !program) return;
@@ -435,32 +438,18 @@ export default function SchoolProgramSection({ memberId, memberName, programTitl
             <div className="border-t pt-4 space-y-3">
               <div className="flex items-center justify-between gap-2">
                 <h4 className="text-sm font-semibold">Photos</h4>
-                <div className="flex gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handlePasteClick}
-                    disabled={isUploadingPhoto}
-                  >
-                    {isUploadingPhoto ? (
-                      <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Uploading...</>
-                    ) : (
-                      <>Paste</>
-                    )}
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => fileInputRef.current?.click()}
-                    disabled={isUploadingPhoto}
-                  >
-                    {isUploadingPhoto ? (
-                      <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Uploading...</>
-                    ) : (
-                      <><Upload className="w-4 h-4 mr-2" />Add Photo</>
-                    )}
-                  </Button>
-                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={isUploadingPhoto}
+                >
+                  {isUploadingPhoto ? (
+                    <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Uploading...</>
+                  ) : (
+                    <><Upload className="w-4 h-4 mr-2" />Add Photo</>
+                  )}
+                </Button>
                 <input
                   ref={fileInputRef}
                   type="file"
