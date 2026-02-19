@@ -19,6 +19,7 @@ export default function PhoenixPage() {
           content: '';
           position: absolute;
           inset: 0;
+          z-index: 1;
           background: 
             repeating-linear-gradient(
               45deg,
@@ -40,8 +41,8 @@ export default function PhoenixPage() {
         <img 
           src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/bce10fc11_Phoenixpage.png"
           alt="Phoenix"
-          className="absolute right-0 bottom-0 z-10 h-60 w-auto object-contain object-right-bottom"
-          style={{ mixBlendMode: 'multiply' }}
+          className="absolute right-0 bottom-0 z-20 h-60 w-auto"
+          style={{ mixBlendMode: 'multiply', objectFit: 'contain', objectPosition: 'right bottom' }}
         />
         <div className="relative z-10 h-full flex flex-col justify-end p-6 sm:p-8 pr-40 sm:pr-8">
           <motion.h1 
