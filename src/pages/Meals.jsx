@@ -412,6 +412,29 @@ export default function Meals() {
         },
       });
 
+      const recategorizeAllGroceriesMutation = useMutation({
+        mutationFn: async () => {
+          for (const item of groceries) {
+            const category = await categorizeMutation.mutateAsync(item.name);
+            if (category && category !== item.category) {
+              await base44.entities.GroceryItem.update(item.id, { category });
+            }
+          }
+        },
+        onSuccess: () => {
+          queryClient.invalidateQueries(['groceries']);
+        },
+      });
+
+      React.useEffect(() => {
+        if (groceries.length > 0 && !recategorizeAllGroceriesMutation.isPending) {
+          const needsRecategorization = groceries.some(item => !item.category || item.category === 'other');
+          if (needsRecategorization) {
+            recategorizeAllGroceriesMutation.mutate();
+          }
+        }
+      }, [groceries.length]);
+
   const generateMealPlanMutation = useMutation({
     mutationFn: async () => {
       const result = await base44.integrations.Core.InvokeLLM({
