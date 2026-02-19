@@ -167,12 +167,14 @@ export default function SchoolProgramSection({ memberId, memberName, programTitl
         if (item.types.some(type => type.startsWith('image/'))) {
           const imageType = item.types.find(type => type.startsWith('image/'));
           const blob = await item.getType(imageType);
-          handlePhotoUploadDirect(blob);
+          const file = new File([blob], `pasted-image-${Date.now()}.png`, { type: imageType });
+          handlePhotoUploadDirect(file);
           return;
         }
       }
+      console.warn('No image found in clipboard');
     } catch (err) {
-      console.error('Failed to read clipboard:', err);
+      console.error('Clipboard read failed:', err);
     }
   };
 
@@ -186,6 +188,8 @@ export default function SchoolProgramSection({ memberId, memberName, programTitl
         id: program.id,
         data: { photos: updatedPhotos },
       });
+    } catch (err) {
+      console.error('Upload failed:', err);
     } finally {
       setIsUploadingPhoto(false);
     }
