@@ -17,7 +17,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
   const [dialogOpen, setDialogOpen] = useState({ chore: false, milestone: false, contact: false, link: false });
   const [newChore, setNewChore] = useState({ title: '', frequency: 'daily' });
   const [newMilestone, setNewMilestone] = useState({ title: '', date: '', description: '' });
-  const [newContact, setNewContact] = useState({ name: '', type: 'other', phone: '', email: '', linked_to_member_ids: ['Everyone'] });
+  const [newContact, setNewContact] = useState({ name: '', type: '', phone: '', email: '', address: '', linked_to_member_ids: ['Everyone'] });
   const [newLink, setNewLink] = useState({ url: '', title: '', category: '' });
   const [quickLinkUrl, setQuickLinkUrl] = useState('');
   const [showTitleDialog, setShowTitleDialog] = useState(false);
@@ -105,7 +105,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
     onSuccess: () => {
       queryClient.invalidateQueries(['contacts']);
       setDialogOpen({ ...dialogOpen, contact: false });
-      setNewContact({ name: '', type: 'other', phone: '', email: '', linked_to_member_ids: ['Everyone'] });
+      setNewContact({ name: '', type: '', phone: '', email: '', address: '', linked_to_member_ids: ['Everyone'] });
     },
   });
 
@@ -361,19 +361,11 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                         value={newContact.name}
                         onChange={(e) => setNewContact({ ...newContact, name: e.target.value })}
                       />
-                      <Select value={newContact.type} onValueChange={(value) => setNewContact({ ...newContact, type: value })}>
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="emergency">Emergency</SelectItem>
-                          <SelectItem value="utility">Utility</SelectItem>
-                          <SelectItem value="neighbor">Neighbor</SelectItem>
-                          <SelectItem value="family">Family</SelectItem>
-                          <SelectItem value="service">Service</SelectItem>
-                          <SelectItem value="other">Other</SelectItem>
-                        </SelectContent>
-                      </Select>
+                      <Input
+                        placeholder="Type (e.g., Emergency, Neighbor, Family...)"
+                        value={newContact.type}
+                        onChange={(e) => setNewContact({ ...newContact, type: e.target.value })}
+                      />
                       <Input
                         placeholder="Phone"
                         value={newContact.phone}
@@ -383,6 +375,11 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                         placeholder="Email"
                         value={newContact.email}
                         onChange={(e) => setNewContact({ ...newContact, email: e.target.value })}
+                      />
+                      <Input
+                        placeholder="Address"
+                        value={newContact.address}
+                        onChange={(e) => setNewContact({ ...newContact, address: e.target.value })}
                       />
                       <Select
                         value={newContact.linked_to_member_ids[0]}
@@ -414,8 +411,10 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                     <div key={contact.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                       <div>
                         <div className="font-medium">{contact.name}</div>
+                        {contact.type && <div className="text-xs text-gray-500 mb-1">{contact.type}</div>}
                         <div className="text-sm text-gray-600">{contact.phone}</div>
                         {contact.email && <div className="text-sm text-gray-500">{contact.email}</div>}
+                        {contact.address && <div className="text-sm text-gray-500">{contact.address}</div>}
                       </div>
                       <Button variant="ghost" size="sm" onClick={() => deleteContactMutation.mutate(contact.id)}>
                         <Trash2 className="w-4 h-4 text-red-500" />
