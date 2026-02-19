@@ -12,7 +12,8 @@ import {
   Lightbulb,
   Loader2,
   ChevronDown,
-  ChevronUp
+  ChevronUp,
+  CalendarPlus
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -32,6 +33,7 @@ export default function Maintenance() {
   const [categoryFilter, setCategoryFilter] = useState('all');
   const [suggestionsOpen, setSuggestionsOpen] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSyncing, setIsSyncing] = useState(false);
 
   const [newTask, setNewTask] = useState({
     title: '', description: '', category: 'seasonal', frequency: 'annually',
@@ -162,6 +164,18 @@ For each task, provide the task name, why it's important, estimated time to comp
       priority: suggestion.priority || 'medium',
     });
     setIsAddOpen(true);
+  };
+
+  const handleSyncToCalendar = async () => {
+    setIsSyncing(true);
+    try {
+      const result = await base44.functions.invoke('syncMaintenanceToCalendar', {});
+      alert(`✅ Successfully synced ${result.data.synced} maintenance tasks to Google Calendar!`);
+    } catch (error) {
+      alert(`❌ Error syncing to calendar: ${error.message}`);
+    } finally {
+      setIsSyncing(false);
+    }
   };
 
   const filteredTasks = tasks?.filter(task => {
@@ -323,13 +337,23 @@ For each task, provide the task name, why it's important, estimated time to comp
             </Select>
           </div>
 
-          <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
-            <DialogTrigger asChild>
-              <Button className="bg-emerald-600 hover:bg-emerald-700">
-                <Plus className="w-4 h-4 mr-2" />
-                Add Task
-              </Button>
-            </DialogTrigger>
+          <div className="flex gap-2">
+            <Button 
+              onClick={handleSyncToCalendar}
+              disabled={isSyncing}
+              variant="outline"
+              className="border-emerald-600 text-emerald-600 hover:bg-emerald-50"
+            >
+              <CalendarPlus className="w-4 h-4 mr-2" />
+              {isSyncing ? 'Syncing...' : 'Sync to Calendar'}
+            </Button>
+            <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
+              <DialogTrigger asChild>
+                <Button className="bg-emerald-600 hover:bg-emerald-700">
+                  <Plus className="w-4 h-4 mr-2" />
+                  Add Task
+                </Button>
+              </DialogTrigger>
             <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
               <DialogHeader>
                 <DialogTitle>Add Maintenance Task</DialogTitle>
@@ -445,6 +469,7 @@ For each task, provide the task name, why it's important, estimated time to comp
               </div>
             </DialogContent>
           </Dialog>
+          </div>
         </div>
 
         {/* Tasks List */}
