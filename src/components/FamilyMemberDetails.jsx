@@ -27,7 +27,6 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
   const [showTitleDialog, setShowTitleDialog] = useState(false);
   const [categorizingLink, setCategorizingLink] = useState(false);
   const [editingLink, setEditingLink] = useState(null);
-  const [expandedLinkId, setExpandedLinkId] = useState(null);
   const [personalNotes, setPersonalNotes] = useState('');
   const [openSections, setOpenSections] = useState({
     links: false,
@@ -323,52 +322,22 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                   <div key={category}>
                     <h4 className="font-medium text-sm text-gray-700 mb-2 capitalize">{category.replace(/_/g, ' ')}</h4>
                     <div className="space-y-2">
-                      {categoryLinks.map((link) => {
-                        const isExpanded = expandedLinkId === link.id;
-                        return (
-                          <div 
-                            key={link.id} 
-                            onClick={() => setExpandedLinkId(isExpanded ? null : link.id)}
-                            className="p-2 bg-gray-50 rounded cursor-pointer transition-colors hover:bg-gray-100"
-                          >
-                            <div className="flex items-center gap-2">
-                              <ExternalLink className="w-4 h-4 flex-shrink-0 text-blue-600" />
-                              <a 
-                                href={link.url} 
-                                target="_blank" 
-                                rel="noopener noreferrer" 
-                                className="text-blue-600 hover:underline flex-grow overflow-hidden whitespace-nowrap text-ellipsis text-sm"
-                                title={link.title || link.url}
-                                onClick={(e) => e.stopPropagation()}
-                              >
-                                {link.title || link.url}
-                              </a>
-                            </div>
-                            {isExpanded && (
-                              <div className="mt-2 flex gap-2">
-                                <Button 
-                                  variant="ghost" 
-                                  size="sm" 
-                                  onClick={(e) => { e.stopPropagation(); setEditingLink(link); }}
-                                  className="text-xs"
-                                >
-                                  <Edit2 className="w-3 h-3 mr-1" />
-                                  Edit
-                                </Button>
-                                <Button 
-                                  variant="ghost" 
-                                  size="sm" 
-                                  onClick={(e) => { e.stopPropagation(); deleteLinkMutation.mutate(link.id); }}
-                                  className="text-xs text-red-600"
-                                >
-                                  <Trash2 className="w-3 h-3 mr-1" />
-                                  Delete
-                                </Button>
-                              </div>
-                            )}
+                      {categoryLinks.map((link) => (
+                        <div key={link.id} className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                          <a href={link.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-blue-600 hover:underline">
+                            <ExternalLink className="w-4 h-4" />
+                            {link.title || link.url}
+                          </a>
+                          <div className="flex gap-1">
+                            <Button variant="ghost" size="sm" onClick={() => setEditingLink(link)}>
+                              <Edit2 className="w-4 h-4 text-gray-500" />
+                            </Button>
+                            <Button variant="ghost" size="sm" onClick={() => deleteLinkMutation.mutate(link.id)}>
+                              <Trash2 className="w-4 h-4 text-red-500" />
+                            </Button>
                           </div>
-                        );
-                      })}
+                        </div>
+                      ))}
                     </div>
                   </div>
                 ))
