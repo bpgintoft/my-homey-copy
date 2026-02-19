@@ -22,7 +22,6 @@ export default function SchoolProgramSection({ memberId, memberName, programTitl
   const [editingWebsite, setEditingWebsite] = useState(false);
   const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
   const fileInputRef = React.useRef(null);
-  const pasteInputRef = React.useRef(null);
 
   // Fetch school program data
   const { data: program } = useQuery({
@@ -161,23 +160,19 @@ export default function SchoolProgramSection({ memberId, memberName, programTitl
     }
   };
 
-  const handlePasteClick = () => {
-    pasteInputRef.current?.focus();
-  };
-
-  const handlePasteEvent = (e) => {
-    const items = e.clipboardData?.items;
-    if (!items) return;
-
-    for (let item of items) {
-      if (item.type.startsWith('image/')) {
-        const blob = item.getAsFile();
-        if (blob) {
+  const handlePasteClick = async () => {
+    try {
+      const items = await navigator.clipboard.read();
+      for (const item of items) {
+        if (item.types.some(type => type.startsWith('image/'))) {
+          const imageType = item.types.find(type => type.startsWith('image/'));
+          const blob = await item.getType(imageType);
           handlePhotoUploadDirect(blob);
-          e.preventDefault();
+          return;
         }
-        return;
       }
+    } catch (err) {
+      console.error('Failed to read clipboard:', err);
     }
   };
 
@@ -469,13 +464,7 @@ export default function SchoolProgramSection({ memberId, memberName, programTitl
                   onChange={handlePhotoUpload}
                   className="hidden"
                 />
-                <input
-                  ref={pasteInputRef}
-                  type="text"
-                  onPaste={handlePasteEvent}
-                  className="hidden"
-                  placeholder="Paste area"
-                />
+
               </div>
               {program.photos && program.photos.length > 0 ? (
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
