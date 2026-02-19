@@ -121,6 +121,15 @@ export default function SchoolProgramSection({ memberId, memberName }) {
     }
   };
 
+  const handleUpdateWebsiteTitle = (websiteTitle) => {
+    if (program) {
+      updateProgramMutation.mutate({
+        id: program.id,
+        data: { website_title: websiteTitle },
+      });
+    }
+  };
+
   if (!program) {
     return (
       <Card>
