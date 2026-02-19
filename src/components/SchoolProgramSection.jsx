@@ -20,6 +20,8 @@ export default function SchoolProgramSection({ memberId, memberName, programTitl
   const [newPasscode, setNewPasscode] = useState({ name: '', code: '' });
   const [isAddingPasscode, setIsAddingPasscode] = useState(false);
   const [editingWebsite, setEditingWebsite] = useState(false);
+  const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
+  const fileInputRef = React.useRef(null);
 
   // Fetch school program data
   const { data: program } = useQuery({
