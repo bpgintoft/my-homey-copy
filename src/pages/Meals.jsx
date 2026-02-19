@@ -37,7 +37,7 @@ export default function Meals() {
             const [appliedRatings, setAppliedRatings] = useState([]);
             const [uploadingImage, setUploadingImage] = useState(false);
             const [expandedSections, setExpandedSections] = useState({});
-            const [shoppingMode, setShoppingMode] = useState(false);
+            const [showHiddenItems, setShowHiddenItems] = useState(false);
             const [newGroceryItem, setNewGroceryItem] = useState({ name: '', category: 'other' });
             const [showAddGrocery, setShowAddGrocery] = useState(false);
             const queryClient = useQueryClient();
@@ -157,8 +157,11 @@ export default function Meals() {
 
             const existing = groceries.find(g => g.name.toLowerCase() === cleanedName.toLowerCase());
             if (existing) {
-              const qty = parseInt(existing.quantity) || 1;
-              await base44.entities.GroceryItem.update(existing.id, { quantity: (qty + 1).toString() });
+              const qty = parseInt(existing.quantity) || 0;
+              await base44.entities.GroceryItem.update(existing.id, { 
+                quantity: (qty + 1).toString(),
+                purchased: false  // Uncheck if was hidden
+              });
             } else {
               const category = await categorizeMutation.mutateAsync(cleanedName);
               await base44.entities.GroceryItem.create({
@@ -341,9 +344,10 @@ export default function Meals() {
           for (const item of result.items || []) {
             const existing = groceries.find(g => g.name.toLowerCase() === item.name.toLowerCase());
             if (existing) {
-              const qty = parseInt(existing.quantity) || 1;
+              const qty = parseInt(existing.quantity) || 0;
               await base44.entities.GroceryItem.update(existing.id, { 
-                quantity: (qty + item.count).toString() 
+                quantity: (qty + item.count).toString(),
+                purchased: false  // Uncheck if was hidden
               });
             } else {
               const category = await categorizeMutation.mutateAsync(item.name);
@@ -377,12 +381,29 @@ export default function Meals() {
         mutationFn: async (itemData) => {
           const weekStart = new Date();
           weekStart.setDate(weekStart.getDate() - weekStart.getDay());
-          await base44.entities.GroceryItem.create({
-            ...itemData,
-            quantity: '1',
-            purchased: false,
-            week_start_date: weekStart.toISOString().split('T')[0],
-          });
+          
+          // Check if item already exists
+          const existing = groceries.find(g => g.name.toLowerCase() === itemData.name.toLowerCase());
+          if (existing) {
+            const qty = parseInt(existing.quantity) || 0;
+            await base44.entities.GroceryItem.update(existing.id, { 
+              quantity: (qty + 1).toString(),
+              purchased: false
+            });
+          } else {
+            // Use AI to categorize if needed
+            const category = itemData.category === 'other' 
+              ? await categorizeMutation.mutateAsync(itemData.name)
+              : itemData.category;
+            
+            await base44.entities.GroceryItem.create({
+              ...itemData,
+              category: category || 'other',
+              quantity: '1',
+              purchased: false,
+              week_start_date: weekStart.toISOString().split('T')[0],
+            });
+          }
         },
         onSuccess: () => {
           queryClient.invalidateQueries(['groceries']);
@@ -1210,26 +1231,23 @@ export default function Meals() {
               {groceries.length > 0 && (
                 <>
                   <Button
-                    onClick={() => setShoppingMode(!shoppingMode)}
+                    onClick={() => setShowHiddenItems(!showHiddenItems)}
                     size="sm"
                     variant="outline"
-                    className={`flex-1 ${shoppingMode ? 'bg-pink-100 border-pink-300 text-pink-700' : 'border-pink-200 text-pink-600'} hover:bg-pink-50 whitespace-nowrap`}
+                    className="flex-1 border-pink-200 text-pink-600 hover:bg-pink-50 whitespace-nowrap text-xs"
                   >
-                    <ShoppingCart className="w-4 h-4 mr-1 flex-shrink-0" />
-                    {shoppingMode ? 'Exit' : 'Shopping Mode'}
+                    {showHiddenItems ? 'Hide' : 'Show'} Hidden Items
                   </Button>
-                  {!shoppingMode && (
-                    <Button
-                      onClick={() => clearAllGroceriesMutation.mutate()}
-                      disabled={clearAllGroceriesMutation.isPending}
-                      size="sm"
-                      variant="outline"
-                      className="border-red-200 text-red-600 hover:bg-red-50"
-                    >
-                      <Trash2 className="w-4 h-4 mr-1" />
-                      Clear
-                    </Button>
-                  )}
+                  <Button
+                    onClick={() => clearAllGroceriesMutation.mutate()}
+                    disabled={clearAllGroceriesMutation.isPending}
+                    size="sm"
+                    variant="outline"
+                    className="border-red-200 text-red-600 hover:bg-red-50"
+                  >
+                    <Trash2 className="w-4 h-4 mr-1" />
+                    Clear
+                  </Button>
                 </>
               )}
             </div>
@@ -1300,7 +1318,9 @@ export default function Meals() {
                   { key: 'deli', label: 'Deli', emoji: '🧀' },
                   { key: 'other', label: 'Other', emoji: '🛒' }
                 ].map(({ key, label, emoji }) => {
-                  const categoryItems = groceries.filter(item => item.category === key);
+                  const categoryItems = groceries.filter(item => 
+                    item.category === key && (showHiddenItems || !item.purchased)
+                  );
                   if (categoryItems.length === 0) return null;
 
                   return (
@@ -1313,90 +1333,33 @@ export default function Meals() {
                         <div className="space-y-2">
                           {categoryItems.map((item) => (
                             <div key={item.id} className={`flex items-center gap-3 p-3 rounded-lg transition-all ${
-                              shoppingMode 
-                                ? item.purchased 
-                                  ? 'bg-gray-100' 
-                                  : 'bg-white border-2 border-pink-200' 
-                                : 'bg-gray-50'
+                              item.purchased 
+                                ? 'bg-gray-100' 
+                                : 'bg-white border-2 border-pink-200'
                             }`}>
-                              {shoppingMode && (
-                                <input
-                                  type="checkbox"
-                                  checked={item.purchased || false}
-                                  onChange={(e) => togglePurchasedMutation.mutate({ id: item.id, purchased: e.target.checked })}
-                                  className="w-5 h-5 rounded border-gray-300 text-pink-600 focus:ring-pink-500 cursor-pointer"
-                                />
-                              )}
+                              <input
+                                type="checkbox"
+                                checked={item.purchased || false}
+                                onChange={(e) => togglePurchasedMutation.mutate({ id: item.id, purchased: e.target.checked })}
+                                className="w-5 h-5 rounded border-gray-300 text-pink-600 focus:ring-pink-500 cursor-pointer"
+                              />
                               <div className="flex-1 min-w-0">
-                                {shoppingMode ? (
-                                  <div className={`text-sm font-medium ${item.purchased ? 'line-through text-gray-400' : 'text-gray-900'}`}>
-                                    {item.name} {item.quantity && parseInt(item.quantity) > 1 ? `(${item.quantity})` : ''}
-                                  </div>
-                                ) : (
-                                  <input
-                                    type="text"
-                                    value={item.name}
-                                    onChange={(e) => updateGroceryNameMutation.mutate({ id: item.id, name: e.target.value })}
-                                    className="text-sm font-medium text-gray-900 bg-transparent border-none outline-none w-full focus:bg-white focus:px-2 focus:py-1 focus:rounded transition-all"
-                                  />
-                                )}
+                                <div className={`text-sm font-medium ${item.purchased ? 'line-through text-gray-400' : 'text-gray-900'}`}>
+                                  {item.name}
+                                </div>
                               </div>
-                              {shoppingMode ? (
-                                <div className="flex items-center gap-2">
-                                  <Button
-                                    onClick={() => deleteGroceryItemMutation.mutate(item.id)}
-                                    disabled={deleteGroceryItemMutation.isPending}
-                                    size="sm"
-                                    variant="outline"
-                                    className="text-xs border-red-200 text-red-600 hover:bg-red-50"
-                                  >
-                                    Delete
-                                  </Button>
-                                  <Button
-                                    onClick={() => updateGroceryNameMutation.mutate({ id: item.id, name: item.name })}
-                                    size="sm"
-                                    variant="outline"
-                                    className="text-xs border-blue-200 text-blue-600 hover:bg-blue-50"
-                                  >
-                                    Keep
-                                  </Button>
-                                </div>
-                              ) : (
-                                <div className="flex items-center gap-3">
-                                  <div className="flex items-center gap-2 bg-white border border-gray-200 rounded-lg">
-                                    <button
-                                      onClick={() => {
-                                        const qty = parseInt(item.quantity) || 0;
-                                        if (qty > 0) {
-                                          updateGroceryQuantityMutation.mutate({ id: item.id, quantity: qty - 1 });
-                                        }
-                                      }}
-                                      disabled={updateGroceryQuantityMutation.isPending}
-                                      className="px-2 py-1 text-gray-500 hover:text-gray-900"
-                                    >
-                                      −
-                                    </button>
-                                    <span className="w-8 text-center font-medium text-sm">{item.quantity || 1}</span>
-                                    <button
-                                      onClick={() => {
-                                        const qty = parseInt(item.quantity) || 0;
-                                        updateGroceryQuantityMutation.mutate({ id: item.id, quantity: qty + 1 });
-                                      }}
-                                      disabled={updateGroceryQuantityMutation.isPending}
-                                      className="px-2 py-1 text-gray-500 hover:text-gray-900"
-                                    >
-                                      +
-                                    </button>
-                                  </div>
-                                  <button
-                                    onClick={() => deleteGroceryItemMutation.mutate(item.id)}
-                                    disabled={deleteGroceryItemMutation.isPending}
-                                    className="text-gray-400 hover:text-red-500 transition-colors p-1"
-                                  >
-                                    <Trash2 className="w-4 h-4" />
-                                  </button>
-                                </div>
-                              )}
+                              <div className="flex items-center gap-2">
+                                <span className="text-sm font-medium text-gray-700 min-w-[20px] text-center">
+                                  {item.quantity || 1}
+                                </span>
+                                <button
+                                  onClick={() => deleteGroceryItemMutation.mutate(item.id)}
+                                  disabled={deleteGroceryItemMutation.isPending}
+                                  className="text-gray-400 hover:text-red-500 transition-colors p-1"
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </button>
+                              </div>
                             </div>
                           ))}
                         </div>
