@@ -10,6 +10,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Plus, Trash2, ExternalLink, CheckCircle2, Circle, Loader2, ChevronDown, Edit2 } from 'lucide-react';
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 import { motion } from 'framer-motion';
 
 export default function FamilyMemberDetails({ memberId, memberName, color = 'blue' }) {
@@ -39,6 +41,11 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
     queryKey: ['familyMember', memberId],
     queryFn: () => base44.entities.FamilyMember.filter({ id: memberId }).then(res => res[0]),
     enabled: !!memberId,
+  });
+
+  const { data: familyMembers = [] } = useQuery({
+    queryKey: ['familyMembers'],
+    queryFn: () => base44.entities.FamilyMember.list(),
   });
 
   const { data: chores = [] } = useQuery({
@@ -396,18 +403,46 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                         value={newContact.website}
                         onChange={(e) => setNewContact({ ...newContact, website: e.target.value })}
                       />
-                      <Select
-                        value={newContact.linked_to_member_ids[0]}
-                        onValueChange={(value) => setNewContact({ ...newContact, linked_to_member_ids: [value] })}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Link to..." />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="Everyone">Everyone</SelectItem>
-                          <SelectItem value={memberId}>{memberName}</SelectItem>
-                        </SelectContent>
-                      </Select>
+                      <div className="space-y-3">
+                        <Label>Link to family members:</Label>
+                        <div className="flex items-center space-x-2">
+                          <Checkbox
+                            id="everyone"
+                            checked={newContact.linked_to_member_ids.includes('Everyone')}
+                            onCheckedChange={(checked) => {
+                              if (checked) {
+                                setNewContact({ ...newContact, linked_to_member_ids: ['Everyone'] });
+                              } else {
+                                setNewContact({ ...newContact, linked_to_member_ids: newContact.linked_to_member_ids.filter(id => id !== 'Everyone') });
+                              }
+                            }}
+                          />
+                          <label htmlFor="everyone" className="text-sm font-medium cursor-pointer">Everyone</label>
+                        </div>
+                        {familyMembers.map((fm) => (
+                          <div key={fm.id} className="flex items-center space-x-2">
+                            <Checkbox
+                              id={fm.id}
+                              checked={newContact.linked_to_member_ids.includes(fm.id)}
+                              disabled={newContact.linked_to_member_ids.includes('Everyone')}
+                              onCheckedChange={(checked) => {
+                                if (checked) {
+                                  setNewContact({ 
+                                    ...newContact, 
+                                    linked_to_member_ids: [...newContact.linked_to_member_ids.filter(id => id !== 'Everyone'), fm.id] 
+                                  });
+                                } else {
+                                  setNewContact({ 
+                                    ...newContact, 
+                                    linked_to_member_ids: newContact.linked_to_member_ids.filter(id => id !== fm.id) 
+                                  });
+                                }
+                              }}
+                            />
+                            <label htmlFor={fm.id} className="text-sm cursor-pointer">{fm.name}</label>
+                          </div>
+                        ))}
+                      </div>
                       <Button
                         onClick={() => createContactMutation.mutate(newContact)}
                         disabled={!newContact.name}
@@ -541,6 +576,46 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                         value={editingContact.website || ''}
                         onChange={(e) => setEditingContact({ ...editingContact, website: e.target.value })}
                       />
+                      <div className="space-y-3">
+                        <Label>Link to family members:</Label>
+                        <div className="flex items-center space-x-2">
+                          <Checkbox
+                            id="edit-everyone"
+                            checked={editingContact.linked_to_member_ids?.includes('Everyone')}
+                            onCheckedChange={(checked) => {
+                              if (checked) {
+                                setEditingContact({ ...editingContact, linked_to_member_ids: ['Everyone'] });
+                              } else {
+                                setEditingContact({ ...editingContact, linked_to_member_ids: editingContact.linked_to_member_ids?.filter(id => id !== 'Everyone') || [] });
+                              }
+                            }}
+                          />
+                          <label htmlFor="edit-everyone" className="text-sm font-medium cursor-pointer">Everyone</label>
+                        </div>
+                        {familyMembers.map((fm) => (
+                          <div key={fm.id} className="flex items-center space-x-2">
+                            <Checkbox
+                              id={`edit-${fm.id}`}
+                              checked={editingContact.linked_to_member_ids?.includes(fm.id)}
+                              disabled={editingContact.linked_to_member_ids?.includes('Everyone')}
+                              onCheckedChange={(checked) => {
+                                if (checked) {
+                                  setEditingContact({ 
+                                    ...editingContact, 
+                                    linked_to_member_ids: [...(editingContact.linked_to_member_ids?.filter(id => id !== 'Everyone') || []), fm.id] 
+                                  });
+                                } else {
+                                  setEditingContact({ 
+                                    ...editingContact, 
+                                    linked_to_member_ids: editingContact.linked_to_member_ids?.filter(id => id !== fm.id) || [] 
+                                  });
+                                }
+                              }}
+                            />
+                            <label htmlFor={`edit-${fm.id}`} className="text-sm cursor-pointer">{fm.name}</label>
+                          </div>
+                        ))}
+                      </div>
                       <Button
                         onClick={() => updateContactMutation.mutate({
                           id: editingContact.id,
@@ -551,6 +626,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                             email: editingContact.email,
                             address: editingContact.address,
                             website: editingContact.website,
+                            linked_to_member_ids: editingContact.linked_to_member_ids,
                           }
                         })}
                         disabled={!editingContact.name}
