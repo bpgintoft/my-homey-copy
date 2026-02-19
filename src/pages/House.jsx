@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
+import { Link } from 'react-router-dom';
+import { createPageUrl } from '@/utils';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -153,29 +155,31 @@ export default function House() {
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                 >
-                  <Card className="bg-white border-0 shadow-sm hover:shadow-md transition-shadow">
-                    <CardContent className="p-5">
-                      <div className="flex items-start justify-between mb-3">
-                        <h3 className="font-semibold text-gray-900 text-lg">{room.name}</h3>
-                        {room.floor && (
-                          <Badge className="bg-emerald-100 text-emerald-700 border-0">
-                            {room.floor}
-                          </Badge>
-                        )}
-                      </div>
-                      {room.description && (
-                        <p className="text-sm text-gray-600 mb-3">{room.description}</p>
-                      )}
-                      {room.square_footage && (
-                        <div className="text-sm text-gray-500">
-                          {room.square_footage} sq ft
+                  <Link to={createPageUrl(`RoomDetail?id=${room.id}`)}>
+                    <Card className="bg-white border-0 shadow-sm hover:shadow-md transition-shadow cursor-pointer">
+                      <CardContent className="p-5">
+                        <div className="flex items-start justify-between mb-3">
+                          <h3 className="font-semibold text-gray-900 text-lg">{room.name}</h3>
+                          {room.floor && (
+                            <Badge className="bg-emerald-100 text-emerald-700 border-0">
+                              {room.floor}
+                            </Badge>
+                          )}
                         </div>
-                      )}
-                      <div className="text-sm text-gray-500 mt-2">
-                        {appliancesByRoom[room.name]?.length || 0} appliances
-                      </div>
-                    </CardContent>
-                  </Card>
+                        {room.description && (
+                          <p className="text-sm text-gray-600 mb-3">{room.description}</p>
+                        )}
+                        {room.square_footage && (
+                          <div className="text-sm text-gray-500">
+                            {room.square_footage} sq ft
+                          </div>
+                        )}
+                        <div className="text-sm text-gray-500 mt-2">
+                          {appliancesByRoom[room.name]?.length || 0} appliances
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </Link>
                 </motion.div>
               ))}
             </div>
