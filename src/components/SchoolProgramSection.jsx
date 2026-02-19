@@ -22,7 +22,6 @@ export default function SchoolProgramSection({ memberId, memberName, programTitl
   const [editingWebsite, setEditingWebsite] = useState(false);
   const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
   const fileInputRef = React.useRef(null);
-  const pasteZoneRef = React.useRef(null);
 
   // Fetch school program data
   const { data: program } = useQuery({
@@ -161,39 +160,39 @@ export default function SchoolProgramSection({ memberId, memberName, programTitl
     }
   };
 
-  const handlePastePhoto = () => {
-    pasteZoneRef.current?.focus();
-  };
+  React.useEffect(() => {
+    const handlePaste = (e) => {
+      const items = e.clipboardData?.items;
+      if (!items) return;
 
-  const handlePasteZoneKeyDown = (e) => {
-    if ((e.ctrlKey || e.metaKey) && e.key === 'v') {
-      e.preventDefault();
-    }
-  };
-
-  const handlePasteEvent = async (e) => {
-    e.preventDefault();
-    const items = e.clipboardData?.items;
-    if (!items) return;
-
-    for (let item of items) {
-      if (item.type.indexOf('image') !== -1) {
-        const file = item.getAsFile();
-        if (file) {
-          setIsUploadingPhoto(true);
-          try {
-            const { file_url } = await base44.integrations.Core.UploadFile({ file });
-            const updatedPhotos = [...(program.photos || []), file_url];
-            updateProgramMutation.mutate({
-              id: program.id,
-              data: { photos: updatedPhotos },
-            });
-          } finally {
-            setIsUploadingPhoto(false);
+      for (let item of items) {
+        if (item.type.startsWith('image/')) {
+          const blob = item.getAsFile();
+          if (blob) {
+            handlePhotoUploadDirect(blob);
+            e.preventDefault();
           }
+          return;
         }
-        break;
       }
+    };
+
+    document.addEventListener('paste', handlePaste);
+    return () => document.removeEventListener('paste', handlePaste);
+  }, [program]);
+
+  const handlePhotoUploadDirect = async (file) => {
+    if (!file || !program) return;
+    setIsUploadingPhoto(true);
+    try {
+      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      const updatedPhotos = [...(program.photos || []), file_url];
+      updateProgramMutation.mutate({
+        id: program.id,
+        data: { photos: updatedPhotos },
+      });
+    } finally {
+      setIsUploadingPhoto(false);
     }
   };
 
@@ -437,32 +436,18 @@ export default function SchoolProgramSection({ memberId, memberName, programTitl
             <div className="border-t pt-4 space-y-3">
               <div className="flex items-center justify-between gap-2">
                 <h4 className="text-sm font-semibold">Photos</h4>
-                <div className="flex gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handlePastePhoto}
-                    disabled={isUploadingPhoto}
-                  >
-                    {isUploadingPhoto ? (
-                      <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Uploading...</>
-                    ) : (
-                      <>Paste</>
-                    )}
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => fileInputRef.current?.click()}
-                    disabled={isUploadingPhoto}
-                  >
-                    {isUploadingPhoto ? (
-                      <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Uploading...</>
-                    ) : (
-                      <><Upload className="w-4 h-4 mr-2" />Add Photo</>
-                    )}
-                  </Button>
-                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={isUploadingPhoto}
+                >
+                  {isUploadingPhoto ? (
+                    <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Uploading...</>
+                  ) : (
+                    <><Upload className="w-4 h-4 mr-2" />Add Photo</>
+                  )}
+                </Button>
                 <input
                   ref={fileInputRef}
                   type="file"
@@ -471,13 +456,7 @@ export default function SchoolProgramSection({ memberId, memberName, programTitl
                   className="hidden"
                 />
               </div>
-              <div
-                ref={pasteZoneRef}
-                contentEditable
-                onPaste={handlePasteEvent}
-                onKeyDown={handlePasteZoneKeyDown}
-                className="hidden"
-              />
+              <p className="text-xs text-gray-500">Copy an image and paste it here with Ctrl+V (or Cmd+V)</p>
               {program.photos && program.photos.length > 0 ? (
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                   {program.photos.map((photoUrl, index) => (
