@@ -1344,20 +1344,43 @@ export default function Meals() {
                                 className="w-5 h-5 rounded border-gray-300 text-pink-600 focus:ring-pink-500 cursor-pointer"
                               />
                               <div className="flex-1 min-w-0">
-                                <div className={`text-sm font-medium ${item.purchased ? 'line-through text-gray-400' : 'text-gray-900'}`}>
-                                  {item.name}
-                                </div>
+                                <input
+                                  type="text"
+                                  value={item.name}
+                                  onChange={(e) => updateGroceryNameMutation.mutate({ id: item.id, name: e.target.value })}
+                                  className={`text-sm font-medium bg-transparent border-none outline-none w-full focus:bg-white focus:px-2 focus:py-1 focus:rounded transition-all ${item.purchased ? 'line-through text-gray-400' : 'text-gray-900'}`}
+                                />
                               </div>
-                              <div className="flex items-center gap-2">
-                                <span className="text-sm font-medium text-gray-700 min-w-[20px] text-center">
-                                  {item.quantity || 1}
-                                </span>
+                              <button
+                                onClick={() => deleteGroceryItemMutation.mutate(item.id)}
+                                disabled={deleteGroceryItemMutation.isPending}
+                                className="text-gray-400 hover:text-red-500 transition-colors p-1"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                              <div className="flex items-center gap-1 bg-white border border-gray-200 rounded-lg">
                                 <button
-                                  onClick={() => deleteGroceryItemMutation.mutate(item.id)}
-                                  disabled={deleteGroceryItemMutation.isPending}
-                                  className="text-gray-400 hover:text-red-500 transition-colors p-1"
+                                  onClick={() => {
+                                    const qty = parseInt(item.quantity) || 1;
+                                    if (qty > 1) {
+                                      updateGroceryQuantityMutation.mutate({ id: item.id, quantity: qty - 1 });
+                                    }
+                                  }}
+                                  disabled={updateGroceryQuantityMutation.isPending}
+                                  className="px-2 py-1 text-gray-500 hover:text-gray-900"
                                 >
-                                  <Trash2 className="w-4 h-4" />
+                                  −
+                                </button>
+                                <span className="w-8 text-center font-medium text-sm">{item.quantity || 1}</span>
+                                <button
+                                  onClick={() => {
+                                    const qty = parseInt(item.quantity) || 1;
+                                    updateGroceryQuantityMutation.mutate({ id: item.id, quantity: qty + 1 });
+                                  }}
+                                  disabled={updateGroceryQuantityMutation.isPending}
+                                  className="px-2 py-1 text-gray-500 hover:text-gray-900"
+                                >
+                                  +
                                 </button>
                               </div>
                             </div>
