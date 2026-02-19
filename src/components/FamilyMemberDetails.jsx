@@ -17,7 +17,9 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
   const [dialogOpen, setDialogOpen] = useState({ chore: false, milestone: false, contact: false, link: false });
   const [newChore, setNewChore] = useState({ title: '', frequency: 'daily' });
   const [newMilestone, setNewMilestone] = useState({ title: '', date: '', description: '' });
-  const [newContact, setNewContact] = useState({ name: '', type: '', phone: '', email: '', address: '', linked_to_member_ids: ['Everyone'] });
+  const [newContact, setNewContact] = useState({ name: '', type: '', phone: '', email: '', address: '', website: '', linked_to_member_ids: ['Everyone'] });
+  const [editingContact, setEditingContact] = useState(null);
+  const [expandedContactId, setExpandedContactId] = useState(null);
   const [newLink, setNewLink] = useState({ url: '', title: '', category: '' });
   const [quickLinkUrl, setQuickLinkUrl] = useState('');
   const [showTitleDialog, setShowTitleDialog] = useState(false);
@@ -105,7 +107,15 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
     onSuccess: () => {
       queryClient.invalidateQueries(['contacts']);
       setDialogOpen({ ...dialogOpen, contact: false });
-      setNewContact({ name: '', type: '', phone: '', email: '', address: '', linked_to_member_ids: ['Everyone'] });
+      setNewContact({ name: '', type: '', phone: '', email: '', address: '', website: '', linked_to_member_ids: ['Everyone'] });
+    },
+  });
+
+  const updateContactMutation = useMutation({
+    mutationFn: ({ id, data }) => base44.entities.ImportantContact.update(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['contacts']);
+      setEditingContact(null);
     },
   });
 
@@ -381,6 +391,11 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                         value={newContact.address}
                         onChange={(e) => setNewContact({ ...newContact, address: e.target.value })}
                       />
+                      <Input
+                        placeholder="Website"
+                        value={newContact.website}
+                        onChange={(e) => setNewContact({ ...newContact, website: e.target.value })}
+                      />
                       <Select
                         value={newContact.linked_to_member_ids[0]}
                         onValueChange={(value) => setNewContact({ ...newContact, linked_to_member_ids: [value] })}
@@ -407,22 +422,145 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                 {contacts.length === 0 ? (
                   <p className="text-sm text-gray-500">No contacts yet</p>
                 ) : (
-                  contacts.map((contact) => (
-                    <div key={contact.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                      <div>
-                        <div className="font-medium">{contact.name}</div>
-                        {contact.type && <div className="text-xs text-gray-500 mb-1">{contact.type}</div>}
-                        <div className="text-sm text-gray-600">{contact.phone}</div>
-                        {contact.email && <div className="text-sm text-gray-500">{contact.email}</div>}
-                        {contact.address && <div className="text-sm text-gray-500">{contact.address}</div>}
+                  contacts.map((contact) => {
+                    const isExpanded = expandedContactId === contact.id;
+                    const isEditing = editingContact?.id === contact.id;
+
+                    return (
+                      <div key={contact.id} className="bg-gray-50 rounded-lg overflow-hidden">
+                        <div 
+                          className="flex items-center justify-between p-3 cursor-pointer hover:bg-gray-100"
+                          onClick={() => setExpandedContactId(isExpanded ? null : contact.id)}
+                        >
+                          <div>
+                            <div className="font-medium">{contact.name}</div>
+                            {contact.type && <div className="text-xs text-gray-500">{contact.type}</div>}
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Button 
+                              variant="ghost" 
+                              size="sm" 
+                              onClick={(e) => { e.stopPropagation(); setEditingContact(contact); }}
+                            >
+                              <Edit2 className="w-4 h-4 text-gray-500" />
+                            </Button>
+                            <Button 
+                              variant="ghost" 
+                              size="sm" 
+                              onClick={(e) => { e.stopPropagation(); deleteContactMutation.mutate(contact.id); }}
+                            >
+                              <Trash2 className="w-4 h-4 text-red-500" />
+                            </Button>
+                          </div>
+                        </div>
+
+                        {isExpanded && (
+                          <div className="px-3 pb-3 space-y-2 border-t border-gray-200 pt-2">
+                            {contact.phone && (
+                              <a 
+                                href={`tel:${contact.phone}`}
+                                className="block text-sm text-blue-600 hover:underline"
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                📞 {contact.phone}
+                              </a>
+                            )}
+                            {contact.email && (
+                              <a 
+                                href={`mailto:${contact.email}`}
+                                className="block text-sm text-blue-600 hover:underline"
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                ✉️ {contact.email}
+                              </a>
+                            )}
+                            {contact.address && (
+                              <a 
+                                href={`https://maps.google.com/?q=${encodeURIComponent(contact.address)}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="block text-sm text-blue-600 hover:underline"
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                📍 {contact.address}
+                              </a>
+                            )}
+                            {contact.website && (
+                              <a 
+                                href={contact.website.startsWith('http') ? contact.website : `https://${contact.website}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="block text-sm text-blue-600 hover:underline"
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                🌐 {contact.website}
+                              </a>
+                            )}
+                          </div>
+                        )}
                       </div>
-                      <Button variant="ghost" size="sm" onClick={() => deleteContactMutation.mutate(contact.id)}>
-                        <Trash2 className="w-4 h-4 text-red-500" />
-                      </Button>
-                    </div>
-                  ))
+                    );
+                  })
                 )}
               </div>
+
+              <Dialog open={!!editingContact} onOpenChange={(open) => !open && setEditingContact(null)}>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Edit Contact</DialogTitle>
+                  </DialogHeader>
+                  {editingContact && (
+                    <div className="space-y-4">
+                      <Input
+                        placeholder="Name"
+                        value={editingContact.name}
+                        onChange={(e) => setEditingContact({ ...editingContact, name: e.target.value })}
+                      />
+                      <Input
+                        placeholder="Type (e.g., Emergency, Neighbor, Family...)"
+                        value={editingContact.type || ''}
+                        onChange={(e) => setEditingContact({ ...editingContact, type: e.target.value })}
+                      />
+                      <Input
+                        placeholder="Phone"
+                        value={editingContact.phone || ''}
+                        onChange={(e) => setEditingContact({ ...editingContact, phone: e.target.value })}
+                      />
+                      <Input
+                        placeholder="Email"
+                        value={editingContact.email || ''}
+                        onChange={(e) => setEditingContact({ ...editingContact, email: e.target.value })}
+                      />
+                      <Input
+                        placeholder="Address"
+                        value={editingContact.address || ''}
+                        onChange={(e) => setEditingContact({ ...editingContact, address: e.target.value })}
+                      />
+                      <Input
+                        placeholder="Website"
+                        value={editingContact.website || ''}
+                        onChange={(e) => setEditingContact({ ...editingContact, website: e.target.value })}
+                      />
+                      <Button
+                        onClick={() => updateContactMutation.mutate({
+                          id: editingContact.id,
+                          data: {
+                            name: editingContact.name,
+                            type: editingContact.type,
+                            phone: editingContact.phone,
+                            email: editingContact.email,
+                            address: editingContact.address,
+                            website: editingContact.website,
+                          }
+                        })}
+                        disabled={!editingContact.name}
+                      >
+                        Save Changes
+                      </Button>
+                    </div>
+                  )}
+                </DialogContent>
+              </Dialog>
             </CardContent>
           </CollapsibleContent>
         </Card>
