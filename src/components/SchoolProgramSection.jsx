@@ -160,6 +160,33 @@ export default function SchoolProgramSection({ memberId, memberName, programTitl
     }
   };
 
+  const handlePastePhoto = async () => {
+    try {
+      const items = await navigator.clipboard.read();
+      for (let item of items) {
+        if (item.types.includes('image/png') || item.types.includes('image/jpeg') || item.types.includes('image/webp')) {
+          const imageBlob = await item.getType(item.types.find(t => t.startsWith('image/')));
+          const file = new File([imageBlob], `pasted-image-${Date.now()}.png`, { type: imageBlob.type });
+          
+          setIsUploadingPhoto(true);
+          try {
+            const { file_url } = await base44.integrations.Core.UploadFile({ file });
+            const updatedPhotos = [...(program.photos || []), file_url];
+            updateProgramMutation.mutate({
+              id: program.id,
+              data: { photos: updatedPhotos },
+            });
+          } finally {
+            setIsUploadingPhoto(false);
+          }
+          break;
+        }
+      }
+    } catch (err) {
+      console.error('Failed to paste image:', err);
+    }
+  };
+
   if (!program) {
     return (
       <Card>
@@ -397,47 +424,35 @@ export default function SchoolProgramSection({ memberId, memberName, programTitl
             </div>
 
             {/* Photos Section */}
-            <div 
-              className="border-t pt-4 space-y-3"
-              onPaste={async (e) => {
-                const items = e.clipboardData?.items;
-                if (!items) return;
-                
-                for (let item of items) {
-                  if (item.type.indexOf('image') !== -1) {
-                    e.preventDefault();
-                    const file = item.getAsFile();
-                    if (file) {
-                      setIsUploadingPhoto(true);
-                      try {
-                        const { file_url } = await base44.integrations.Core.UploadFile({ file });
-                        const updatedPhotos = [...(program.photos || []), file_url];
-                        updateProgramMutation.mutate({
-                          id: program.id,
-                          data: { photos: updatedPhotos },
-                        });
-                      } finally {
-                        setIsUploadingPhoto(false);
-                      }
-                    }
-                  }
-                }
-              }}
-            >
-              <div className="flex items-center justify-between">
+            <div className="border-t pt-4 space-y-3">
+              <div className="flex items-center justify-between gap-2">
                 <h4 className="text-sm font-semibold">Photos</h4>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => fileInputRef.current?.click()}
-                  disabled={isUploadingPhoto}
-                >
-                  {isUploadingPhoto ? (
-                    <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Uploading...</>
-                  ) : (
-                    <><Upload className="w-4 h-4 mr-2" />Add Photo</>
-                  )}
-                </Button>
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handlePastePhoto}
+                    disabled={isUploadingPhoto}
+                  >
+                    {isUploadingPhoto ? (
+                      <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Uploading...</>
+                    ) : (
+                      <>Paste</>
+                    )}
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={isUploadingPhoto}
+                  >
+                    {isUploadingPhoto ? (
+                      <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Uploading...</>
+                    ) : (
+                      <><Upload className="w-4 h-4 mr-2" />Add Photo</>
+                    )}
+                  </Button>
+                </div>
                 <input
                   ref={fileInputRef}
                   type="file"
