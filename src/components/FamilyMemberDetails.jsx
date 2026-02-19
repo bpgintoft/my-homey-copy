@@ -323,17 +323,17 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                     <h4 className="font-medium text-sm text-gray-700 mb-2 capitalize">{category.replace(/_/g, ' ')}</h4>
                     <div className="space-y-2">
                       {categoryLinks.map((link) => (
-                        <div key={link.id} className="flex items-center justify-between p-2 bg-gray-50 rounded">
-                          <a href={link.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-blue-600 hover:underline">
-                            <ExternalLink className="w-4 h-4" />
-                            {link.title || link.url}
+                        <div key={link.id} className="flex items-center gap-2 p-2 bg-gray-50 rounded">
+                          <a href={link.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-blue-600 hover:underline flex-1 min-w-0">
+                            <ExternalLink className="w-4 h-4 flex-shrink-0" />
+                            <span className="overflow-hidden text-ellipsis whitespace-nowrap">{link.title || link.url}</span>
                           </a>
-                          <div className="flex gap-1">
-                            <Button variant="ghost" size="sm" onClick={() => setEditingLink(link)}>
-                              <Edit2 className="w-4 h-4 text-gray-500" />
+                          <div className="flex gap-0.5 flex-shrink-0">
+                            <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setEditingLink(link)}>
+                              <Edit2 className="w-3 h-3 text-gray-500" />
                             </Button>
-                            <Button variant="ghost" size="sm" onClick={() => deleteLinkMutation.mutate(link.id)}>
-                              <Trash2 className="w-4 h-4 text-red-500" />
+                            <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => deleteLinkMutation.mutate(link.id)}>
+                              <Trash2 className="w-3 h-3 text-red-500" />
                             </Button>
                           </div>
                         </div>
