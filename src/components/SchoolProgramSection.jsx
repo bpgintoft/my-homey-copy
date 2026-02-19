@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { Plus, Trash2, ChevronDown, Edit2 } from 'lucide-react';
+import { Plus, Trash2, ChevronDown, Edit2, Upload, Loader2 } from 'lucide-react';
 
 const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'];
 const dayLabels = ['M', 'T', 'W', 'Th', 'F'];
@@ -126,6 +126,34 @@ export default function SchoolProgramSection({ memberId, memberName, programTitl
       updateProgramMutation.mutate({
         id: program.id,
         data: { website_title: websiteTitle },
+      });
+    }
+  };
+
+  const handlePhotoUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file || !program) return;
+
+    setIsUploadingPhoto(true);
+    try {
+      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      const updatedPhotos = [...(program.photos || []), file_url];
+      updateProgramMutation.mutate({
+        id: program.id,
+        data: { photos: updatedPhotos },
+      });
+    } finally {
+      setIsUploadingPhoto(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  };
+
+  const handleDeletePhoto = (index) => {
+    if (program) {
+      const updatedPhotos = program.photos.filter((_, i) => i !== index);
+      updateProgramMutation.mutate({
+        id: program.id,
+        data: { photos: updatedPhotos },
       });
     }
   };
@@ -363,6 +391,55 @@ export default function SchoolProgramSection({ memberId, memberName, programTitl
                     </Button>
                   </div>
                 </div>
+              )}
+            </div>
+
+            {/* Photos Section */}
+            <div className="border-t pt-4 space-y-3">
+              <div className="flex items-center justify-between">
+                <h4 className="text-sm font-semibold">Photos</h4>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={isUploadingPhoto}
+                >
+                  {isUploadingPhoto ? (
+                    <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Uploading...</>
+                  ) : (
+                    <><Upload className="w-4 h-4 mr-2" />Add Photo</>
+                  )}
+                </Button>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handlePhotoUpload}
+                  className="hidden"
+                />
+              </div>
+              {program.photos && program.photos.length > 0 ? (
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                  {program.photos.map((photoUrl, index) => (
+                    <div key={index} className="relative group">
+                      <img
+                        src={photoUrl}
+                        alt={`Program photo ${index + 1}`}
+                        className="w-full h-24 object-cover rounded-lg"
+                      />
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        onClick={() => handleDeletePhoto(index)}
+                        className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity h-7 w-7 p-0"
+                      >
+                        <Trash2 className="w-3 h-3" />
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-sm text-gray-500">No photos yet</p>
               )}
             </div>
 
