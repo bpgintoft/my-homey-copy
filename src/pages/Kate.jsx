@@ -50,7 +50,7 @@ export default function KatePage() {
             animate={{ opacity: 1, x: 0 }}
             src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/6d06cb23a_Katepage.png"
             alt="Kate"
-            className="h-56 w-auto object-contain"
+            className="h-80 w-auto object-contain"
             style={{ position: 'relative', zIndex: 20 }}
           />
         </div>
