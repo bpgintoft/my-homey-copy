@@ -457,8 +457,12 @@ export default function SchoolProgramSection({ memberId, memberName, programTitl
                   onChange={handlePhotoUpload}
                   className="hidden"
                 />
-
               </div>
+              <Input
+                placeholder="Click here or paste an image..."
+                disabled={isUploadingPhoto}
+                className="text-xs"
+              />
               {program.photos && program.photos.length > 0 ? (
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                   {program.photos.map((photoUrl, index) => (
