@@ -62,7 +62,11 @@ export default function MaraPage() {
         </div>
       </div>
 
-      {mara && <FamilyMemberDetails memberId={mara.id} memberName="Mara" color="purple" />}
+      {mara && (
+        <div className="max-w-2xl mx-auto px-4 sm:px-6 py-6 space-y-4">
+          <FamilyMemberDetails memberId={mara.id} memberName="Mara" color="purple" />
+        </div>
+      )}
     </div>
   );
 }
