@@ -49,7 +49,7 @@ export default function Home() {
     { 
       title: 'Meal Planning', 
       href: 'Meals', 
-      count: thisWeekMeals,
+      count: 0,
       imageKey: 'meals',
       bgColor: 'bg-gradient-to-br from-pink-200 to-pink-300'
     },
