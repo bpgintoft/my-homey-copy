@@ -14,7 +14,9 @@ import {
   TreeDeciduous,
   Warehouse,
   LayoutGrid,
-  ArrowRight
+  ArrowRight,
+  Edit2,
+  Trash2
 } from 'lucide-react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -27,6 +29,7 @@ import { motion } from 'framer-motion';
 
 export default function Rooms() {
   const [isAddOpen, setIsAddOpen] = useState(false);
+  const [editingRoom, setEditingRoom] = useState(null);
   const [newRoom, setNewRoom] = useState({
     name: '',
     floor: 'first',
@@ -53,6 +56,20 @@ export default function Rooms() {
     },
   });
 
+  const updateRoomMutation = useMutation({
+    mutationFn: ({ id, data }) => base44.entities.Room.update(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['rooms'] });
+      setEditingRoom(null);
+      setPhotoFile(null);
+    },
+  });
+
+  const deleteRoomMutation = useMutation({
+    mutationFn: (id) => base44.entities.Room.delete(id),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['rooms'] }),
+  });
+
   const handleCreateRoom = async () => {
     setIsCreating(true);
     let photoUrl = null;
@@ -66,6 +83,28 @@ export default function Rooms() {
       ...newRoom,
       square_footage: newRoom.square_footage ? parseInt(newRoom.square_footage) : null,
       photo_url: photoUrl,
+    });
+    setIsCreating(false);
+  };
+
+  const handleUpdateRoom = async () => {
+    setIsCreating(true);
+    let photoUrl = editingRoom.photo_url;
+    
+    if (photoFile) {
+      const { file_url } = await base44.integrations.Core.UploadFile({ file: photoFile });
+      photoUrl = file_url;
+    }
+
+    await updateRoomMutation.mutateAsync({
+      id: editingRoom.id,
+      data: {
+        name: editingRoom.name,
+        floor: editingRoom.floor,
+        description: editingRoom.description,
+        square_footage: editingRoom.square_footage ? parseInt(editingRoom.square_footage) : null,
+        photo_url: photoUrl,
+      }
     });
     setIsCreating(false);
   };
@@ -211,6 +250,83 @@ export default function Rooms() {
           </Dialog>
         </div>
 
+        {/* Edit Room Dialog */}
+        <Dialog open={!!editingRoom} onOpenChange={(open) => !open && setEditingRoom(null)}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Edit Room</DialogTitle>
+            </DialogHeader>
+            {editingRoom && (
+              <div className="space-y-4 mt-4">
+                <div>
+                  <Label>Room Name *</Label>
+                  <Input 
+                    value={editingRoom.name}
+                    onChange={e => setEditingRoom({...editingRoom, name: e.target.value})}
+                    placeholder="e.g., Master Bedroom, Kitchen"
+                  />
+                </div>
+                <div>
+                  <Label>Floor</Label>
+                  <Select value={editingRoom.floor} onValueChange={v => setEditingRoom({...editingRoom, floor: v})}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="basement">Basement</SelectItem>
+                      <SelectItem value="first">First Floor</SelectItem>
+                      <SelectItem value="second">Second Floor</SelectItem>
+                      <SelectItem value="attic">Attic</SelectItem>
+                      <SelectItem value="garage">Garage</SelectItem>
+                      <SelectItem value="outdoor">Outdoor</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label>Square Footage</Label>
+                  <Input 
+                    type="number"
+                    value={editingRoom.square_footage || ''}
+                    onChange={e => setEditingRoom({...editingRoom, square_footage: e.target.value})}
+                    placeholder="e.g., 200"
+                  />
+                </div>
+                <div>
+                  <Label>Description</Label>
+                  <Textarea 
+                    value={editingRoom.description || ''}
+                    onChange={e => setEditingRoom({...editingRoom, description: e.target.value})}
+                    placeholder="Any notes about this room..."
+                  />
+                </div>
+                <div>
+                  <Label>Photo</Label>
+                  <Input 
+                    type="file"
+                    onChange={e => setPhotoFile(e.target.files[0])}
+                    accept="image/*"
+                  />
+                  {editingRoom.photo_url && !photoFile && (
+                    <p className="text-xs text-slate-500 mt-1">Current photo will be kept unless you upload a new one</p>
+                  )}
+                </div>
+                <div className="flex gap-3 pt-4">
+                  <Button variant="outline" onClick={() => setEditingRoom(null)} className="flex-1">
+                    Cancel
+                  </Button>
+                  <Button 
+                    onClick={handleUpdateRoom} 
+                    disabled={!editingRoom.name || isCreating}
+                    className="flex-1 bg-blue-600 hover:bg-blue-700"
+                  >
+                    {isCreating ? 'Saving...' : 'Save Changes'}
+                  </Button>
+                </div>
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
+
         {/* Rooms by Floor */}
         {isLoading ? (
           <div className="grid md:grid-cols-3 gap-6">
@@ -244,36 +360,61 @@ export default function Rooms() {
                     const Icon = getRoomIcon(room.name);
                     return (
                       <motion.div
-                        key={room.id}
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: fi * 0.1 + i * 0.05 }}
+                       key={room.id}
+                       initial={{ opacity: 0, y: 10 }}
+                       animate={{ opacity: 1, y: 0 }}
+                       transition={{ delay: fi * 0.1 + i * 0.05 }}
                       >
-                        <Link to={createPageUrl(`RoomDetail?id=${room.id}`)}>
-                          <Card className="border-0 shadow-md hover:shadow-xl transition-all group overflow-hidden cursor-pointer">
-                            <CardContent className="p-0">
-                              <div className={`h-32 bg-gradient-to-br ${floorColors[floor]} flex items-center justify-center relative overflow-hidden`}>
-                                {room.photo_url ? (
-                                  <img src={room.photo_url} alt={room.name} className="w-full h-full object-cover" />
-                                ) : (
-                                  <Icon className="w-12 h-12 text-white/80" />
-                                )}
-                                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
-                              </div>
-                              <div className="p-4">
-                                <div className="flex items-center justify-between">
-                                  <h3 className="font-semibold text-slate-800 group-hover:text-blue-600 transition-colors">
-                                    {room.name}
-                                  </h3>
-                                  <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-blue-600 group-hover:translate-x-1 transition-all" />
-                                </div>
-                                {room.square_footage && (
-                                  <p className="text-sm text-slate-500 mt-1">{room.square_footage} sq ft</p>
-                                )}
-                              </div>
-                            </CardContent>
-                          </Card>
-                        </Link>
+                       <Card className="border-0 shadow-md hover:shadow-xl transition-all group overflow-hidden">
+                         <CardContent className="p-0">
+                           <Link to={createPageUrl(`RoomDetail?id=${room.id}`)}>
+                             <div className={`h-32 bg-gradient-to-br ${floorColors[floor]} flex items-center justify-center relative overflow-hidden cursor-pointer`}>
+                               {room.photo_url ? (
+                                 <img src={room.photo_url} alt={room.name} className="w-full h-full object-cover" />
+                               ) : (
+                                 <Icon className="w-12 h-12 text-white/80" />
+                               )}
+                               <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
+                             </div>
+                           </Link>
+                           <div className="p-4">
+                             <div className="flex items-center justify-between">
+                               <Link to={createPageUrl(`RoomDetail?id=${room.id}`)} className="flex-1">
+                                 <h3 className="font-semibold text-slate-800 group-hover:text-blue-600 transition-colors">
+                                   {room.name}
+                                 </h3>
+                               </Link>
+                               <div className="flex gap-1">
+                                 <Button 
+                                   variant="ghost" 
+                                   size="sm"
+                                   onClick={(e) => {
+                                     e.preventDefault();
+                                     setEditingRoom(room);
+                                   }}
+                                 >
+                                   <Edit2 className="w-4 h-4 text-slate-500" />
+                                 </Button>
+                                 <Button 
+                                   variant="ghost" 
+                                   size="sm"
+                                   onClick={(e) => {
+                                     e.preventDefault();
+                                     if (confirm(`Delete ${room.name}?`)) {
+                                       deleteRoomMutation.mutate(room.id);
+                                     }
+                                   }}
+                                 >
+                                   <Trash2 className="w-4 h-4 text-red-500" />
+                                 </Button>
+                               </div>
+                             </div>
+                             {room.square_footage && (
+                               <p className="text-sm text-slate-500 mt-1">{room.square_footage} sq ft</p>
+                             )}
+                           </div>
+                         </CardContent>
+                       </Card>
                       </motion.div>
                     );
                   })}
