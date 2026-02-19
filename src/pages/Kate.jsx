@@ -37,22 +37,14 @@ export default function KatePage() {
         }
       `}</style>
       <div className="relative h-64 bg-gradient-to-r from-pink-500 to-pink-600 overflow-hidden kate-banner">
-        <div className="relative z-10 h-full flex items-end justify-between p-6 sm:p-8">
+        <div className="relative z-10 h-full flex flex-col justify-end p-6 sm:p-8">
           <motion.h1 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-4xl sm:text-5xl font-bold text-white pb-2"
+            className="text-4xl sm:text-5xl font-bold text-white"
           >
             Kate
           </motion.h1>
-          <motion.img
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/6d06cb23a_Katepage.png"
-            alt="Kate"
-            className="h-80 w-auto object-contain mt-1"
-            style={{ position: 'relative', zIndex: 20 }}
-          />
         </div>
       </div>
 
