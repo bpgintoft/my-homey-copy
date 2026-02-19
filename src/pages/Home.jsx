@@ -184,7 +184,7 @@ export default function Home() {
         </div>
 
         {/* Main Sections */}
-        <div className="grid grid-cols-2 gap-4 pb-24">
+        <div className="grid grid-cols-2 gap-4 pb-8">
           {sections.map((section, i) => (
             <motion.div
               key={section.title}
@@ -213,6 +213,15 @@ export default function Home() {
               </Link>
             </motion.div>
           ))}
+        </div>
+
+        {/* Footer Image */}
+        <div className="w-full flex justify-center pb-6">
+          <img 
+            src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/8e2cf008e_Gintoftsback.png"
+            alt="Gintoft Family"
+            className="w-full max-w-lg h-auto object-contain"
+          />
         </div>
       </div>
     </div>
