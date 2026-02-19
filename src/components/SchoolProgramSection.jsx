@@ -162,17 +162,68 @@ export default function SchoolProgramSection({ memberId, memberName }) {
         </CollapsibleTrigger>
         <CollapsibleContent>
           <CardContent className="space-y-4">
-            {/* URL Input */}
-            <div>
-              <label className="text-sm font-medium">Website URL</label>
-              <Input
-                type="url"
-                placeholder="https://..."
-                value={program.url || ''}
-                onChange={(e) => handleUpdateUrl(e.target.value)}
-                onBlur={(e) => handleUpdateUrl(e.target.value)}
-                className="mt-1"
-              />
+            {/* Website Link */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Website</label>
+              {program.url ? (
+                <div className="flex items-center gap-2 p-2 bg-gray-50 rounded">
+                  {editingWebsite ? (
+                    <div className="flex-1 space-y-2">
+                      <Input
+                        placeholder="Display title"
+                        defaultValue={program.website_title || ''}
+                        onBlur={(e) => {
+                          handleUpdateWebsiteTitle(e.target.value);
+                          setEditingWebsite(false);
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            handleUpdateWebsiteTitle(e.target.value);
+                            setEditingWebsite(false);
+                          }
+                        }}
+                        autoFocus
+                        className="text-sm"
+                      />
+                      <Input
+                        type="url"
+                        placeholder="https://..."
+                        defaultValue={program.url}
+                        onBlur={(e) => handleUpdateUrl(e.target.value)}
+                        className="text-sm"
+                      />
+                    </div>
+                  ) : (
+                    <>
+                      <a
+                        href={program.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex-1 text-blue-600 hover:underline text-sm truncate"
+                      >
+                        {program.website_title || program.url}
+                      </a>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setEditingWebsite(true)}
+                        className="h-7 w-7 p-0 flex-shrink-0"
+                      >
+                        <Edit2 className="w-3 h-3 text-gray-500" />
+                      </Button>
+                    </>
+                  )}
+                </div>
+              ) : (
+                <Input
+                  type="url"
+                  placeholder="https://..."
+                  value={program.url || ''}
+                  onChange={(e) => handleUpdateUrl(e.target.value)}
+                  onBlur={(e) => handleUpdateUrl(e.target.value)}
+                  className="mt-1"
+                />
+              )}
             </div>
 
             {/* Schedule Table */}
