@@ -291,56 +291,61 @@ export default function Timeline() {
         {events.length === 0 ? (
           <p className="text-sm text-gray-500 text-center py-8">No events yet. Add your first event to get started.</p>
         ) : (
-          <div className="space-y-12">
-            {sortedYears.map((year) => {
-              const yearEvents = eventsByYear[year];
-              return (
-                <div key={year} className="relative">
-                  {/* Year and dots section */}
-                  <div className="flex items-start gap-6 mb-4">
-                    <div className="flex flex-col items-center gap-2">
-                      {/* Year badge */}
-                      <div className="w-[60px] h-[50px] bg-amber-500 text-white font-bold text-xl flex items-center justify-center rounded shadow-md">
-                        {year}
+          <div className="relative">
+            {/* Vertical timeline line */}
+            <div className="absolute left-[30px] top-6 bottom-6 w-0.5 bg-amber-300" />
+            
+            <div className="space-y-12">
+              {sortedYears.map((year) => {
+                const yearEvents = eventsByYear[year];
+                return (
+                  <div key={year} className="relative">
+                    {/* Year and dots section */}
+                    <div className="flex items-start gap-6 mb-4">
+                      <div className="flex flex-col items-center gap-2 relative z-10">
+                        {/* Year badge */}
+                        <div className="w-[60px] h-[50px] bg-amber-500 text-white font-bold text-xl flex items-center justify-center rounded shadow-md">
+                          {year}
+                        </div>
+                        {/* Color-coded circles for events */}
+                        <div className="flex flex-col gap-1.5">
+                          {yearEvents.map((event) => (
+                            <div 
+                              key={event.id}
+                              className={`w-4 h-4 rounded-full cursor-pointer hover:scale-125 transition-transform border-2 bg-white ${event.category ? categoryColors[event.category].split(' ')[1] : 'border-amber-500'}`}
+                              onClick={() => {
+                                setSelectedEvent(event);
+                                setEditingEvent(null);
+                              }}
+                              title={event.title}
+                            />
+                          ))}
+                        </div>
                       </div>
-                      {/* Color-coded circles for events */}
-                      <div className="flex flex-col gap-1.5">
+
+                      {/* Events list */}
+                      <div className="flex-1 space-y-3">
                         {yearEvents.map((event) => (
-                          <div 
+                          <motion.div
                             key={event.id}
-                            className={`w-3 h-3 rounded-full cursor-pointer hover:scale-125 transition-transform ${event.category ? categoryColors[event.category].split(' ')[0] : 'bg-amber-500'}`}
+                            initial={{ opacity: 0, x: 20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            className="bg-gray-50 rounded-lg p-3 hover:bg-gray-100 transition-colors cursor-pointer"
                             onClick={() => {
                               setSelectedEvent(event);
                               setEditingEvent(null);
                             }}
-                            title={event.title}
-                          />
+                          >
+                            <h3 className="font-semibold text-gray-900 text-base">{event.title}</h3>
+                            <p className="text-xs text-gray-500">{event.date_text}</p>
+                          </motion.div>
                         ))}
                       </div>
                     </div>
-
-                    {/* Events list */}
-                    <div className="flex-1 space-y-3">
-                      {yearEvents.map((event) => (
-                        <motion.div
-                          key={event.id}
-                          initial={{ opacity: 0, x: 20 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          className="bg-gray-50 rounded-lg p-3 hover:bg-gray-100 transition-colors cursor-pointer"
-                          onClick={() => {
-                            setSelectedEvent(event);
-                            setEditingEvent(null);
-                          }}
-                        >
-                          <h3 className="font-semibold text-gray-900 text-base">{event.title}</h3>
-                          <p className="text-xs text-gray-500">{event.date_text}</p>
-                        </motion.div>
-                      ))}
-                    </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
         )}
 
