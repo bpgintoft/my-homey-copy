@@ -323,14 +323,7 @@ export default function Timeline() {
                               setEditingEvent(null);
                             }}
                           >
-                            <div className="flex items-center gap-2 flex-wrap">
-                              <h3 className="font-semibold text-gray-900 text-base">{event.title}</h3>
-                              {event.category && (
-                                <span className="text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-600">
-                                  {categoryLabels[event.category]}
-                                </span>
-                              )}
-                            </div>
+                            <h3 className="font-semibold text-gray-900 text-base">{event.title}</h3>
                             <p className="text-xs text-gray-500">{event.date_text}</p>
                           </div>
                         </motion.div>
