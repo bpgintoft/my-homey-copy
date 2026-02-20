@@ -198,16 +198,13 @@ export default function Timeline() {
               </Button>
             )}
             <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-            <DialogTrigger asChild>
-              <Button size="sm">
-                <Plus className="w-4 h-4 mr-2" />
-                Add Event
-              </Button>
-            </DialogTrigger>
-            </Dialog>
-            </div>
-            </div>
-            <DialogContent className="max-w-2xl">
+              <DialogTrigger asChild>
+                <Button size="sm">
+                  <Plus className="w-4 h-4 mr-2" />
+                  Add Event
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-2xl">
               <DialogHeader>
                 <DialogTitle>Add Timeline Event</DialogTitle>
               </DialogHeader>
@@ -325,10 +322,13 @@ export default function Timeline() {
                 >
                   Add Event
                 </Button>
-              </div>
-            </DialogContent>
+                </div>
+                </DialogContent>
+                </Dialog>
+                </div>
+                </div>
 
-            {events.length === 0 ? (
+                {events.length === 0 ? (
               <p className="text-sm text-gray-500 text-center py-8">No events yet. Add your first event to get started.</p>
             ) : filteredEvents.length === 0 ? (
               <p className="text-sm text-gray-500 text-center py-8">No events match "{searchQuery}"</p>
