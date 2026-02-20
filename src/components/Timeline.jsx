@@ -6,13 +6,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Plus, Upload, Loader2, Trash2, X } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function Timeline() {
   const queryClient = useQueryClient();
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [newEvent, setNewEvent] = useState({ date_text: '', year: null, month: null, title: '', description: '', photos: [] });
+  const [newEvent, setNewEvent] = useState({ date_text: '', year: null, month: null, title: '', description: '', category: '', photos: [] });
   const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
   const [selectedPhoto, setSelectedPhoto] = useState(null);
   const [selectedEvent, setSelectedEvent] = useState(null);
@@ -24,6 +25,26 @@ export default function Timeline() {
     queryKey: ['timelineEvents'],
     queryFn: () => base44.entities.TimelineEvent.list(),
   });
+
+  const categoryColors = {
+    structure_systems: 'bg-gray-500 border-gray-500',
+    renovations_improvements: 'bg-blue-500 border-blue-500',
+    maintenance_repairs: 'bg-green-500 border-green-500',
+    damage_incidents: 'bg-red-500 border-red-500',
+    financial_legal: 'bg-purple-500 border-purple-500',
+    family_moments: 'bg-pink-500 border-pink-500',
+    exterior_property: 'bg-orange-500 border-orange-500',
+  };
+
+  const categoryLabels = {
+    structure_systems: 'Structure & Systems',
+    renovations_improvements: 'Renovations & Improvements',
+    maintenance_repairs: 'Maintenance & Repairs',
+    damage_incidents: 'Damage & Incidents',
+    financial_legal: 'Financial & Legal',
+    family_moments: 'Family Moments',
+    exterior_property: 'Exterior & Property',
+  };
 
   const parseDateText = (text) => {
     const yearMatch = text.match(/\d{4}/);
@@ -54,7 +75,7 @@ export default function Timeline() {
     onSuccess: () => {
       queryClient.invalidateQueries(['timelineEvents']);
       setDialogOpen(false);
-      setNewEvent({ date_text: '', year: null, month: null, title: '', description: '', photos: [] });
+      setNewEvent({ date_text: '', year: null, month: null, title: '', description: '', category: '', photos: [] });
     },
   });
 
@@ -175,6 +196,23 @@ export default function Timeline() {
                   />
                 </div>
                 <div>
+                  <label className="text-sm font-medium mb-1 block">Category</label>
+                  <Select value={newEvent.category} onValueChange={(value) => setNewEvent({ ...newEvent, category: value })}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select category" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="structure_systems">Structure & Systems</SelectItem>
+                      <SelectItem value="renovations_improvements">Renovations & Improvements</SelectItem>
+                      <SelectItem value="maintenance_repairs">Maintenance & Repairs</SelectItem>
+                      <SelectItem value="damage_incidents">Damage & Incidents</SelectItem>
+                      <SelectItem value="financial_legal">Financial & Legal</SelectItem>
+                      <SelectItem value="family_moments">Family Moments</SelectItem>
+                      <SelectItem value="exterior_property">Exterior & Property</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
                   <label className="text-sm font-medium mb-1 block">Description</label>
                   <Textarea
                     placeholder="Event description..."
@@ -285,7 +323,14 @@ export default function Timeline() {
                               setEditingEvent(null);
                             }}
                           >
-                            <h3 className="font-semibold text-gray-900 text-base">{event.title}</h3>
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <h3 className="font-semibold text-gray-900 text-base">{event.title}</h3>
+                              {event.category && (
+                                <span className="text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-600">
+                                  {categoryLabels[event.category]}
+                                </span>
+                              )}
+                            </div>
                             <p className="text-xs text-gray-500">{event.date_text}</p>
                           </div>
                         </motion.div>
@@ -307,7 +352,14 @@ export default function Timeline() {
             {selectedEvent && !editingEvent && (
               <div className="space-y-4">
                 <div>
-                  <h3 className="text-2xl font-bold text-gray-900">{selectedEvent.title}</h3>
+                  <div className="flex items-center gap-2 flex-wrap mb-1">
+                    <h3 className="text-2xl font-bold text-gray-900">{selectedEvent.title}</h3>
+                    {selectedEvent.category && (
+                      <span className={`text-xs px-3 py-1 rounded-full text-white ${categoryColors[selectedEvent.category].replace('border-', 'bg-')}`}>
+                        {categoryLabels[selectedEvent.category]}
+                      </span>
+                    )}
+                  </div>
                   <p className="text-gray-500">{selectedEvent.date_text}</p>
                 </div>
                 {selectedEvent.description && (
@@ -369,6 +421,23 @@ export default function Timeline() {
                     value={editingEvent.title}
                     onChange={(e) => setEditingEvent({ ...editingEvent, title: e.target.value })}
                   />
+                </div>
+                <div>
+                  <label className="text-sm font-medium mb-1 block">Category</label>
+                  <Select value={editingEvent.category || ''} onValueChange={(value) => setEditingEvent({ ...editingEvent, category: value })}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select category" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="structure_systems">Structure & Systems</SelectItem>
+                      <SelectItem value="renovations_improvements">Renovations & Improvements</SelectItem>
+                      <SelectItem value="maintenance_repairs">Maintenance & Repairs</SelectItem>
+                      <SelectItem value="damage_incidents">Damage & Incidents</SelectItem>
+                      <SelectItem value="financial_legal">Financial & Legal</SelectItem>
+                      <SelectItem value="family_moments">Family Moments</SelectItem>
+                      <SelectItem value="exterior_property">Exterior & Property</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
                 <div>
                   <label className="text-sm font-medium mb-1 block">Description</label>
