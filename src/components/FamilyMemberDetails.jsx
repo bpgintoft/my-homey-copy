@@ -17,6 +17,16 @@ import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 
 export default function FamilyMemberDetails({ memberId, memberName, color = 'blue' }) {
   const queryClient = useQueryClient();
+
+  const colorMap = {
+    blue: 'bg-blue-50 border-blue-100',
+    green: 'bg-green-50 border-green-100',
+    pink: 'bg-pink-50 border-pink-100',
+    purple: 'bg-purple-50 border-purple-100',
+    orange: 'bg-orange-50 border-orange-100',
+  };
+
+  const itemBg = colorMap[color] || colorMap.blue;
   const [dialogOpen, setDialogOpen] = useState({ chore: false, milestone: false, contact: false, link: false });
   const [newChore, setNewChore] = useState({ title: '', timing: 'short-term' });
   const [editingChoreId, setEditingChoreId] = useState(null);
@@ -359,7 +369,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                     <h4 className="font-medium text-sm text-gray-700 mb-2 capitalize">{category.replace(/_/g, ' ')}</h4>
                     <div className="space-y-2">
                       {categoryLinks.map((link) => (
-                        <div key={link.id} className="flex items-center gap-2 p-2 bg-gray-50 rounded">
+                        <div key={link.id} className={`flex items-center gap-2 p-2 rounded ${itemBg}`}>
                           <a href={link.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-blue-600 hover:underline flex-1 min-w-0">
                             <ExternalLink className="w-4 h-4 flex-shrink-0" />
                             <span className="overflow-hidden text-ellipsis whitespace-nowrap">{link.title || link.url}</span>
@@ -501,9 +511,9 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                           const isExpanded = expandedContactId === contact.id;
 
                           return (
-                            <div key={contact.id} className="bg-gray-50 rounded-lg overflow-hidden">
+                            <div key={contact.id} className={`rounded-lg overflow-hidden ${itemBg}`}>
                               <div 
-                                className="flex items-center gap-2 p-3 cursor-pointer hover:bg-gray-100"
+                                className={`flex items-center gap-2 p-3 cursor-pointer hover:opacity-80 transition-opacity`}
                                 onClick={() => setExpandedContactId(isExpanded ? null : contact.id)}
                               >
                                 <div className="flex-1 min-w-0">
@@ -773,7 +783,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                                         <div
                                           ref={provided.innerRef}
                                           {...provided.draggableProps}
-                                          className={`flex items-center justify-between p-3 bg-gray-50 rounded-lg ${
+                                          className={`flex items-center justify-between p-3 rounded-lg ${itemBg} ${
                                             snapshot.isDragging ? 'shadow-lg opacity-90' : ''
                                           }`}
                                         >
@@ -924,7 +934,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                   <p className="text-sm text-gray-500">No milestones yet</p>
                 ) : (
                   milestones.map((milestone) => (
-                    <details key={milestone.id} className="bg-gray-50 rounded-lg p-3">
+                    <details key={milestone.id} className={`rounded-lg p-3 ${itemBg}`}>
                       <summary className="cursor-pointer font-medium flex justify-between items-center">
                         <span>{milestone.title}</span>
                         <div className="flex items-center gap-2">
