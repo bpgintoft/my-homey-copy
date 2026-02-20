@@ -18,6 +18,8 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
   const queryClient = useQueryClient();
   const [dialogOpen, setDialogOpen] = useState({ chore: false, milestone: false, contact: false, link: false });
   const [newChore, setNewChore] = useState({ title: '', timing: 'short-term' });
+  const [editingChoreId, setEditingChoreId] = useState(null);
+  const [editingChoreTitle, setEditingChoreTitle] = useState('');
   const [newMilestone, setNewMilestone] = useState({ title: '', date: '', description: '' });
   const [newContact, setNewContact] = useState({ name: '', type: '', phone: '', email: '', address: '', website: '', linked_to_member_ids: ['Everyone'] });
   const [editingContact, setEditingContact] = useState(null);
@@ -88,6 +90,14 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
   const toggleChoreMutation = useMutation({
     mutationFn: ({ id, is_completed }) => base44.entities.Chore.update(id, { is_completed }),
     onSuccess: () => queryClient.invalidateQueries(['chores', memberId]),
+  });
+
+  const updateChoreMutation = useMutation({
+    mutationFn: ({ id, title }) => base44.entities.Chore.update(id, { title }),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['chores', memberId]);
+      setEditingChoreId(null);
+    },
   });
 
   const deleteChoreMutation = useMutation({
@@ -729,7 +739,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                         <div className="space-y-2">
                           {timingChores.map((chore) => (
                             <div key={chore.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                              <div className="flex items-center gap-3">
+                              <div className="flex items-center gap-3 flex-1 min-w-0">
                                 <button onClick={() => toggleChoreMutation.mutate({ id: chore.id, is_completed: !chore.is_completed })}>
                                   {chore.is_completed ? (
                                     <CheckCircle2 className="w-5 h-5 text-green-500" />
@@ -737,7 +747,29 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                                     <Circle className="w-5 h-5 text-gray-400" />
                                   )}
                                 </button>
-                                <span className={chore.is_completed ? 'line-through text-gray-500' : ''}>{chore.title}</span>
+                                {editingChoreId === chore.id ? (
+                                  <Input
+                                    value={editingChoreTitle}
+                                    onChange={(e) => setEditingChoreTitle(e.target.value)}
+                                    onBlur={() => updateChoreMutation.mutate({ id: chore.id, title: editingChoreTitle })}
+                                    onKeyDown={(e) => {
+                                      if (e.key === 'Enter') updateChoreMutation.mutate({ id: chore.id, title: editingChoreTitle });
+                                      if (e.key === 'Escape') setEditingChoreId(null);
+                                    }}
+                                    autoFocus
+                                    className="h-8"
+                                  />
+                                ) : (
+                                  <span 
+                                    className={`cursor-pointer hover:text-blue-600 flex-1 ${chore.is_completed ? 'line-through text-gray-500' : ''}`}
+                                    onClick={() => {
+                                      setEditingChoreId(chore.id);
+                                      setEditingChoreTitle(chore.title);
+                                    }}
+                                  >
+                                    {chore.title}
+                                  </span>
+                                )}
                               </div>
                               <Button variant="ghost" size="sm" onClick={() => deleteChoreMutation.mutate(chore.id)}>
                                 <Trash2 className="w-4 h-4 text-red-500" />
