@@ -70,11 +70,27 @@ export default function History() {
       `}</style>
       <div className="history-banner-bg text-white py-12 relative">
         <div className="container mx-auto px-6 relative z-10">
-          <div className="flex items-center gap-3 mb-3">
-            <HistoryIcon className="w-8 h-8" />
-            <h1 className="text-4xl font-bold">Property History</h1>
+          <div className="flex flex-col lg:flex-row items-center justify-between gap-8">
+            <div className="flex-1 text-center lg:text-left">
+              <div className="flex items-center gap-3 mb-3 justify-center lg:justify-start">
+                <HistoryIcon className="w-8 h-8" />
+                <h1 className="text-4xl font-bold">Property History</h1>
+              </div>
+              <p className="text-white/90 text-lg">1934 Church St, Wauwatosa, WI 53213</p>
+            </div>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5 }}
+              className="flex-shrink-0"
+            >
+              <img 
+                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/9bbbadd96_ChatGPTImageFeb20202602_34_05PM.png"
+                alt="Historic home"
+                className="w-48 h-48 lg:w-56 lg:h-56 object-cover rounded-2xl shadow-2xl"
+              />
+            </motion.div>
           </div>
-          <p className="text-white/90 text-lg">1934 Church St, Wauwatosa, WI 53213</p>
         </div>
       </div>
 
