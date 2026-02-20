@@ -68,17 +68,21 @@ export default function History() {
           background-position: 0 0, 7px 7px;
         }
       `}</style>
-      <div className="history-banner-bg text-white py-12 relative overflow-hidden">
-        <div className="container mx-auto px-6 relative z-10">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-4xl font-bold mb-1">Property History</h1>
-              <p className="text-white/90 text-lg">1934 Church St</p>
+      <div className="history-banner-bg relative overflow-hidden">
+        <div className="relative h-40 md:h-48 history-banner-bg">
+          <div className="relative z-10 flex items-center justify-between px-4 md:px-12 gap-4 h-full">
+            <div className="flex-1">
+              <h1 className="text-2xl md:text-4xl font-bold text-gray-800 mb-1 md:mb-2">
+                Property History
+              </h1>
+              <p className="text-sm md:text-lg text-gray-700">
+                1934 Church St
+              </p>
             </div>
             <motion.img 
               src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/e7f0c2650_house.png"
               alt="Historic home"
-              className="w-48 h-48 object-contain"
+              className="h-40 md:h-56 w-auto object-contain flex-shrink-0"
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.5 }}
