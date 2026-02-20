@@ -314,7 +314,7 @@ export default function Timeline() {
                           className="relative"
                         >
                           {/* Connection dot */}
-                          <div className="absolute -left-[59px] top-3 w-4 h-4 bg-white border-4 border-amber-500 rounded-full" />
+                          <div className={`absolute -left-[59px] top-3 w-4 h-4 bg-white border-4 rounded-full ${event.category ? categoryColors[event.category] : 'border-amber-500'}`} />
 
                           <div 
                             className="bg-gray-50 rounded-lg p-3 hover:bg-gray-100 transition-colors cursor-pointer"
