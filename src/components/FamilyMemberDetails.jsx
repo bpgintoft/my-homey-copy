@@ -404,14 +404,12 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                 Important Contacts
                 <ChevronDown className={`w-5 h-5 transition-transform ${openSections.contacts ? 'rotate-180' : ''}`} />
               </CardTitle>
-            </CardHeader>
-          </CollapsibleTrigger>
-          <CollapsibleContent>
-            <CardContent>
-              <div className="mb-4">
+              {openSections.contacts && (
                 <Dialog open={dialogOpen.contact} onOpenChange={(open) => setDialogOpen({ ...dialogOpen, contact: open })}>
                   <DialogTrigger asChild>
-                    <Button size="sm"><Plus className="w-4 h-4 mr-2" />Add Contact</Button>
+                    <Button size="sm" onClick={(e) => e.stopPropagation()}>
+                      <Plus className="w-4 h-4 mr-2" />Add
+                    </Button>
                   </DialogTrigger>
                   <DialogContent>
                     <DialogHeader>
@@ -497,7 +495,11 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                     </div>
                   </DialogContent>
                 </Dialog>
-              </div>
+              )}
+            </CardHeader>
+          </CollapsibleTrigger>
+          <CollapsibleContent>
+            <CardContent>
               {contacts.length === 0 ? (
                 <p className="text-sm text-gray-500">No contacts yet</p>
               ) : (
@@ -706,14 +708,12 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                 To-Do List & Chores
                 <ChevronDown className={`w-5 h-5 transition-transform ${openSections.chores ? 'rotate-180' : ''}`} />
               </CardTitle>
-            </CardHeader>
-          </CollapsibleTrigger>
-          <CollapsibleContent>
-            <CardContent>
-              <div className="mb-4">
+              {openSections.chores && (
                 <Dialog open={dialogOpen.chore} onOpenChange={(open) => setDialogOpen({ ...dialogOpen, chore: open })}>
                   <DialogTrigger asChild>
-                    <Button size="sm"><Plus className="w-4 h-4 mr-2" />Add Chore</Button>
+                    <Button size="sm" onClick={(e) => e.stopPropagation()}>
+                      <Plus className="w-4 h-4 mr-2" />Add
+                    </Button>
                   </DialogTrigger>
                   <DialogContent>
                     <DialogHeader>
@@ -749,8 +749,12 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                     </div>
                   </DialogContent>
                 </Dialog>
-              </div>
-{chores.length === 0 ? (
+              )}
+            </CardHeader>
+          </CollapsibleTrigger>
+          <CollapsibleContent>
+            <CardContent>
+              {chores.length === 0 ? (
                 <p className="text-sm text-gray-500">No tasks yet</p>
               ) : (
                 <DragDropContext onDragEnd={handleDragEnd}>
