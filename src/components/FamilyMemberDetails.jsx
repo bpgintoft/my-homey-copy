@@ -100,6 +100,24 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
     },
   });
 
+  const updateChoreTimingMutation = useMutation({
+    mutationFn: ({ id, timing }) => base44.entities.Chore.update(id, { timing }),
+    onSuccess: () => queryClient.invalidateQueries(['chores', memberId]),
+  });
+
+  const handleDragEnd = (result) => {
+    if (!result.destination) return;
+
+    const sourceCategory = result.source.droppableId;
+    const destCategory = result.destination.droppableId;
+    const choreId = result.draggableId;
+
+    // If moved to different category, update timing
+    if (sourceCategory !== destCategory) {
+      updateChoreTimingMutation.mutate({ id: choreId, timing: destCategory });
+    }
+  };
+
   const deleteChoreMutation = useMutation({
     mutationFn: (id) => base44.entities.Chore.delete(id),
     onSuccess: () => queryClient.invalidateQueries(['chores', memberId]),
@@ -726,61 +744,90 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
 {chores.length === 0 ? (
                 <p className="text-sm text-gray-500">No tasks yet</p>
               ) : (
-                <div className="space-y-4">
-                  {['daily', 'short-term', 'mid-term', 'long-term'].map((timing) => {
-                    const timingChores = choresByTiming[timing];
-                    if (timingChores.length === 0) return null;
-                    
-                    return (
-                      <div key={timing}>
-                        <h4 className="font-medium text-sm text-gray-700 mb-2 capitalize">
-                          {timing === 'mid-term' ? 'Mid-term' : timing === 'short-term' ? 'Short-term' : timing === 'long-term' ? 'Long-term' : 'Daily'}
-                        </h4>
-                        <div className="space-y-2">
-                          {timingChores.map((chore) => (
-                            <div key={chore.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                              <div className="flex items-center gap-3 flex-1 min-w-0">
-                                <button onClick={() => toggleChoreMutation.mutate({ id: chore.id, is_completed: !chore.is_completed })}>
-                                  {chore.is_completed ? (
-                                    <CheckCircle2 className="w-5 h-5 text-green-500" />
-                                  ) : (
-                                    <Circle className="w-5 h-5 text-gray-400" />
-                                  )}
-                                </button>
-                                {editingChoreId === chore.id ? (
-                                  <Input
-                                    value={editingChoreTitle}
-                                    onChange={(e) => setEditingChoreTitle(e.target.value)}
-                                    onBlur={() => updateChoreMutation.mutate({ id: chore.id, title: editingChoreTitle })}
-                                    onKeyDown={(e) => {
-                                      if (e.key === 'Enter') updateChoreMutation.mutate({ id: chore.id, title: editingChoreTitle });
-                                      if (e.key === 'Escape') setEditingChoreId(null);
-                                    }}
-                                    autoFocus
-                                    className="h-8"
-                                  />
+                <DragDropContext onDragEnd={handleDragEnd}>
+                  <div className="space-y-4">
+                    {['daily', 'short-term', 'mid-term', 'long-term'].map((timing) => {
+                      const timingChores = choresByTiming[timing];
+                      
+                      return (
+                        <div key={timing}>
+                          <h4 className="font-medium text-sm text-gray-700 mb-2 capitalize">
+                            {timing === 'mid-term' ? 'Mid-term' : timing === 'short-term' ? 'Short-term' : timing === 'long-term' ? 'Long-term' : 'Daily'}
+                          </h4>
+                          <Droppable droppableId={timing}>
+                            {(provided, snapshot) => (
+                              <div
+                                ref={provided.innerRef}
+                                {...provided.droppableProps}
+                                className={`space-y-2 min-h-[60px] p-2 rounded-lg transition-colors ${
+                                  snapshot.isDraggingOver ? 'bg-blue-50 border-2 border-blue-300' : 'bg-transparent'
+                                }`}
+                              >
+                                {timingChores.length === 0 && !snapshot.isDraggingOver ? (
+                                  <p className="text-xs text-gray-400 text-center py-2">Drop items here</p>
                                 ) : (
-                                  <span 
-                                    className={`cursor-pointer hover:text-blue-600 flex-1 ${chore.is_completed ? 'line-through text-gray-500' : ''}`}
-                                    onClick={() => {
-                                      setEditingChoreId(chore.id);
-                                      setEditingChoreTitle(chore.title);
-                                    }}
-                                  >
-                                    {chore.title}
-                                  </span>
+                                  timingChores.map((chore, index) => (
+                                    <Draggable key={chore.id} draggableId={chore.id} index={index}>
+                                      {(provided, snapshot) => (
+                                        <div
+                                          ref={provided.innerRef}
+                                          {...provided.draggableProps}
+                                          className={`flex items-center justify-between p-3 bg-gray-50 rounded-lg ${
+                                            snapshot.isDragging ? 'shadow-lg opacity-90' : ''
+                                          }`}
+                                        >
+                                          <div className="flex items-center gap-3 flex-1 min-w-0">
+                                            <div {...provided.dragHandleProps} className="cursor-grab active:cursor-grabbing">
+                                              <GripVertical className="w-4 h-4 text-gray-400" />
+                                            </div>
+                                            <button onClick={() => toggleChoreMutation.mutate({ id: chore.id, is_completed: !chore.is_completed })}>
+                                              {chore.is_completed ? (
+                                                <CheckCircle2 className="w-5 h-5 text-green-500" />
+                                              ) : (
+                                                <Circle className="w-5 h-5 text-gray-400" />
+                                              )}
+                                            </button>
+                                            {editingChoreId === chore.id ? (
+                                              <Input
+                                                value={editingChoreTitle}
+                                                onChange={(e) => setEditingChoreTitle(e.target.value)}
+                                                onBlur={() => updateChoreMutation.mutate({ id: chore.id, title: editingChoreTitle })}
+                                                onKeyDown={(e) => {
+                                                  if (e.key === 'Enter') updateChoreMutation.mutate({ id: chore.id, title: editingChoreTitle });
+                                                  if (e.key === 'Escape') setEditingChoreId(null);
+                                                }}
+                                                autoFocus
+                                                className="h-8"
+                                              />
+                                            ) : (
+                                              <span 
+                                                className={`cursor-pointer hover:text-blue-600 flex-1 ${chore.is_completed ? 'line-through text-gray-500' : ''}`}
+                                                onClick={() => {
+                                                  setEditingChoreId(chore.id);
+                                                  setEditingChoreTitle(chore.title);
+                                                }}
+                                              >
+                                                {chore.title}
+                                              </span>
+                                            )}
+                                          </div>
+                                          <Button variant="ghost" size="sm" onClick={() => deleteChoreMutation.mutate(chore.id)}>
+                                            <Trash2 className="w-4 h-4 text-red-500" />
+                                          </Button>
+                                        </div>
+                                      )}
+                                    </Draggable>
+                                  ))
                                 )}
+                                {provided.placeholder}
                               </div>
-                              <Button variant="ghost" size="sm" onClick={() => deleteChoreMutation.mutate(chore.id)}>
-                                <Trash2 className="w-4 h-4 text-red-500" />
-                              </Button>
-                            </div>
-                          ))}
+                            )}
+                          </Droppable>
                         </div>
-                      </div>
-                    );
-                  })}
-                </div>
+                      );
+                    })}
+                  </div>
+                </DragDropContext>
               )}
             </CardContent>
           </CollapsibleContent>
