@@ -334,7 +334,6 @@ export default function Timeline() {
                             }}
                           >
                             <h3 className="font-semibold text-gray-900 text-sm">{event.title}</h3>
-                            <p className="text-xs text-gray-500">{event.date_text}</p>
                           </motion.div>
                         </div>
                       ))}
