@@ -131,7 +131,7 @@ export default function History() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
+          transition={{ delay: 0.2 }}
         >
           <Card className="bg-white border-0 shadow-sm">
             <CardContent className="p-6">
@@ -223,7 +223,7 @@ export default function History() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
+            transition={{ delay: 0.4 }}
           >
             <Card className="bg-white border-0 shadow-sm">
               <CardContent className="p-6">
@@ -265,7 +265,7 @@ export default function History() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5 }}
+            transition={{ delay: 0.6 }}
           >
             <Card className="bg-white border-0 shadow-sm">
               <CardContent className="p-6">
