@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, Upload, Loader2, Trash2, X } from 'lucide-react';
+import { Plus, Upload, Loader2, Trash2, X, Search } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function Timeline() {
@@ -18,6 +18,8 @@ export default function Timeline() {
   const [selectedPhoto, setSelectedPhoto] = useState(null);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [editingEvent, setEditingEvent] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [showSearch, setShowSearch] = useState(false);
   const fileInputRef = React.useRef(null);
   const editFileInputRef = React.useRef(null);
 
@@ -137,8 +139,15 @@ export default function Timeline() {
     }
   };
 
+  // Filter events based on search query
+  const filteredEvents = searchQuery.trim()
+    ? events.filter(event => 
+        event.title.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    : events;
+
   // Group events by year and sort (most recent first)
-  const eventsByYear = events
+  const eventsByYear = filteredEvents
     .sort((a, b) => {
       if (a.year !== b.year) return b.year - a.year;
       return (b.month || 0) - (a.month || 0);
@@ -158,13 +167,46 @@ export default function Timeline() {
       <CardContent className="p-6">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-xl font-bold text-gray-900">Timeline</h2>
-          <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+          <div className="flex items-center gap-2">
+            {showSearch ? (
+              <div className="flex items-center gap-2">
+                <Input
+                  placeholder="Search events..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-48"
+                  autoFocus
+                />
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => {
+                    setShowSearch(false);
+                    setSearchQuery('');
+                  }}
+                >
+                  <X className="w-4 h-4" />
+                </Button>
+              </div>
+            ) : (
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={() => setShowSearch(true)}
+              >
+                <Search className="w-4 h-4" />
+              </Button>
+            )}
+            <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
             <DialogTrigger asChild>
               <Button size="sm">
                 <Plus className="w-4 h-4 mr-2" />
                 Add Event
               </Button>
             </DialogTrigger>
+            </Dialog>
+            </div>
+            </div>
             <DialogContent className="max-w-2xl">
               <DialogHeader>
                 <DialogTitle>Add Timeline Event</DialogTitle>
@@ -285,12 +327,12 @@ export default function Timeline() {
                 </Button>
               </div>
             </DialogContent>
-          </Dialog>
-        </div>
 
-        {events.length === 0 ? (
-          <p className="text-sm text-gray-500 text-center py-8">No events yet. Add your first event to get started.</p>
-        ) : (
+            {events.length === 0 ? (
+              <p className="text-sm text-gray-500 text-center py-8">No events yet. Add your first event to get started.</p>
+            ) : filteredEvents.length === 0 ? (
+              <p className="text-sm text-gray-500 text-center py-8">No events match "{searchQuery}"</p>
+            ) : (
           <div className="relative">
             {/* Vertical timeline line */}
             <div className="absolute left-[25px] top-0 bottom-0 w-0.5 bg-amber-300" />
