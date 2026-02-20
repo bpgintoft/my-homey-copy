@@ -15,7 +15,10 @@ export default function Timeline() {
   const [newEvent, setNewEvent] = useState({ date_text: '', year: null, month: null, title: '', description: '', photos: [] });
   const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
   const [selectedPhoto, setSelectedPhoto] = useState(null);
+  const [selectedEvent, setSelectedEvent] = useState(null);
+  const [editingEvent, setEditingEvent] = useState(null);
   const fileInputRef = React.useRef(null);
+  const editFileInputRef = React.useRef(null);
 
   const { data: events = [] } = useQuery({
     queryKey: ['timelineEvents'],
@@ -57,22 +60,40 @@ export default function Timeline() {
 
   const deleteEventMutation = useMutation({
     mutationFn: (id) => base44.entities.TimelineEvent.delete(id),
-    onSuccess: () => queryClient.invalidateQueries(['timelineEvents']),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['timelineEvents']);
+      setSelectedEvent(null);
+      setEditingEvent(null);
+    },
   });
 
-  const handlePhotoUpload = async (file) => {
+  const updateEventMutation = useMutation({
+    mutationFn: ({ id, data }) => base44.entities.TimelineEvent.update(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['timelineEvents']);
+      setSelectedEvent(null);
+      setEditingEvent(null);
+    },
+  });
+
+  const handlePhotoUpload = async (file, isEditing = false) => {
     if (!file) return;
     setIsUploadingPhoto(true);
     try {
       const { file_url } = await base44.integrations.Core.UploadFile({ file });
-      setNewEvent({ ...newEvent, photos: [...newEvent.photos, file_url] });
+      if (isEditing) {
+        setEditingEvent({ ...editingEvent, photos: [...(editingEvent.photos || []), file_url] });
+      } else {
+        setNewEvent({ ...newEvent, photos: [...newEvent.photos, file_url] });
+      }
     } finally {
       setIsUploadingPhoto(false);
       if (fileInputRef.current) fileInputRef.current.value = '';
+      if (editFileInputRef.current) editFileInputRef.current.value = '';
     }
   };
 
-  const handlePaste = (e) => {
+  const handlePaste = (e, isEditing = false) => {
     const items = e.clipboardData?.items;
     if (!items) return;
 
@@ -80,15 +101,19 @@ export default function Timeline() {
       if (item.type.startsWith('image/')) {
         const blob = item.getAsFile();
         if (blob) {
-          handlePhotoUpload(blob);
+          handlePhotoUpload(blob, isEditing);
           e.preventDefault();
         }
       }
     }
   };
 
-  const removePhoto = (index) => {
-    setNewEvent({ ...newEvent, photos: newEvent.photos.filter((_, i) => i !== index) });
+  const removePhoto = (index, isEditing = false) => {
+    if (isEditing) {
+      setEditingEvent({ ...editingEvent, photos: editingEvent.photos.filter((_, i) => i !== index) });
+    } else {
+      setNewEvent({ ...newEvent, photos: newEvent.photos.filter((_, i) => i !== index) });
+    }
   };
 
   // Group events by year and sort
@@ -248,39 +273,15 @@ export default function Timeline() {
                         {/* Connection dot */}
                         <div className="absolute -left-[59px] top-3 w-4 h-4 bg-white border-4 border-amber-500 rounded-full" />
 
-                        <div className="bg-gray-50 rounded-lg p-4 hover:bg-gray-100 transition-colors">
-                          <div className="flex items-start justify-between gap-3 mb-2">
-                            <div className="flex-1">
-                              <h3 className="font-semibold text-gray-900 text-lg">{event.title}</h3>
-                              <p className="text-sm text-gray-500">{event.date_text}</p>
-                            </div>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => deleteEventMutation.mutate(event.id)}
-                              className="text-red-500 hover:text-red-700 h-7 w-7 p-0"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </Button>
-                          </div>
-                          
-                          {event.description && (
-                            <p className="text-gray-700 text-sm mb-3 whitespace-pre-wrap">{event.description}</p>
-                          )}
-
-                          {event.photos && event.photos.length > 0 && (
-                            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mt-3">
-                              {event.photos.map((photo, index) => (
-                                <img
-                                  key={index}
-                                  src={photo}
-                                  alt={`${event.title} photo ${index + 1}`}
-                                  className="w-full h-32 object-cover rounded cursor-pointer hover:opacity-90 transition-opacity"
-                                  onClick={() => setSelectedPhoto(photo)}
-                                />
-                              ))}
-                            </div>
-                          )}
+                        <div 
+                          className="bg-gray-50 rounded-lg p-4 hover:bg-gray-100 transition-colors cursor-pointer"
+                          onClick={() => {
+                            setSelectedEvent(event);
+                            setEditingEvent(null);
+                          }}
+                        >
+                          <h3 className="font-semibold text-gray-900 text-lg">{event.title}</h3>
+                          <p className="text-sm text-gray-500">{event.date_text}</p>
                         </div>
                       </motion.div>
                     ))}
@@ -290,6 +291,154 @@ export default function Timeline() {
             </div>
           </div>
         )}
+
+        {/* Event Detail Dialog */}
+        <Dialog open={!!selectedEvent} onOpenChange={(open) => !open && setSelectedEvent(null)}>
+          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>Event Details</DialogTitle>
+            </DialogHeader>
+            {selectedEvent && !editingEvent && (
+              <div className="space-y-4">
+                <div>
+                  <h3 className="text-2xl font-bold text-gray-900">{selectedEvent.title}</h3>
+                  <p className="text-gray-500">{selectedEvent.date_text}</p>
+                </div>
+                {selectedEvent.description && (
+                  <div>
+                    <h4 className="text-sm font-medium text-gray-700 mb-1">Description</h4>
+                    <p className="text-gray-700 whitespace-pre-wrap">{selectedEvent.description}</p>
+                  </div>
+                )}
+                {selectedEvent.photos && selectedEvent.photos.length > 0 && (
+                  <div>
+                    <h4 className="text-sm font-medium text-gray-700 mb-2">Photos</h4>
+                    <div className="grid grid-cols-2 gap-2">
+                      {selectedEvent.photos.map((photo, index) => (
+                        <img
+                          key={index}
+                          src={photo}
+                          alt={`${selectedEvent.title} photo ${index + 1}`}
+                          className="w-full h-32 object-cover rounded cursor-pointer hover:opacity-90"
+                          onClick={() => setSelectedPhoto(photo)}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                )}
+                <div className="flex gap-2 pt-4 border-t">
+                  <Button onClick={() => setEditingEvent({ ...selectedEvent })} className="flex-1">
+                    Edit Event
+                  </Button>
+                  <Button 
+                    variant="destructive" 
+                    onClick={() => {
+                      if (confirm('Are you sure you want to delete this event?')) {
+                        deleteEventMutation.mutate(selectedEvent.id);
+                      }
+                    }}
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </Button>
+                </div>
+              </div>
+            )}
+            {editingEvent && (
+              <div className="space-y-4">
+                <div>
+                  <label className="text-sm font-medium mb-1 block">Date</label>
+                  <Input
+                    placeholder="e.g., 'Summer 1927', 'December 1950', '1985'"
+                    value={editingEvent.date_text}
+                    onChange={(e) => {
+                      const date_text = e.target.value;
+                      const { year, month } = parseDateText(date_text);
+                      setEditingEvent({ ...editingEvent, date_text, year, month });
+                    }}
+                  />
+                </div>
+                <div>
+                  <label className="text-sm font-medium mb-1 block">Title</label>
+                  <Input
+                    value={editingEvent.title}
+                    onChange={(e) => setEditingEvent({ ...editingEvent, title: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <label className="text-sm font-medium mb-1 block">Description</label>
+                  <Textarea
+                    value={editingEvent.description || ''}
+                    onChange={(e) => setEditingEvent({ ...editingEvent, description: e.target.value })}
+                    rows={4}
+                  />
+                </div>
+                <div>
+                  <label className="text-sm font-medium mb-2 block">Photos</label>
+                  <div className="space-y-3">
+                    <div className="flex gap-2">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => editFileInputRef.current?.click()}
+                        disabled={isUploadingPhoto}
+                      >
+                        {isUploadingPhoto ? (
+                          <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Uploading...</>
+                        ) : (
+                          <><Upload className="w-4 h-4 mr-2" />Upload Photo</>
+                        )}
+                      </Button>
+                      <input
+                        ref={editFileInputRef}
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => handlePhotoUpload(e.target.files?.[0], true)}
+                        className="hidden"
+                      />
+                    </div>
+                    <Input
+                      placeholder="Or paste an image here..."
+                      onPaste={(e) => handlePaste(e, true)}
+                      disabled={isUploadingPhoto}
+                      className="text-sm"
+                    />
+                    {editingEvent.photos && editingEvent.photos.length > 0 && (
+                      <div className="grid grid-cols-3 gap-2">
+                        {editingEvent.photos.map((photo, index) => (
+                          <div key={index} className="relative group">
+                            <img src={photo} alt={`Photo ${index + 1}`} className="w-full h-24 object-cover rounded" />
+                            <Button
+                              type="button"
+                              variant="destructive"
+                              size="sm"
+                              onClick={() => removePhoto(index, true)}
+                              className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity h-6 w-6 p-0"
+                            >
+                              <X className="w-3 h-3" />
+                            </Button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    onClick={() => updateEventMutation.mutate({ id: editingEvent.id, data: editingEvent })}
+                    disabled={!editingEvent.date_text || !editingEvent.year || !editingEvent.title}
+                    className="flex-1"
+                  >
+                    Save Changes
+                  </Button>
+                  <Button variant="outline" onClick={() => setEditingEvent(null)}>
+                    Cancel
+                  </Button>
+                </div>
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
 
         {/* Photo viewer */}
         {selectedPhoto && (
