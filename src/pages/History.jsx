@@ -78,7 +78,7 @@ export default function History() {
             <motion.img 
               src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/e7f0c2650_house.png"
               alt="Historic home"
-              className="w-32 h-32 object-contain"
+              className="w-48 h-48 object-contain"
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.5 }}
