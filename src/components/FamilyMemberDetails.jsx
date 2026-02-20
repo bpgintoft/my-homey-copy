@@ -211,6 +211,13 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
     return acc;
   }, {});
 
+  const contactsByType = contacts.reduce((acc, contact) => {
+    const type = contact.type || 'Other';
+    if (!acc[type]) acc[type] = [];
+    acc[type].push(contact);
+    return acc;
+  }, {});
+
   return (
     <div className="space-y-4">
       {/* Important Links */}
