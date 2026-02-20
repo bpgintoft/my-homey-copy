@@ -12,7 +12,7 @@ import { motion } from 'framer-motion';
 export default function Timeline() {
   const queryClient = useQueryClient();
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [newEvent, setNewEvent] = useState({ date: '', title: '', description: '', photos: [] });
+  const [newEvent, setNewEvent] = useState({ date_text: '', year: null, month: null, title: '', description: '', photos: [] });
   const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
   const [selectedPhoto, setSelectedPhoto] = useState(null);
   const fileInputRef = React.useRef(null);
@@ -22,12 +22,36 @@ export default function Timeline() {
     queryFn: () => base44.entities.TimelineEvent.list(),
   });
 
+  const parseDateText = (text) => {
+    const yearMatch = text.match(/\d{4}/);
+    const year = yearMatch ? parseInt(yearMatch[0]) : null;
+    
+    const months = {
+      january: 1, jan: 1, february: 2, feb: 2, march: 3, mar: 3,
+      april: 4, apr: 4, may: 5, june: 6, jun: 6, july: 7, jul: 7,
+      august: 8, aug: 8, september: 9, sep: 9, october: 10, oct: 10,
+      november: 11, nov: 11, december: 12, dec: 12,
+      spring: 3, summer: 6, fall: 9, autumn: 9, winter: 12
+    };
+    
+    let month = null;
+    const lowerText = text.toLowerCase();
+    for (const [key, value] of Object.entries(months)) {
+      if (lowerText.includes(key)) {
+        month = value;
+        break;
+      }
+    }
+    
+    return { year, month };
+  };
+
   const createEventMutation = useMutation({
     mutationFn: (data) => base44.entities.TimelineEvent.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries(['timelineEvents']);
       setDialogOpen(false);
-      setNewEvent({ date: '', title: '', description: '', photos: [] });
+      setNewEvent({ date_text: '', year: null, month: null, title: '', description: '', photos: [] });
     },
   });
 
@@ -67,11 +91,14 @@ export default function Timeline() {
     setNewEvent({ ...newEvent, photos: newEvent.photos.filter((_, i) => i !== index) });
   };
 
-  // Group events by year
+  // Group events by year and sort
   const eventsByYear = events
-    .sort((a, b) => new Date(b.date) - new Date(a.date))
+    .sort((a, b) => {
+      if (b.year !== a.year) return b.year - a.year;
+      return (b.month || 0) - (a.month || 0);
+    })
     .reduce((acc, event) => {
-      const year = new Date(event.date).getFullYear();
+      const year = event.year;
       if (!acc[year]) acc[year] = [];
       acc[year].push(event);
       return acc;
@@ -97,10 +124,19 @@ export default function Timeline() {
                 <div>
                   <label className="text-sm font-medium mb-1 block">Date</label>
                   <Input
-                    type="date"
-                    value={newEvent.date}
-                    onChange={(e) => setNewEvent({ ...newEvent, date: e.target.value })}
+                    placeholder="e.g., 'Summer 1927', 'December 1950', '1985'"
+                    value={newEvent.date_text}
+                    onChange={(e) => {
+                      const date_text = e.target.value;
+                      const { year, month } = parseDateText(date_text);
+                      setNewEvent({ ...newEvent, date_text, year, month });
+                    }}
                   />
+                  {newEvent.year && (
+                    <p className="text-xs text-gray-500 mt-1">
+                      Will be sorted as: {newEvent.month ? `${['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][newEvent.month - 1]} ` : ''}{newEvent.year}
+                    </p>
+                  )}
                 </div>
                 <div>
                   <label className="text-sm font-medium mb-1 block">Title</label>
@@ -176,7 +212,7 @@ export default function Timeline() {
                 </div>
                 <Button
                   onClick={() => createEventMutation.mutate(newEvent)}
-                  disabled={!newEvent.date || !newEvent.title}
+                  disabled={!newEvent.date_text || !newEvent.year || !newEvent.title}
                   className="w-full"
                 >
                   Add Event
@@ -216,13 +252,7 @@ export default function Timeline() {
                           <div className="flex items-start justify-between gap-3 mb-2">
                             <div className="flex-1">
                               <h3 className="font-semibold text-gray-900 text-lg">{event.title}</h3>
-                              <p className="text-sm text-gray-500">
-                                {new Date(event.date).toLocaleDateString('en-US', { 
-                                  month: 'long', 
-                                  day: 'numeric',
-                                  year: 'numeric' 
-                                })}
-                              </p>
+                              <p className="text-sm text-gray-500">{event.date_text}</p>
                             </div>
                             <Button
                               variant="ghost"
