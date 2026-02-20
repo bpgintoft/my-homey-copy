@@ -300,39 +300,34 @@ export default function Timeline() {
                 const yearEvents = eventsByYear[year];
                 return (
                   <div key={year} className="relative">
-                    {/* Year and dots section */}
-                    <div className="flex items-start gap-6 mb-4">
-                      <div className="flex flex-col items-center gap-2 relative z-10">
-                        {/* Year badge */}
-                        <div className="w-[50px] h-[40px] bg-amber-500 text-white font-bold text-base flex items-center justify-center rounded shadow-md">
-                          {year}
-                        </div>
-                        {/* Color-coded circles for events */}
-                        <div className="flex flex-col gap-1.5 items-center">
-                          {yearEvents.map((event) => (
-                            <div 
-                              key={event.id}
-                              className="w-6 h-6 rounded-full cursor-pointer hover:scale-125 transition-transform border-[3px] border-amber-300 bg-white flex items-center justify-center"
-                              onClick={() => {
-                                setSelectedEvent(event);
-                                setEditingEvent(null);
-                              }}
-                              title={event.title}
-                            >
-                              <div className={`w-2.5 h-2.5 rounded-full ${event.category ? categoryColors[event.category].split(' ')[0] : 'bg-amber-500'}`} />
-                            </div>
-                          ))}
-                        </div>
+                    {/* Year badge */}
+                    <div className="flex justify-start mb-2">
+                      <div className="w-[50px] h-[40px] bg-amber-500 text-white font-bold text-base flex items-center justify-center rounded shadow-md relative z-10">
+                        {year}
                       </div>
+                    </div>
 
-                      {/* Events list */}
-                      <div className="flex-1 space-y-3">
-                        {yearEvents.map((event) => (
+                    {/* Events with circles */}
+                    <div className="space-y-2">
+                      {yearEvents.map((event) => (
+                        <div key={event.id} className="flex items-center gap-6">
+                          {/* Circle */}
+                          <div 
+                            className="w-6 h-6 rounded-full cursor-pointer hover:scale-125 transition-transform border-[3px] border-amber-300 bg-white flex items-center justify-center flex-shrink-0 relative z-10"
+                            onClick={() => {
+                              setSelectedEvent(event);
+                              setEditingEvent(null);
+                            }}
+                            title={event.title}
+                          >
+                            <div className={`w-2.5 h-2.5 rounded-full ${event.category ? categoryColors[event.category].split(' ')[0] : 'bg-amber-500'}`} />
+                          </div>
+
+                          {/* Event box */}
                           <motion.div
-                            key={event.id}
                             initial={{ opacity: 0, x: 20 }}
                             animate={{ opacity: 1, x: 0 }}
-                            className="bg-gray-50 rounded-lg p-2 hover:bg-gray-100 transition-colors cursor-pointer"
+                            className="bg-gray-50 rounded-lg p-2 hover:bg-gray-100 transition-colors cursor-pointer flex-1"
                             onClick={() => {
                               setSelectedEvent(event);
                               setEditingEvent(null);
@@ -341,8 +336,8 @@ export default function Timeline() {
                             <h3 className="font-semibold text-gray-900 text-sm">{event.title}</h3>
                             <p className="text-xs text-gray-500">{event.date_text}</p>
                           </motion.div>
-                        ))}
-                      </div>
+                        </div>
+                      ))}
                     </div>
                   </div>
                 );
