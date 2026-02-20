@@ -300,9 +300,9 @@ export default function Timeline() {
                 const yearEvents = eventsByYear[year];
                 return (
                   <div key={year} className="relative">
-                    {/* Year badge */}
-                    <div className="flex justify-start mb-2">
-                      <div className="w-[50px] h-[40px] bg-amber-500 text-white font-bold text-base flex items-center justify-center rounded shadow-md relative z-10">
+                    {/* Year badge - centered on timeline */}
+                    <div className="flex mb-2">
+                      <div className="w-[50px] h-[40px] bg-amber-500 text-white font-bold text-base flex items-center justify-center rounded shadow-md relative z-10 ml-0">
                         {year}
                       </div>
                     </div>
@@ -310,10 +310,10 @@ export default function Timeline() {
                     {/* Events with circles */}
                     <div className="space-y-2">
                       {yearEvents.map((event) => (
-                        <div key={event.id} className="flex items-center gap-6">
-                          {/* Circle */}
+                        <div key={event.id} className="flex items-center">
+                          {/* Circle - positioned at the timeline */}
                           <div 
-                            className="w-6 h-6 rounded-full cursor-pointer hover:scale-125 transition-transform border-[3px] border-amber-300 bg-white flex items-center justify-center flex-shrink-0 relative z-10"
+                            className="w-6 h-6 rounded-full cursor-pointer hover:scale-125 transition-transform border-[3px] border-amber-300 bg-white flex items-center justify-center flex-shrink-0 relative z-10 ml-[13px]"
                             onClick={() => {
                               setSelectedEvent(event);
                               setEditingEvent(null);
@@ -327,7 +327,7 @@ export default function Timeline() {
                           <motion.div
                             initial={{ opacity: 0, x: 20 }}
                             animate={{ opacity: 1, x: 0 }}
-                            className="bg-gray-50 rounded-lg p-2 hover:bg-gray-100 transition-colors cursor-pointer flex-1"
+                            className="bg-gray-50 rounded-lg p-2 hover:bg-gray-100 transition-colors cursor-pointer flex-1 ml-6"
                             onClick={() => {
                               setSelectedEvent(event);
                               setEditingEvent(null);
