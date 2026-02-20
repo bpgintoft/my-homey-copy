@@ -312,7 +312,7 @@ export default function Timeline() {
                           {yearEvents.map((event) => (
                             <div 
                               key={event.id}
-                              className={`w-4 h-4 rounded-full cursor-pointer hover:scale-125 transition-transform border-2 bg-white ${event.category ? categoryColors[event.category].split(' ')[1] : 'border-amber-500'}`}
+                              className={`w-5 h-5 rounded-full cursor-pointer hover:scale-125 transition-transform border-[3px] bg-white ${event.category ? categoryColors[event.category].split(' ')[1] : 'border-amber-500'}`}
                               onClick={() => {
                                 setSelectedEvent(event);
                                 setEditingEvent(null);
