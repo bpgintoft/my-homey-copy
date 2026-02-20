@@ -165,16 +165,16 @@ export default function Timeline() {
   return (
     <Card className="bg-white border-0 shadow-sm">
       <CardContent className="p-6">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-bold text-gray-900">Timeline</h2>
-          <div className="flex items-center gap-2">
+        <div className="flex items-center justify-between mb-6 gap-2">
+          <h2 className="text-xl font-bold text-gray-900 flex-shrink-0">Timeline</h2>
+          <div className="flex items-center gap-2 flex-1 justify-end">
             {showSearch ? (
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 flex-1 max-w-xs">
                 <Input
                   placeholder="Search events..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-48"
+                  className="w-full"
                   autoFocus
                 />
                 <Button
@@ -184,6 +184,7 @@ export default function Timeline() {
                     setShowSearch(false);
                     setSearchQuery('');
                   }}
+                  className="flex-shrink-0"
                 >
                   <X className="w-4 h-4" />
                 </Button>
