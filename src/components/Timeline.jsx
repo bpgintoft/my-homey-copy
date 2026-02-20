@@ -116,10 +116,10 @@ export default function Timeline() {
     }
   };
 
-  // Group events by year and sort
+  // Group events by year and sort (most recent first)
   const eventsByYear = events
     .sort((a, b) => {
-      if (b.year !== a.year) return b.year - a.year;
+      if (a.year !== b.year) return b.year - a.year;
       return (b.month || 0) - (a.month || 0);
     })
     .reduce((acc, event) => {
@@ -128,6 +128,9 @@ export default function Timeline() {
       acc[year].push(event);
       return acc;
     }, {});
+
+  // Sort years in descending order
+  const sortedYears = Object.keys(eventsByYear).sort((a, b) => parseInt(b) - parseInt(a));
 
   return (
     <Card className="bg-white border-0 shadow-sm">
@@ -255,7 +258,9 @@ export default function Timeline() {
             <div className="absolute left-[30px] top-8 bottom-8 w-0.5 bg-amber-200" />
 
             <div className="space-y-8">
-              {Object.entries(eventsByYear).map(([year, yearEvents]) => (
+              {sortedYears.map((year) => {
+                const yearEvents = eventsByYear[year];
+                return (
                 <div key={year} className="relative">
                   {/* Year badge */}
                   <div className="absolute left-0 top-0 w-[60px] h-[50px] bg-amber-500 text-white font-bold text-xl flex items-center justify-center rounded shadow-md z-10">
@@ -274,14 +279,14 @@ export default function Timeline() {
                         <div className="absolute -left-[59px] top-3 w-4 h-4 bg-white border-4 border-amber-500 rounded-full" />
 
                         <div 
-                          className="bg-gray-50 rounded-lg p-4 hover:bg-gray-100 transition-colors cursor-pointer"
+                          className="bg-gray-50 rounded-lg p-3 hover:bg-gray-100 transition-colors cursor-pointer"
                           onClick={() => {
                             setSelectedEvent(event);
                             setEditingEvent(null);
                           }}
                         >
-                          <h3 className="font-semibold text-gray-900 text-lg">{event.title}</h3>
-                          <p className="text-sm text-gray-500">{event.date_text}</p>
+                          <h3 className="font-semibold text-gray-900 text-base">{event.title}</h3>
+                          <p className="text-xs text-gray-500">{event.date_text}</p>
                         </div>
                       </motion.div>
                     ))}
