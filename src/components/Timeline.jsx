@@ -261,37 +261,37 @@ export default function Timeline() {
               {sortedYears.map((year) => {
                 const yearEvents = eventsByYear[year];
                 return (
-                <div key={year} className="relative">
-                  {/* Year badge */}
-                  <div className="absolute left-0 top-0 w-[60px] h-[50px] bg-amber-500 text-white font-bold text-xl flex items-center justify-center rounded shadow-md z-10">
-                    {year}
-                  </div>
+                  <div key={year} className="relative">
+                    {/* Year badge */}
+                    <div className="absolute left-0 top-0 w-[60px] h-[50px] bg-amber-500 text-white font-bold text-xl flex items-center justify-center rounded shadow-md z-10">
+                      {year}
+                    </div>
 
-                  <div className="ml-[80px] space-y-6">
-                    {yearEvents.map((event) => (
-                      <motion.div
-                        key={event.id}
-                        initial={{ opacity: 0, x: 20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        className="relative"
-                      >
-                        {/* Connection dot */}
-                        <div className="absolute -left-[59px] top-3 w-4 h-4 bg-white border-4 border-amber-500 rounded-full" />
-
-                        <div 
-                          className="bg-gray-50 rounded-lg p-3 hover:bg-gray-100 transition-colors cursor-pointer"
-                          onClick={() => {
-                            setSelectedEvent(event);
-                            setEditingEvent(null);
-                          }}
+                    <div className="ml-[80px] space-y-6">
+                      {yearEvents.map((event) => (
+                        <motion.div
+                          key={event.id}
+                          initial={{ opacity: 0, x: 20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          className="relative"
                         >
-                          <h3 className="font-semibold text-gray-900 text-base">{event.title}</h3>
-                          <p className="text-xs text-gray-500">{event.date_text}</p>
-                        </div>
-                      </motion.div>
-                    ))}
+                          {/* Connection dot */}
+                          <div className="absolute -left-[59px] top-3 w-4 h-4 bg-white border-4 border-amber-500 rounded-full" />
+
+                          <div 
+                            className="bg-gray-50 rounded-lg p-3 hover:bg-gray-100 transition-colors cursor-pointer"
+                            onClick={() => {
+                              setSelectedEvent(event);
+                              setEditingEvent(null);
+                            }}
+                          >
+                            <h3 className="font-semibold text-gray-900 text-base">{event.title}</h3>
+                            <p className="text-xs text-gray-500">{event.date_text}</p>
+                          </div>
+                        </motion.div>
+                      ))}
+                    </div>
                   </div>
-                </div>
                 );
               })}
             </div>
