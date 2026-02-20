@@ -237,7 +237,6 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
   }, [member]);
 
   const choresByTiming = {
-    'daily': chores.filter(c => c.timing === 'daily'),
     'short-term': chores.filter(c => c.timing === 'short-term'),
     'mid-term': chores.filter(c => c.timing === 'mid-term'),
     'long-term': chores.filter(c => c.timing === 'long-term'),
@@ -731,7 +730,6 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="daily">Daily</SelectItem>
                           <SelectItem value="short-term">Short-term</SelectItem>
                           <SelectItem value="mid-term">Mid-term</SelectItem>
                           <SelectItem value="long-term">Long-term</SelectItem>
@@ -757,13 +755,13 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
               ) : (
                 <DragDropContext onDragEnd={handleDragEnd}>
                   <div className="space-y-4">
-                    {['daily', 'short-term', 'mid-term', 'long-term'].map((timing) => {
+                    {['short-term', 'mid-term', 'long-term'].map((timing) => {
                       const timingChores = choresByTiming[timing];
                       
                       return (
                         <div key={timing}>
                           <h4 className="font-medium text-sm text-gray-700 mb-2 capitalize">
-                            {timing === 'mid-term' ? 'Mid-term' : timing === 'short-term' ? 'Short-term' : timing === 'long-term' ? 'Long-term' : 'Daily'}
+                            {timing === 'mid-term' ? 'Mid-term' : timing === 'short-term' ? 'Short-term' : 'Long-term'}
                           </h4>
                           <Droppable droppableId={timing}>
                             {(provided, snapshot) => (
