@@ -293,7 +293,7 @@ export default function Timeline() {
         ) : (
           <div className="relative">
             {/* Vertical timeline line */}
-            <div className="absolute left-[30px] top-6 bottom-6 w-0.5 bg-amber-300" />
+            <div className="absolute left-[25px] top-0 bottom-0 w-0.5 bg-amber-300" />
             
             <div className="space-y-8">
               {sortedYears.map((year) => {
@@ -308,7 +308,7 @@ export default function Timeline() {
                           {year}
                         </div>
                         {/* Color-coded circles for events */}
-                        <div className="flex flex-col gap-1.5">
+                        <div className="flex flex-col gap-1.5 items-center">
                           {yearEvents.map((event) => (
                             <div 
                               key={event.id}
