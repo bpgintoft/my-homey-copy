@@ -4,6 +4,7 @@ import { base44 } from '@/api/base44Client';
 import { Card, CardContent } from "@/components/ui/card";
 import { History as HistoryIcon, Home as HomeIcon, DollarSign, TrendingUp, Calendar, Ruler } from 'lucide-react';
 import { motion } from 'framer-motion';
+import Timeline from '../components/Timeline';
 
 export default function History() {
   const { data: homeInfo } = useQuery({
@@ -78,10 +79,19 @@ export default function History() {
       </div>
 
       <div className="container mx-auto px-6 py-8 space-y-6">
+        {/* Timeline */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+        >
+          <Timeline />
+        </motion.div>
+
         {/* Property Value */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
         >
           <Card className="bg-white border-0 shadow-sm">
             <CardContent className="p-6">
@@ -181,7 +191,7 @@ export default function History() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
+            transition={{ delay: 0.3 }}
           >
             <Card className="bg-white border-0 shadow-sm">
               <CardContent className="p-6">
@@ -231,7 +241,7 @@ export default function History() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
+            transition={{ delay: 0.5 }}
           >
             <Card className="bg-white border-0 shadow-sm">
               <CardContent className="p-6">
