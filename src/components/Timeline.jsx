@@ -295,7 +295,7 @@ export default function Timeline() {
             {/* Vertical timeline line */}
             <div className="absolute left-[30px] top-6 bottom-6 w-0.5 bg-amber-300" />
             
-            <div className="space-y-12">
+            <div className="space-y-8">
               {sortedYears.map((year) => {
                 const yearEvents = eventsByYear[year];
                 return (
@@ -304,7 +304,7 @@ export default function Timeline() {
                     <div className="flex items-start gap-6 mb-4">
                       <div className="flex flex-col items-center gap-2 relative z-10">
                         {/* Year badge */}
-                        <div className="w-[60px] h-[50px] bg-amber-500 text-white font-bold text-xl flex items-center justify-center rounded shadow-md">
+                        <div className="w-[50px] h-[40px] bg-amber-500 text-white font-bold text-base flex items-center justify-center rounded shadow-md">
                           {year}
                         </div>
                         {/* Color-coded circles for events */}
@@ -332,13 +332,13 @@ export default function Timeline() {
                             key={event.id}
                             initial={{ opacity: 0, x: 20 }}
                             animate={{ opacity: 1, x: 0 }}
-                            className="bg-gray-50 rounded-lg p-3 hover:bg-gray-100 transition-colors cursor-pointer"
+                            className="bg-gray-50 rounded-lg p-2 hover:bg-gray-100 transition-colors cursor-pointer"
                             onClick={() => {
                               setSelectedEvent(event);
                               setEditingEvent(null);
                             }}
                           >
-                            <h3 className="font-semibold text-gray-900 text-base">{event.title}</h3>
+                            <h3 className="font-semibold text-gray-900 text-sm">{event.title}</h3>
                             <p className="text-xs text-gray-500">{event.date_text}</p>
                           </motion.div>
                         ))}
