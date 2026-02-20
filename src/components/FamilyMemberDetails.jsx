@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Plus, Trash2, ExternalLink, CheckCircle2, Circle, Loader2, ChevronDown, Edit2 } from 'lucide-react';
 import { Checkbox } from "@/components/ui/checkbox";
@@ -17,7 +17,7 @@ import { motion } from 'framer-motion';
 export default function FamilyMemberDetails({ memberId, memberName, color = 'blue' }) {
   const queryClient = useQueryClient();
   const [dialogOpen, setDialogOpen] = useState({ chore: false, milestone: false, contact: false, link: false });
-  const [newChore, setNewChore] = useState({ title: '', frequency: 'daily' });
+  const [newChore, setNewChore] = useState({ title: '', timing: 'short-term' });
   const [newMilestone, setNewMilestone] = useState({ title: '', date: '', description: '' });
   const [newContact, setNewContact] = useState({ name: '', type: '', phone: '', email: '', address: '', website: '', linked_to_member_ids: ['Everyone'] });
   const [editingContact, setEditingContact] = useState(null);
@@ -81,7 +81,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
     onSuccess: () => {
       queryClient.invalidateQueries(['chores', memberId]);
       setDialogOpen({ ...dialogOpen, chore: false });
-      setNewChore({ title: '', frequency: 'daily' });
+      setNewChore({ title: '', timing: 'short-term' });
     },
   });
 
@@ -197,11 +197,11 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
     }
   }, [member]);
 
-  const choresByFrequency = {
-    daily: chores.filter(c => c.frequency === 'daily'),
-    weekly: chores.filter(c => c.frequency === 'weekly'),
-    monthly: chores.filter(c => c.frequency === 'monthly'),
-    yearly: chores.filter(c => c.frequency === 'yearly'),
+  const choresByTiming = {
+    'daily': chores.filter(c => c.timing === 'daily'),
+    'short-term': chores.filter(c => c.timing === 'short-term'),
+    'mid-term': chores.filter(c => c.timing === 'mid-term'),
+    'long-term': chores.filter(c => c.timing === 'long-term'),
   };
 
   const linksByCategory = links.reduce((acc, link) => {
@@ -687,21 +687,21 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                         value={newChore.title}
                         onChange={(e) => setNewChore({ ...newChore, title: e.target.value })}
                       />
-                      <Select value={newChore.frequency} onValueChange={(value) => setNewChore({ ...newChore, frequency: value })}>
+                      <Select value={newChore.timing} onValueChange={(value) => setNewChore({ ...newChore, timing: value })}>
                         <SelectTrigger>
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="daily">Daily</SelectItem>
-                          <SelectItem value="weekly">Weekly</SelectItem>
-                          <SelectItem value="monthly">Monthly</SelectItem>
-                          <SelectItem value="yearly">Yearly</SelectItem>
+                          <SelectItem value="short-term">Short-term</SelectItem>
+                          <SelectItem value="mid-term">Mid-term</SelectItem>
+                          <SelectItem value="long-term">Long-term</SelectItem>
                         </SelectContent>
                       </Select>
                       <Button
                         onClick={() => createChoreMutation.mutate({
                           title: newChore.title,
-                          frequency: newChore.frequency,
+                          timing: newChore.timing,
                           assigned_to_member_id: memberId,
                           assigned_to_name: memberName,
                         })}
@@ -713,41 +713,43 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                   </DialogContent>
                 </Dialog>
               </div>
-              <Tabs defaultValue="daily">
-                <TabsList className="grid grid-cols-4 w-full">
-                  <TabsTrigger value="daily">Daily</TabsTrigger>
-                  <TabsTrigger value="weekly">Weekly</TabsTrigger>
-                  <TabsTrigger value="monthly">Monthly</TabsTrigger>
-                  <TabsTrigger value="yearly">Yearly</TabsTrigger>
-                </TabsList>
-                {['daily', 'weekly', 'monthly', 'yearly'].map((freq) => (
-                  <TabsContent key={freq} value={freq}>
-                    <div className="space-y-2">
-                      {choresByFrequency[freq].length === 0 ? (
-                        <p className="text-sm text-gray-500">No {freq} chores</p>
-                      ) : (
-                        choresByFrequency[freq].map((chore) => (
-                          <div key={chore.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                            <div className="flex items-center gap-3">
-                              <button onClick={() => toggleChoreMutation.mutate({ id: chore.id, is_completed: !chore.is_completed })}>
-                                {chore.is_completed ? (
-                                  <CheckCircle2 className="w-5 h-5 text-green-500" />
-                                ) : (
-                                  <Circle className="w-5 h-5 text-gray-400" />
-                                )}
-                              </button>
-                              <span className={chore.is_completed ? 'line-through text-gray-500' : ''}>{chore.title}</span>
+{chores.length === 0 ? (
+                <p className="text-sm text-gray-500">No tasks yet</p>
+              ) : (
+                <div className="space-y-4">
+                  {['daily', 'short-term', 'mid-term', 'long-term'].map((timing) => {
+                    const timingChores = choresByTiming[timing];
+                    if (timingChores.length === 0) return null;
+                    
+                    return (
+                      <div key={timing}>
+                        <h4 className="font-medium text-sm text-gray-700 mb-2 capitalize">
+                          {timing === 'mid-term' ? 'Mid-term' : timing === 'short-term' ? 'Short-term' : timing === 'long-term' ? 'Long-term' : 'Daily'}
+                        </h4>
+                        <div className="space-y-2">
+                          {timingChores.map((chore) => (
+                            <div key={chore.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                              <div className="flex items-center gap-3">
+                                <button onClick={() => toggleChoreMutation.mutate({ id: chore.id, is_completed: !chore.is_completed })}>
+                                  {chore.is_completed ? (
+                                    <CheckCircle2 className="w-5 h-5 text-green-500" />
+                                  ) : (
+                                    <Circle className="w-5 h-5 text-gray-400" />
+                                  )}
+                                </button>
+                                <span className={chore.is_completed ? 'line-through text-gray-500' : ''}>{chore.title}</span>
+                              </div>
+                              <Button variant="ghost" size="sm" onClick={() => deleteChoreMutation.mutate(chore.id)}>
+                                <Trash2 className="w-4 h-4 text-red-500" />
+                              </Button>
                             </div>
-                            <Button variant="ghost" size="sm" onClick={() => deleteChoreMutation.mutate(chore.id)}>
-                              <Trash2 className="w-4 h-4 text-red-500" />
-                            </Button>
-                          </div>
-                        ))
-                      )}
-                    </div>
-                  </TabsContent>
-                ))}
-              </Tabs>
+                          ))}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
             </CardContent>
           </CollapsibleContent>
         </Card>
