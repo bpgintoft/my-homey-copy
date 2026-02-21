@@ -230,7 +230,7 @@ export default function House() {
                   animate={{ opacity: 1, scale: 1 }}
                 >
                   <Link to={createPageUrl(`RoomDetail?id=${room.id}`)}>
-                    <Card className="bg-white border-0 shadow-sm hover:shadow-md transition-shadow cursor-pointer">
+                    <Card className="bg-white/80 border-0 shadow-sm hover:shadow-md transition-shadow cursor-pointer">
                       <CardContent className="p-5">
                         <div className="flex items-start justify-between gap-4">
                           <div className="flex-1">
