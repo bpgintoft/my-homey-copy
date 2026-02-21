@@ -384,8 +384,43 @@ export default function House() {
                                 {findManualMutation.isPending ? 'Finding...' : 'Find Manual'}
                               </Button>
                             )}
-                          </CardContent>
-                        </Card>
+                            {(appliance.dimensions || appliance.specs) && (
+                              <div className="mt-3 pt-3 border-t">
+                                {appliance.dimensions && (
+                                  <div className="mb-2">
+                                    <span className="text-xs font-medium text-gray-500">Dimensions:</span>
+                                    <p className="text-sm text-gray-700">{appliance.dimensions}</p>
+                                  </div>
+                                )}
+                                {appliance.specs && (
+                                  <div>
+                                    <span className="text-xs font-medium text-gray-500">Specifications:</span>
+                                    <p className="text-sm text-gray-700 whitespace-pre-wrap">{appliance.specs}</p>
+                                  </div>
+                                )}
+                              </div>
+                            )}
+                            {!appliance.dimensions && !appliance.specs && (
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={async () => {
+                                  await fetchSpecsMutation.mutateAsync({
+                                    brand: appliance.brand,
+                                    model: appliance.model,
+                                    serial_number: appliance.serial_number,
+                                    applianceId: appliance.id
+                                  });
+                                }}
+                                disabled={fetchSpecsMutation.isPending}
+                                className="text-xs mt-2"
+                              >
+                                <Sparkles className="w-3 h-3 mr-1" />
+                                {fetchSpecsMutation.isPending ? 'Finding...' : 'Fetch Specs'}
+                              </Button>
+                            )}
+                            </CardContent>
+                            </Card>
                       ))}
                     </div>
                   </div>
