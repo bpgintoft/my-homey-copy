@@ -230,10 +230,10 @@ export default function House() {
                   animate={{ opacity: 1, scale: 1 }}
                 >
                   <Link to={createPageUrl(`RoomDetail?id=${room.id}`)}>
-                    <Card className="bg-white/80 border-0 shadow-sm hover:shadow-md transition-shadow cursor-pointer">
+                    <Card className="bg-white/80 border-0 shadow-sm hover:shadow-md transition-shadow cursor-pointer overflow-hidden relative">
                       <CardContent className="p-5">
                         <div className="flex items-start justify-between gap-4">
-                          <div className="flex-1">
+                          <div className="flex-1 pr-32">
                             <div className="flex items-start justify-between mb-3">
                               <h3 className="font-semibold text-gray-900 text-lg">{room.name}</h3>
                               {room.floor && (
@@ -258,7 +258,7 @@ export default function House() {
                             <img 
                               src={room.photo_url} 
                               alt={room.name}
-                              className="w-20 h-20 rounded object-contain flex-shrink-0"
+                              className="absolute top-0 right-0 bottom-0 w-40 h-full object-contain"
                               loading="lazy"
                             />
                           )}
