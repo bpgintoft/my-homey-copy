@@ -21,8 +21,10 @@ export default function House() {
   const [newRoom, setNewRoom] = useState({});
   const [newAppliance, setNewAppliance] = useState({ photos: [] });
   const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
+  const [isUploadingRoomPhoto, setIsUploadingRoomPhoto] = useState(false);
   const queryClient = useQueryClient();
   const fileInputRef = React.useRef(null);
+  const roomPhotoInputRef = React.useRef(null);
 
   const { data: rooms = [] } = useQuery({
     queryKey: ['rooms'],
@@ -81,6 +83,33 @@ export default function House() {
 
   const removePhoto = (index) => {
     setNewAppliance({ ...newAppliance, photos: newAppliance.photos.filter((_, i) => i !== index) });
+  };
+
+  const handleRoomPhotoUpload = async (file) => {
+    if (!file) return;
+    setIsUploadingRoomPhoto(true);
+    try {
+      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      setNewRoom({ ...newRoom, photo_url: file_url });
+    } finally {
+      setIsUploadingRoomPhoto(false);
+      if (roomPhotoInputRef.current) roomPhotoInputRef.current.value = '';
+    }
+  };
+
+  const handleRoomPhotoPaste = (e) => {
+    const items = e.clipboardData?.items;
+    if (!items) return;
+
+    for (let item of items) {
+      if (item.type.startsWith('image/')) {
+        const blob = item.getAsFile();
+        if (blob) {
+          handleRoomPhotoUpload(blob);
+          e.preventDefault();
+        }
+      }
+    }
   };
 
   const findManualMutation = useMutation({
@@ -365,6 +394,57 @@ export default function House() {
               value={newRoom.square_footage || ''}
               onChange={(e) => setNewRoom({ ...newRoom, square_footage: parseFloat(e.target.value) })}
             />
+            <div>
+              <label className="text-sm font-medium mb-2 block">Room Photo</label>
+              <div className="space-y-3">
+                <div className="flex gap-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => roomPhotoInputRef.current?.click()}
+                    disabled={isUploadingRoomPhoto}
+                  >
+                    {isUploadingRoomPhoto ? (
+                      <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Uploading...</>
+                    ) : (
+                      <><Upload className="w-4 h-4 mr-2" />Upload Photo</>
+                    )}
+                  </Button>
+                  <input
+                    ref={roomPhotoInputRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => handleRoomPhotoUpload(e.target.files?.[0])}
+                    className="hidden"
+                  />
+                </div>
+                <Input
+                  placeholder="Or paste an image here (Ctrl+V / Cmd+V)..."
+                  onPaste={handleRoomPhotoPaste}
+                  disabled={isUploadingRoomPhoto}
+                  className="text-sm"
+                />
+                {newRoom.photo_url && (
+                  <div className="relative group">
+                    <img
+                      src={newRoom.photo_url}
+                      alt="Room preview"
+                      className="w-full h-32 object-cover rounded"
+                    />
+                    <Button
+                      type="button"
+                      variant="destructive"
+                      size="sm"
+                      onClick={() => setNewRoom({ ...newRoom, photo_url: null })}
+                      className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity h-6 w-6 p-0"
+                    >
+                      <X className="w-3 h-3" />
+                    </Button>
+                  </div>
+                )}
+              </div>
+            </div>
             <Button
               onClick={() => createRoomMutation.mutate(newRoom)}
               disabled={!newRoom.name}
