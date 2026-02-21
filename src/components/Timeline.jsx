@@ -16,6 +16,7 @@ export default function Timeline() {
   const [newEvent, setNewEvent] = useState({ date_text: '', year: null, month: null, title: '', description: '', category: '', photos: [] });
   const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
   const [selectedPhoto, setSelectedPhoto] = useState(null);
+  const [photoZoom, setPhotoZoom] = useState(1);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [editingEvent, setEditingEvent] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
@@ -425,7 +426,10 @@ export default function Timeline() {
                           src={photo}
                           alt={`${selectedEvent.title} photo ${index + 1}`}
                           className="w-full h-32 object-cover rounded cursor-pointer hover:opacity-90"
-                          onClick={() => setSelectedPhoto(photo)}
+                          onClick={() => {
+                            setSelectedPhoto(photo);
+                            setPhotoZoom(1);
+                          }}
                         />
                       ))}
                     </div>
@@ -565,30 +569,38 @@ export default function Timeline() {
         {/* Photo viewer */}
         {selectedPhoto && (
           <div 
-            className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4" 
-            onClick={() => setSelectedPhoto(null)}
+            className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center" 
+            onClick={() => {
+              setSelectedPhoto(null);
+              setPhotoZoom(1);
+            }}
           >
             <Button
               variant="ghost"
               size="icon"
-              className="absolute top-4 right-4 text-white hover:bg-white/20 z-10"
-              onClick={() => setSelectedPhoto(null)}
+              className="absolute top-4 right-4 text-white hover:bg-white/20"
+              onClick={() => {
+                setSelectedPhoto(null);
+                setPhotoZoom(1);
+              }}
             >
               <X className="w-6 h-6" />
             </Button>
-            <div className="w-full h-full flex items-center justify-center overflow-auto touch-pinch-zoom">
-              <img
-                src={selectedPhoto}
-                alt="Full screen view"
-                className="max-w-none h-auto"
-                style={{ 
-                  maxWidth: '200%',
-                  minWidth: '100%',
-                  cursor: 'zoom-in'
-                }}
-                onClick={(e) => e.stopPropagation()}
-              />
-            </div>
+            <motion.img
+              src={selectedPhoto}
+              alt="Full screen view"
+              className="max-w-[90vw] max-h-[90vh] object-contain"
+              initial={{ scale: 1 }}
+              animate={{ scale: photoZoom }}
+              transition={{ type: 'spring', damping: 20 }}
+              onClick={(e) => e.stopPropagation()}
+              onWheel={(e) => {
+                e.preventDefault();
+                const newZoom = photoZoom + (e.deltaY > 0 ? -0.1 : 0.1);
+                setPhotoZoom(Math.max(1, Math.min(newZoom, 3)));
+              }}
+              style={{ touchAction: 'pinch-zoom' }}
+            />
           </div>
         )}
       </CardContent>
