@@ -569,7 +569,7 @@ export default function Timeline() {
         {/* Photo viewer */}
         {selectedPhoto && (
           <div 
-            className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center" 
+            className="fixed inset-0 z-[100] bg-black/90 flex items-center justify-center" 
             onClick={() => {
               setSelectedPhoto(null);
               setPhotoZoom(1);
@@ -578,7 +578,7 @@ export default function Timeline() {
             <Button
               variant="ghost"
               size="icon"
-              className="absolute top-4 right-4 text-white hover:bg-white/20"
+              className="absolute top-4 right-4 text-white hover:bg-white/20 z-10"
               onClick={() => {
                 setSelectedPhoto(null);
                 setPhotoZoom(1);
