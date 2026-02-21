@@ -134,6 +134,32 @@ export default function House() {
     },
   });
 
+  const fetchSpecsMutation = useMutation({
+    mutationFn: async ({ brand, model, serial_number, applianceId }) => {
+      const result = await base44.integrations.Core.InvokeLLM({
+        prompt: `Find detailed product specifications for the ${brand} ${model}${serial_number ? ` (Serial: ${serial_number})` : ''}. Search for official product dimensions and technical specifications. Return dimensions in a standard format (W x D x H) and specs as a detailed description.`,
+        add_context_from_internet: true,
+        response_json_schema: {
+          type: "object",
+          properties: {
+            dimensions: { type: "string" },
+            specs: { type: "string" },
+            found: { type: "boolean" }
+          }
+        }
+      });
+      
+      if (result.found && (result.dimensions || result.specs)) {
+        await base44.entities.Appliance.update(applianceId, {
+          dimensions: result.dimensions,
+          specs: result.specs
+        });
+        queryClient.invalidateQueries(['appliances']);
+      }
+      return result;
+    },
+  });
+
   const itemsByRoomId = roomItems.reduce((acc, item) => {
     if (!acc[item.room_id]) acc[item.room_id] = [];
     acc[item.room_id].push(item);
