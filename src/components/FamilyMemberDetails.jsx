@@ -230,6 +230,11 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
     onSuccess: () => queryClient.invalidateQueries(['familyMember', memberId]),
   });
 
+  const updateExpirationDatesMutation = useMutation({
+    mutationFn: (data) => base44.entities.FamilyMember.update(memberId, data),
+    onSuccess: () => queryClient.invalidateQueries(['familyMember', memberId]),
+  });
+
   React.useEffect(() => {
     if (member?.personal_notes) {
       setPersonalNotes(member.personal_notes);
@@ -258,6 +263,46 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
 
   return (
     <div className="space-y-4">
+      {/* Passport & License */}
+      {(member?.passport_expiration_date || member?.license_expiration_date) && (
+        <Card className={itemBg}>
+          <CardContent className="p-4 space-y-3">
+            {member.passport_expiration_date && (
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="font-medium text-sm">Passport Expiration</div>
+                  <div className="text-xs text-gray-600">
+                    {new Date(member.passport_expiration_date).toLocaleDateString()}
+                  </div>
+                </div>
+                <Input
+                  type="date"
+                  value={member.passport_expiration_date}
+                  onChange={(e) => updateExpirationDatesMutation.mutate({ passport_expiration_date: e.target.value })}
+                  className="w-auto text-sm"
+                />
+              </div>
+            )}
+            {member.license_expiration_date && (
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="font-medium text-sm">Driver's License Expiration</div>
+                  <div className="text-xs text-gray-600">
+                    {new Date(member.license_expiration_date).toLocaleDateString()}
+                  </div>
+                </div>
+                <Input
+                  type="date"
+                  value={member.license_expiration_date}
+                  onChange={(e) => updateExpirationDatesMutation.mutate({ license_expiration_date: e.target.value })}
+                  className="w-auto text-sm"
+                />
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      )}
+
       {/* Important Links */}
       <Collapsible 
         open={openSections.links} 
