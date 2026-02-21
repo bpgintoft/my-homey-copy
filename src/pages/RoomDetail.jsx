@@ -438,60 +438,54 @@ export default function RoomDetail() {
                       transition={{ delay: i * 0.05 }}
                     >
                       <Card className="border-0 shadow-md hover:shadow-lg transition-shadow">
-                        <CardContent className="p-6">
-                          <div className="flex items-start justify-between mb-3">
-                            <div className="flex items-start gap-3 flex-1">
-                              {item.photos && item.photos.length > 0 && (
-                                <img 
-                                  src={getThumbnailUrl(item.photos[0], 100)} 
-                                  alt=""
-                                  className="w-16 h-16 rounded object-cover flex-shrink-0 cursor-pointer hover:opacity-90"
-                                  loading="lazy"
-                                  onClick={() => {
-                                    setSelectedPhoto(item.photos[0]);
-                                    setPhotoZoom(1);
-                                  }}
-                                />
-                              )}
-                              <div>
-                                <Badge className={typeColors[item.type]}>{item.type}</Badge>
-                                <h3 className="font-semibold text-slate-800 mt-2">{item.name}</h3>
+                        <CardContent className="p-4">
+                          <div className="flex gap-3">
+                            {item.photos && item.photos.length > 0 && (
+                              <img 
+                                src={getThumbnailUrl(item.photos[0], 100)} 
+                                alt=""
+                                className="w-20 h-20 rounded object-cover flex-shrink-0 cursor-pointer hover:opacity-90"
+                                loading="lazy"
+                                onClick={() => {
+                                  setSelectedPhoto(item.photos[0]);
+                                  setPhotoZoom(1);
+                                }}
+                              />
+                            )}
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-start justify-between gap-2 mb-1.5">
+                                <div>
+                                  <Badge className={typeColors[item.type] + " text-xs"}>{item.type}</Badge>
+                                  <h3 className="font-semibold text-slate-800 text-sm mt-1">{item.name}</h3>
+                                </div>
+                                <div className="flex gap-1 flex-shrink-0">
+                                  <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setEditingItem(item)}>
+                                    <Pencil className="w-3.5 h-3.5 text-slate-400" />
+                                  </Button>
+                                  <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => deleteItemMutation.mutate(item.id)}>
+                                    <Trash2 className="w-3.5 h-3.5 text-red-400" />
+                                  </Button>
+                                </div>
+                              </div>
+                              <div className="grid grid-cols-2 gap-x-4 gap-y-0.5 text-xs text-slate-600">
+                                {item.brand && <div><strong>Brand:</strong> {item.brand}</div>}
+                                {item.model && <div><strong>Model:</strong> {item.model}</div>}
+                                {item.serial_number && <div className="col-span-2 truncate"><strong>S/N:</strong> {item.serial_number}</div>}
+                                {item.purchase_date && (
+                                  <div className="flex items-center gap-1 text-slate-500">
+                                    <Calendar className="w-3 h-3" />
+                                    {new Date(item.purchase_date).toLocaleDateString()}
+                                  </div>
+                                )}
+                                {item.warranty_expiration && (
+                                  <div className="flex items-center gap-1 text-slate-500">
+                                    <Shield className="w-3 h-3" />
+                                    {new Date(item.warranty_expiration).toLocaleDateString()}
+                                  </div>
+                                )}
                               </div>
                             </div>
-                            <div className="flex gap-1">
-                              <Button variant="ghost" size="icon" onClick={() => setEditingItem(item)}>
-                                <Pencil className="w-4 h-4 text-slate-400" />
-                              </Button>
-                              <Button variant="ghost" size="icon" onClick={() => deleteItemMutation.mutate(item.id)}>
-                                <Trash2 className="w-4 h-4 text-red-400" />
-                              </Button>
-                            </div>
                           </div>
-                          {(item.brand || item.model) && (
-                            <p className="text-sm text-slate-600 mb-2">
-                              {item.brand} {item.model}
-                            </p>
-                          )}
-                          {item.serial_number && (
-                            <p className="text-xs text-slate-500 mb-2">S/N: {item.serial_number}</p>
-                          )}
-                          <div className="flex flex-wrap gap-3 text-xs text-slate-500">
-                            {item.purchase_date && (
-                              <span className="flex items-center gap-1">
-                                <Calendar className="w-3 h-3" />
-                                Purchased: {new Date(item.purchase_date).toLocaleDateString()}
-                              </span>
-                            )}
-                            {item.warranty_expiration && (
-                              <span className="flex items-center gap-1">
-                                <Shield className="w-3 h-3" />
-                                Warranty: {new Date(item.warranty_expiration).toLocaleDateString()}
-                              </span>
-                            )}
-                          </div>
-                          {item.notes && (
-                            <p className="text-sm text-slate-600 mt-3 pt-3 border-t">{item.notes}</p>
-                          )}
                         </CardContent>
                       </Card>
                     </motion.div>
