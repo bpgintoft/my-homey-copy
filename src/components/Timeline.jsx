@@ -169,12 +169,12 @@ export default function Timeline() {
           <h2 className="text-xl font-bold text-gray-900 flex-shrink-0">Timeline</h2>
           <div className="flex items-center gap-2 flex-1 justify-end">
             {showSearch ? (
-              <div className="flex items-center gap-2 flex-1 max-w-xs">
+              <>
                 <Input
                   placeholder="Search events..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full"
+                  className="flex-1"
                   autoFocus
                 />
                 <Button
@@ -188,23 +188,23 @@ export default function Timeline() {
                 >
                   <X className="w-4 h-4" />
                 </Button>
-              </div>
+              </>
             ) : (
-              <Button
-                size="sm"
-                variant="ghost"
-                onClick={() => setShowSearch(true)}
-              >
-                <Search className="w-4 h-4" />
-              </Button>
-            )}
-            <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-              <DialogTrigger asChild>
-                <Button size="sm">
-                  <Plus className="w-4 h-4 mr-2" />
-                  Add Event
+              <>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => setShowSearch(true)}
+                >
+                  <Search className="w-4 h-4" />
                 </Button>
-              </DialogTrigger>
+                <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+                  <DialogTrigger asChild>
+                    <Button size="sm">
+                      <Plus className="w-4 h-4 mr-2" />
+                      Add Event
+                    </Button>
+                  </DialogTrigger>
               <DialogContent className="max-w-2xl">
               <DialogHeader>
                 <DialogTitle>Add Timeline Event</DialogTitle>
@@ -325,7 +325,9 @@ export default function Timeline() {
                 </Button>
                 </div>
                 </DialogContent>
-                </Dialog>
+                  </Dialog>
+                </>
+                )}
                 </div>
                 </div>
 
