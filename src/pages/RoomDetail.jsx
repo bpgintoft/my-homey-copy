@@ -259,8 +259,8 @@ export default function RoomDetail() {
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back to Rooms
             </Link>
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-slate-900 mb-1 sm:mb-2">{room.name}</h1>
-            <p className="text-sm sm:text-lg text-slate-700">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-1 sm:mb-2">{room.name}</h1>
+            <p className="text-sm sm:text-lg text-white/90">
               {room.floor?.charAt(0).toUpperCase() + room.floor?.slice(1)} Floor
               {room.square_footage && ` • ${room.square_footage} sq ft`}
             </p>
