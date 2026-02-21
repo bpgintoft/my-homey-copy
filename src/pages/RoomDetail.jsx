@@ -222,26 +222,50 @@ export default function RoomDetail() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
       {/* Hero */}
-      <div className="relative h-64 bg-gradient-to-r from-blue-600 to-indigo-600">
-        {room.photo_url && (
-          <img src={room.photo_url} alt={room.name} className="w-full h-full object-cover absolute inset-0" />
-        )}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-black/20" />
-        <div className="container mx-auto px-6 relative h-full flex flex-col justify-end pb-6">
-          <Link to={createPageUrl('Rooms')} className="inline-flex items-center text-white/80 hover:text-white mb-4 transition-colors">
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Rooms
-          </Link>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-          >
-            <h1 className="text-4xl font-bold text-white mb-1">{room.name}</h1>
-            <p className="text-white/80">
-              {room.floor?.charAt(0).toUpperCase() + room.floor?.slice(1)} Floor
-              {room.square_footage && ` • ${room.square_footage} sq ft`}
-            </p>
-          </motion.div>
+      <div className="relative h-64 overflow-hidden">
+        <div 
+          className="absolute inset-0 opacity-20"
+          style={{
+            backgroundImage: `repeating-linear-gradient(
+              45deg,
+              transparent,
+              transparent 35px,
+              rgba(0, 0, 0, 0.05) 35px,
+              rgba(0, 0, 0, 0.05) 70px
+            )`,
+            backgroundColor: '#3b82f6'
+          }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-indigo-600" />
+        <div className="container mx-auto px-4 sm:px-6 relative h-full flex items-center">
+          <div className="flex items-center justify-between w-full gap-8">
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="flex-1 z-10"
+            >
+              <Link to={createPageUrl('Rooms')} className="inline-flex items-center text-white/80 hover:text-white mb-4 transition-colors text-sm">
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Back to Rooms
+              </Link>
+              <h1 className="text-4xl sm:text-5xl font-bold text-slate-900 mb-2">{room.name}</h1>
+              <p className="text-lg text-slate-700">
+                {room.floor?.charAt(0).toUpperCase() + room.floor?.slice(1)} Floor
+                {room.square_footage && ` • ${room.square_footage} sq ft`}
+              </p>
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="hidden md:block flex-shrink-0"
+            >
+              <img 
+                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/0525a86f6_kitchen.png" 
+                alt={room.name}
+                className="h-56 w-auto object-contain drop-shadow-2xl"
+              />
+            </motion.div>
+          </div>
         </div>
       </div>
 
