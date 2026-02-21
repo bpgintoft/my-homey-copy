@@ -232,24 +232,36 @@ export default function House() {
                   <Link to={createPageUrl(`RoomDetail?id=${room.id}`)}>
                     <Card className="bg-white border-0 shadow-sm hover:shadow-md transition-shadow cursor-pointer">
                       <CardContent className="p-5">
-                        <div className="flex items-start justify-between mb-3">
-                          <h3 className="font-semibold text-gray-900 text-lg">{room.name}</h3>
-                          {room.floor && (
-                            <Badge className="bg-emerald-100 text-emerald-700 border-0">
-                              {room.floor}
-                            </Badge>
-                          )}
-                        </div>
-                        {room.description && (
-                          <p className="text-sm text-gray-600 mb-3">{room.description}</p>
-                        )}
-                        {room.square_footage && (
-                          <div className="text-sm text-gray-500">
-                            {room.square_footage} sq ft
+                        <div className="flex items-start justify-between gap-4">
+                          <div className="flex-1">
+                            <div className="flex items-start justify-between mb-3">
+                              <h3 className="font-semibold text-gray-900 text-lg">{room.name}</h3>
+                              {room.floor && (
+                                <Badge className="bg-emerald-100 text-emerald-700 border-0">
+                                  {room.floor}
+                                </Badge>
+                              )}
+                            </div>
+                            {room.description && (
+                              <p className="text-sm text-gray-600 mb-3">{room.description}</p>
+                            )}
+                            {room.square_footage && (
+                              <div className="text-sm text-gray-500">
+                                {room.square_footage} sq ft
+                              </div>
+                            )}
+                            <div className="text-sm text-gray-500 mt-2">
+                              {itemsByRoomId[room.id]?.length || 0} items
+                            </div>
                           </div>
-                        )}
-                        <div className="text-sm text-gray-500 mt-2">
-                          {itemsByRoomId[room.id]?.length || 0} items
+                          {room.photo_url && (
+                            <img 
+                              src={getThumbnailUrl(room.photo_url, 100)} 
+                              alt={room.name}
+                              className="w-20 h-20 rounded object-cover flex-shrink-0"
+                              loading="lazy"
+                            />
+                          )}
                         </div>
                       </CardContent>
                     </Card>
