@@ -256,9 +256,9 @@ export default function House() {
                           </div>
                           {room.photo_url && (
                             <img 
-                              src={getThumbnailUrl(room.photo_url, 100)} 
+                              src={room.photo_url} 
                               alt={room.name}
-                              className="w-20 h-20 rounded object-cover flex-shrink-0"
+                              className="w-20 h-20 rounded object-contain flex-shrink-0"
                               loading="lazy"
                             />
                           )}
