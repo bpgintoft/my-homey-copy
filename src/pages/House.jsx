@@ -258,7 +258,7 @@ export default function House() {
                             <img 
                               src={room.photo_url} 
                               alt={room.name}
-                              className="absolute top-1 right-1 bottom-1 w-40 h-full object-contain"
+                              className="absolute top-0 right-0 bottom-0 w-40 h-full object-contain"
                               loading="lazy"
                             />
                           )}
