@@ -1,21 +1,30 @@
-export const getOptimizedImageUrl = (url, width = 400) => {
-  if (!url) return url;
+/**
+ * Generates a thumbnail URL for faster loading
+ * Attempts to use URL-based image resizing if supported by the CDN
+ */
+export function getThumbnailUrl(originalUrl, width = 400) {
+  if (!originalUrl) return originalUrl;
   
-  // Check if it's a Supabase URL
-  if (url.includes('supabase.co')) {
-    // Add width parameter for image optimization
-    const separator = url.includes('?') ? '&' : '?';
-    return `${url}${separator}width=${width}&quality=80`;
+  try {
+    const url = new URL(originalUrl);
+    
+    // Check if it's a Base44/Supabase storage URL
+    if (url.hostname.includes('supabase')) {
+      // Supabase supports transform parameters
+      url.searchParams.set('width', width.toString());
+      url.searchParams.set('quality', '80');
+      return url.toString();
+    }
+    
+    // Check for Cloudflare Images
+    if (url.hostname.includes('imagedelivery.net')) {
+      // Cloudflare Images: replace /public with /w={width}
+      return originalUrl.replace('/public', `/w=${width}`);
+    }
+    
+    // For other CDNs, return original but will use lazy loading
+    return originalUrl;
+  } catch {
+    return originalUrl;
   }
-  
-  return url;
-};
-
-// Get thumbnail size (mobile)
-export const getThumbnailUrl = (url) => getOptimizedImageUrl(url, 300);
-
-// Get medium size (tablet/expanded views)
-export const getMediumUrl = (url) => getOptimizedImageUrl(url, 600);
-
-// Get large size (desktop)
-export const getLargeUrl = (url) => getOptimizedImageUrl(url, 1000);
+}

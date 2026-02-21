@@ -9,6 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Plus, Upload, Loader2, Trash2, X, Search } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { getThumbnailUrl } from './imageHelpers';
 
 export default function Timeline() {
   const queryClient = useQueryClient();
@@ -423,9 +424,10 @@ export default function Timeline() {
                       {selectedEvent.photos.map((photo, index) => (
                         <img
                           key={index}
-                          src={photo}
+                          src={getThumbnailUrl(photo, 400)}
                           alt={`${selectedEvent.title} photo ${index + 1}`}
                           className="w-full h-32 object-cover rounded cursor-pointer hover:opacity-90"
+                          loading="lazy"
                           onClick={() => {
                             setSelectedPhoto(photo);
                             setPhotoZoom(1);
