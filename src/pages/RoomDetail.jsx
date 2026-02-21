@@ -13,8 +13,11 @@ import {
   Calendar,
   Shield,
   FileText,
-  X
+  X,
+  Upload,
+  Loader2
 } from 'lucide-react';
+import { getThumbnailUrl } from '../components/imageHelpers';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -35,11 +38,17 @@ export default function RoomDetail() {
   const [editingItem, setEditingItem] = useState(null);
   const [editingPaint, setEditingPaint] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
+  const [selectedPhoto, setSelectedPhoto] = useState(null);
+  const [photoZoom, setPhotoZoom] = useState(1);
 
   const [newItem, setNewItem] = useState({
     name: '', type: 'appliance', brand: '', model: '', serial_number: '',
-    purchase_date: '', warranty_expiration: '', notes: ''
+    purchase_date: '', warranty_expiration: '', notes: '', photos: []
   });
+
+  const fileInputRef = React.useRef(null);
+  const editFileInputRef = React.useRef(null);
 
   const [newPaint, setNewPaint] = useState({
     surface: 'walls', brand: '', color_name: '', color_code: '',
@@ -74,9 +83,49 @@ export default function RoomDetail() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['roomItems', roomId] });
       setIsItemOpen(false);
-      setNewItem({ name: '', type: 'appliance', brand: '', model: '', serial_number: '', purchase_date: '', warranty_expiration: '', notes: '' });
+      setNewItem({ name: '', type: 'appliance', brand: '', model: '', serial_number: '', purchase_date: '', warranty_expiration: '', notes: '', photos: [] });
     },
   });
+
+  const handlePhotoUpload = async (file, isEditing = false) => {
+    if (!file) return;
+    setIsUploadingPhoto(true);
+    try {
+      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      if (isEditing) {
+        setEditingItem({ ...editingItem, photos: [...(editingItem.photos || []), file_url] });
+      } else {
+        setNewItem({ ...newItem, photos: [...(newItem.photos || []), file_url] });
+      }
+    } finally {
+      setIsUploadingPhoto(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+      if (editFileInputRef.current) editFileInputRef.current.value = '';
+    }
+  };
+
+  const handlePaste = (e, isEditing = false) => {
+    const items = e.clipboardData?.items;
+    if (!items) return;
+
+    for (let item of items) {
+      if (item.type.startsWith('image/')) {
+        const blob = item.getAsFile();
+        if (blob) {
+          handlePhotoUpload(blob, isEditing);
+          e.preventDefault();
+        }
+      }
+    }
+  };
+
+  const removePhoto = (index, isEditing = false) => {
+    if (isEditing) {
+      setEditingItem({ ...editingItem, photos: editingItem.photos.filter((_, i) => i !== index) });
+    } else {
+      setNewItem({ ...newItem, photos: newItem.photos.filter((_, i) => i !== index) });
+    }
+  };
 
   const updateItemMutation = useMutation({
     mutationFn: ({ id, data }) => base44.entities.RoomItem.update(id, data),
@@ -296,6 +345,61 @@ export default function RoomDetail() {
                         placeholder="Any additional notes..."
                       />
                     </div>
+                    <div>
+                      <Label>Photos</Label>
+                      <div className="space-y-3 mt-2">
+                        <div className="flex gap-2">
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => fileInputRef.current?.click()}
+                            disabled={isUploadingPhoto}
+                          >
+                            {isUploadingPhoto ? (
+                              <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Uploading...</>
+                            ) : (
+                              <><Upload className="w-4 h-4 mr-2" />Upload Photo</>
+                            )}
+                          </Button>
+                          <input
+                            ref={fileInputRef}
+                            type="file"
+                            accept="image/*"
+                            onChange={(e) => handlePhotoUpload(e.target.files?.[0])}
+                            className="hidden"
+                          />
+                        </div>
+                        <Input
+                          placeholder="Or paste an image here (Ctrl+V / Cmd+V)..."
+                          onPaste={handlePaste}
+                          disabled={isUploadingPhoto}
+                          className="text-sm"
+                        />
+                        {newItem.photos && newItem.photos.length > 0 && (
+                          <div className="grid grid-cols-3 gap-2">
+                            {newItem.photos.map((photo, index) => (
+                              <div key={index} className="relative group">
+                                <img
+                                  src={photo}
+                                  alt={`Item photo ${index + 1}`}
+                                  className="w-full h-24 object-cover rounded"
+                                />
+                                <Button
+                                  type="button"
+                                  variant="destructive"
+                                  size="sm"
+                                  onClick={() => removePhoto(index)}
+                                  className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity h-6 w-6 p-0"
+                                >
+                                  <X className="w-3 h-3" />
+                                </Button>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </div>
                     <div className="flex gap-3 pt-4">
                       <Button variant="outline" onClick={() => setIsItemOpen(false)} className="flex-1">Cancel</Button>
                       <Button 
@@ -336,9 +440,23 @@ export default function RoomDetail() {
                       <Card className="border-0 shadow-md hover:shadow-lg transition-shadow">
                         <CardContent className="p-6">
                           <div className="flex items-start justify-between mb-3">
-                            <div>
-                              <Badge className={typeColors[item.type]}>{item.type}</Badge>
-                              <h3 className="font-semibold text-slate-800 mt-2">{item.name}</h3>
+                            <div className="flex items-start gap-3 flex-1">
+                              {item.photos && item.photos.length > 0 && (
+                                <img 
+                                  src={getThumbnailUrl(item.photos[0], 100)} 
+                                  alt=""
+                                  className="w-16 h-16 rounded object-cover flex-shrink-0 cursor-pointer hover:opacity-90"
+                                  loading="lazy"
+                                  onClick={() => {
+                                    setSelectedPhoto(item.photos[0]);
+                                    setPhotoZoom(1);
+                                  }}
+                                />
+                              )}
+                              <div>
+                                <Badge className={typeColors[item.type]}>{item.type}</Badge>
+                                <h3 className="font-semibold text-slate-800 mt-2">{item.name}</h3>
+                              </div>
                             </div>
                             <div className="flex gap-1">
                               <Button variant="ghost" size="icon" onClick={() => setEditingItem(item)}>
@@ -657,6 +775,65 @@ export default function RoomDetail() {
                     onChange={e => setEditingItem({...editingItem, notes: e.target.value})}
                   />
                 </div>
+                <div>
+                  <Label>Photos</Label>
+                  <div className="space-y-3 mt-2">
+                    <div className="flex gap-2">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => editFileInputRef.current?.click()}
+                        disabled={isUploadingPhoto}
+                      >
+                        {isUploadingPhoto ? (
+                          <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Uploading...</>
+                        ) : (
+                          <><Upload className="w-4 h-4 mr-2" />Upload Photo</>
+                        )}
+                      </Button>
+                      <input
+                        ref={editFileInputRef}
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => handlePhotoUpload(e.target.files?.[0], true)}
+                        className="hidden"
+                      />
+                    </div>
+                    <Input
+                      placeholder="Or paste an image here..."
+                      onPaste={(e) => handlePaste(e, true)}
+                      disabled={isUploadingPhoto}
+                      className="text-sm"
+                    />
+                    {editingItem.photos && editingItem.photos.length > 0 && (
+                      <div className="grid grid-cols-3 gap-2">
+                        {editingItem.photos.map((photo, index) => (
+                          <div key={index} className="relative group">
+                            <img 
+                              src={photo} 
+                              alt={`Photo ${index + 1}`} 
+                              className="w-full h-24 object-cover rounded cursor-pointer hover:opacity-90"
+                              onClick={() => {
+                                setSelectedPhoto(photo);
+                                setPhotoZoom(1);
+                              }}
+                            />
+                            <Button
+                              type="button"
+                              variant="destructive"
+                              size="sm"
+                              onClick={() => removePhoto(index, true)}
+                              className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity h-6 w-6 p-0"
+                            >
+                              <X className="w-3 h-3" />
+                            </Button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
                 <div className="flex gap-3 pt-4">
                   <Button variant="outline" onClick={() => setEditingItem(null)} className="flex-1">Cancel</Button>
                   <Button 
@@ -783,6 +960,44 @@ export default function RoomDetail() {
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Photo viewer */}
+      {selectedPhoto && (
+        <div 
+          className="fixed inset-0 z-[100] bg-black/90 flex items-center justify-center" 
+          onClick={() => {
+            setSelectedPhoto(null);
+            setPhotoZoom(1);
+          }}
+        >
+          <Button
+            variant="ghost"
+            size="icon"
+            className="absolute top-4 right-4 text-white hover:bg-white/20 z-10"
+            onClick={() => {
+              setSelectedPhoto(null);
+              setPhotoZoom(1);
+            }}
+          >
+            <X className="w-6 h-6" />
+          </Button>
+          <motion.img
+            src={selectedPhoto}
+            alt="Full screen view"
+            className="max-w-[90vw] max-h-[90vh] object-contain"
+            initial={{ scale: 1 }}
+            animate={{ scale: photoZoom }}
+            transition={{ type: 'spring', damping: 20 }}
+            onClick={(e) => e.stopPropagation()}
+            onWheel={(e) => {
+              e.preventDefault();
+              const newZoom = photoZoom + (e.deltaY > 0 ? -0.1 : 0.1);
+              setPhotoZoom(Math.max(1, Math.min(newZoom, 3)));
+            }}
+            style={{ touchAction: 'pinch-zoom' }}
+          />
+        </div>
+      )}
     </div>
   );
 }
