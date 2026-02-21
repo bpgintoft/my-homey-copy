@@ -38,7 +38,7 @@ export default function House() {
 
   const { data: appliances = [] } = useQuery({
     queryKey: ['appliances'],
-    queryFn: () => base44.entities.Appliance.list(),
+    queryFn: () => base44.entities.RoomItem.filter({ type: 'appliance' }),
   });
 
   const createRoomMutation = useMutation({
@@ -51,9 +51,10 @@ export default function House() {
   });
 
   const createApplianceMutation = useMutation({
-    mutationFn: (data) => base44.entities.Appliance.create(data),
+    mutationFn: (data) => base44.entities.RoomItem.create({ ...data, type: 'appliance' }),
     onSuccess: () => {
       queryClient.invalidateQueries(['appliances']);
+      queryClient.invalidateQueries(['roomItems']);
       setShowApplianceDialog(false);
       setNewAppliance({ photos: [] });
     },
@@ -117,8 +118,10 @@ export default function House() {
     }
   };
 
+  const [expandedApplianceId, setExpandedApplianceId] = React.useState(null);
+
   const findManualMutation = useMutation({
-    mutationFn: async ({ brand, model }) => {
+    mutationFn: async ({ brand, model, itemId }) => {
       const result = await base44.integrations.Core.InvokeLLM({
         prompt: `Find the official online user manual PDF link for ${brand} ${model}. Search the manufacturer's website and return the direct PDF URL or support page URL.`,
         add_context_from_internet: true,
@@ -130,12 +133,18 @@ export default function House() {
           }
         }
       });
+      if (result.found && result.manual_url) {
+        await base44.entities.RoomItem.update(itemId, {
+          manual_url: result.manual_url
+        });
+        queryClient.invalidateQueries(['appliances']);
+      }
       return result;
     },
   });
 
   const fetchSpecsMutation = useMutation({
-    mutationFn: async ({ brand, model, serial_number, applianceId }) => {
+    mutationFn: async ({ brand, model, serial_number, itemId }) => {
       const result = await base44.integrations.Core.InvokeLLM({
         prompt: `Find detailed product specifications for the ${brand} ${model}${serial_number ? ` (Serial: ${serial_number})` : ''}. Search for official product dimensions and technical specifications. Return dimensions in a standard format (W x D x H) and specs as a detailed description.`,
         add_context_from_internet: true,
@@ -150,7 +159,7 @@ export default function House() {
       });
       
       if (result.found && (result.dimensions || result.specs)) {
-        await base44.entities.Appliance.update(applianceId, {
+        await base44.entities.RoomItem.update(itemId, {
           dimensions: result.dimensions,
           specs: result.specs
         });
@@ -167,7 +176,8 @@ export default function House() {
   }, {});
 
   const appliancesByRoom = appliances.reduce((acc, appliance) => {
-    const room = appliance.room_name || 'Unassigned';
+    const roomObj = rooms.find(r => r.id === appliance.room_id);
+    const room = roomObj?.name || 'Unassigned';
     if (!acc[room]) acc[room] = [];
     acc[room].push(appliance);
     return acc;
@@ -322,106 +332,175 @@ export default function House() {
                 {Object.entries(appliancesByRoom).map(([roomName, roomAppliances]) => (
                   <div key={roomName}>
                     <h3 className="text-lg font-semibold text-gray-900 mb-3">{roomName}</h3>
-                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                      {roomAppliances.map((appliance) => (
-                       <Card key={appliance.id} className="bg-white border-0 shadow-sm hover:shadow-md transition-shadow">
-                         <CardContent className="p-5">
-                           <div className="flex items-start gap-3 mb-2">
-                             {appliance.photos && appliance.photos.length > 0 && (
-                               <img 
-                                 src={getThumbnailUrl(appliance.photos[0], 100)} 
-                                 alt=""
-                                 className="w-16 h-16 rounded object-cover flex-shrink-0"
-                                 loading="lazy"
-                               />
-                             )}
-                             <div className="flex-1">
-                               <h4 className="font-semibold text-gray-900 mb-2">{appliance.name}</h4>
-                               <div className="space-y-1 text-sm text-gray-600">
-                                 <div><span className="font-medium">Brand:</span> {appliance.brand}</div>
-                                 <div><span className="font-medium">Model:</span> {appliance.model}</div>
-                                 {appliance.purchase_date && (
-                                   <div className="flex items-center gap-1 text-gray-500">
-                                     <Calendar className="w-3 h-3" />
-                                     Purchased {new Date(appliance.purchase_date).toLocaleDateString()}
-                                   </div>
-                                 )}
-                               </div>
-                             </div>
-                           </div>
-                            {appliance.manual_url ? (
-                              <a
-                                href={appliance.manual_url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="inline-flex items-center gap-1 text-sm text-emerald-600 hover:text-emerald-700"
+                    <div className="space-y-4">
+                      {roomAppliances.map((appliance) => {
+                        const isExpanded = expandedApplianceId === appliance.id;
+                        return (
+                          <Card 
+                            key={appliance.id} 
+                            className="bg-white border-0 shadow-sm hover:shadow-md transition-shadow"
+                          >
+                            <CardContent className="p-4">
+                              <div 
+                                className="flex gap-3 items-start cursor-pointer"
+                                onClick={() => setExpandedApplianceId(isExpanded ? null : appliance.id)}
                               >
-                                <FileText className="w-4 h-4" />
-                                View Manual
-                                <ExternalLink className="w-3 h-3" />
-                              </a>
-                            ) : (
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                onClick={async () => {
-                                  const result = await findManualMutation.mutateAsync({
-                                    brand: appliance.brand,
-                                    model: appliance.model
-                                  });
-                                  if (result.found && result.manual_url) {
-                                    await base44.entities.Appliance.update(appliance.id, {
-                                      ...appliance,
-                                      manual_url: result.manual_url
-                                    });
-                                    queryClient.invalidateQueries(['appliances']);
-                                  }
-                                }}
-                                disabled={findManualMutation.isPending}
-                                className="text-xs"
-                              >
-                                <Sparkles className="w-3 h-3 mr-1" />
-                                {findManualMutation.isPending ? 'Finding...' : 'Find Manual'}
-                              </Button>
-                            )}
-                            {(appliance.dimensions || appliance.specs) && (
-                              <div className="mt-3 pt-3 border-t">
-                                {appliance.dimensions && (
-                                  <div className="mb-2">
-                                    <span className="text-xs font-medium text-gray-500">Dimensions:</span>
-                                    <p className="text-sm text-gray-700">{appliance.dimensions}</p>
-                                  </div>
+                                {appliance.photos && appliance.photos.length > 0 && (
+                                  <img 
+                                    src={getThumbnailUrl(appliance.photos[0], 100)} 
+                                    alt=""
+                                    className="w-20 h-20 rounded object-cover flex-shrink-0"
+                                    loading="lazy"
+                                  />
                                 )}
-                                {appliance.specs && (
-                                  <div>
-                                    <span className="text-xs font-medium text-gray-500">Specifications:</span>
-                                    <p className="text-sm text-gray-700 whitespace-pre-wrap">{appliance.specs}</p>
-                                  </div>
-                                )}
+                                <div className="flex-1 min-w-0">
+                                  <h4 className="font-semibold text-gray-900 text-base mb-1">{appliance.name}</h4>
+                                  {(appliance.brand || appliance.model) && (
+                                    <p className="text-sm text-gray-600">
+                                      {appliance.brand} {appliance.model}
+                                    </p>
+                                  )}
+                                </div>
                               </div>
-                            )}
-                            {!appliance.dimensions && !appliance.specs && (
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                onClick={async () => {
-                                  await fetchSpecsMutation.mutateAsync({
-                                    brand: appliance.brand,
-                                    model: appliance.model,
-                                    serial_number: appliance.serial_number,
-                                    applianceId: appliance.id
-                                  });
-                                }}
-                                disabled={fetchSpecsMutation.isPending}
-                                className="text-xs mt-2"
-                              >
-                                <Sparkles className="w-3 h-3 mr-1" />
-                                {fetchSpecsMutation.isPending ? 'Finding...' : 'Fetch Specs'}
-                              </Button>
-                            )}
+
+                              <AnimatePresence>
+                                {isExpanded && (
+                                  <motion.div
+                                    initial={{ height: 0, opacity: 0 }}
+                                    animate={{ height: 'auto', opacity: 1 }}
+                                    exit={{ height: 0, opacity: 0 }}
+                                    transition={{ duration: 0.2 }}
+                                    className="overflow-hidden"
+                                  >
+                                    <div className="mt-4 pt-4 border-t space-y-4">
+                                      {appliance.serial_number && (
+                                        <div>
+                                          <Label className="text-xs text-gray-500">Serial Number</Label>
+                                          <p className="text-sm text-gray-800">{appliance.serial_number}</p>
+                                        </div>
+                                      )}
+
+                                      <div className="grid grid-cols-2 gap-4">
+                                        {appliance.purchase_date && (
+                                          <div>
+                                            <Label className="text-xs text-gray-500">Purchase Date</Label>
+                                            <p className="text-sm text-gray-800 flex items-center gap-1">
+                                              <Calendar className="w-3 h-3" />
+                                              {new Date(appliance.purchase_date).toLocaleDateString()}
+                                            </p>
+                                          </div>
+                                        )}
+                                        {appliance.warranty_expiration && (
+                                          <div>
+                                            <Label className="text-xs text-gray-500">Warranty Expires</Label>
+                                            <p className="text-sm text-gray-800 flex items-center gap-1">
+                                              {new Date(appliance.warranty_expiration).toLocaleDateString()}
+                                            </p>
+                                          </div>
+                                        )}
+                                      </div>
+
+                                      {appliance.notes && (
+                                        <div>
+                                          <Label className="text-xs text-gray-500">Notes</Label>
+                                          <p className="text-sm text-gray-700 whitespace-pre-wrap">{appliance.notes}</p>
+                                        </div>
+                                      )}
+
+                                      {appliance.manual_url ? (
+                                        <a
+                                          href={appliance.manual_url}
+                                          target="_blank"
+                                          rel="noopener noreferrer"
+                                          className="inline-flex items-center gap-1 text-sm text-emerald-600 hover:text-emerald-700"
+                                          onClick={(e) => e.stopPropagation()}
+                                        >
+                                          <FileText className="w-4 h-4" />
+                                          View Manual
+                                          <ExternalLink className="w-3 h-3" />
+                                        </a>
+                                      ) : (
+                                        <Button
+                                          size="sm"
+                                          variant="outline"
+                                          onClick={async (e) => {
+                                            e.stopPropagation();
+                                            await findManualMutation.mutateAsync({
+                                              brand: appliance.brand,
+                                              model: appliance.model,
+                                              itemId: appliance.id
+                                            });
+                                          }}
+                                          disabled={findManualMutation.isPending}
+                                          className="text-xs"
+                                        >
+                                          <Sparkles className="w-3 h-3 mr-1" />
+                                          {findManualMutation.isPending ? 'Finding...' : 'Find Manual'}
+                                        </Button>
+                                      )}
+
+                                      {(appliance.dimensions || appliance.specs) && (
+                                        <div className="pt-3 border-t">
+                                          {appliance.dimensions && (
+                                            <div className="mb-2">
+                                              <Label className="text-xs text-gray-500">Dimensions</Label>
+                                              <p className="text-sm text-gray-700">{appliance.dimensions}</p>
+                                            </div>
+                                          )}
+                                          {appliance.specs && (
+                                            <div>
+                                              <Label className="text-xs text-gray-500">Specifications</Label>
+                                              <p className="text-sm text-gray-700 whitespace-pre-wrap">{appliance.specs}</p>
+                                            </div>
+                                          )}
+                                        </div>
+                                      )}
+
+                                      {!appliance.dimensions && !appliance.specs && appliance.brand && appliance.model && (
+                                        <Button
+                                          size="sm"
+                                          variant="outline"
+                                          onClick={async (e) => {
+                                            e.stopPropagation();
+                                            await fetchSpecsMutation.mutateAsync({
+                                              brand: appliance.brand,
+                                              model: appliance.model,
+                                              serial_number: appliance.serial_number,
+                                              itemId: appliance.id
+                                            });
+                                          }}
+                                          disabled={fetchSpecsMutation.isPending}
+                                          className="text-xs w-full"
+                                        >
+                                          <Sparkles className="w-3 h-3 mr-1" />
+                                          {fetchSpecsMutation.isPending ? 'Finding Specs...' : 'Fetch Dimensions & Specs'}
+                                        </Button>
+                                      )}
+
+                                      {appliance.photos && appliance.photos.length > 1 && (
+                                        <div>
+                                          <Label className="text-xs text-gray-500 mb-2 block">Photos ({appliance.photos.length})</Label>
+                                          <div className="grid grid-cols-4 gap-2">
+                                            {appliance.photos.map((photo, idx) => (
+                                              <img
+                                                key={idx}
+                                                src={getThumbnailUrl(photo, 150)}
+                                                alt={`${appliance.name} ${idx + 1}`}
+                                                className="w-full h-20 object-cover rounded"
+                                                loading="lazy"
+                                              />
+                                            ))}
+                                          </div>
+                                        </div>
+                                      )}
+                                    </div>
+                                  </motion.div>
+                                )}
+                              </AnimatePresence>
                             </CardContent>
-                            </Card>
-                      ))}
+                          </Card>
+                        );
+                      })}
                     </div>
                   </div>
                 ))}
