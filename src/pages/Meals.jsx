@@ -157,11 +157,19 @@ export default function Meals() {
 
             const existing = groceries.find(g => g.name.toLowerCase() === cleanedName.toLowerCase());
             if (existing) {
-              const qty = parseInt(existing.quantity) || 0;
-              await base44.entities.GroceryItem.update(existing.id, { 
-                quantity: (qty + 1).toString(),
-                purchased: false  // Uncheck if was hidden
-              });
+              // If hidden (purchased), unhide and set quantity to 1
+              // If not hidden, increment quantity
+              if (existing.purchased) {
+                await base44.entities.GroceryItem.update(existing.id, { 
+                  quantity: '1',
+                  purchased: false
+                });
+              } else {
+                const qty = parseInt(existing.quantity) || 0;
+                await base44.entities.GroceryItem.update(existing.id, { 
+                  quantity: (qty + 1).toString()
+                });
+              }
             } else {
               const category = await categorizeMutation.mutateAsync(cleanedName);
               await base44.entities.GroceryItem.create({
@@ -278,7 +286,14 @@ export default function Meals() {
     });
 
     const togglePurchasedMutation = useMutation({
-      mutationFn: ({ id, purchased }) => base44.entities.GroceryItem.update(id, { purchased }),
+      mutationFn: ({ id, purchased }) => {
+        // When hiding (purchased = true), set quantity to 0
+        // When unhiding (purchased = false), set quantity to 1
+        return base44.entities.GroceryItem.update(id, { 
+          purchased,
+          quantity: purchased ? '0' : '1'
+        });
+      },
       onSuccess: () => {
         queryClient.invalidateQueries(['groceries']);
       },
@@ -344,11 +359,19 @@ export default function Meals() {
           for (const item of result.items || []) {
             const existing = groceries.find(g => g.name.toLowerCase() === item.name.toLowerCase());
             if (existing) {
-              const qty = parseInt(existing.quantity) || 0;
-              await base44.entities.GroceryItem.update(existing.id, { 
-                quantity: (qty + item.count).toString(),
-                purchased: false  // Uncheck if was hidden
-              });
+              // If hidden (purchased), unhide and set quantity to item count
+              // If not hidden, add to existing quantity
+              if (existing.purchased) {
+                await base44.entities.GroceryItem.update(existing.id, { 
+                  quantity: item.count.toString(),
+                  purchased: false
+                });
+              } else {
+                const qty = parseInt(existing.quantity) || 0;
+                await base44.entities.GroceryItem.update(existing.id, { 
+                  quantity: (qty + item.count).toString()
+                });
+              }
             } else {
               const category = await categorizeMutation.mutateAsync(item.name);
               await base44.entities.GroceryItem.create({
@@ -385,11 +408,19 @@ export default function Meals() {
           // Check if item already exists
           const existing = groceries.find(g => g.name.toLowerCase() === itemData.name.toLowerCase());
           if (existing) {
-            const qty = parseInt(existing.quantity) || 0;
-            await base44.entities.GroceryItem.update(existing.id, { 
-              quantity: (qty + 1).toString(),
-              purchased: false
-            });
+            // If hidden (purchased), unhide and set quantity to 1
+            // If not hidden, increment quantity
+            if (existing.purchased) {
+              await base44.entities.GroceryItem.update(existing.id, { 
+                quantity: '1',
+                purchased: false
+              });
+            } else {
+              const qty = parseInt(existing.quantity) || 0;
+              await base44.entities.GroceryItem.update(existing.id, { 
+                quantity: (qty + 1).toString()
+              });
+            }
           } else {
             // Use AI to categorize if needed
             const category = itemData.category === 'other' 
