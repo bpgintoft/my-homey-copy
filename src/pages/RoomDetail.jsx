@@ -438,13 +438,13 @@ export default function RoomDetail() {
                       transition={{ delay: i * 0.05 }}
                     >
                       <Card className="border-0 shadow-md hover:shadow-lg transition-shadow">
-                        <CardContent className="p-4">
-                          <div className="flex gap-3">
+                        <CardContent className="p-3">
+                          <div className="flex gap-2.5 items-center">
                             {item.photos && item.photos.length > 0 && (
                               <img 
                                 src={getThumbnailUrl(item.photos[0], 100)} 
                                 alt=""
-                                className="w-20 h-20 rounded object-cover flex-shrink-0 cursor-pointer hover:opacity-90"
+                                className="w-16 h-16 rounded object-cover flex-shrink-0 cursor-pointer hover:opacity-90"
                                 loading="lazy"
                                 onClick={() => {
                                   setSelectedPhoto(item.photos[0]);
@@ -453,35 +453,40 @@ export default function RoomDetail() {
                               />
                             )}
                             <div className="flex-1 min-w-0">
-                              <div className="flex items-start justify-between gap-2 mb-1.5">
-                                <div>
-                                  <Badge className={typeColors[item.type] + " text-xs"}>{item.type}</Badge>
-                                  <h3 className="font-semibold text-slate-800 text-sm mt-1">{item.name}</h3>
+                              <div className="flex items-start justify-between gap-2 mb-1">
+                                <div className="flex-1 min-w-0">
+                                  <div className="flex items-center gap-1.5 mb-0.5">
+                                    <Badge className={typeColors[item.type] + " text-[10px] py-0 px-1.5 h-4"}>{item.type}</Badge>
+                                    <h3 className="font-semibold text-slate-800 text-xs truncate">{item.name}</h3>
+                                  </div>
+                                  {(item.brand || item.model) && (
+                                    <p className="text-[11px] text-slate-600 truncate">
+                                      {item.brand} {item.model}
+                                    </p>
+                                  )}
                                 </div>
-                                <div className="flex gap-1 flex-shrink-0">
-                                  <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setEditingItem(item)}>
-                                    <Pencil className="w-3.5 h-3.5 text-slate-400" />
+                                <div className="flex gap-0.5 flex-shrink-0">
+                                  <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => setEditingItem(item)}>
+                                    <Pencil className="w-3 h-3 text-slate-400" />
                                   </Button>
-                                  <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => deleteItemMutation.mutate(item.id)}>
-                                    <Trash2 className="w-3.5 h-3.5 text-red-400" />
+                                  <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => deleteItemMutation.mutate(item.id)}>
+                                    <Trash2 className="w-3 h-3 text-red-400" />
                                   </Button>
                                 </div>
                               </div>
-                              <div className="grid grid-cols-2 gap-x-4 gap-y-0.5 text-xs text-slate-600">
-                                {item.brand && <div><strong>Brand:</strong> {item.brand}</div>}
-                                {item.model && <div><strong>Model:</strong> {item.model}</div>}
-                                {item.serial_number && <div className="col-span-2 truncate"><strong>S/N:</strong> {item.serial_number}</div>}
+                              <div className="flex flex-wrap gap-x-3 gap-y-0.5 text-[10px] text-slate-500">
+                                {item.serial_number && <span className="truncate">S/N: {item.serial_number}</span>}
                                 {item.purchase_date && (
-                                  <div className="flex items-center gap-1 text-slate-500">
-                                    <Calendar className="w-3 h-3" />
+                                  <span className="flex items-center gap-0.5">
+                                    <Calendar className="w-2.5 h-2.5" />
                                     {new Date(item.purchase_date).toLocaleDateString()}
-                                  </div>
+                                  </span>
                                 )}
                                 {item.warranty_expiration && (
-                                  <div className="flex items-center gap-1 text-slate-500">
-                                    <Shield className="w-3 h-3" />
+                                  <span className="flex items-center gap-0.5">
+                                    <Shield className="w-2.5 h-2.5" />
                                     {new Date(item.warranty_expiration).toLocaleDateString()}
-                                  </div>
+                                  </span>
                                 )}
                               </div>
                             </div>
