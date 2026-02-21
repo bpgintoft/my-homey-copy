@@ -245,16 +245,18 @@ export default function RoomDetail() {
         </div>
       </div>
 
-      <div className="container mx-auto px-6 py-8 -mt-8 relative z-10">
+      <div className="container mx-auto px-4 sm:px-6 py-8 -mt-8 relative z-10">
         <Tabs defaultValue="items" className="space-y-6">
           <TabsList className="bg-white shadow-lg border-0 p-1 h-auto">
-            <TabsTrigger value="items" className="data-[state=active]:bg-blue-100 data-[state=active]:text-blue-800 px-6 py-2.5">
-              <Package className="w-4 h-4 mr-2" />
-              Items & Appliances
+            <TabsTrigger value="items" className="data-[state=active]:bg-blue-100 data-[state=active]:text-blue-800 px-3 sm:px-6 py-2.5 text-xs sm:text-sm">
+              <Package className="w-4 h-4 mr-1 sm:mr-2" />
+              <span className="hidden sm:inline">Items & Appliances</span>
+              <span className="sm:hidden">Items</span>
             </TabsTrigger>
-            <TabsTrigger value="paint" className="data-[state=active]:bg-blue-100 data-[state=active]:text-blue-800 px-6 py-2.5">
-              <Palette className="w-4 h-4 mr-2" />
-              Paint Colors
+            <TabsTrigger value="paint" className="data-[state=active]:bg-blue-100 data-[state=active]:text-blue-800 px-3 sm:px-6 py-2.5 text-xs sm:text-sm">
+              <Palette className="w-4 h-4 mr-1 sm:mr-2" />
+              <span className="hidden sm:inline">Paint Colors</span>
+              <span className="sm:hidden">Paint</span>
             </TabsTrigger>
           </TabsList>
 
@@ -455,10 +457,7 @@ export default function RoomDetail() {
                             <div className="flex-1 min-w-0">
                               <div className="flex items-start justify-between gap-2 mb-1">
                                 <div className="flex-1 min-w-0">
-                                  <div className="flex items-center gap-1.5 mb-0.5">
-                                    <Badge className={typeColors[item.type] + " text-[10px] py-0 px-1.5 h-4"}>{item.type}</Badge>
-                                    <h3 className="font-semibold text-slate-800 text-xs truncate">{item.name}</h3>
-                                  </div>
+                                  <h3 className="font-semibold text-slate-800 text-sm truncate mb-0.5">{item.name}</h3>
                                   {(item.brand || item.model) && (
                                     <p className="text-[11px] text-slate-600 truncate">
                                       {item.brand} {item.model}
