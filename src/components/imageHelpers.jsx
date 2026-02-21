@@ -28,3 +28,10 @@ export function getThumbnailUrl(originalUrl, width = 400) {
     return originalUrl;
   }
 }
+
+/**
+ * Generates a medium-sized URL for card displays
+ */
+export function getMediumUrl(originalUrl, width = 800) {
+  return getThumbnailUrl(originalUrl, width);
+}
