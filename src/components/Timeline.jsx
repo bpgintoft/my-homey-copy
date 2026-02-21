@@ -571,17 +571,24 @@ export default function Timeline() {
             <Button
               variant="ghost"
               size="icon"
-              className="absolute top-4 right-4 text-white hover:bg-white/20"
+              className="absolute top-4 right-4 text-white hover:bg-white/20 z-10"
               onClick={() => setSelectedPhoto(null)}
             >
               <X className="w-6 h-6" />
             </Button>
-            <img
-              src={selectedPhoto}
-              alt="Full screen view"
-              className="max-w-full max-h-full object-contain"
-              onClick={(e) => e.stopPropagation()}
-            />
+            <div className="w-full h-full flex items-center justify-center overflow-auto touch-pinch-zoom">
+              <img
+                src={selectedPhoto}
+                alt="Full screen view"
+                className="max-w-none h-auto"
+                style={{ 
+                  maxWidth: '200%',
+                  minWidth: '100%',
+                  cursor: 'zoom-in'
+                }}
+                onClick={(e) => e.stopPropagation()}
+              />
+            </div>
           </div>
         )}
       </CardContent>
