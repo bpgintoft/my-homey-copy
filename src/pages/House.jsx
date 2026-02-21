@@ -249,7 +249,7 @@ export default function House() {
                               </div>
                             )}
                             <div className="text-sm text-gray-500 mt-2">
-                              {itemsByRoomId[room.id]?.length || 0} items
+                              {itemsByRoomId[room.id]?.length || 0} {(itemsByRoomId[room.id]?.length || 0) === 1 ? 'item' : 'items'}
                             </div>
                           </div>
                           {room.photo_url && (
