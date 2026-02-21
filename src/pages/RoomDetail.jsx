@@ -163,6 +163,32 @@ export default function RoomDetail() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['paintColors', roomId] }),
   });
 
+  const fetchItemSpecsMutation = useMutation({
+    mutationFn: async ({ brand, model, serial_number, itemId }) => {
+      const result = await base44.integrations.Core.InvokeLLM({
+        prompt: `Find detailed product specifications for the ${brand} ${model}${serial_number ? ` (Serial: ${serial_number})` : ''}. Search for official product dimensions and technical specifications. Return dimensions in a standard format (W x D x H) and specs as a detailed description.`,
+        add_context_from_internet: true,
+        response_json_schema: {
+          type: "object",
+          properties: {
+            dimensions: { type: "string" },
+            specs: { type: "string" },
+            found: { type: "boolean" }
+          }
+        }
+      });
+      
+      if (result.found && (result.dimensions || result.specs)) {
+        await base44.entities.RoomItem.update(itemId, {
+          dimensions: result.dimensions,
+          specs: result.specs
+        });
+        queryClient.invalidateQueries({ queryKey: ['roomItems', roomId] });
+      }
+      return result;
+    },
+  });
+
   const handleSaveItem = async (data, isEdit = false) => {
     setIsSubmitting(true);
     if (isEdit) {
@@ -550,6 +576,44 @@ export default function RoomDetail() {
                                         <Label className="text-xs text-slate-500">Notes</Label>
                                         <p className="text-sm text-slate-700 whitespace-pre-wrap">{item.notes}</p>
                                       </div>
+                                    )}
+
+                                    {(item.dimensions || item.specs) && (
+                                      <div className="pt-3 border-t">
+                                        {item.dimensions && (
+                                          <div className="mb-2">
+                                            <Label className="text-xs text-slate-500">Dimensions</Label>
+                                            <p className="text-sm text-slate-700">{item.dimensions}</p>
+                                          </div>
+                                        )}
+                                        {item.specs && (
+                                          <div>
+                                            <Label className="text-xs text-slate-500">Specifications</Label>
+                                            <p className="text-sm text-slate-700 whitespace-pre-wrap">{item.specs}</p>
+                                          </div>
+                                        )}
+                                      </div>
+                                    )}
+
+                                    {!item.dimensions && !item.specs && item.brand && item.model && (
+                                      <Button
+                                        size="sm"
+                                        variant="outline"
+                                        onClick={async (e) => {
+                                          e.stopPropagation();
+                                          await fetchItemSpecsMutation.mutateAsync({
+                                            brand: item.brand,
+                                            model: item.model,
+                                            serial_number: item.serial_number,
+                                            itemId: item.id
+                                          });
+                                        }}
+                                        disabled={fetchItemSpecsMutation.isPending}
+                                        className="text-xs w-full"
+                                      >
+                                        <Sparkles className="w-3 h-3 mr-1" />
+                                        {fetchItemSpecsMutation.isPending ? 'Finding Specs...' : 'Fetch Dimensions & Specs'}
+                                      </Button>
                                     )}
 
                                     {item.photos && item.photos.length > 1 && (
