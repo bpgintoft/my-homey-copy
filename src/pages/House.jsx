@@ -11,15 +11,18 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Plus, Home as HomeIcon, Package, FileText, ExternalLink, Calendar, Sparkles } from 'lucide-react';
+import { Plus, Home as HomeIcon, Package, FileText, ExternalLink, Calendar, Sparkles, Upload, Loader2, X } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { getThumbnailUrl } from '../components/imageHelpers';
 
 export default function House() {
   const [showRoomDialog, setShowRoomDialog] = useState(false);
   const [showApplianceDialog, setShowApplianceDialog] = useState(false);
   const [newRoom, setNewRoom] = useState({});
-  const [newAppliance, setNewAppliance] = useState({});
+  const [newAppliance, setNewAppliance] = useState({ photos: [] });
+  const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
   const queryClient = useQueryClient();
+  const fileInputRef = React.useRef(null);
 
   const { data: rooms = [] } = useQuery({
     queryKey: ['rooms'],
@@ -45,9 +48,40 @@ export default function House() {
     onSuccess: () => {
       queryClient.invalidateQueries(['appliances']);
       setShowApplianceDialog(false);
-      setNewAppliance({});
+      setNewAppliance({ photos: [] });
     },
   });
+
+  const handlePhotoUpload = async (file) => {
+    if (!file) return;
+    setIsUploadingPhoto(true);
+    try {
+      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      setNewAppliance({ ...newAppliance, photos: [...(newAppliance.photos || []), file_url] });
+    } finally {
+      setIsUploadingPhoto(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  };
+
+  const handlePaste = (e) => {
+    const items = e.clipboardData?.items;
+    if (!items) return;
+
+    for (let item of items) {
+      if (item.type.startsWith('image/')) {
+        const blob = item.getAsFile();
+        if (blob) {
+          handlePhotoUpload(blob);
+          e.preventDefault();
+        }
+      }
+    }
+  };
+
+  const removePhoto = (index) => {
+    setNewAppliance({ ...newAppliance, photos: newAppliance.photos.filter((_, i) => i !== index) });
+  };
 
   const findManualMutation = useMutation({
     mutationFn: async ({ brand, model }) => {
@@ -214,19 +248,31 @@ export default function House() {
                     <h3 className="text-lg font-semibold text-gray-900 mb-3">{roomName}</h3>
                     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
                       {roomAppliances.map((appliance) => (
-                        <Card key={appliance.id} className="bg-white border-0 shadow-sm hover:shadow-md transition-shadow">
-                          <CardContent className="p-5">
-                            <h4 className="font-semibold text-gray-900 mb-2">{appliance.name}</h4>
-                            <div className="space-y-1 text-sm text-gray-600 mb-3">
-                              <div><span className="font-medium">Brand:</span> {appliance.brand}</div>
-                              <div><span className="font-medium">Model:</span> {appliance.model}</div>
-                              {appliance.purchase_date && (
-                                <div className="flex items-center gap-1 text-gray-500">
-                                  <Calendar className="w-3 h-3" />
-                                  Purchased {new Date(appliance.purchase_date).toLocaleDateString()}
-                                </div>
-                              )}
-                            </div>
+                       <Card key={appliance.id} className="bg-white border-0 shadow-sm hover:shadow-md transition-shadow">
+                         <CardContent className="p-5">
+                           <div className="flex items-start gap-3 mb-2">
+                             {appliance.photos && appliance.photos.length > 0 && (
+                               <img 
+                                 src={getThumbnailUrl(appliance.photos[0], 100)} 
+                                 alt=""
+                                 className="w-16 h-16 rounded object-cover flex-shrink-0"
+                                 loading="lazy"
+                               />
+                             )}
+                             <div className="flex-1">
+                               <h4 className="font-semibold text-gray-900 mb-2">{appliance.name}</h4>
+                               <div className="space-y-1 text-sm text-gray-600">
+                                 <div><span className="font-medium">Brand:</span> {appliance.brand}</div>
+                                 <div><span className="font-medium">Model:</span> {appliance.model}</div>
+                                 {appliance.purchase_date && (
+                                   <div className="flex items-center gap-1 text-gray-500">
+                                     <Calendar className="w-3 h-3" />
+                                     Purchased {new Date(appliance.purchase_date).toLocaleDateString()}
+                                   </div>
+                                 )}
+                               </div>
+                             </div>
+                           </div>
                             {appliance.manual_url ? (
                               <a
                                 href={appliance.manual_url}
@@ -384,6 +430,61 @@ export default function House() {
               onChange={(e) => setNewAppliance({ ...newAppliance, notes: e.target.value })}
               rows={3}
             />
+            <div>
+              <label className="text-sm font-medium mb-2 block">Photos</label>
+              <div className="space-y-3">
+                <div className="flex gap-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={isUploadingPhoto}
+                  >
+                    {isUploadingPhoto ? (
+                      <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Uploading...</>
+                    ) : (
+                      <><Upload className="w-4 h-4 mr-2" />Upload Photo</>
+                    )}
+                  </Button>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => handlePhotoUpload(e.target.files?.[0])}
+                    className="hidden"
+                  />
+                </div>
+                <Input
+                  placeholder="Or paste an image here (Ctrl+V / Cmd+V)..."
+                  onPaste={handlePaste}
+                  disabled={isUploadingPhoto}
+                  className="text-sm"
+                />
+                {newAppliance.photos && newAppliance.photos.length > 0 && (
+                  <div className="grid grid-cols-3 gap-2">
+                    {newAppliance.photos.map((photo, index) => (
+                      <div key={index} className="relative group">
+                        <img
+                          src={photo}
+                          alt={`Appliance photo ${index + 1}`}
+                          className="w-full h-24 object-cover rounded"
+                        />
+                        <Button
+                          type="button"
+                          variant="destructive"
+                          size="sm"
+                          onClick={() => removePhoto(index)}
+                          className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity h-6 w-6 p-0"
+                        >
+                          <X className="w-3 h-3" />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
             <Button
               onClick={() => createApplianceMutation.mutate(newAppliance)}
               disabled={!newAppliance.name || !newAppliance.brand || !newAppliance.model}
