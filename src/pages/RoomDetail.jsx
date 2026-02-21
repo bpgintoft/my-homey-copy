@@ -37,6 +37,7 @@ export default function RoomDetail() {
   const [isPaintOpen, setIsPaintOpen] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
   const [editingPaint, setEditingPaint] = useState(null);
+  const [expandedItemId, setExpandedItemId] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
   const [selectedPhoto, setSelectedPhoto] = useState(null);
@@ -211,8 +212,8 @@ export default function RoomDetail() {
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center">
         <div className="text-center">
           <h2 className="text-xl font-semibold text-slate-800 mb-2">Room not found</h2>
-          <Link to={createPageUrl('Rooms')} className="text-blue-600 hover:underline">
-            Return to Rooms
+          <Link to={createPageUrl('House')} className="text-blue-600 hover:underline">
+            Return to House
           </Link>
         </div>
       </div>
@@ -255,9 +256,9 @@ export default function RoomDetail() {
             animate={{ opacity: 1, x: 0 }}
             className="flex-1"
           >
-            <Link to={createPageUrl('Rooms')} className="inline-flex items-center text-white/90 hover:text-white mb-3 sm:mb-4 transition-colors text-sm">
+            <Link to={createPageUrl('House')} className="inline-flex items-center text-white/90 hover:text-white mb-3 sm:mb-4 transition-colors text-sm">
               <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Rooms
+              Back to House
             </Link>
             <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-1 sm:mb-2">{room.name}</h1>
             <p className="text-sm sm:text-lg text-white/90">
@@ -463,71 +464,152 @@ export default function RoomDetail() {
                 ))}
               </div>
             ) : items?.length > 0 ? (
-              <div className="grid md:grid-cols-2 gap-4">
+              <div className="space-y-4">
                 <AnimatePresence>
-                  {items.map((item, i) => (
-                    <motion.div
-                      key={item.id}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      transition={{ delay: i * 0.05 }}
-                    >
-                      <Card className="border-0 shadow-md hover:shadow-lg transition-shadow">
-                        <CardContent className="p-3">
-                          <div className="flex gap-2.5 items-center">
-                            {item.photos && item.photos.length > 0 && (
-                              <img 
-                                src={getThumbnailUrl(item.photos[0], 100)} 
-                                alt=""
-                                className="w-16 h-16 rounded object-cover flex-shrink-0 cursor-pointer hover:opacity-90"
-                                loading="lazy"
-                                onClick={() => {
-                                  setSelectedPhoto(item.photos[0]);
-                                  setPhotoZoom(1);
-                                }}
-                              />
-                            )}
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-start justify-between gap-2 mb-1">
-                                <div className="flex-1 min-w-0">
-                                  <h3 className="font-semibold text-slate-800 text-sm truncate mb-0.5">{item.name}</h3>
-                                  {(item.brand || item.model) && (
-                                    <p className="text-[11px] text-slate-600 truncate">
-                                      {item.brand} {item.model}
-                                    </p>
-                                  )}
+                  {items.map((item, i) => {
+                    const isExpanded = expandedItemId === item.id;
+                    return (
+                      <motion.div
+                        key={item.id}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        transition={{ delay: i * 0.05 }}
+                      >
+                        <Card className="border-0 shadow-md hover:shadow-lg transition-shadow overflow-hidden">
+                          <CardContent className="p-4">
+                            <div 
+                              className="flex gap-3 items-start cursor-pointer"
+                              onClick={() => setExpandedItemId(isExpanded ? null : item.id)}
+                            >
+                              {item.photos && item.photos.length > 0 && (
+                                <img 
+                                  src={getThumbnailUrl(item.photos[0], 100)} 
+                                  alt=""
+                                  className="w-20 h-20 rounded object-cover flex-shrink-0"
+                                  loading="lazy"
+                                />
+                              )}
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-start justify-between gap-2 mb-1">
+                                  <div className="flex-1 min-w-0">
+                                    <h3 className="font-semibold text-slate-800 text-base mb-1">{item.name}</h3>
+                                    {(item.brand || item.model) && (
+                                      <p className="text-sm text-slate-600">
+                                        {item.brand} {item.model}
+                                      </p>
+                                    )}
+                                    <Badge className={`${typeColors[item.type]} mt-2`}>
+                                      {item.type.charAt(0).toUpperCase() + item.type.slice(1)}
+                                    </Badge>
+                                  </div>
                                 </div>
-                                <div className="flex gap-0.5 flex-shrink-0">
-                                  <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => setEditingItem(item)}>
-                                    <Pencil className="w-3 h-3 text-slate-400" />
-                                  </Button>
-                                  <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => deleteItemMutation.mutate(item.id)}>
-                                    <Trash2 className="w-3 h-3 text-red-400" />
-                                  </Button>
-                                </div>
-                              </div>
-                              <div className="flex flex-wrap gap-x-3 gap-y-0.5 text-[10px] text-slate-500">
-                                {item.serial_number && <span className="truncate">S/N: {item.serial_number}</span>}
-                                {item.purchase_date && (
-                                  <span className="flex items-center gap-0.5">
-                                    <Calendar className="w-2.5 h-2.5" />
-                                    {new Date(item.purchase_date).toLocaleDateString()}
-                                  </span>
-                                )}
-                                {item.warranty_expiration && (
-                                  <span className="flex items-center gap-0.5">
-                                    <Shield className="w-2.5 h-2.5" />
-                                    {new Date(item.warranty_expiration).toLocaleDateString()}
-                                  </span>
-                                )}
                               </div>
                             </div>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    </motion.div>
-                  ))}
+
+                            <AnimatePresence>
+                              {isExpanded && (
+                                <motion.div
+                                  initial={{ height: 0, opacity: 0 }}
+                                  animate={{ height: 'auto', opacity: 1 }}
+                                  exit={{ height: 0, opacity: 0 }}
+                                  transition={{ duration: 0.2 }}
+                                  className="overflow-hidden"
+                                >
+                                  <div className="mt-4 pt-4 border-t space-y-4">
+                                    {item.serial_number && (
+                                      <div>
+                                        <Label className="text-xs text-slate-500">Serial Number</Label>
+                                        <p className="text-sm text-slate-800">{item.serial_number}</p>
+                                      </div>
+                                    )}
+                                    
+                                    <div className="grid grid-cols-2 gap-4">
+                                      {item.purchase_date && (
+                                        <div>
+                                          <Label className="text-xs text-slate-500">Purchase Date</Label>
+                                          <p className="text-sm text-slate-800 flex items-center gap-1">
+                                            <Calendar className="w-3 h-3" />
+                                            {new Date(item.purchase_date).toLocaleDateString()}
+                                          </p>
+                                        </div>
+                                      )}
+                                      {item.warranty_expiration && (
+                                        <div>
+                                          <Label className="text-xs text-slate-500">Warranty Expires</Label>
+                                          <p className="text-sm text-slate-800 flex items-center gap-1">
+                                            <Shield className="w-3 h-3" />
+                                            {new Date(item.warranty_expiration).toLocaleDateString()}
+                                          </p>
+                                        </div>
+                                      )}
+                                    </div>
+
+                                    {item.notes && (
+                                      <div>
+                                        <Label className="text-xs text-slate-500">Notes</Label>
+                                        <p className="text-sm text-slate-700 whitespace-pre-wrap">{item.notes}</p>
+                                      </div>
+                                    )}
+
+                                    {item.photos && item.photos.length > 1 && (
+                                      <div>
+                                        <Label className="text-xs text-slate-500 mb-2 block">Photos ({item.photos.length})</Label>
+                                        <div className="grid grid-cols-4 gap-2">
+                                          {item.photos.map((photo, idx) => (
+                                            <img
+                                              key={idx}
+                                              src={getThumbnailUrl(photo, 150)}
+                                              alt={`${item.name} ${idx + 1}`}
+                                              className="w-full h-20 object-cover rounded cursor-pointer hover:opacity-90"
+                                              onClick={(e) => {
+                                                e.stopPropagation();
+                                                setSelectedPhoto(photo);
+                                                setPhotoZoom(1);
+                                              }}
+                                            />
+                                          ))}
+                                        </div>
+                                      </div>
+                                    )}
+
+                                    <div className="flex gap-2 pt-2">
+                                      <Button 
+                                        variant="outline" 
+                                        size="sm" 
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          setEditingItem(item);
+                                        }}
+                                        className="flex-1"
+                                      >
+                                        <Pencil className="w-4 h-4 mr-2" />
+                                        Edit
+                                      </Button>
+                                      <Button 
+                                        variant="outline" 
+                                        size="sm"
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          if (confirm(`Delete ${item.name}?`)) {
+                                            deleteItemMutation.mutate(item.id);
+                                          }
+                                        }}
+                                        className="flex-1 text-red-600 hover:text-red-700 hover:bg-red-50"
+                                      >
+                                        <Trash2 className="w-4 h-4 mr-2" />
+                                        Delete
+                                      </Button>
+                                    </div>
+                                  </div>
+                                </motion.div>
+                              )}
+                            </AnimatePresence>
+                          </CardContent>
+                        </Card>
+                      </motion.div>
+                    );
+                  })}
                 </AnimatePresence>
               </div>
             ) : (
