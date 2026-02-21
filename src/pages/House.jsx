@@ -237,7 +237,7 @@ export default function House() {
                             <h3 className="font-semibold text-gray-900 text-lg mb-1">{room.name}</h3>
                             {room.floor && (
                               <Badge className="bg-emerald-100 text-emerald-700 border-0 mb-3">
-                                {room.floor}
+                                {room.floor} floor
                               </Badge>
                             )}
                             {room.description && (
@@ -256,7 +256,7 @@ export default function House() {
                             <img 
                               src={room.photo_url} 
                               alt={room.name}
-                              className="absolute top-0.5 right-0.5 bottom-0.5 w-40 h-[calc(100%-4px)] object-contain"
+                              className="absolute top-0.5 right-2 bottom-0.5 w-40 h-[calc(100%-4px)] object-contain"
                               loading="lazy"
                             />
                           )}
