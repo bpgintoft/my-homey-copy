@@ -31,6 +31,11 @@ export default function House() {
     queryFn: () => base44.entities.Room.list(),
   });
 
+  const { data: roomItems = [] } = useQuery({
+    queryKey: ['roomItems'],
+    queryFn: () => base44.entities.RoomItem.list(),
+  });
+
   const { data: appliances = [] } = useQuery({
     queryKey: ['appliances'],
     queryFn: () => base44.entities.Appliance.list(),
@@ -128,6 +133,12 @@ export default function House() {
       return result;
     },
   });
+
+  const itemsByRoomId = roomItems.reduce((acc, item) => {
+    if (!acc[item.room_id]) acc[item.room_id] = [];
+    acc[item.room_id].push(item);
+    return acc;
+  }, {});
 
   const appliancesByRoom = appliances.reduce((acc, appliance) => {
     const room = appliance.room_name || 'Unassigned';
@@ -238,7 +249,7 @@ export default function House() {
                           </div>
                         )}
                         <div className="text-sm text-gray-500 mt-2">
-                          {appliancesByRoom[room.name]?.length || 0} appliances
+                          {itemsByRoomId[room.id]?.length || 0} items
                         </div>
                       </CardContent>
                     </Card>
