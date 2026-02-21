@@ -234,14 +234,12 @@ export default function House() {
                       <CardContent className="p-5">
                         <div className="flex items-start justify-between gap-4">
                           <div className="flex-1 pr-32">
-                            <div className="flex items-start justify-between mb-3">
-                              <h3 className="font-semibold text-gray-900 text-lg">{room.name}</h3>
-                              {room.floor && (
-                                <Badge className="bg-emerald-100 text-emerald-700 border-0">
-                                  {room.floor}
-                                </Badge>
-                              )}
-                            </div>
+                            <h3 className="font-semibold text-gray-900 text-lg mb-1">{room.name}</h3>
+                            {room.floor && (
+                              <Badge className="bg-emerald-100 text-emerald-700 border-0 mb-3">
+                                {room.floor}
+                              </Badge>
+                            )}
                             {room.description && (
                               <p className="text-sm text-gray-600 mb-3">{room.description}</p>
                             )}
@@ -258,7 +256,7 @@ export default function House() {
                             <img 
                               src={room.photo_url} 
                               alt={room.name}
-                              className="absolute top-0 right-0 bottom-0 w-40 h-full object-contain"
+                              className="absolute top-0.5 right-0.5 bottom-0.5 w-40 h-[calc(100%-4px)] object-contain"
                               loading="lazy"
                             />
                           )}
