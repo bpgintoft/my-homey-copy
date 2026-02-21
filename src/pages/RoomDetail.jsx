@@ -271,7 +271,7 @@ export default function RoomDetail() {
             className="flex-shrink-0"
           >
             <img 
-              src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/0525a86f6_kitchen.png" 
+              src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/2db961fef_kitchen2.png" 
               alt={room.name}
               className="h-36 sm:h-48 md:h-56 w-auto object-contain drop-shadow-2xl"
             />
