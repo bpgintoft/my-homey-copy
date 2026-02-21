@@ -374,12 +374,20 @@ export default function Timeline() {
                           <motion.div
                             initial={{ opacity: 0, x: 20 }}
                             animate={{ opacity: 1, x: 0 }}
-                            className="bg-gray-50 rounded-lg p-2 hover:bg-gray-100 transition-colors cursor-pointer flex-1 ml-6"
+                            className="bg-gray-50 rounded-lg p-2 hover:bg-gray-100 transition-colors cursor-pointer flex-1 ml-6 flex items-center gap-2"
                             onClick={() => {
                               setSelectedEvent(event);
                               setEditingEvent(null);
                             }}
                           >
+                            {event.photos && event.photos.length > 0 && (
+                              <img 
+                                src={getThumbnailUrl(event.photos[0], 100)} 
+                                alt=""
+                                className="w-10 h-10 rounded object-cover flex-shrink-0"
+                                loading="lazy"
+                              />
+                            )}
                             <h3 className="font-semibold text-gray-900 text-sm">{event.title}</h3>
                           </motion.div>
                         </div>
