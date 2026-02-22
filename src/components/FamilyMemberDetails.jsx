@@ -264,7 +264,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
   return (
     <div className="space-y-2">
       {/* Passport & License */}
-      <div className={`grid grid-cols-3 gap-x-2 p-2.5 rounded-lg ${itemBg}`}>
+      <div className={`grid grid-cols-[1fr_1.3fr_1fr] gap-x-2 p-2.5 rounded-lg ${itemBg}`}>
         <div 
           className="cursor-pointer flex flex-col items-center text-center"
           onClick={() => {
