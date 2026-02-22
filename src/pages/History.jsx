@@ -1,12 +1,26 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
+import { createPageUrl } from '@/utils';
 import { base44 } from '@/api/base44Client';
+import useSwipe from '../components/useSwipe';
 import { Card, CardContent } from "@/components/ui/card";
 import { History as HistoryIcon, Home as HomeIcon, DollarSign, TrendingUp, Calendar, Ruler } from 'lucide-react';
 import { motion } from 'framer-motion';
 import Timeline from '../components/Timeline';
 
 export default function History() {
+  const navigate = useNavigate();
+  const bannerRef = useRef(null);
+  
+  useSwipe(bannerRef, (direction) => {
+    if (direction === 'left') {
+      navigate(createPageUrl('Meals'));
+    } else if (direction === 'right') {
+      navigate(createPageUrl('House'));
+    }
+  });
+
   const { data: homeInfo } = useQuery({
     queryKey: ['homeInfo'],
     queryFn: () => base44.entities.HomeInfo.list(),
@@ -69,7 +83,7 @@ export default function History() {
         }
       `}</style>
       <div className="history-banner-bg relative overflow-hidden">
-        <div className="relative h-40 md:h-48 history-banner-bg">
+        <div ref={bannerRef} className="relative h-40 md:h-48 history-banner-bg cursor-grab active:cursor-grabbing">
           <div className="relative z-10 flex items-center justify-between px-4 md:px-12 gap-4 h-full">
             <div className="flex-1">
               <h1 className="text-2xl md:text-4xl font-bold text-gray-800 mb-1 md:mb-2">

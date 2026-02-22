@@ -1,6 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
+import { createPageUrl } from '@/utils';
 import { base44 } from '@/api/base44Client';
+import useSwipe from '../components/useSwipe';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -17,6 +20,17 @@ import ProteinTypeFilter from '../components/ProteinTypeFilter';
 import MealQuickSelector from '../components/MealQuickSelector';
 
 export default function Meals() {
+  const navigate = useNavigate();
+  const bannerRef = useRef(null);
+  
+  useSwipe(bannerRef, (direction) => {
+    if (direction === 'left') {
+      navigate(createPageUrl('Kids'));
+    } else if (direction === 'right') {
+      navigate(createPageUrl('History'));
+    }
+  });
+
   const [showMealDialog, setShowMealDialog] = useState(false);
     const [newMeal, setNewMeal] = useState({});
     const [editingMeal, setEditingMeal] = useState(null);
@@ -655,7 +669,7 @@ export default function Meals() {
             background-position: 0 0, 7px 7px;
           }
         `}</style>
-        <div className="relative h-40 md:h-48 meal-banner-bg">
+        <div ref={bannerRef} className="relative h-40 md:h-48 meal-banner-bg cursor-grab active:cursor-grabbing">
           <div className="relative z-10 flex items-center justify-between px-4 md:px-12 gap-0 h-full">
             <div className="flex-1">
               <h1 className="text-2xl md:text-4xl font-bold text-gray-800 mb-1 md:mb-2">

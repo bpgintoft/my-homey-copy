@@ -1,6 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
+import { createPageUrl } from '@/utils';
 import { base44 } from '@/api/base44Client';
+import useSwipe from '../components/useSwipe';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -14,6 +17,17 @@ import { motion } from 'framer-motion';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, parseISO } from 'date-fns';
 
 export default function Kids() {
+  const navigate = useNavigate();
+  const bannerRef = useRef(null);
+  
+  useSwipe(bannerRef, (direction) => {
+    if (direction === 'left') {
+      navigate(createPageUrl('House'));
+    } else if (direction === 'right') {
+      navigate(createPageUrl('Meals'));
+    }
+  });
+
   const [showDialog, setShowDialog] = useState(false);
   const [newActivity, setNewActivity] = useState({});
   const [editingActivity, setEditingActivity] = useState(null);
@@ -138,7 +152,7 @@ export default function Kids() {
             background-position: 0 0, 7px 7px;
           }
         `}</style>
-        <div className="relative h-40 md:h-48 kids-banner-bg">
+        <div ref={bannerRef} className="relative h-40 md:h-48 kids-banner-bg cursor-grab active:cursor-grabbing">
           <div className="relative z-10 flex items-center justify-between px-4 md:px-12 gap-0 h-full">
             <div className="flex-1">
               <h1 className="text-2xl md:text-4xl font-bold text-gray-800 mb-1 md:mb-2">
