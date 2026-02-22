@@ -115,6 +115,20 @@ export default function Family() {
             />
           </div>
           <div>
+            <Label>Type</Label>
+            <Select value={formData.person_type || 'adult'} onValueChange={(value) => setFormData({...formData, person_type: value})}>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="kid">Kid</SelectItem>
+                <SelectItem value="adult">Adult</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+          <div>
             <Label>Role</Label>
             <Input 
               value={formData.role || ''}
@@ -122,8 +136,6 @@ export default function Family() {
               placeholder="e.g., Parent, Child, Grandparent"
             />
           </div>
-        </div>
-        <div className="grid grid-cols-2 gap-4">
           <div>
             <Label>Phone</Label>
             <Input 
