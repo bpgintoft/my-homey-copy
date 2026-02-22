@@ -323,37 +323,37 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
       <div className="grid grid-cols-2 gap-4">
         <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => setExpandedSection('schoolProgram')}>
           <CardHeader>
-            <CardTitle className="flex items-center gap-3">{member?.person_type === 'adult' ? <Briefcase className={`w-10 h-10 ${iconColor}`} /> : <GraduationCap className={`w-10 h-10 ${iconColor}`} />}{member?.school_or_work_name || (member?.person_type === 'adult' ? 'Work' : 'School')}</CardTitle>
+            <CardTitle className="flex items-center gap-3">{member?.person_type === 'adult' ? <Briefcase className={`w-8 h-8 ${iconColor}`} /> : <GraduationCap className={`w-8 h-8 ${iconColor}`} />}{member?.school_or_work_name || (member?.person_type === 'adult' ? 'Work' : 'School')}</CardTitle>
           </CardHeader>
         </Card>
 
         <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => setExpandedSection('links')}>
           <CardHeader>
-            <CardTitle className="flex items-center gap-3"><Link2 className={`w-10 h-10 ${iconColor}`} />Important Links</CardTitle>
+            <CardTitle className="flex items-center gap-3"><Link2 className={`w-8 h-8 ${iconColor}`} />Important Links</CardTitle>
           </CardHeader>
         </Card>
 
         <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => setExpandedSection('contacts')}>
           <CardHeader>
-            <CardTitle className="flex items-center gap-3"><Users className={`w-10 h-10 ${iconColor}`} />Important Contacts</CardTitle>
+            <CardTitle className="flex items-center gap-3"><Users className={`w-8 h-8 ${iconColor}`} />Important Contacts</CardTitle>
           </CardHeader>
         </Card>
 
         <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => setExpandedSection('chores')}>
           <CardHeader>
-            <CardTitle className="flex items-center gap-3"><ListTodo className={`w-10 h-10 ${iconColor}`} />To-Do List & Chores</CardTitle>
+            <CardTitle className="flex items-center gap-3"><ListTodo className={`w-8 h-8 ${iconColor}`} />To-Do List & Chores</CardTitle>
           </CardHeader>
         </Card>
 
         <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => setExpandedSection('notes')}>
           <CardHeader>
-            <CardTitle className="flex items-center gap-3"><Lightbulb className={`w-10 h-10 ${iconColor}`} />Personal Notes & Reminders</CardTitle>
+            <CardTitle className="flex items-center gap-3"><Lightbulb className={`w-8 h-8 ${iconColor}`} />Personal Notes & Reminders</CardTitle>
           </CardHeader>
         </Card>
 
         <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => setExpandedSection('milestones')}>
           <CardHeader>
-            <CardTitle className="flex items-center gap-3"><Target className={`w-10 h-10 ${iconColor}`} />Goals & Milestones</CardTitle>
+            <CardTitle className="flex items-center gap-3"><Target className={`w-8 h-8 ${iconColor}`} />Goals & Milestones</CardTitle>
           </CardHeader>
         </Card>
       </div>
