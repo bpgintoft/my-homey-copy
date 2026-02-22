@@ -222,7 +222,7 @@ export default function SchoolProgramSection({ memberId, memberName, programTitl
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{program?.title || schoolOrWorkName || sectionLabel}</CardTitle>
+        <CardTitle>{schoolOrWorkName || program?.title || sectionLabel}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
             {/* Website Link */}
