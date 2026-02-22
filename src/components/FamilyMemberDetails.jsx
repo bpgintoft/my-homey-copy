@@ -7,12 +7,9 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { Plus, Trash2, ExternalLink, CheckCircle2, Circle, Loader2, ChevronDown, Edit2, GripVertical } from 'lucide-react';
+import { Plus, Trash2, ExternalLink, CheckCircle2, Circle, Loader2, Edit2, GripVertical } from 'lucide-react';
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import { motion } from 'framer-motion';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import SchoolProgramSection from './SchoolProgramSection';
 
@@ -42,14 +39,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
   const [categorizingLink, setCategorizingLink] = useState(false);
   const [editingLink, setEditingLink] = useState(null);
   const [personalNotes, setPersonalNotes] = useState('');
-  const [openSections, setOpenSections] = useState({
-      links: false,
-      contacts: false,
-      chores: false,
-      notes: false,
-      milestones: false
-    });
-    const [expandedSection, setExpandedSection] = useState(null);
+  const [expandedSection, setExpandedSection] = useState(null);
 
   // Fetch data
   const { data: member } = useQuery({
@@ -120,12 +110,9 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
 
   const handleDragEnd = (result) => {
     if (!result.destination) return;
-
     const sourceCategory = result.source.droppableId;
     const destCategory = result.destination.droppableId;
     const choreId = result.draggableId;
-
-    // If moved to different category, update timing
     if (sourceCategory !== destCategory) {
       updateChoreTimingMutation.mutate({ id: choreId, timing: destCategory });
     }
@@ -265,8 +252,6 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
 
   return (
     <div className="space-y-4">
-      {/* Grid Layout */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       {/* Passport & License */}
       <div className={`grid grid-cols-[1.2fr_1.3fr_1fr] gap-x-2 p-2.5 rounded-lg ${itemBg}`}>
         <div 
@@ -325,716 +310,489 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
         </div>
       </div>
 
-      {/* School Program */}
-      <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => setExpandedSection('schoolProgram')}>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">School Program</CardTitle>
-        </CardHeader>
-      </Card>
+      {/* 2-Column Grid for Sections */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => setExpandedSection('schoolProgram')}>
+          <CardHeader>
+            <CardTitle>School Program</CardTitle>
+          </CardHeader>
+        </Card>
 
-      {/* Important Links */}
-      <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => setExpandedSection('links')}>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">Important Links</CardTitle>
-        </CardHeader>
-      </Card>
+        <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => setExpandedSection('links')}>
+          <CardHeader>
+            <CardTitle>Important Links</CardTitle>
+          </CardHeader>
+        </Card>
 
-      {/* Important Contacts */}
-      <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => setExpandedSection('contacts')}>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">Important Contacts</CardTitle>
-        </CardHeader>
-      </Card>
+        <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => setExpandedSection('contacts')}>
+          <CardHeader>
+            <CardTitle>Important Contacts</CardTitle>
+          </CardHeader>
+        </Card>
 
-      {/* To-Do List / Chores */}
-      <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => setExpandedSection('chores')}>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">To-Do List & Chores</CardTitle>
-        </CardHeader>
-      </Card>
+        <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => setExpandedSection('chores')}>
+          <CardHeader>
+            <CardTitle>To-Do List & Chores</CardTitle>
+          </CardHeader>
+        </Card>
 
-      {/* Personal Notes */}
-      <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => setExpandedSection('notes')}>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">Personal Notes & Reminders</CardTitle>
-        </CardHeader>
-      </Card>
+        <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => setExpandedSection('notes')}>
+          <CardHeader>
+            <CardTitle>Personal Notes & Reminders</CardTitle>
+          </CardHeader>
+        </Card>
 
-      {/* Goals & Milestones */}
-      <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => setExpandedSection('milestones')}>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">Goals & Milestones</CardTitle>
-        </CardHeader>
-      </Card>
+        <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => setExpandedSection('milestones')}>
+          <CardHeader>
+            <CardTitle>Goals & Milestones</CardTitle>
+          </CardHeader>
+        </Card>
       </div>
 
       {/* Links Dialog */}
       <Dialog open={expandedSection === 'links'} onOpenChange={(open) => !open && setExpandedSection(null)}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle>Important Links</DialogTitle>
-        </DialogHeader>
-            <CardContent className="space-y-4">
-              <div className="flex gap-2">
-                <Input
-                  placeholder="Paste a link here..."
-                  value={quickLinkUrl}
-                  onChange={(e) => setQuickLinkUrl(e.target.value)}
-                  onBlur={handleQuickLinkPaste}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' && quickLinkUrl.trim()) {
-                      setShowTitleDialog(true);
-                    }
-                  }}
-                />
-              </div>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Important Links</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="flex gap-2">
+              <Input
+                placeholder="Paste a link here..."
+                value={quickLinkUrl}
+                onChange={(e) => setQuickLinkUrl(e.target.value)}
+                onBlur={handleQuickLinkPaste}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && quickLinkUrl.trim()) {
+                    setShowTitleDialog(true);
+                  }
+                }}
+              />
+            </div>
 
-              <Dialog open={showTitleDialog} onOpenChange={setShowTitleDialog}>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>Add Link Details</DialogTitle>
-                  </DialogHeader>
+            <Dialog open={showTitleDialog} onOpenChange={setShowTitleDialog}>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Add Link Details</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4">
+                  <Input
+                    placeholder="Enter title for this link"
+                    value={newLink.title}
+                    onChange={(e) => setNewLink({ ...newLink, title: e.target.value })}
+                  />
+                  <Input
+                    placeholder="Enter category (e.g., school, sports, medical...)"
+                    value={newLink.category}
+                    onChange={(e) => setNewLink({ ...newLink, category: e.target.value })}
+                  />
+                  <p className="text-xs text-gray-500">Leave category blank for AI to categorize automatically</p>
+                  <Button
+                    onClick={() => createLinkMutation.mutate({
+                      url: quickLinkUrl,
+                      title: newLink.title,
+                      category: newLink.category,
+                      assigned_to_member_id: memberId,
+                      assigned_to_name: memberName,
+                    })}
+                    disabled={categorizingLink}
+                  >
+                    {categorizingLink ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Categorizing...</> : 'Add Link'}
+                  </Button>
+                </div>
+              </DialogContent>
+            </Dialog>
+
+            <Dialog open={!!editingLink} onOpenChange={(open) => !open && setEditingLink(null)}>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Edit Link</DialogTitle>
+                </DialogHeader>
+                {editingLink && (
                   <div className="space-y-4">
                     <Input
-                      placeholder="Enter title for this link"
-                      value={newLink.title}
-                      onChange={(e) => setNewLink({ ...newLink, title: e.target.value })}
+                      placeholder="Title"
+                      value={editingLink.title || ''}
+                      onChange={(e) => setEditingLink({ ...editingLink, title: e.target.value })}
                     />
                     <Input
-                      placeholder="Enter category (e.g., school, sports, medical...)"
-                      value={newLink.category}
-                      onChange={(e) => setNewLink({ ...newLink, category: e.target.value })}
+                      placeholder="URL"
+                      value={editingLink.url || ''}
+                      onChange={(e) => setEditingLink({ ...editingLink, url: e.target.value })}
                     />
-                    <p className="text-xs text-gray-500">Leave category blank for AI to categorize automatically</p>
+                    <Input
+                      placeholder="Category (e.g., school, sports, medical...)"
+                      value={editingLink.category || ''}
+                      onChange={(e) => setEditingLink({ ...editingLink, category: e.target.value })}
+                    />
                     <Button
-                      onClick={() => createLinkMutation.mutate({
-                        url: quickLinkUrl,
-                        title: newLink.title,
-                        category: newLink.category,
-                        assigned_to_member_id: memberId,
-                        assigned_to_name: memberName,
+                      onClick={() => updateLinkMutation.mutate({
+                        id: editingLink.id,
+                        data: {
+                          title: editingLink.title,
+                          url: editingLink.url,
+                          category: editingLink.category,
+                        }
                       })}
-                      disabled={categorizingLink}
                     >
-                      {categorizingLink ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Categorizing...</> : 'Add Link'}
+                      Save Changes
                     </Button>
                   </div>
-                </DialogContent>
-              </Dialog>
+                )}
+              </DialogContent>
+            </Dialog>
 
-              <Dialog open={!!editingLink} onOpenChange={(open) => !open && setEditingLink(null)}>
+            {Object.keys(linksByCategory).length === 0 ? (
+              <p className="text-sm text-gray-500">No links yet</p>
+            ) : (
+              Object.entries(linksByCategory).map(([category, categoryLinks]) => (
+                <div key={category}>
+                  <h4 className="font-medium text-sm text-gray-700 mb-2 capitalize">{category.replace(/_/g, ' ')}</h4>
+                  <div className="space-y-2">
+                    {categoryLinks.map((link) => (
+                      <div key={link.id} className={`flex items-center gap-2 p-2 rounded ${itemBg}`}>
+                        <a href={link.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-blue-600 hover:underline flex-1 min-w-0">
+                          <ExternalLink className="w-4 h-4 flex-shrink-0" />
+                          <span className="overflow-hidden text-ellipsis whitespace-nowrap">{link.title || link.url}</span>
+                        </a>
+                        <div className="flex gap-0.5 flex-shrink-0">
+                          <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setEditingLink(link)}>
+                            <Edit2 className="w-3 h-3 text-gray-500" />
+                          </Button>
+                          <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => deleteLinkMutation.mutate(link.id)}>
+                            <Trash2 className="w-3 h-3 text-red-500" />
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Contacts Dialog */}
+      <Dialog open={expandedSection === 'contacts'} onOpenChange={(open) => !open && setExpandedSection(null)}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center justify-between">
+              <span>Important Contacts</span>
+              <Dialog open={dialogOpen.contact} onOpenChange={(open) => setDialogOpen({ ...dialogOpen, contact: open })}>
+                <DialogTrigger asChild>
+                  <Button size="sm">
+                    <Plus className="w-4 h-4 mr-2" />Add
+                  </Button>
+                </DialogTrigger>
                 <DialogContent>
                   <DialogHeader>
-                    <DialogTitle>Edit Link</DialogTitle>
+                    <DialogTitle>Add New Contact</DialogTitle>
                   </DialogHeader>
-                  {editingLink && (
-                    <div className="space-y-4">
-                      <Input
-                        placeholder="Title"
-                        value={editingLink.title || ''}
-                        onChange={(e) => setEditingLink({ ...editingLink, title: e.target.value })}
-                      />
-                      <Input
-                        placeholder="URL"
-                        value={editingLink.url || ''}
-                        onChange={(e) => setEditingLink({ ...editingLink, url: e.target.value })}
-                      />
-                      <Input
-                        placeholder="Category (e.g., school, sports, medical...)"
-                        value={editingLink.category || ''}
-                        onChange={(e) => setEditingLink({ ...editingLink, category: e.target.value })}
-                      />
-                      <Button
-                        onClick={() => updateLinkMutation.mutate({
-                          id: editingLink.id,
-                          data: {
-                            title: editingLink.title,
-                            url: editingLink.url,
-                            category: editingLink.category,
+                  <div className="space-y-4">
+                    <Input placeholder="Name" value={newContact.name} onChange={(e) => setNewContact({ ...newContact, name: e.target.value })} />
+                    <Input placeholder="Type (e.g., Emergency, Neighbor, Family...)" value={newContact.type} onChange={(e) => setNewContact({ ...newContact, type: e.target.value })} />
+                    <Input placeholder="Phone" value={newContact.phone} onChange={(e) => setNewContact({ ...newContact, phone: e.target.value })} />
+                    <Input placeholder="Email" value={newContact.email} onChange={(e) => setNewContact({ ...newContact, email: e.target.value })} />
+                    <Input placeholder="Address" value={newContact.address} onChange={(e) => setNewContact({ ...newContact, address: e.target.value })} />
+                    <Input placeholder="Website" value={newContact.website} onChange={(e) => setNewContact({ ...newContact, website: e.target.value })} />
+                    <div className="space-y-3">
+                      <Label>Link to family members:</Label>
+                      <div className="flex items-center space-x-2">
+                        <Checkbox id="everyone" checked={newContact.linked_to_member_ids.includes('Everyone')} onCheckedChange={(checked) => {
+                          if (checked) {
+                            setNewContact({ ...newContact, linked_to_member_ids: ['Everyone'] });
+                          } else {
+                            setNewContact({ ...newContact, linked_to_member_ids: newContact.linked_to_member_ids.filter(id => id !== 'Everyone') });
                           }
-                        })}
-                      >
-                        Save Changes
-                      </Button>
-                    </div>
-                  )}
-                </DialogContent>
-              </Dialog>
-
-              {Object.keys(linksByCategory).length === 0 ? (
-                <p className="text-sm text-gray-500">No links yet</p>
-              ) : (
-                Object.entries(linksByCategory).map(([category, categoryLinks]) => (
-                  <div key={category}>
-                    <h4 className="font-medium text-sm text-gray-700 mb-2 capitalize">{category.replace(/_/g, ' ')}</h4>
-                    <div className="space-y-2">
-                      {categoryLinks.map((link) => (
-                        <div key={link.id} className={`flex items-center gap-2 p-2 rounded ${itemBg}`}>
-                          <a href={link.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-blue-600 hover:underline flex-1 min-w-0">
-                            <ExternalLink className="w-4 h-4 flex-shrink-0" />
-                            <span className="overflow-hidden text-ellipsis whitespace-nowrap">{link.title || link.url}</span>
-                          </a>
-                          <div className="flex gap-0.5 flex-shrink-0">
-                            <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setEditingLink(link)}>
-                              <Edit2 className="w-3 h-3 text-gray-500" />
-                            </Button>
-                            <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => deleteLinkMutation.mutate(link.id)}>
-                              <Trash2 className="w-3 h-3 text-red-500" />
-                            </Button>
-                          </div>
+                        }} />
+                        <label htmlFor="everyone" className="text-sm font-medium cursor-pointer">Everyone</label>
+                      </div>
+                      {familyMembers.map((fm) => (
+                        <div key={fm.id} className="flex items-center space-x-2">
+                          <Checkbox id={fm.id} checked={newContact.linked_to_member_ids.includes(fm.id)} disabled={newContact.linked_to_member_ids.includes('Everyone')} onCheckedChange={(checked) => {
+                            if (checked) {
+                              setNewContact({ 
+                                ...newContact, 
+                                linked_to_member_ids: [...newContact.linked_to_member_ids.filter(id => id !== 'Everyone'), fm.id] 
+                              });
+                            } else {
+                              setNewContact({ 
+                                ...newContact, 
+                                linked_to_member_ids: newContact.linked_to_member_ids.filter(id => id !== fm.id) 
+                              });
+                            }
+                          }} />
+                          <label htmlFor={fm.id} className="text-sm cursor-pointer">{fm.name}</label>
                         </div>
                       ))}
                     </div>
+                    <Button onClick={() => createContactMutation.mutate(newContact)} disabled={!newContact.name}>Add Contact</Button>
                   </div>
-                ))
-              )}
-            </DialogContent>
-            </Dialog>
-
-            {/* Contacts Dialog */}
-            <Dialog open={expandedSection === 'contacts'} onOpenChange={(open) => !open && setExpandedSection(null)}>
-            <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-              <DialogHeader>
-                <DialogTitle className="flex items-center justify-between">
-                  <span>Important Contacts</span>
-                  <Dialog open={dialogOpen.contact} onOpenChange={(open) => setDialogOpen({ ...dialogOpen, contact: open })}>
-                    <DialogTrigger asChild>
-                      <Button size="sm">
-                        <Plus className="w-4 h-4 mr-2" />Add
-                      </Button>
-                    </DialogTrigger>
-                  <DialogContent>
-                    <DialogHeader>
-                      <DialogTitle>Add New Contact</DialogTitle>
-                    </DialogHeader>
-                    <div className="space-y-4">
-                      <Input
-                        placeholder="Name"
-                        value={newContact.name}
-                        onChange={(e) => setNewContact({ ...newContact, name: e.target.value })}
-                      />
-                      <Input
-                        placeholder="Type (e.g., Emergency, Neighbor, Family...)"
-                        value={newContact.type}
-                        onChange={(e) => setNewContact({ ...newContact, type: e.target.value })}
-                      />
-                      <Input
-                        placeholder="Phone"
-                        value={newContact.phone}
-                        onChange={(e) => setNewContact({ ...newContact, phone: e.target.value })}
-                      />
-                      <Input
-                        placeholder="Email"
-                        value={newContact.email}
-                        onChange={(e) => setNewContact({ ...newContact, email: e.target.value })}
-                      />
-                      <Input
-                        placeholder="Address"
-                        value={newContact.address}
-                        onChange={(e) => setNewContact({ ...newContact, address: e.target.value })}
-                      />
-                      <Input
-                        placeholder="Website"
-                        value={newContact.website}
-                        onChange={(e) => setNewContact({ ...newContact, website: e.target.value })}
-                      />
-                      <div className="space-y-3">
-                        <Label>Link to family members:</Label>
-                        <div className="flex items-center space-x-2">
-                          <Checkbox
-                            id="everyone"
-                            checked={newContact.linked_to_member_ids.includes('Everyone')}
-                            onCheckedChange={(checked) => {
-                              if (checked) {
-                                setNewContact({ ...newContact, linked_to_member_ids: ['Everyone'] });
-                              } else {
-                                setNewContact({ ...newContact, linked_to_member_ids: newContact.linked_to_member_ids.filter(id => id !== 'Everyone') });
-                              }
-                            }}
-                          />
-                          <label htmlFor="everyone" className="text-sm font-medium cursor-pointer">Everyone</label>
-                        </div>
-                        {familyMembers.map((fm) => (
-                          <div key={fm.id} className="flex items-center space-x-2">
-                            <Checkbox
-                              id={fm.id}
-                              checked={newContact.linked_to_member_ids.includes(fm.id)}
-                              disabled={newContact.linked_to_member_ids.includes('Everyone')}
-                              onCheckedChange={(checked) => {
-                                if (checked) {
-                                  setNewContact({ 
-                                    ...newContact, 
-                                    linked_to_member_ids: [...newContact.linked_to_member_ids.filter(id => id !== 'Everyone'), fm.id] 
-                                  });
-                                } else {
-                                  setNewContact({ 
-                                    ...newContact, 
-                                    linked_to_member_ids: newContact.linked_to_member_ids.filter(id => id !== fm.id) 
-                                  });
-                                }
-                              }}
-                            />
-                            <label htmlFor={fm.id} className="text-sm cursor-pointer">{fm.name}</label>
-                          </div>
-                        ))}
-                      </div>
-                      <Button
-                        onClick={() => createContactMutation.mutate(newContact)}
-                        disabled={!newContact.name}
-                      >
-                        Add Contact
-                      </Button>
-                    </div>
-                  </DialogContent>
-                </Dialog>
-              )}
-            </CardHeader>
-          </CollapsibleTrigger>
-          <CollapsibleContent>
-            <CardContent>
-              {contacts.length === 0 ? (
-                <p className="text-sm text-gray-500">No contacts yet</p>
-              ) : (
-                <div className="space-y-4">
-                  {Object.entries(contactsByType).map(([type, typeContacts]) => (
-                    <div key={type}>
-                      <h4 className="font-medium text-sm text-gray-700 mb-2">{type}</h4>
-                      <div className="space-y-2">
-                        {typeContacts.map((contact) => {
-                          const isExpanded = expandedContactId === contact.id;
-
-                          return (
-                            <div key={contact.id} className={`rounded-lg overflow-hidden ${itemBg}`}>
-                              <div 
-                                className={`flex items-center gap-2 p-3 cursor-pointer hover:opacity-80 transition-opacity`}
-                                onClick={() => setExpandedContactId(isExpanded ? null : contact.id)}
-                              >
-                                <div className="flex-1 min-w-0">
-                                  <div className="font-medium">{contact.name}</div>
-                                </div>
-                                <div className="flex gap-0.5 flex-shrink-0">
-                                  <Button 
-                                    variant="ghost" 
-                                    size="icon"
-                                    className="h-7 w-7"
-                                    onClick={(e) => { e.stopPropagation(); setEditingContact(contact); }}
-                                  >
-                                    <Edit2 className="w-3 h-3 text-gray-500" />
-                                  </Button>
-                                  <Button 
-                                    variant="ghost" 
-                                    size="icon"
-                                    className="h-7 w-7"
-                                    onClick={(e) => { e.stopPropagation(); deleteContactMutation.mutate(contact.id); }}
-                                  >
-                                    <Trash2 className="w-3 h-3 text-red-500" />
-                                  </Button>
-                                </div>
-                              </div>
-
-                              {isExpanded && (
-                                <div className="px-3 pb-3 space-y-2 border-t border-gray-200 pt-2">
-                                  {contact.phone && (
-                                    <a 
-                                      href={`tel:${contact.phone}`}
-                                      className="block text-sm text-blue-600 hover:underline"
-                                      onClick={(e) => e.stopPropagation()}
-                                    >
-                                      📞 {contact.phone}
-                                    </a>
-                                  )}
-                                  {contact.email && (
-                                    <a 
-                                      href={`mailto:${contact.email}`}
-                                      className="block text-sm text-blue-600 hover:underline"
-                                      onClick={(e) => e.stopPropagation()}
-                                    >
-                                      ✉️ {contact.email}
-                                    </a>
-                                  )}
-                                  {contact.address && (
-                                    <a 
-                                      href={`https://maps.google.com/?q=${encodeURIComponent(contact.address)}`}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                      className="block text-sm text-blue-600 hover:underline"
-                                      onClick={(e) => e.stopPropagation()}
-                                    >
-                                      📍 {contact.address}
-                                    </a>
-                                  )}
-                                  {contact.website && (
-                                    <a 
-                                      href={contact.website.startsWith('http') ? contact.website : `https://${contact.website}`}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                      className="block text-sm text-blue-600 hover:underline"
-                                      onClick={(e) => e.stopPropagation()}
-                                    >
-                                      🌐 {contact.website}
-                                    </a>
-                                  )}
-                                </div>
-                              )}
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              <Dialog open={!!editingContact} onOpenChange={(open) => !open && setEditingContact(null)}>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>Edit Contact</DialogTitle>
-                  </DialogHeader>
-                  {editingContact && (
-                    <div className="space-y-4">
-                      <Input
-                        placeholder="Name"
-                        value={editingContact.name}
-                        onChange={(e) => setEditingContact({ ...editingContact, name: e.target.value })}
-                      />
-                      <Input
-                        placeholder="Type (e.g., Emergency, Neighbor, Family...)"
-                        value={editingContact.type || ''}
-                        onChange={(e) => setEditingContact({ ...editingContact, type: e.target.value })}
-                      />
-                      <Input
-                        placeholder="Phone"
-                        value={editingContact.phone || ''}
-                        onChange={(e) => setEditingContact({ ...editingContact, phone: e.target.value })}
-                      />
-                      <Input
-                        placeholder="Email"
-                        value={editingContact.email || ''}
-                        onChange={(e) => setEditingContact({ ...editingContact, email: e.target.value })}
-                      />
-                      <Input
-                        placeholder="Address"
-                        value={editingContact.address || ''}
-                        onChange={(e) => setEditingContact({ ...editingContact, address: e.target.value })}
-                      />
-                      <Input
-                        placeholder="Website"
-                        value={editingContact.website || ''}
-                        onChange={(e) => setEditingContact({ ...editingContact, website: e.target.value })}
-                      />
-                      <div className="space-y-3">
-                        <Label>Link to family members:</Label>
-                        <div className="flex items-center space-x-2">
-                          <Checkbox
-                            id="edit-everyone"
-                            checked={editingContact.linked_to_member_ids?.includes('Everyone')}
-                            onCheckedChange={(checked) => {
-                              if (checked) {
-                                setEditingContact({ ...editingContact, linked_to_member_ids: ['Everyone'] });
-                              } else {
-                                setEditingContact({ ...editingContact, linked_to_member_ids: editingContact.linked_to_member_ids?.filter(id => id !== 'Everyone') || [] });
-                              }
-                            }}
-                          />
-                          <label htmlFor="edit-everyone" className="text-sm font-medium cursor-pointer">Everyone</label>
-                        </div>
-                        {familyMembers.map((fm) => (
-                          <div key={fm.id} className="flex items-center space-x-2">
-                            <Checkbox
-                              id={`edit-${fm.id}`}
-                              checked={editingContact.linked_to_member_ids?.includes(fm.id)}
-                              disabled={editingContact.linked_to_member_ids?.includes('Everyone')}
-                              onCheckedChange={(checked) => {
-                                if (checked) {
-                                  setEditingContact({ 
-                                    ...editingContact, 
-                                    linked_to_member_ids: [...(editingContact.linked_to_member_ids?.filter(id => id !== 'Everyone') || []), fm.id] 
-                                  });
-                                } else {
-                                  setEditingContact({ 
-                                    ...editingContact, 
-                                    linked_to_member_ids: editingContact.linked_to_member_ids?.filter(id => id !== fm.id) || [] 
-                                  });
-                                }
-                              }}
-                            />
-                            <label htmlFor={`edit-${fm.id}`} className="text-sm cursor-pointer">{fm.name}</label>
-                          </div>
-                        ))}
-                      </div>
-                      <Button
-                        onClick={() => updateContactMutation.mutate({
-                          id: editingContact.id,
-                          data: {
-                            name: editingContact.name,
-                            type: editingContact.type,
-                            phone: editingContact.phone,
-                            email: editingContact.email,
-                            address: editingContact.address,
-                            website: editingContact.website,
-                            linked_to_member_ids: editingContact.linked_to_member_ids,
-                          }
-                        })}
-                        disabled={!editingContact.name}
-                      >
-                        Save Changes
-                      </Button>
-                    </div>
-                  )}
                 </DialogContent>
               </Dialog>
-            </CardContent>
-          </CollapsibleContent>
-        </Card>
-      </Collapsible>
-
-      {/* To-Do List / Chores */}
-      <Collapsible 
-        open={openSections.chores} 
-        onOpenChange={(open) => setOpenSections({ ...openSections, chores: open })}
-      >
-        <Card>
-          <CollapsibleTrigger className="w-full">
-            <CardHeader className="flex flex-row items-center justify-between cursor-pointer hover:bg-gray-50 transition-colors">
-              <CardTitle className="flex items-center gap-2">
-                To-Do List & Chores
-                <ChevronDown className={`w-5 h-5 transition-transform ${openSections.chores ? 'rotate-180' : ''}`} />
-              </CardTitle>
-              {openSections.chores && (
-                <Dialog open={dialogOpen.chore} onOpenChange={(open) => setDialogOpen({ ...dialogOpen, chore: open })}>
-                  <DialogTrigger asChild>
-                    <Button size="sm" onClick={(e) => e.stopPropagation()}>
-                      <Plus className="w-4 h-4 mr-2" />Add
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent>
-                    <DialogHeader>
-                      <DialogTitle>Add New Chore</DialogTitle>
-                    </DialogHeader>
-                    <div className="space-y-4">
-                      <Input
-                        placeholder="Chore title"
-                        value={newChore.title}
-                        onChange={(e) => setNewChore({ ...newChore, title: e.target.value })}
-                      />
-                      <Select value={newChore.timing} onValueChange={(value) => setNewChore({ ...newChore, timing: value })}>
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="short-term">Short-term</SelectItem>
-                          <SelectItem value="mid-term">Mid-term</SelectItem>
-                          <SelectItem value="long-term">Long-term</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <Button
-                        onClick={() => createChoreMutation.mutate({
-                          title: newChore.title,
-                          timing: newChore.timing,
-                          assigned_to_member_id: memberId,
-                          assigned_to_name: memberName,
-                        })}
-                        disabled={!newChore.title}
-                      >
-                        Add Chore
-                      </Button>
-                    </div>
-                  </DialogContent>
-                </Dialog>
-              )}
-            </CardHeader>
-          </CollapsibleTrigger>
-          <CollapsibleContent>
-            <CardContent>
-              {chores.length === 0 ? (
-                <p className="text-sm text-gray-500">No tasks yet</p>
-              ) : (
-                <DragDropContext onDragEnd={handleDragEnd}>
-                  <div className="space-y-4">
-                    {['short-term', 'mid-term', 'long-term'].map((timing) => {
-                      const timingChores = choresByTiming[timing];
-                      
-                      return (
-                        <div key={timing}>
-                          <h4 className="font-medium text-sm text-gray-700 mb-2 capitalize">
-                            {timing === 'mid-term' ? 'Mid-term' : timing === 'short-term' ? 'Short-term' : 'Long-term'}
-                          </h4>
-                          <Droppable droppableId={timing}>
-                            {(provided, snapshot) => (
-                              <div
-                                ref={provided.innerRef}
-                                {...provided.droppableProps}
-                                className={`space-y-2 min-h-[60px] p-2 rounded-lg transition-colors ${
-                                  snapshot.isDraggingOver ? 'bg-blue-50 border-2 border-blue-300' : 'bg-transparent'
-                                }`}
-                              >
-                                {timingChores.length === 0 && !snapshot.isDraggingOver ? (
-                                  <p className="text-xs text-gray-400 text-center py-2">Drop items here</p>
-                                ) : (
-                                  timingChores.map((chore, index) => (
-                                    <Draggable key={chore.id} draggableId={chore.id} index={index}>
-                                      {(provided, snapshot) => (
-                                        <div
-                                          ref={provided.innerRef}
-                                          {...provided.draggableProps}
-                                          className={`flex items-center justify-between p-3 rounded-lg ${itemBg} ${
-                                            snapshot.isDragging ? 'shadow-lg opacity-90' : ''
-                                          }`}
-                                        >
-                                          <div className="flex items-center gap-3 flex-1 min-w-0">
-                                            <div {...provided.dragHandleProps} className="cursor-grab active:cursor-grabbing">
-                                              <GripVertical className="w-4 h-4 text-gray-400" />
-                                            </div>
-                                            <button onClick={() => toggleChoreMutation.mutate({ id: chore.id, is_completed: !chore.is_completed })}>
-                                              {chore.is_completed ? (
-                                                <CheckCircle2 className="w-5 h-5 text-green-500" />
-                                              ) : (
-                                                <Circle className="w-5 h-5 text-gray-400" />
-                                              )}
-                                            </button>
-                                            {editingChoreId === chore.id ? (
-                                              <Input
-                                                value={editingChoreTitle}
-                                                onChange={(e) => setEditingChoreTitle(e.target.value)}
-                                                onBlur={() => updateChoreMutation.mutate({ id: chore.id, title: editingChoreTitle })}
-                                                onKeyDown={(e) => {
-                                                  if (e.key === 'Enter') updateChoreMutation.mutate({ id: chore.id, title: editingChoreTitle });
-                                                  if (e.key === 'Escape') setEditingChoreId(null);
-                                                }}
-                                                autoFocus
-                                                className="h-8"
-                                              />
-                                            ) : (
-                                              <span 
-                                                className={`cursor-pointer hover:text-blue-600 flex-1 ${chore.is_completed ? 'line-through text-gray-500' : ''}`}
-                                                onClick={() => {
-                                                  setEditingChoreId(chore.id);
-                                                  setEditingChoreTitle(chore.title);
-                                                }}
-                                              >
-                                                {chore.title}
-                                              </span>
-                                            )}
-                                          </div>
-                                          <Button variant="ghost" size="sm" onClick={() => deleteChoreMutation.mutate(chore.id)}>
-                                            <Trash2 className="w-4 h-4 text-red-500" />
-                                          </Button>
-                                        </div>
-                                      )}
-                                    </Draggable>
-                                  ))
-                                )}
-                                {provided.placeholder}
+            </DialogTitle>
+          </DialogHeader>
+          <div>
+            {contacts.length === 0 ? (
+              <p className="text-sm text-gray-500">No contacts yet</p>
+            ) : (
+              <div className="space-y-4">
+                {Object.entries(contactsByType).map(([type, typeContacts]) => (
+                  <div key={type}>
+                    <h4 className="font-medium text-sm text-gray-700 mb-2">{type}</h4>
+                    <div className="space-y-2">
+                      {typeContacts.map((contact) => {
+                        const isExpanded = expandedContactId === contact.id;
+                        return (
+                          <div key={contact.id} className={`rounded-lg overflow-hidden ${itemBg}`}>
+                            <div className={`flex items-center gap-2 p-3 cursor-pointer hover:opacity-80 transition-opacity`} onClick={() => setExpandedContactId(isExpanded ? null : contact.id)}>
+                              <div className="flex-1 min-w-0">
+                                <div className="font-medium">{contact.name}</div>
+                              </div>
+                              <div className="flex gap-0.5 flex-shrink-0">
+                                <Button variant="ghost" size="icon" className="h-7 w-7" onClick={(e) => { e.stopPropagation(); setEditingContact(contact); }}>
+                                  <Edit2 className="w-3 h-3 text-gray-500" />
+                                </Button>
+                                <Button variant="ghost" size="icon" className="h-7 w-7" onClick={(e) => { e.stopPropagation(); deleteContactMutation.mutate(contact.id); }}>
+                                  <Trash2 className="w-3 h-3 text-red-500" />
+                                </Button>
+                              </div>
+                            </div>
+                            {isExpanded && (
+                              <div className="px-3 pb-3 space-y-2 border-t border-gray-200 pt-2">
+                                {contact.phone && <a href={`tel:${contact.phone}`} className="block text-sm text-blue-600 hover:underline">📞 {contact.phone}</a>}
+                                {contact.email && <a href={`mailto:${contact.email}`} className="block text-sm text-blue-600 hover:underline">✉️ {contact.email}</a>}
+                                {contact.address && <a href={`https://maps.google.com/?q=${encodeURIComponent(contact.address)}`} target="_blank" rel="noopener noreferrer" className="block text-sm text-blue-600 hover:underline">📍 {contact.address}</a>}
+                                {contact.website && <a href={contact.website.startsWith('http') ? contact.website : `https://${contact.website}`} target="_blank" rel="noopener noreferrer" className="block text-sm text-blue-600 hover:underline">🌐 {contact.website}</a>}
                               </div>
                             )}
-                          </Droppable>
-                        </div>
-                      );
-                    })}
+                          </div>
+                        );
+                      })}
+                    </div>
                   </div>
-                </DragDropContext>
+                ))}
               </div>
-              </DialogContent>
-              </Dialog>
+            )}
 
-              {/* Notes Dialog */}
-              <Dialog open={expandedSection === 'notes'} onOpenChange={(open) => !open && setExpandedSection(null)}>
-              <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-              <DialogHeader>
-                <DialogTitle>Personal Notes & Reminders</DialogTitle>
-              </DialogHeader>
-              <div>
-              <Textarea
-                placeholder="Add personal notes or reminders..."
-                value={personalNotes}
-                onChange={(e) => setPersonalNotes(e.target.value)}
-                onBlur={() => updateNotesMutation.mutate(personalNotes)}
-                rows={6}
-                className="w-full"
-              />
-              </div>
+            <Dialog open={!!editingContact} onOpenChange={(open) => !open && setEditingContact(null)}>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Edit Contact</DialogTitle>
+                </DialogHeader>
+                {editingContact && (
+                  <div className="space-y-4">
+                    <Input placeholder="Name" value={editingContact.name} onChange={(e) => setEditingContact({ ...editingContact, name: e.target.value })} />
+                    <Input placeholder="Type" value={editingContact.type || ''} onChange={(e) => setEditingContact({ ...editingContact, type: e.target.value })} />
+                    <Input placeholder="Phone" value={editingContact.phone || ''} onChange={(e) => setEditingContact({ ...editingContact, phone: e.target.value })} />
+                    <Input placeholder="Email" value={editingContact.email || ''} onChange={(e) => setEditingContact({ ...editingContact, email: e.target.value })} />
+                    <Input placeholder="Address" value={editingContact.address || ''} onChange={(e) => setEditingContact({ ...editingContact, address: e.target.value })} />
+                    <Input placeholder="Website" value={editingContact.website || ''} onChange={(e) => setEditingContact({ ...editingContact, website: e.target.value })} />
+                    <div className="space-y-3">
+                      <Label>Link to family members:</Label>
+                      <div className="flex items-center space-x-2">
+                        <Checkbox id="edit-everyone" checked={editingContact.linked_to_member_ids?.includes('Everyone')} onCheckedChange={(checked) => {
+                          if (checked) {
+                            setEditingContact({ ...editingContact, linked_to_member_ids: ['Everyone'] });
+                          } else {
+                            setEditingContact({ ...editingContact, linked_to_member_ids: editingContact.linked_to_member_ids?.filter(id => id !== 'Everyone') || [] });
+                          }
+                        }} />
+                        <label htmlFor="edit-everyone" className="text-sm font-medium cursor-pointer">Everyone</label>
+                      </div>
+                      {familyMembers.map((fm) => (
+                        <div key={fm.id} className="flex items-center space-x-2">
+                          <Checkbox id={`edit-${fm.id}`} checked={editingContact.linked_to_member_ids?.includes(fm.id)} disabled={editingContact.linked_to_member_ids?.includes('Everyone')} onCheckedChange={(checked) => {
+                            if (checked) {
+                              setEditingContact({ 
+                                ...editingContact, 
+                                linked_to_member_ids: [...(editingContact.linked_to_member_ids?.filter(id => id !== 'Everyone') || []), fm.id] 
+                              });
+                            } else {
+                              setEditingContact({ 
+                                ...editingContact, 
+                                linked_to_member_ids: editingContact.linked_to_member_ids?.filter(id => id !== fm.id) || [] 
+                              });
+                            }
+                          }} />
+                          <label htmlFor={`edit-${fm.id}`} className="text-sm cursor-pointer">{fm.name}</label>
+                        </div>
+                      ))}
+                    </div>
+                    <Button onClick={() => updateContactMutation.mutate({ id: editingContact.id, data: { name: editingContact.name, type: editingContact.type, phone: editingContact.phone, email: editingContact.email, address: editingContact.address, website: editingContact.website, linked_to_member_ids: editingContact.linked_to_member_ids } })} disabled={!editingContact.name}>Save Changes</Button>
+                  </div>
+                )}
               </DialogContent>
-              </Dialog>
+            </Dialog>
+          </div>
+        </DialogContent>
+      </Dialog>
 
-              {/* Milestones Dialog */}
-              <Dialog open={expandedSection === 'milestones'} onOpenChange={(open) => !open && setExpandedSection(null)}>
-              <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-              <DialogHeader>
-              <DialogTitle>Goals & Milestones</DialogTitle>
-              </DialogHeader>
-              <div>
-              <div className="mb-4">
-                <Dialog open={dialogOpen.milestone} onOpenChange={(open) => setDialogOpen({ ...dialogOpen, milestone: open })}>
-                  <DialogTrigger asChild>
-                    <Button size="sm"><Plus className="w-4 h-4 mr-2" />Add Milestone</Button>
-                  </DialogTrigger>
-                  <DialogContent>
-                    <DialogHeader>
-                      <DialogTitle>Add New Milestone</DialogTitle>
-                    </DialogHeader>
-                    <div className="space-y-4">
-                      <Input
-                        placeholder="Milestone title"
-                        value={newMilestone.title}
-                        onChange={(e) => setNewMilestone({ ...newMilestone, title: e.target.value })}
-                      />
-                      <Input
-                        type="date"
-                        value={newMilestone.date}
-                        onChange={(e) => setNewMilestone({ ...newMilestone, date: e.target.value })}
-                      />
-                      <Textarea
-                        placeholder="Brief description"
-                        value={newMilestone.description}
-                        onChange={(e) => setNewMilestone({ ...newMilestone, description: e.target.value })}
-                      />
-                      <Button
-                        onClick={() => createMilestoneMutation.mutate({
-                          ...newMilestone,
-                          assigned_to_member_id: memberId,
-                          assigned_to_name: memberName,
-                        })}
-                        disabled={!newMilestone.title}
-                      >
-                        Add Milestone
+      {/* Chores Dialog */}
+      <Dialog open={expandedSection === 'chores'} onOpenChange={(open) => !open && setExpandedSection(null)}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center justify-between">
+              <span>To-Do List & Chores</span>
+              <Dialog open={dialogOpen.chore} onOpenChange={(open) => setDialogOpen({ ...dialogOpen, chore: open })}>
+                <DialogTrigger asChild>
+                  <Button size="sm">
+                    <Plus className="w-4 h-4 mr-2" />Add
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Add New Chore</DialogTitle>
+                  </DialogHeader>
+                  <div className="space-y-4">
+                    <Input placeholder="Chore title" value={newChore.title} onChange={(e) => setNewChore({ ...newChore, title: e.target.value })} />
+                    <Select value={newChore.timing} onValueChange={(value) => setNewChore({ ...newChore, timing: value })}>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="short-term">Short-term</SelectItem>
+                        <SelectItem value="mid-term">Mid-term</SelectItem>
+                        <SelectItem value="long-term">Long-term</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <Button onClick={() => createChoreMutation.mutate({ title: newChore.title, timing: newChore.timing, assigned_to_member_id: memberId, assigned_to_name: memberName })} disabled={!newChore.title}>Add Chore</Button>
+                  </div>
+                </DialogContent>
+              </Dialog>
+            </DialogTitle>
+          </DialogHeader>
+          <div>
+            {chores.length === 0 ? (
+              <p className="text-sm text-gray-500">No tasks yet</p>
+            ) : (
+              <DragDropContext onDragEnd={handleDragEnd}>
+                <div className="space-y-4">
+                  {['short-term', 'mid-term', 'long-term'].map((timing) => {
+                    const timingChores = choresByTiming[timing];
+                    return (
+                      <div key={timing}>
+                        <h4 className="font-medium text-sm text-gray-700 mb-2 capitalize">
+                          {timing === 'mid-term' ? 'Mid-term' : timing === 'short-term' ? 'Short-term' : 'Long-term'}
+                        </h4>
+                        <Droppable droppableId={timing}>
+                          {(provided, snapshot) => (
+                            <div ref={provided.innerRef} {...provided.droppableProps} className={`space-y-2 min-h-[60px] p-2 rounded-lg transition-colors ${snapshot.isDraggingOver ? 'bg-blue-50 border-2 border-blue-300' : 'bg-transparent'}`}>
+                              {timingChores.length === 0 && !snapshot.isDraggingOver ? (
+                                <p className="text-xs text-gray-400 text-center py-2">Drop items here</p>
+                              ) : (
+                                timingChores.map((chore, index) => (
+                                  <Draggable key={chore.id} draggableId={chore.id} index={index}>
+                                    {(provided, snapshot) => (
+                                      <div ref={provided.innerRef} {...provided.draggableProps} className={`flex items-center justify-between p-3 rounded-lg ${itemBg} ${snapshot.isDragging ? 'shadow-lg opacity-90' : ''}`}>
+                                        <div className="flex items-center gap-3 flex-1 min-w-0">
+                                          <div {...provided.dragHandleProps} className="cursor-grab active:cursor-grabbing">
+                                            <GripVertical className="w-4 h-4 text-gray-400" />
+                                          </div>
+                                          <button onClick={() => toggleChoreMutation.mutate({ id: chore.id, is_completed: !chore.is_completed })}>
+                                            {chore.is_completed ? (
+                                              <CheckCircle2 className="w-5 h-5 text-green-500" />
+                                            ) : (
+                                              <Circle className="w-5 h-5 text-gray-400" />
+                                            )}
+                                          </button>
+                                          {editingChoreId === chore.id ? (
+                                            <Input value={editingChoreTitle} onChange={(e) => setEditingChoreTitle(e.target.value)} onBlur={() => updateChoreMutation.mutate({ id: chore.id, title: editingChoreTitle })} onKeyDown={(e) => { if (e.key === 'Enter') updateChoreMutation.mutate({ id: chore.id, title: editingChoreTitle }); if (e.key === 'Escape') setEditingChoreId(null); }} autoFocus className="h-8" />
+                                          ) : (
+                                            <span className={`cursor-pointer hover:text-blue-600 flex-1 ${chore.is_completed ? 'line-through text-gray-500' : ''}`} onClick={() => { setEditingChoreId(chore.id); setEditingChoreTitle(chore.title); }}>
+                                              {chore.title}
+                                            </span>
+                                          )}
+                                        </div>
+                                        <Button variant="ghost" size="sm" onClick={() => deleteChoreMutation.mutate(chore.id)}>
+                                          <Trash2 className="w-4 h-4 text-red-500" />
+                                        </Button>
+                                      </div>
+                                    )}
+                                  </Draggable>
+                                ))
+                              )}
+                              {provided.placeholder}
+                            </div>
+                          )}
+                        </Droppable>
+                      </div>
+                    );
+                  })}
+                </div>
+              </DragDropContext>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Notes Dialog */}
+      <Dialog open={expandedSection === 'notes'} onOpenChange={(open) => !open && setExpandedSection(null)}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Personal Notes & Reminders</DialogTitle>
+          </DialogHeader>
+          <Textarea placeholder="Add personal notes or reminders..." value={personalNotes} onChange={(e) => setPersonalNotes(e.target.value)} onBlur={() => updateNotesMutation.mutate(personalNotes)} rows={6} className="w-full" />
+        </DialogContent>
+      </Dialog>
+
+      {/* Milestones Dialog */}
+      <Dialog open={expandedSection === 'milestones'} onOpenChange={(open) => !open && setExpandedSection(null)}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center justify-between">
+              <span>Goals & Milestones</span>
+              <Dialog open={dialogOpen.milestone} onOpenChange={(open) => setDialogOpen({ ...dialogOpen, milestone: open })}>
+                <DialogTrigger asChild>
+                  <Button size="sm"><Plus className="w-4 h-4 mr-2" />Add</Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Add New Milestone</DialogTitle>
+                  </DialogHeader>
+                  <div className="space-y-4">
+                    <Input placeholder="Milestone title" value={newMilestone.title} onChange={(e) => setNewMilestone({ ...newMilestone, title: e.target.value })} />
+                    <Input type="date" value={newMilestone.date} onChange={(e) => setNewMilestone({ ...newMilestone, date: e.target.value })} />
+                    <Textarea placeholder="Brief description" value={newMilestone.description} onChange={(e) => setNewMilestone({ ...newMilestone, description: e.target.value })} />
+                    <Button onClick={() => createMilestoneMutation.mutate({ ...newMilestone, assigned_to_member_id: memberId, assigned_to_name: memberName })} disabled={!newMilestone.title}>Add Milestone</Button>
+                  </div>
+                </DialogContent>
+              </Dialog>
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3">
+            {milestones.length === 0 ? (
+              <p className="text-sm text-gray-500">No milestones yet</p>
+            ) : (
+              milestones.map((milestone) => (
+                <details key={milestone.id} className={`rounded-lg p-3 ${itemBg}`}>
+                  <summary className="cursor-pointer font-medium flex justify-between items-center">
+                    <span>{milestone.title}</span>
+                    <div className="flex items-center gap-2">
+                      {milestone.date && <span className="text-sm text-gray-500">{new Date(milestone.date).toLocaleDateString()}</span>}
+                      <Button variant="ghost" size="sm" onClick={(e) => { e.preventDefault(); deleteMilestoneMutation.mutate(milestone.id); }}>
+                        <Trash2 className="w-4 h-4 text-red-500" />
                       </Button>
                     </div>
-                  </DialogContent>
-                </Dialog>
-              </div>
-              <div className="space-y-3">
-                {milestones.length === 0 ? (
-                  <p className="text-sm text-gray-500">No milestones yet</p>
-                ) : (
-                  milestones.map((milestone) => (
-                    <details key={milestone.id} className={`rounded-lg p-3 ${itemBg}`}>
-                      <summary className="cursor-pointer font-medium flex justify-between items-center">
-                        <span>{milestone.title}</span>
-                        <div className="flex items-center gap-2">
-                          {milestone.date && <span className="text-sm text-gray-500">{new Date(milestone.date).toLocaleDateString()}</span>}
-                          <Button variant="ghost" size="sm" onClick={(e) => { e.preventDefault(); deleteMilestoneMutation.mutate(milestone.id); }}>
-                            <Trash2 className="w-4 h-4 text-red-500" />
-                          </Button>
-                        </div>
-                      </summary>
-                      {milestone.description && <p className="mt-2 text-sm text-gray-600">{milestone.description}</p>}
-                    </details>
-                  ))
-                )}
-                </div>
-                </div>
-                </DialogContent>
-                </Dialog>
+                  </summary>
+                  {milestone.description && <p className="mt-2 text-sm text-gray-600">{milestone.description}</p>}
+                </details>
+              ))
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
 
-                {/* School Program Dialog */}
-                <Dialog open={expandedSection === 'schoolProgram'} onOpenChange={(open) => !open && setExpandedSection(null)}>
-                <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-                <DialogHeader>
-                <DialogTitle>School Program</DialogTitle>
-                </DialogHeader>
-                <SchoolProgramSection memberId={memberId} memberName={memberName} />
-                </DialogContent>
-                </Dialog>
-                </div>
-                );
+      {/* School Program Dialog */}
+      <Dialog open={expandedSection === 'schoolProgram'} onOpenChange={(open) => !open && setExpandedSection(null)}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>School Program</DialogTitle>
+          </DialogHeader>
+          <SchoolProgramSection memberId={memberId} memberName={memberName} />
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
 }
