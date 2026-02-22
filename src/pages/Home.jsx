@@ -117,7 +117,7 @@ export default function Home() {
                 1934 Church St
               </p>
             </div>
-            <a href="/Family">
+            <a href={createPageUrl('Family')}>
               <img 
                 src={familyImage} 
                 alt="Family Welcome"
