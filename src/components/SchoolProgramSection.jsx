@@ -5,8 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { Plus, Trash2, ChevronDown, Edit2, Upload, Loader2, X } from 'lucide-react';
+import { Plus, Trash2, Edit2, Upload, Loader2, X } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'];
