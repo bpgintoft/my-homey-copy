@@ -286,7 +286,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
           </div>
         </div>
         <div 
-          className="cursor-pointer flex flex-col items-center text-center"
+          className="cursor-pointer flex flex-col items-center text-center ml-1"
           onClick={() => {
             const newDate = prompt('Enter license expiration date (MM/DD/YYYY):');
             if (newDate) {
