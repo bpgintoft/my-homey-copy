@@ -81,8 +81,8 @@ export default function MaraPage() {
 
       {mara && (
         <div className="max-w-2xl mx-auto px-4 sm:px-6 pt-2 pb-6 space-y-4">
-          <FamilyMemberDetails memberId={mara.id} memberName="Mara" color="purple" />
           <SchoolProgramSection memberId={mara.id} memberName="Mara" programTitle="Bright Horizons" />
+          <FamilyMemberDetails memberId={mara.id} memberName="Mara" color="purple" />
         </div>
       )}
     </div>
