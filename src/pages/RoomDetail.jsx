@@ -314,12 +314,34 @@ export default function RoomDetail() {
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="flex-shrink-0"
+            className="flex-shrink-0 relative group"
           >
-            <img 
-              src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/633730e7e_kitchen3.png" 
-              alt={room.name}
-              className="h-36 sm:h-48 md:h-56 w-auto object-contain drop-shadow-2xl"
+            {room.banner_photo_url && (
+              <img 
+                src={room.banner_photo_url} 
+                alt={room.name}
+                className="h-36 sm:h-48 md:h-56 w-auto object-contain drop-shadow-2xl"
+              />
+            )}
+            <Button
+              variant="ghost"
+              size="icon"
+              className="absolute bottom-2 right-2 bg-white/70 hover:bg-white transition-all opacity-0 group-hover:opacity-100"
+              onClick={() => bannerFileInputRef.current?.click()}
+              disabled={isUploadingBanner}
+            >
+              {isUploadingBanner ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <Camera className="w-4 h-4" />
+              )}
+            </Button>
+            <input
+              ref={bannerFileInputRef}
+              type="file"
+              accept="image/*"
+              onChange={(e) => handlePhotoUpload(e.target.files?.[0], false, true)}
+              className="hidden"
             />
           </motion.div>
         </div>
