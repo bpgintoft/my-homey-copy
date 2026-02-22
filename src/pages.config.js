@@ -63,8 +63,8 @@ import MaintenanceCalendar from './pages/MaintenanceCalendar';
 import Mara from './pages/Mara';
 import Meals from './pages/Meals';
 import Phoenix from './pages/Phoenix';
-import Vendors from './pages/Vendors';
 import RoomDetail from './pages/RoomDetail';
+import Vendors from './pages/Vendors';
 import __Layout from './Layout.jsx';
 
 
@@ -85,8 +85,8 @@ export const PAGES = {
     "Mara": Mara,
     "Meals": Meals,
     "Phoenix": Phoenix,
-    "Vendors": Vendors,
     "RoomDetail": RoomDetail,
+    "Vendors": Vendors,
 }
 
 export const pagesConfig = {
