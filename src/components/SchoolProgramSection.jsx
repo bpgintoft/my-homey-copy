@@ -441,9 +441,10 @@ export default function SchoolProgramSection({ memberId, memberName, programTitl
                   </div>
                 </div>
               )}
-            </div>
+              </div>
+              )}
 
-            {/* Photos Section */}
+              {/* Photos Section */}
             <div className="border-t pt-4 space-y-3">
               <div className="flex items-center justify-between gap-2">
                 <h4 className="text-sm font-semibold">Photos</h4>
