@@ -323,7 +323,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
       <div className="grid grid-cols-2 gap-4">
         <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => setExpandedSection('schoolProgram')}>
           <CardHeader>
-            <CardTitle className="flex items-center gap-3"><GraduationCap className={`w-10 h-10 ${iconColor}`} />School Program</CardTitle>
+            <CardTitle className="flex items-center gap-3"><GraduationCap className={`w-10 h-10 ${iconColor}`} />{member?.school_or_work_name || (member?.person_type === 'adult' ? 'Work' : 'School')}</CardTitle>
           </CardHeader>
         </Card>
 
@@ -797,9 +797,9 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
       <Dialog open={expandedSection === 'schoolProgram'} onOpenChange={(open) => !open && setExpandedSection(null)}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>School Program</DialogTitle>
+            <DialogTitle>{member?.person_type === 'adult' ? 'Work' : 'School'}</DialogTitle>
           </DialogHeader>
-          <SchoolProgramSection memberId={memberId} memberName={memberName} />
+          <SchoolProgramSection memberId={memberId} memberName={memberName} personType={member?.person_type || 'kid'} />
         </DialogContent>
       </Dialog>
     </div>
