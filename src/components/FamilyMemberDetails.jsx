@@ -306,7 +306,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
           </div>
         </div>
         <div 
-          className="cursor-pointer flex flex-col items-center text-center ml-3"
+          className="cursor-pointer flex flex-col items-center text-center ml-5"
           onClick={() => {
             const newPlate = prompt('Enter license plate number:');
             if (newPlate !== null) {
