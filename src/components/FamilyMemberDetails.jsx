@@ -311,7 +311,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
       </div>
 
       {/* 2-Column Grid for Sections */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-2 gap-4">
         <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => setExpandedSection('schoolProgram')}>
           <CardHeader>
             <CardTitle>School Program</CardTitle>
