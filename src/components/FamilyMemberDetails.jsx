@@ -264,28 +264,26 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
   return (
     <div className="space-y-4">
       {/* Passport & License */}
-      <Card className={itemBg}>
-        <CardContent className="p-4 space-y-3">
-          <div className="flex items-center justify-between gap-4">
-            <Label className="font-medium text-sm min-w-[140px]">Passport Expiration</Label>
-            <Input
-              type="date"
-              value={member?.passport_expiration_date || ''}
-              onChange={(e) => updateExpirationDatesMutation.mutate({ passport_expiration_date: e.target.value })}
-              className="w-auto text-sm"
-            />
-          </div>
-          <div className="flex items-center justify-between gap-4">
-            <Label className="font-medium text-sm min-w-[140px]">License Expiration</Label>
-            <Input
-              type="date"
-              value={member?.license_expiration_date || ''}
-              onChange={(e) => updateExpirationDatesMutation.mutate({ license_expiration_date: e.target.value })}
-              className="w-auto text-sm"
-            />
-          </div>
-        </CardContent>
-      </Card>
+      <div className={`flex flex-wrap items-center gap-4 p-3 rounded-lg ${itemBg}`}>
+        <div className="flex items-center gap-2">
+          <Label className="text-xs text-gray-600">Passport:</Label>
+          <Input
+            type="date"
+            value={member?.passport_expiration_date || ''}
+            onChange={(e) => updateExpirationDatesMutation.mutate({ passport_expiration_date: e.target.value })}
+            className="h-8 text-xs w-36"
+          />
+        </div>
+        <div className="flex items-center gap-2">
+          <Label className="text-xs text-gray-600">License:</Label>
+          <Input
+            type="date"
+            value={member?.license_expiration_date || ''}
+            onChange={(e) => updateExpirationDatesMutation.mutate({ license_expiration_date: e.target.value })}
+            className="h-8 text-xs w-36"
+          />
+        </div>
+      </div>
 
       {/* Important Links */}
       <Collapsible 
