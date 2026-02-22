@@ -278,7 +278,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
             }
           }}
         >
-          <div className="text-xs text-gray-500 mb-1">🛂 Passport</div>
+          <div className="text-xs text-gray-500 mb-1">🛂 Passport Exp:</div>
           <div className="text-sm font-semibold">
             {member?.passport_expiration_date 
               ? new Date(member.passport_expiration_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).toUpperCase().replace(',', ',')
@@ -298,7 +298,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
             }
           }}
         >
-          <div className="text-xs text-gray-500 mb-1">🪪 License</div>
+          <div className="text-xs text-gray-500 mb-1">🪪 License Exp:</div>
           <div className="text-sm font-semibold">
             {member?.license_expiration_date 
               ? new Date(member.license_expiration_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).toUpperCase().replace(',', ',')
