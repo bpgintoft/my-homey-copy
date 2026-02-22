@@ -264,9 +264,9 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
   return (
     <div className="space-y-2">
       {/* Passport & License */}
-      <div className={`grid grid-cols-3 gap-4 p-2.5 rounded-lg ${itemBg} justify-items-center`}>
+      <div className={`grid grid-cols-3 p-2.5 rounded-lg ${itemBg}`}>
         <div 
-          className="cursor-pointer"
+          className="cursor-pointer flex flex-col items-center text-center"
           onClick={() => {
             const newDate = prompt('Enter passport expiration date (MM/DD/YYYY):');
             if (newDate) {
@@ -286,7 +286,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
           </div>
         </div>
         <div 
-          className="cursor-pointer"
+          className="cursor-pointer flex flex-col items-center text-center"
           onClick={() => {
             const newDate = prompt('Enter license expiration date (MM/DD/YYYY):');
             if (newDate) {
@@ -306,7 +306,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
           </div>
         </div>
         <div 
-          className="cursor-pointer"
+          className="cursor-pointer flex flex-col items-center text-center"
           onClick={() => {
             const newPlate = prompt('Enter license plate number:');
             if (newPlate !== null) {
