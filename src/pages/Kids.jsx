@@ -26,7 +26,7 @@ export default function Kids() {
     } else if (direction === 'right') {
       navigate(createPageUrl('Meals'));
     }
-  });
+  }, bannerRef);
 
   const [showDialog, setShowDialog] = useState(false);
   const [newActivity, setNewActivity] = useState({});

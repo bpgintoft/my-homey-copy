@@ -29,7 +29,7 @@ export default function Meals() {
     } else if (direction === 'right') {
       navigate(createPageUrl('History'));
     }
-  });
+  }, bannerRef);
 
   const [showMealDialog, setShowMealDialog] = useState(false);
     const [newMeal, setNewMeal] = useState({});

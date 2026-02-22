@@ -28,7 +28,7 @@ export default function House() {
     } else if (direction === 'right') {
       navigate(createPageUrl('Kids'));
     }
-  });
+  }, bannerRef);
 
   const [showRoomDialog, setShowRoomDialog] = useState(false);
   const [showApplianceDialog, setShowApplianceDialog] = useState(false);

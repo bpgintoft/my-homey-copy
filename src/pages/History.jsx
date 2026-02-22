@@ -19,7 +19,7 @@ export default function History() {
     } else if (direction === 'right') {
       navigate(createPageUrl('House'));
     }
-  });
+  }, bannerRef);
 
   const { data: homeInfo } = useQuery({
     queryKey: ['homeInfo'],
