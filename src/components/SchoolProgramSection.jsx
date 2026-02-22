@@ -11,7 +11,7 @@ import { motion } from 'framer-motion';
 const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'];
 const dayLabels = ['M', 'T', 'W', 'Th', 'F'];
 
-export default function SchoolProgramSection({ memberId, memberName, programTitle = 'Right at School', personType = 'kid' }) {
+export default function SchoolProgramSection({ memberId, memberName, programTitle = 'Right at School', personType = 'kid', schoolOrWorkName }) {
   const queryClient = useQueryClient();
   const [openSections, setOpenSections] = useState({ schoolProgram: false });
   const [editingTitle, setEditingTitle] = useState(null);
@@ -222,7 +222,7 @@ export default function SchoolProgramSection({ memberId, memberName, programTitl
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{program?.title || sectionLabel}</CardTitle>
+        <CardTitle>{program?.title || schoolOrWorkName || sectionLabel}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
             {/* Website Link */}
