@@ -117,13 +117,13 @@ export default function Home() {
                 1934 Church St
               </p>
             </div>
-            <Link to={createPageUrl('Family')}>
+            <a href="/Family">
               <img 
                 src={familyImage} 
                 alt="Family Welcome"
                 className="h-40 md:h-56 w-auto object-cover flex-shrink-0 cursor-pointer hover:opacity-80 transition-opacity"
               />
-            </Link>
+            </a>
           </div>
         </div>
       </div>
