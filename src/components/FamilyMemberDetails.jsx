@@ -43,12 +43,13 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
   const [editingLink, setEditingLink] = useState(null);
   const [personalNotes, setPersonalNotes] = useState('');
   const [openSections, setOpenSections] = useState({
-    links: false,
-    contacts: false,
-    chores: false,
-    notes: false,
-    milestones: false
-  });
+      links: false,
+      contacts: false,
+      chores: false,
+      notes: false,
+      milestones: false
+    });
+    const [expandedSection, setExpandedSection] = useState(null);
 
   // Fetch data
   const { data: member } = useQuery({
@@ -263,7 +264,9 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
   }, {});
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-4">
+      {/* Grid Layout */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       {/* Passport & License */}
       <div className={`grid grid-cols-[1.2fr_1.3fr_1fr] gap-x-2 p-2.5 rounded-lg ${itemBg}`}>
         <div 
@@ -323,23 +326,54 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
       </div>
 
       {/* School Program */}
-      <SchoolProgramSection memberId={memberId} memberName={memberName} />
+      <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => setExpandedSection('schoolProgram')}>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">School Program</CardTitle>
+        </CardHeader>
+      </Card>
 
       {/* Important Links */}
-      <Collapsible 
-        open={openSections.links} 
-        onOpenChange={(open) => setOpenSections({ ...openSections, links: open })}
-      >
-        <Card>
-          <CollapsibleTrigger className="w-full">
-            <CardHeader className="flex flex-row items-center justify-between cursor-pointer hover:bg-gray-50 transition-colors">
-              <CardTitle className="flex items-center gap-2">
-                Important Links
-                <ChevronDown className={`w-5 h-5 transition-transform ${openSections.links ? 'rotate-180' : ''}`} />
-              </CardTitle>
-            </CardHeader>
-          </CollapsibleTrigger>
-          <CollapsibleContent>
+      <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => setExpandedSection('links')}>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">Important Links</CardTitle>
+        </CardHeader>
+      </Card>
+
+      {/* Important Contacts */}
+      <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => setExpandedSection('contacts')}>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">Important Contacts</CardTitle>
+        </CardHeader>
+      </Card>
+
+      {/* To-Do List / Chores */}
+      <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => setExpandedSection('chores')}>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">To-Do List & Chores</CardTitle>
+        </CardHeader>
+      </Card>
+
+      {/* Personal Notes */}
+      <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => setExpandedSection('notes')}>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">Personal Notes & Reminders</CardTitle>
+        </CardHeader>
+      </Card>
+
+      {/* Goals & Milestones */}
+      <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => setExpandedSection('milestones')}>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">Goals & Milestones</CardTitle>
+        </CardHeader>
+      </Card>
+      </div>
+
+      {/* Links Dialog */}
+      <Dialog open={expandedSection === 'links'} onOpenChange={(open) => !open && setExpandedSection(null)}>
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle>Important Links</DialogTitle>
+        </DialogHeader>
             <CardContent className="space-y-4">
               <div className="flex gap-2">
                 <Input
@@ -454,30 +488,21 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                   </div>
                 ))
               )}
-            </CardContent>
-          </CollapsibleContent>
-        </Card>
-      </Collapsible>
+            </DialogContent>
+            </Dialog>
 
-      {/* Important Contacts */}
-      <Collapsible 
-        open={openSections.contacts} 
-        onOpenChange={(open) => setOpenSections({ ...openSections, contacts: open })}
-      >
-        <Card>
-          <CollapsibleTrigger className="w-full">
-            <CardHeader className="flex flex-row items-center justify-between cursor-pointer hover:bg-gray-50 transition-colors">
-              <CardTitle className="flex items-center gap-2">
-                Important Contacts
-                <ChevronDown className={`w-5 h-5 transition-transform ${openSections.contacts ? 'rotate-180' : ''}`} />
-              </CardTitle>
-              {openSections.contacts && (
-                <Dialog open={dialogOpen.contact} onOpenChange={(open) => setDialogOpen({ ...dialogOpen, contact: open })}>
-                  <DialogTrigger asChild>
-                    <Button size="sm" onClick={(e) => e.stopPropagation()}>
-                      <Plus className="w-4 h-4 mr-2" />Add
-                    </Button>
-                  </DialogTrigger>
+            {/* Contacts Dialog */}
+            <Dialog open={expandedSection === 'contacts'} onOpenChange={(open) => !open && setExpandedSection(null)}>
+            <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+              <DialogHeader>
+                <DialogTitle className="flex items-center justify-between">
+                  <span>Important Contacts</span>
+                  <Dialog open={dialogOpen.contact} onOpenChange={(open) => setDialogOpen({ ...dialogOpen, contact: open })}>
+                    <DialogTrigger asChild>
+                      <Button size="sm">
+                        <Plus className="w-4 h-4 mr-2" />Add
+                      </Button>
+                    </DialogTrigger>
                   <DialogContent>
                     <DialogHeader>
                       <DialogTitle>Add New Contact</DialogTitle>
@@ -908,28 +933,17 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                     })}
                   </div>
                 </DragDropContext>
-              )}
-            </CardContent>
-          </CollapsibleContent>
-        </Card>
-      </Collapsible>
+              </div>
+              </DialogContent>
+              </Dialog>
 
-      {/* Personal Notes */}
-      <Collapsible 
-        open={openSections.notes} 
-        onOpenChange={(open) => setOpenSections({ ...openSections, notes: open })}
-      >
-        <Card>
-          <CollapsibleTrigger className="w-full">
-            <CardHeader className="flex flex-row items-center justify-between cursor-pointer hover:bg-gray-50 transition-colors">
-              <CardTitle className="flex items-center gap-2">
-                Personal Notes & Reminders
-                <ChevronDown className={`w-5 h-5 transition-transform ${openSections.notes ? 'rotate-180' : ''}`} />
-              </CardTitle>
-            </CardHeader>
-          </CollapsibleTrigger>
-          <CollapsibleContent>
-            <CardContent>
+              {/* Notes Dialog */}
+              <Dialog open={expandedSection === 'notes'} onOpenChange={(open) => !open && setExpandedSection(null)}>
+              <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+              <DialogHeader>
+                <DialogTitle>Personal Notes & Reminders</DialogTitle>
+              </DialogHeader>
+              <div>
               <Textarea
                 placeholder="Add personal notes or reminders..."
                 value={personalNotes}
@@ -938,27 +952,17 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                 rows={6}
                 className="w-full"
               />
-            </CardContent>
-          </CollapsibleContent>
-        </Card>
-      </Collapsible>
+              </div>
+              </DialogContent>
+              </Dialog>
 
-      {/* Goals & Milestones */}
-      <Collapsible 
-        open={openSections.milestones} 
-        onOpenChange={(open) => setOpenSections({ ...openSections, milestones: open })}
-      >
-        <Card>
-          <CollapsibleTrigger className="w-full">
-            <CardHeader className="flex flex-row items-center justify-between cursor-pointer hover:bg-gray-50 transition-colors">
-              <CardTitle className="flex items-center gap-2">
-                Goals & Milestones
-                <ChevronDown className={`w-5 h-5 transition-transform ${openSections.milestones ? 'rotate-180' : ''}`} />
-              </CardTitle>
-            </CardHeader>
-          </CollapsibleTrigger>
-          <CollapsibleContent>
-            <CardContent>
+              {/* Milestones Dialog */}
+              <Dialog open={expandedSection === 'milestones'} onOpenChange={(open) => !open && setExpandedSection(null)}>
+              <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+              <DialogHeader>
+              <DialogTitle>Goals & Milestones</DialogTitle>
+              </DialogHeader>
+              <div>
               <div className="mb-4">
                 <Dialog open={dialogOpen.milestone} onOpenChange={(open) => setDialogOpen({ ...dialogOpen, milestone: open })}>
                   <DialogTrigger asChild>
@@ -1017,11 +1021,20 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                     </details>
                   ))
                 )}
-              </div>
-            </CardContent>
-          </CollapsibleContent>
-        </Card>
-      </Collapsible>
-    </div>
-  );
+                </div>
+                </div>
+                </DialogContent>
+                </Dialog>
+
+                {/* School Program Dialog */}
+                <Dialog open={expandedSection === 'schoolProgram'} onOpenChange={(open) => !open && setExpandedSection(null)}>
+                <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+                <DialogHeader>
+                <DialogTitle>School Program</DialogTitle>
+                </DialogHeader>
+                <SchoolProgramSection memberId={memberId} memberName={memberName} />
+                </DialogContent>
+                </Dialog>
+                </div>
+                );
 }
