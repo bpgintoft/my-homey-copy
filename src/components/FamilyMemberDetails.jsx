@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, Trash2, ExternalLink, CheckCircle2, Circle, Loader2, Edit2, GripVertical, GraduationCap, Link2, Users, ListTodo, Lightbulb, Target, X } from 'lucide-react';
+import { Plus, Trash2, ExternalLink, CheckCircle2, Circle, Loader2, Edit2, GripVertical, GraduationCap, Briefcase, Link2, Users, ListTodo, Lightbulb, Target, X } from 'lucide-react';
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
@@ -323,7 +323,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
       <div className="grid grid-cols-2 gap-4">
         <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => setExpandedSection('schoolProgram')}>
           <CardHeader>
-            <CardTitle className="flex items-center gap-3"><GraduationCap className={`w-10 h-10 ${iconColor}`} />{member?.school_or_work_name || (member?.person_type === 'adult' ? 'Work' : 'School')}</CardTitle>
+            <CardTitle className="flex items-center gap-3">{member?.person_type === 'adult' ? <Briefcase className={`w-10 h-10 ${iconColor}`} /> : <GraduationCap className={`w-10 h-10 ${iconColor}`} />}{member?.school_or_work_name || (member?.person_type === 'adult' ? 'Work' : 'School')}</CardTitle>
           </CardHeader>
         </Card>
 
