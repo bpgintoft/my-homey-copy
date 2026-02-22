@@ -793,15 +793,20 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
         </DialogContent>
       </Dialog>
 
-      {/* School Program Dialog */}
-      <Dialog open={expandedSection === 'schoolProgram'} onOpenChange={(open) => !open && setExpandedSection(null)}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>{member?.person_type === 'adult' ? 'Work' : 'School'}</DialogTitle>
-          </DialogHeader>
-          <SchoolProgramSection memberId={memberId} memberName={memberName} personType={member?.person_type || 'kid'} />
-        </DialogContent>
-      </Dialog>
+      {/* School Program Inline */}
+      {expandedSection === 'schoolProgram' && (
+        <Card className="col-span-2 mt-4">
+          <CardHeader className="flex flex-row items-center justify-between">
+            <CardTitle>{member?.person_type === 'adult' ? 'Work' : 'School'}</CardTitle>
+            <Button variant="ghost" size="icon" onClick={() => setExpandedSection(null)}>
+              <X className="w-4 h-4" />
+            </Button>
+          </CardHeader>
+          <CardContent>
+            <SchoolProgramSection memberId={memberId} memberName={memberName} personType={member?.person_type || 'kid'} />
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }
