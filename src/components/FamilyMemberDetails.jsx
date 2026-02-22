@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, Trash2, ExternalLink, CheckCircle2, Circle, Loader2, Edit2, GripVertical } from 'lucide-react';
+import { Plus, Trash2, ExternalLink, CheckCircle2, Circle, Loader2, Edit2, GripVertical, GraduationCap, Link2, Users, ListTodo, Lightbulb, Target } from 'lucide-react';
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
@@ -314,37 +314,37 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
       <div className="grid grid-cols-2 gap-4">
         <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => setExpandedSection('schoolProgram')}>
           <CardHeader>
-            <CardTitle>School Program</CardTitle>
+            <CardTitle className="flex items-center gap-2"><GraduationCap className="w-5 h-5" />School Program</CardTitle>
           </CardHeader>
         </Card>
 
         <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => setExpandedSection('links')}>
           <CardHeader>
-            <CardTitle>Important Links</CardTitle>
+            <CardTitle className="flex items-center gap-2"><Link2 className="w-5 h-5" />Important Links</CardTitle>
           </CardHeader>
         </Card>
 
         <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => setExpandedSection('contacts')}>
           <CardHeader>
-            <CardTitle>Important Contacts</CardTitle>
+            <CardTitle className="flex items-center gap-2"><Users className="w-5 h-5" />Important Contacts</CardTitle>
           </CardHeader>
         </Card>
 
         <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => setExpandedSection('chores')}>
           <CardHeader>
-            <CardTitle>To-Do List & Chores</CardTitle>
+            <CardTitle className="flex items-center gap-2"><ListTodo className="w-5 h-5" />To-Do List & Chores</CardTitle>
           </CardHeader>
         </Card>
 
         <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => setExpandedSection('notes')}>
           <CardHeader>
-            <CardTitle>Personal Notes & Reminders</CardTitle>
+            <CardTitle className="flex items-center gap-2"><Lightbulb className="w-5 h-5" />Personal Notes & Reminders</CardTitle>
           </CardHeader>
         </Card>
 
         <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => setExpandedSection('milestones')}>
           <CardHeader>
-            <CardTitle>Goals & Milestones</CardTitle>
+            <CardTitle className="flex items-center gap-2"><Target className="w-5 h-5" />Goals & Milestones</CardTitle>
           </CardHeader>
         </Card>
       </div>
