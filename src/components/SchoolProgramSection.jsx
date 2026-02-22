@@ -12,7 +12,7 @@ import { motion } from 'framer-motion';
 const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'];
 const dayLabels = ['M', 'T', 'W', 'Th', 'F'];
 
-export default function SchoolProgramSection({ memberId, memberName, programTitle = 'Right at School' }) {
+export default function SchoolProgramSection({ memberId, memberName, programTitle = 'Right at School', personType = 'kid' }) {
   const queryClient = useQueryClient();
   const [openSections, setOpenSections] = useState({ schoolProgram: false });
   const [editingTitle, setEditingTitle] = useState(null);
@@ -32,6 +32,9 @@ export default function SchoolProgramSection({ memberId, memberName, programTitl
     queryFn: () => base44.entities.SchoolProgram.filter({ family_member_id: memberId }).then(res => res[0]),
     enabled: !!memberId,
   });
+
+  const isKid = personType === 'kid';
+  const sectionLabel = isKid ? 'School' : 'Work';
 
   // Mutations
   const createProgramMutation = useMutation({
@@ -205,12 +208,12 @@ export default function SchoolProgramSection({ memberId, memberName, programTitl
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Right at School</CardTitle>
+          <CardTitle>{sectionLabel}</CardTitle>
         </CardHeader>
         <CardContent>
           <Button onClick={handleCreateProgram} size="sm">
             <Plus className="w-4 h-4 mr-2" />
-            Add Program
+            Add {sectionLabel} Info
           </Button>
         </CardContent>
       </Card>
@@ -297,7 +300,8 @@ export default function SchoolProgramSection({ memberId, memberName, programTitl
               )}
             </div>
 
-            {/* Schedule Table */}
+            {/* Schedule Table - Kid only */}
+            {isKid && (
             <div>
               <div className="flex items-center gap-2 mb-3">
                 {editingTitle === 'title' ? (
@@ -369,8 +373,10 @@ export default function SchoolProgramSection({ memberId, memberName, programTitl
                 </table>
               </div>
             </div>
+            )}
 
-            {/* Passcodes Section */}
+            {/* Passcodes Section - Kid only */}
+            {isKid && (
             <div className="border-t pt-4 space-y-3">
               <h4 className="text-sm font-semibold">Passcodes</h4>
               <div className="space-y-2">
