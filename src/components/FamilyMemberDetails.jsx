@@ -264,7 +264,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
   return (
     <div className="space-y-2">
       {/* Passport & License */}
-      <div className={`grid grid-cols-3 gap-2 p-2.5 rounded-lg ${itemBg}`}>
+      <div className={`grid grid-cols-3 gap-4 p-2.5 rounded-lg ${itemBg} justify-items-center`}>
         <div 
           className="cursor-pointer"
           onClick={() => {
