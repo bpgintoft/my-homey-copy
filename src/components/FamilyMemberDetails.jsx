@@ -14,6 +14,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { motion } from 'framer-motion';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
+import SchoolProgramSection from './SchoolProgramSection';
 
 export default function FamilyMemberDetails({ memberId, memberName, color = 'blue' }) {
   const queryClient = useQueryClient();
@@ -320,6 +321,9 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
           </div>
         </div>
       </div>
+
+      {/* School Program */}
+      <SchoolProgramSection memberId={memberId} memberName={memberName} />
 
       {/* Important Links */}
       <Collapsible 
