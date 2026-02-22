@@ -547,9 +547,7 @@ export default function SchoolProgramSection({ memberId, memberName, programTitl
                 />
               </div>
             </div>
-          </CardContent>
-        </CollapsibleContent>
-      </Card>
-    </Collapsible>
+      </CardContent>
+    </Card>
   );
 }
