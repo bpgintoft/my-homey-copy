@@ -264,9 +264,9 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
   return (
     <div className="space-y-4">
       {/* Passport & License */}
-      <div className={`flex flex-wrap items-center gap-4 p-3 rounded-lg ${itemBg}`}>
+      <div className={`flex items-center gap-4 p-3 rounded-lg ${itemBg}`}>
         <div className="flex items-center gap-2">
-          <Label className="text-xs text-gray-600">Passport:</Label>
+          <Label className="text-xs text-gray-600">Passport Exp:</Label>
           <Input
             type="date"
             value={member?.passport_expiration_date || ''}
@@ -275,7 +275,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
           />
         </div>
         <div className="flex items-center gap-2">
-          <Label className="text-xs text-gray-600">License:</Label>
+          <Label className="text-xs text-gray-600">License Exp:</Label>
           <Input
             type="date"
             value={member?.license_expiration_date || ''}
