@@ -262,9 +262,9 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
   }, {});
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       {/* Passport & License */}
-      <div className={`grid grid-cols-2 gap-4 p-3 rounded-lg ${itemBg}`}>
+      <div className={`grid grid-cols-3 gap-3 p-3 rounded-lg ${itemBg}`}>
         <div 
           className="cursor-pointer"
           onClick={() => {
@@ -303,6 +303,20 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
             {member?.license_expiration_date 
               ? new Date(member.license_expiration_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).toUpperCase().replace(',', ',')
               : 'Not set'}
+          </div>
+        </div>
+        <div 
+          className="cursor-pointer"
+          onClick={() => {
+            const newPlate = prompt('Enter license plate number:');
+            if (newPlate !== null) {
+              updateExpirationDatesMutation.mutate({ license_plate_number: newPlate });
+            }
+          }}
+        >
+          <div className="text-xs text-gray-500 mb-1">🚗 License Plate #</div>
+          <div className="text-sm font-semibold">
+            {member?.license_plate_number || 'Not set'}
           </div>
         </div>
       </div>
