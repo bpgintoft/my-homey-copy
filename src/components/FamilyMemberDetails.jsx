@@ -262,9 +262,9 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
   }, {});
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-2">
       {/* Passport & License */}
-      <div className={`grid grid-cols-3 gap-3 p-3 rounded-lg ${itemBg}`}>
+      <div className={`grid grid-cols-3 gap-2 p-2.5 rounded-lg ${itemBg}`}>
         <div 
           className="cursor-pointer"
           onClick={() => {
@@ -314,7 +314,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
             }
           }}
         >
-          <div className="text-xs text-gray-500 mb-1">🚗 License Plate #</div>
+          <div className="text-[10px] text-gray-500 mb-1">🚗 Plate #</div>
           <div className="text-sm font-semibold">
             {member?.license_plate_number || 'Not set'}
           </div>
