@@ -3,7 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { base44 } from '@/api/base44Client';
-import useSwipe from '../components/useSwipe';
+import { useSwipe } from '../components/useSwipe';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -20,7 +20,7 @@ export default function Kids() {
   const navigate = useNavigate();
   const bannerRef = useRef(null);
   
-  useSwipe(bannerRef, (direction) => {
+  useSwipe((direction) => {
     if (direction === 'left') {
       navigate(createPageUrl('House'));
     } else if (direction === 'right') {
