@@ -204,7 +204,7 @@ export default function Home() {
                       <img 
                         src={imageUrls[section.imageKey]} 
                         alt={section.title}
-                        className="w-32 h-32 object-contain mb-3"
+                        className="w-32 h-32 object-contain mb-3 -ml-1"
                       />
                     )}
                     <h3 className="text-lg font-bold text-white drop-shadow-lg whitespace-nowrap">{section.title}</h3>
