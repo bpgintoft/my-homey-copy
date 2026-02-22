@@ -261,7 +261,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
 
   return (
     <div className="space-y-4">
-      {/* Passport & License */}
+      {/* Passport & License/Student # */}
       <div className={`grid grid-cols-[1.2fr_1.3fr_1fr] gap-x-2 p-2.5 rounded-lg ${itemBg}`}>
         <div 
           className="cursor-pointer flex flex-col items-center text-center"
@@ -283,26 +283,43 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
               : 'Not set'}
           </div>
         </div>
-        <div 
-          className="cursor-pointer flex flex-col items-center text-center ml-4"
-          onClick={() => {
-            const newDate = prompt('Enter license expiration date (MM/DD/YYYY):');
-            if (newDate) {
-              const date = new Date(newDate);
-              if (!isNaN(date)) {
-                const formatted = date.toISOString().split('T')[0];
-                updateExpirationDatesMutation.mutate({ license_expiration_date: formatted });
+        {member?.person_type === 'kid' ? (
+          <div 
+            className="cursor-pointer flex flex-col items-center text-center ml-4"
+            onClick={() => {
+              const newStudent = prompt('Enter student number:');
+              if (newStudent !== null) {
+                updateExpirationDatesMutation.mutate({ student_number: newStudent });
               }
-            }
-          }}
-        >
-          <div className="text-xs text-gray-500 mb-1 whitespace-nowrap">🪪 License Exp:</div>
-          <div className="text-sm font-semibold whitespace-nowrap">
-            {member?.license_expiration_date 
-              ? new Date(member.license_expiration_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).toUpperCase().replace(',', ',')
-              : 'Not set'}
+            }}
+          >
+            <div className="text-xs text-gray-500 mb-1 whitespace-nowrap">📚 Student #:</div>
+            <div className="text-sm font-semibold whitespace-nowrap">
+              {member?.student_number || 'Not set'}
+            </div>
           </div>
-        </div>
+        ) : (
+          <div 
+            className="cursor-pointer flex flex-col items-center text-center ml-4"
+            onClick={() => {
+              const newDate = prompt('Enter license expiration date (MM/DD/YYYY):');
+              if (newDate) {
+                const date = new Date(newDate);
+                if (!isNaN(date)) {
+                  const formatted = date.toISOString().split('T')[0];
+                  updateExpirationDatesMutation.mutate({ license_expiration_date: formatted });
+                }
+              }
+            }}
+          >
+            <div className="text-xs text-gray-500 mb-1 whitespace-nowrap">🪪 License Exp:</div>
+            <div className="text-sm font-semibold whitespace-nowrap">
+              {member?.license_expiration_date 
+                ? new Date(member.license_expiration_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).toUpperCase().replace(',', ',')
+                : 'Not set'}
+            </div>
+          </div>
+        )}
         <div 
           className="cursor-pointer flex flex-col items-center text-center ml-5"
           onClick={() => {
