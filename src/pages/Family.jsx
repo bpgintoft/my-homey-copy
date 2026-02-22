@@ -4,6 +4,7 @@ import { base44 } from '@/api/base44Client';
 import { 
   Users, Plus, Phone, Mail, Pencil, Trash2, CheckCircle2
 } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -24,7 +25,7 @@ export default function Family() {
   const [responsibilityInput, setResponsibilityInput] = useState('');
 
   const [newMember, setNewMember] = useState({
-    name: '', role: '', email: '', phone: '', 
+    name: '', role: '', email: '', phone: '', person_type: 'adult',
     color: COLORS[0], responsibilities: []
   });
 
@@ -63,7 +64,7 @@ export default function Family() {
   });
 
   const resetForm = () => {
-    setNewMember({ name: '', role: '', email: '', phone: '', color: COLORS[0], responsibilities: [] });
+    setNewMember({ name: '', role: '', email: '', phone: '', person_type: 'adult', color: COLORS[0], responsibilities: [] });
     setResponsibilityInput('');
   };
 
