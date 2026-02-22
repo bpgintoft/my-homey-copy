@@ -6,7 +6,6 @@ import { createPageUrl } from '@/utils';
 import { base44 } from '@/api/base44Client';
 import { useSwipe } from '../components/useSwipe';
 import FamilyMemberDetails from '../components/FamilyMemberDetails';
-import SchoolProgramSection from '../components/SchoolProgramSection';
 
 export default function PhoenixPage() {
   const navigate = useNavigate();
