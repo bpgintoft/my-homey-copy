@@ -264,24 +264,70 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
   return (
     <div className="space-y-4">
       {/* Passport & License */}
-      <div className={`flex items-center gap-3 p-2 rounded-lg ${itemBg}`}>
-        <div className="flex items-center gap-1">
-          <Label className="text-xs text-gray-600">Passport:</Label>
-          <Input
-            type="month"
-            value={member?.passport_expiration_date?.substring(0, 7) || ''}
-            onChange={(e) => updateExpirationDatesMutation.mutate({ passport_expiration_date: e.target.value + '-01' })}
-            className="h-7 text-xs w-[100px] px-2"
-          />
+      <div className={`flex items-center gap-4 p-3 rounded-lg ${itemBg}`}>
+        <div className="flex items-center gap-2">
+          <Label className="text-[10px] text-gray-600 whitespace-nowrap">Passport Exp:</Label>
+          <div className="flex flex-col items-center">
+            <Input
+              type="text"
+              placeholder="MAY"
+              value={member?.passport_expiration_date ? new Date(member.passport_expiration_date).toLocaleString('en-US', { month: 'short' }).toUpperCase() : ''}
+              onChange={(e) => {
+                const month = e.target.value;
+                const year = member?.passport_expiration_date ? new Date(member.passport_expiration_date).getFullYear() : new Date().getFullYear();
+                const monthNum = new Date(`${month} 1, ${year}`).getMonth() + 1;
+                if (!isNaN(monthNum)) {
+                  updateExpirationDatesMutation.mutate({ passport_expiration_date: `${year}-${String(monthNum).padStart(2, '0')}-01` });
+                }
+              }}
+              className="h-6 text-xs font-bold text-center w-12 px-1 border-b-2 border-t-0 border-l-0 border-r-0 rounded-none"
+            />
+            <Input
+              type="text"
+              placeholder="2028"
+              value={member?.passport_expiration_date ? new Date(member.passport_expiration_date).getFullYear() : ''}
+              onChange={(e) => {
+                const year = e.target.value;
+                const month = member?.passport_expiration_date ? new Date(member.passport_expiration_date).getMonth() + 1 : 1;
+                if (year.length === 4) {
+                  updateExpirationDatesMutation.mutate({ passport_expiration_date: `${year}-${String(month).padStart(2, '0')}-01` });
+                }
+              }}
+              className="h-8 text-lg font-bold text-center w-16 px-1 border-0 shadow-none"
+            />
+          </div>
         </div>
-        <div className="flex items-center gap-1">
-          <Label className="text-xs text-gray-600">License:</Label>
-          <Input
-            type="month"
-            value={member?.license_expiration_date?.substring(0, 7) || ''}
-            onChange={(e) => updateExpirationDatesMutation.mutate({ license_expiration_date: e.target.value + '-01' })}
-            className="h-7 text-xs w-[100px] px-2"
-          />
+        <div className="flex items-center gap-2">
+          <Label className="text-[10px] text-gray-600 whitespace-nowrap">License Exp:</Label>
+          <div className="flex flex-col items-center">
+            <Input
+              type="text"
+              placeholder="MAY"
+              value={member?.license_expiration_date ? new Date(member.license_expiration_date).toLocaleString('en-US', { month: 'short' }).toUpperCase() : ''}
+              onChange={(e) => {
+                const month = e.target.value;
+                const year = member?.license_expiration_date ? new Date(member.license_expiration_date).getFullYear() : new Date().getFullYear();
+                const monthNum = new Date(`${month} 1, ${year}`).getMonth() + 1;
+                if (!isNaN(monthNum)) {
+                  updateExpirationDatesMutation.mutate({ license_expiration_date: `${year}-${String(monthNum).padStart(2, '0')}-01` });
+                }
+              }}
+              className="h-6 text-xs font-bold text-center w-12 px-1 border-b-2 border-t-0 border-l-0 border-r-0 rounded-none"
+            />
+            <Input
+              type="text"
+              placeholder="2028"
+              value={member?.license_expiration_date ? new Date(member.license_expiration_date).getFullYear() : ''}
+              onChange={(e) => {
+                const year = e.target.value;
+                const month = member?.license_expiration_date ? new Date(member.license_expiration_date).getMonth() + 1 : 1;
+                if (year.length === 4) {
+                  updateExpirationDatesMutation.mutate({ license_expiration_date: `${year}-${String(month).padStart(2, '0')}-01` });
+                }
+              }}
+              className="h-8 text-lg font-bold text-center w-16 px-1 border-0 shadow-none"
+            />
+          </div>
         </div>
       </div>
 
