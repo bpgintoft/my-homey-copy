@@ -264,23 +264,23 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
   return (
     <div className="space-y-4">
       {/* Passport & License */}
-      <div className={`flex items-center gap-4 p-3 rounded-lg ${itemBg}`}>
-        <div className="flex items-center gap-2">
-          <Label className="text-xs text-gray-600">Passport Exp:</Label>
+      <div className={`flex items-center gap-3 p-2 rounded-lg ${itemBg}`}>
+        <div className="flex items-center gap-1">
+          <Label className="text-xs text-gray-600">Passport:</Label>
           <Input
-            type="date"
-            value={member?.passport_expiration_date || ''}
-            onChange={(e) => updateExpirationDatesMutation.mutate({ passport_expiration_date: e.target.value })}
-            className="h-8 text-xs w-36"
+            type="month"
+            value={member?.passport_expiration_date?.substring(0, 7) || ''}
+            onChange={(e) => updateExpirationDatesMutation.mutate({ passport_expiration_date: e.target.value + '-01' })}
+            className="h-7 text-xs w-[100px] px-2"
           />
         </div>
-        <div className="flex items-center gap-2">
-          <Label className="text-xs text-gray-600">License Exp:</Label>
+        <div className="flex items-center gap-1">
+          <Label className="text-xs text-gray-600">License:</Label>
           <Input
-            type="date"
-            value={member?.license_expiration_date || ''}
-            onChange={(e) => updateExpirationDatesMutation.mutate({ license_expiration_date: e.target.value })}
-            className="h-8 text-xs w-36"
+            type="month"
+            value={member?.license_expiration_date?.substring(0, 7) || ''}
+            onChange={(e) => updateExpirationDatesMutation.mutate({ license_expiration_date: e.target.value + '-01' })}
+            className="h-7 text-xs w-[100px] px-2"
           />
         </div>
       </div>
