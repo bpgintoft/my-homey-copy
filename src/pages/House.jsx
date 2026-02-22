@@ -430,19 +430,7 @@ export default function House() {
                                         </div>
                                       )}
 
-                                      {appliance.manual_url ? (
-                                        <a
-                                          href={appliance.manual_url}
-                                          target="_blank"
-                                          rel="noopener noreferrer"
-                                          className="inline-flex items-center gap-1 text-sm text-emerald-600 hover:text-emerald-700"
-                                          onClick={(e) => e.stopPropagation()}
-                                        >
-                                          <FileText className="w-4 h-4" />
-                                          View Manual
-                                          <ExternalLink className="w-3 h-3" />
-                                        </a>
-                                      ) : (
+                                      <div className="flex gap-2">
                                         <Button
                                           size="sm"
                                           variant="outline"
@@ -454,13 +442,26 @@ export default function House() {
                                               itemId: appliance.id
                                             });
                                           }}
-                                          disabled={findManualMutation.isPending}
+                                          disabled={findManualMutation.isPending || !appliance.brand || !appliance.model}
                                           className="text-xs"
                                         >
                                           <Sparkles className="w-3 h-3 mr-1" />
                                           {findManualMutation.isPending ? 'Finding...' : 'Find Manual'}
                                         </Button>
-                                      )}
+                                        {appliance.manual_url && (
+                                          <a
+                                            href={appliance.manual_url}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="inline-flex items-center gap-1 text-sm text-emerald-600 hover:text-emerald-700 px-2 py-1"
+                                            onClick={(e) => e.stopPropagation()}
+                                          >
+                                            <FileText className="w-4 h-4" />
+                                            View Manual
+                                            <ExternalLink className="w-3 h-3" />
+                                          </a>
+                                        )}
+                                      </div>
 
                                       {(appliance.dimensions || appliance.specs) && (
                                         <div className="pt-3 border-t">
