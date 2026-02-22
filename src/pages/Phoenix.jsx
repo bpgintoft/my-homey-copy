@@ -81,7 +81,6 @@ export default function PhoenixPage() {
 
       {phoenix && (
         <div className="max-w-2xl mx-auto px-4 sm:px-6 pt-2 pb-6 space-y-4">
-          <SchoolProgramSection memberId={phoenix.id} memberName="Phoenix" />
           <FamilyMemberDetails memberId={phoenix.id} memberName="Phoenix" color="orange" />
         </div>
       )}
