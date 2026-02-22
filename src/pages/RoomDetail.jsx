@@ -16,7 +16,8 @@ import {
   X,
   Upload,
   Loader2,
-  Sparkles
+  Sparkles,
+  Camera
 } from 'lucide-react';
 import { getThumbnailUrl } from '../components/imageHelpers';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -41,6 +42,7 @@ export default function RoomDetail() {
   const [expandedItemId, setExpandedItemId] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
+  const [isUploadingBanner, setIsUploadingBanner] = useState(false);
   const [selectedPhoto, setSelectedPhoto] = useState(null);
   const [photoZoom, setPhotoZoom] = useState(1);
 
@@ -51,6 +53,7 @@ export default function RoomDetail() {
 
   const fileInputRef = React.useRef(null);
   const editFileInputRef = React.useRef(null);
+  const bannerFileInputRef = React.useRef(null);
 
   const [newPaint, setNewPaint] = useState({
     surface: 'walls', brand: '', color_name: '', color_code: '',
@@ -89,20 +92,28 @@ export default function RoomDetail() {
     },
   });
 
-  const handlePhotoUpload = async (file, isEditing = false) => {
+  const handlePhotoUpload = async (file, isEditing = false, isBanner = false) => {
     if (!file) return;
-    setIsUploadingPhoto(true);
+    if (isBanner) {
+      setIsUploadingBanner(true);
+    } else {
+      setIsUploadingPhoto(true);
+    }
     try {
       const { file_url } = await base44.integrations.Core.UploadFile({ file });
-      if (isEditing) {
+      if (isBanner) {
+        await updateRoomMutation.mutateAsync({ photo_url: file_url });
+      } else if (isEditing) {
         setEditingItem({ ...editingItem, photos: [...(editingItem.photos || []), file_url] });
       } else {
         setNewItem({ ...newItem, photos: [...(newItem.photos || []), file_url] });
       }
     } finally {
       setIsUploadingPhoto(false);
+      setIsUploadingBanner(false);
       if (fileInputRef.current) fileInputRef.current.value = '';
       if (editFileInputRef.current) editFileInputRef.current.value = '';
+      if (bannerFileInputRef.current) bannerFileInputRef.current.value = '';
     }
   };
 
@@ -134,6 +145,13 @@ export default function RoomDetail() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['roomItems', roomId] });
       setEditingItem(null);
+    },
+  });
+
+  const updateRoomMutation = useMutation({
+    mutationFn: (data) => base44.entities.Room.update(roomId, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['room', roomId] });
     },
   });
 
@@ -296,12 +314,35 @@ export default function RoomDetail() {
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="flex-shrink-0"
+            className="flex-shrink-0 relative"
           >
-            <img 
-              src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/633730e7e_kitchen3.png" 
-              alt={room.name}
-              className="h-36 sm:h-48 md:h-56 w-auto object-contain drop-shadow-2xl"
+            {room.photo_url && (
+              <img 
+                src={room.photo_url}
+                alt={room.name}
+                className="h-36 sm:h-48 md:h-56 w-auto object-contain drop-shadow-2xl"
+              />
+            )}
+            <Button
+              variant="ghost"
+              size="icon"
+              className="absolute bottom-2 right-2 bg-white/70 hover:bg-white transition-all"
+              onClick={() => bannerFileInputRef.current?.click()}
+              disabled={isUploadingBanner}
+              title="Change room image"
+            >
+              {isUploadingBanner ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <Camera className="w-4 h-4" />
+              )}
+            </Button>
+            <input
+              ref={bannerFileInputRef}
+              type="file"
+              accept="image/*"
+              onChange={(e) => handlePhotoUpload(e.target.files?.[0], false, true)}
+              className="hidden"
             />
           </motion.div>
         </div>
@@ -418,7 +459,7 @@ export default function RoomDetail() {
                             variant="outline"
                             size="sm"
                             onClick={() => fileInputRef.current?.click()}
-                            disabled={isUploadingPhoto}
+                            disabled={isUploadingPhoto || isUploadingBanner}
                           >
                             {isUploadingPhoto ? (
                               <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Uploading...</>
@@ -437,7 +478,7 @@ export default function RoomDetail() {
                         <Input
                           placeholder="Or paste an image here (Ctrl+V / Cmd+V)..."
                           onPaste={handlePaste}
-                          disabled={isUploadingPhoto}
+                          disabled={isUploadingPhoto || isUploadingBanner}
                           className="text-sm"
                         />
                         {newItem.photos && newItem.photos.length > 0 && (
