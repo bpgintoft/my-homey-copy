@@ -16,7 +16,8 @@ import {
   X,
   Upload,
   Loader2,
-  Sparkles
+  Sparkles,
+  Camera
 } from 'lucide-react';
 import { getThumbnailUrl } from '../components/imageHelpers';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -41,6 +42,7 @@ export default function RoomDetail() {
   const [expandedItemId, setExpandedItemId] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
+  const [isUploadingBanner, setIsUploadingBanner] = useState(false);
   const [selectedPhoto, setSelectedPhoto] = useState(null);
   const [photoZoom, setPhotoZoom] = useState(1);
 
@@ -51,6 +53,7 @@ export default function RoomDetail() {
 
   const fileInputRef = React.useRef(null);
   const editFileInputRef = React.useRef(null);
+  const bannerFileInputRef = React.useRef(null);
 
   const [newPaint, setNewPaint] = useState({
     surface: 'walls', brand: '', color_name: '', color_code: '',
@@ -89,20 +92,28 @@ export default function RoomDetail() {
     },
   });
 
-  const handlePhotoUpload = async (file, isEditing = false) => {
+  const handlePhotoUpload = async (file, isEditing = false, isBanner = false) => {
     if (!file) return;
-    setIsUploadingPhoto(true);
+    if (isBanner) {
+      setIsUploadingBanner(true);
+    } else {
+      setIsUploadingPhoto(true);
+    }
     try {
       const { file_url } = await base44.integrations.Core.UploadFile({ file });
-      if (isEditing) {
+      if (isBanner) {
+        await updateRoomMutation.mutateAsync({ banner_photo_url: file_url });
+      } else if (isEditing) {
         setEditingItem({ ...editingItem, photos: [...(editingItem.photos || []), file_url] });
       } else {
         setNewItem({ ...newItem, photos: [...(newItem.photos || []), file_url] });
       }
     } finally {
       setIsUploadingPhoto(false);
+      setIsUploadingBanner(false);
       if (fileInputRef.current) fileInputRef.current.value = '';
       if (editFileInputRef.current) editFileInputRef.current.value = '';
+      if (bannerFileInputRef.current) bannerFileInputRef.current.value = '';
     }
   };
 
@@ -134,6 +145,13 @@ export default function RoomDetail() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['roomItems', roomId] });
       setEditingItem(null);
+    },
+  });
+
+  const updateRoomMutation = useMutation({
+    mutationFn: (data) => base44.entities.Room.update(roomId, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['room', roomId] });
     },
   });
 
