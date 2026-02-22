@@ -221,21 +221,11 @@ export default function SchoolProgramSection({ memberId, memberName, programTitl
   }
 
   return (
-    <Collapsible 
-      open={openSections.schoolProgram} 
-      onOpenChange={(open) => setOpenSections({ ...openSections, schoolProgram: open })}
-    >
-      <Card>
-        <CollapsibleTrigger className="w-full">
-                <CardHeader className="flex flex-row items-center justify-between cursor-pointer hover:bg-gray-50 transition-colors">
-                  <CardTitle className="flex items-center gap-2">
-                    {programTitle}
-              <ChevronDown className={`w-5 h-5 transition-transform ${openSections.schoolProgram ? 'rotate-180' : ''}`} />
-            </CardTitle>
-          </CardHeader>
-        </CollapsibleTrigger>
-        <CollapsibleContent>
-          <CardContent className="space-y-4">
+    <Card>
+      <CardHeader>
+        <CardTitle>{program?.title || sectionLabel}</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">
             {/* Website Link */}
             <div className="space-y-2">
               <label className="text-sm font-medium">Website</label>
