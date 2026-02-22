@@ -230,8 +230,8 @@ export default function House() {
               className="hidden md:block h-40 md:h-56 w-auto object-cover flex-shrink-0"
             />
             <img 
-              src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/e7138b18e_familyappliances.png" 
-              alt="Family with appliances"
+              src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/38b6105cf_kitchengreen3.png" 
+              alt="Kitchen illustration"
               className="h-40 md:h-56 w-auto object-cover flex-shrink-0"
             />
           </div>
