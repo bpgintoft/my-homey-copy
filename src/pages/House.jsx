@@ -66,11 +66,20 @@ export default function House() {
 
   const createApplianceMutation = useMutation({
     mutationFn: (data) => base44.entities.RoomItem.create({ ...data, type: 'appliance' }),
-    onSuccess: () => {
+    onSuccess: (createdAppliance) => {
       queryClient.invalidateQueries(['appliances']);
       queryClient.invalidateQueries(['roomItems']);
       setShowApplianceDialog(false);
       setNewAppliance({ photos: [] });
+      
+      // Auto-fetch manual if brand and model are available
+      if (createdAppliance.brand && createdAppliance.model) {
+        findManualMutation.mutate({
+          brand: createdAppliance.brand,
+          model: createdAppliance.model,
+          itemId: createdAppliance.id
+        });
+      }
     },
   });
 
