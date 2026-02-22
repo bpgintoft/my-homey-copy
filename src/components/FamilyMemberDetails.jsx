@@ -490,7 +490,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
               <span>Important Contacts</span>
               <Dialog open={dialogOpen.contact} onOpenChange={(open) => setDialogOpen({ ...dialogOpen, contact: open })}>
                 <DialogTrigger asChild>
-                  <Button size="sm">
+                  <Button size="sm" className="mr-10">
                     <Plus className="w-4 h-4 mr-2" />Add
                   </Button>
                 </DialogTrigger>
@@ -646,7 +646,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
               <span>To-Do List & Chores</span>
               <Dialog open={dialogOpen.chore} onOpenChange={(open) => setDialogOpen({ ...dialogOpen, chore: open })}>
                 <DialogTrigger asChild>
-                  <Button size="sm">
+                  <Button size="sm" className="mr-10">
                     <Plus className="w-4 h-4 mr-2" />Add
                   </Button>
                 </DialogTrigger>
@@ -754,7 +754,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
               <span>Goals & Milestones</span>
               <Dialog open={dialogOpen.milestone} onOpenChange={(open) => setDialogOpen({ ...dialogOpen, milestone: open })}>
                 <DialogTrigger asChild>
-                  <Button size="sm"><Plus className="w-4 h-4 mr-2" />Add</Button>
+                  <Button size="sm" className="mr-10"><Plus className="w-4 h-4 mr-2" />Add</Button>
                 </DialogTrigger>
                 <DialogContent>
                   <DialogHeader>
