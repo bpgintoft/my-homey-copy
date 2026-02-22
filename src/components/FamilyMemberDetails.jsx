@@ -314,7 +314,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
             }
           }}
         >
-          <div className="text-[10px] text-gray-500 mb-1">🚗 Plate #</div>
+          <div className="text-xs text-gray-500 mb-1">🚗 Plate #</div>
           <div className="text-sm font-semibold">
             {member?.license_plate_number || 'Not set'}
           </div>
