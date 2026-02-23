@@ -63,7 +63,7 @@ export default function Home() {
     { 
       title: 'House', 
       href: 'House', 
-      count: totalAppliances,
+      count: 0,
       imageKey: 'house',
       bgColor: 'bg-gradient-to-br from-green-200 to-green-300'
     },
