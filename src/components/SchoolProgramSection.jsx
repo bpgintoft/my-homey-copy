@@ -19,6 +19,7 @@ export default function SchoolProgramSection({ memberId, memberName, programTitl
   const [editingPasscode, setEditingPasscode] = useState(null);
   const [newPasscode, setNewPasscode] = useState({ name: '', code: '' });
   const [isAddingPasscode, setIsAddingPasscode] = useState(false);
+  const [visiblePasscodes, setVisiblePasscodes] = useState([]);
   const [editingWebsite, setEditingWebsite] = useState(false);
   const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
   const [selectedPhotoIndex, setSelectedPhotoIndex] = useState(null);
@@ -371,9 +372,20 @@ export default function SchoolProgramSection({ memberId, memberName, programTitl
               <div className="space-y-2">
                 {program.passcodes && program.passcodes.map((passcode, index) => (
                   <div key={index} className="flex items-center justify-between p-2 bg-gray-50 rounded text-sm">
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 flex-1">
                       <div className="font-medium">{passcode.name}</div>
-                      <div className="text-gray-600 font-mono">{passcode.code}</div>
+                      <div 
+                        className="text-gray-600 font-mono cursor-pointer select-none"
+                        onClick={() => {
+                          if (visiblePasscodes.includes(index)) {
+                            setVisiblePasscodes(visiblePasscodes.filter(i => i !== index));
+                          } else {
+                            setVisiblePasscodes([...visiblePasscodes, index]);
+                          }
+                        }}
+                      >
+                        {visiblePasscodes.includes(index) ? passcode.code : '••••'}
+                      </div>
                     </div>
                     <Button
                       variant="ghost"
