@@ -475,7 +475,7 @@ export default function Timeline() {
                   {selectedEvent.isAppliance ? (
                     <Button 
                       onClick={() => {
-                        navigate(createPageUrl('House') + '?tab=appliances');
+                        navigate(createPageUrl('House') + `?tab=appliances&editId=${selectedEvent.applianceId}`);
                         setSelectedEvent(null);
                       }} 
                       className="flex-1"

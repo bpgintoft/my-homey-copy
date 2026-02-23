@@ -33,6 +33,7 @@ export default function House() {
   const [showRoomDialog, setShowRoomDialog] = useState(false);
   const [showApplianceDialog, setShowApplianceDialog] = useState(false);
   const [editingAppliance, setEditingAppliance] = useState(null);
+  const [activeTab, setActiveTab] = useState('rooms');
   const [newRoom, setNewRoom] = useState({});
   const [newAppliance, setNewAppliance] = useState({ photos: [] });
   const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
@@ -55,6 +56,24 @@ export default function House() {
     queryKey: ['appliances'],
     queryFn: () => base44.entities.RoomItem.filter({ type: 'appliance' }),
   });
+
+  // Handle URL params for direct editing
+  React.useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const tab = params.get('tab');
+    const editId = params.get('editId');
+    
+    if (tab) {
+      setActiveTab(tab);
+    }
+    
+    if (editId && appliances.length > 0) {
+      const applianceToEdit = appliances.find(a => a.id === editId);
+      if (applianceToEdit) {
+        setEditingAppliance(applianceToEdit);
+      }
+    }
+  }, [appliances]);
 
   const createRoomMutation = useMutation({
     mutationFn: (data) => base44.entities.Room.create(data),
@@ -271,7 +290,7 @@ export default function House() {
       </div>
 
       <div className="container mx-auto px-6 py-8">
-        <Tabs defaultValue="rooms" className="space-y-6">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
           <TabsList className="bg-white shadow-sm">
             <TabsTrigger value="rooms">Rooms</TabsTrigger>
             <TabsTrigger value="appliances">Appliances</TabsTrigger>
