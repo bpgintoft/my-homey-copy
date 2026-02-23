@@ -154,7 +154,8 @@ export default function Timeline() {
     .filter(a => a.purchase_date)
     .map(appliance => ({
       id: `appliance-${appliance.id}`,
-      title: `Purchased and Installed ${appliance.name}`,
+      applianceId: appliance.id,
+      title: `Installed ${appliance.name}`,
       description: appliance.history_description || '',
       date_text: new Date(appliance.purchase_date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }),
       year: new Date(appliance.purchase_date).getFullYear(),
