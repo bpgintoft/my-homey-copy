@@ -25,6 +25,8 @@ export default function SchoolProgramSection({ memberId, memberName, programTitl
   const [selectedPhotoIndex, setSelectedPhotoIndex] = useState(null);
   const [photoZoom, setPhotoZoom] = useState(1);
   const fileInputRef = React.useRef(null);
+  const [localPhone, setLocalPhone] = useState('');
+  const [localEmail, setLocalEmail] = useState('');
 
   // Fetch school program data
   const { data: program } = useQuery({
@@ -32,6 +34,13 @@ export default function SchoolProgramSection({ memberId, memberName, programTitl
     queryFn: () => base44.entities.SchoolProgram.filter({ family_member_id: memberId }).then(res => res[0]),
     enabled: !!memberId,
   });
+
+  React.useEffect(() => {
+    if (program) {
+      setLocalPhone(program.phone || '');
+      setLocalEmail(program.email || '');
+    }
+  }, [program]);
 
   const isKid = personType === 'kid';
   const sectionLabel = isKid ? 'School' : 'Work';
@@ -102,20 +111,20 @@ export default function SchoolProgramSection({ memberId, memberName, programTitl
     }
   };
 
-  const handleUpdatePhone = (phone) => {
-    if (program) {
+  const handleUpdatePhone = () => {
+    if (program && localPhone !== program.phone) {
       updateProgramMutation.mutate({
         id: program.id,
-        data: { phone },
+        data: { phone: localPhone },
       });
     }
   };
 
-  const handleUpdateEmail = (email) => {
-    if (program) {
+  const handleUpdateEmail = () => {
+    if (program && localEmail !== program.email) {
       updateProgramMutation.mutate({
         id: program.id,
-        data: { email },
+        data: { email: localEmail },
       });
     }
   };
@@ -540,9 +549,9 @@ export default function SchoolProgramSection({ memberId, memberName, programTitl
                 <Input
                   type="tel"
                   placeholder="(123) 456-7890"
-                  value={program.phone || ''}
-                  onChange={(e) => handleUpdatePhone(e.target.value)}
-                  onBlur={(e) => handleUpdatePhone(e.target.value)}
+                  value={localPhone}
+                  onChange={(e) => setLocalPhone(e.target.value)}
+                  onBlur={handleUpdatePhone}
                   className="mt-1"
                 />
               </div>
@@ -551,9 +560,9 @@ export default function SchoolProgramSection({ memberId, memberName, programTitl
                 <Input
                   type="email"
                   placeholder="email@example.com"
-                  value={program.email || ''}
-                  onChange={(e) => handleUpdateEmail(e.target.value)}
-                  onBlur={(e) => handleUpdateEmail(e.target.value)}
+                  value={localEmail}
+                  onChange={(e) => setLocalEmail(e.target.value)}
+                  onBlur={handleUpdateEmail}
                   className="mt-1"
                 />
               </div>
