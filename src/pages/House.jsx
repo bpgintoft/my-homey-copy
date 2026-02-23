@@ -32,6 +32,7 @@ export default function House() {
 
   const [showRoomDialog, setShowRoomDialog] = useState(false);
   const [showApplianceDialog, setShowApplianceDialog] = useState(false);
+  const [editingAppliance, setEditingAppliance] = useState(null);
   const [newRoom, setNewRoom] = useState({});
   const [newAppliance, setNewAppliance] = useState({ photos: [] });
   const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
@@ -71,7 +72,7 @@ export default function House() {
       queryClient.invalidateQueries(['roomItems']);
       setShowApplianceDialog(false);
       setNewAppliance({ photos: [] });
-      
+
       // Auto-fetch manual if brand and model are available
       if (createdAppliance.brand && createdAppliance.model) {
         findManualMutation.mutate({
@@ -80,6 +81,15 @@ export default function House() {
           itemId: createdAppliance.id
         });
       }
+    },
+  });
+
+  const updateApplianceMutation = useMutation({
+    mutationFn: ({ id, data }) => base44.entities.RoomItem.update(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['appliances']);
+      queryClient.invalidateQueries(['roomItems']);
+      setEditingAppliance(null);
     },
   });
 
@@ -517,6 +527,18 @@ export default function House() {
                                           </div>
                                         </div>
                                       )}
+
+                                      <Button
+                                        size="sm"
+                                        variant="outline"
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          setEditingAppliance(appliance);
+                                        }}
+                                        className="text-xs w-full"
+                                      >
+                                        Edit Appliance
+                                      </Button>
                                     </div>
                                   </motion.div>
                                 )}
