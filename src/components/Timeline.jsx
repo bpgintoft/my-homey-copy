@@ -32,7 +32,7 @@ export default function Timeline() {
 
   const { data: appliances = [] } = useQuery({
     queryKey: ['appliances'],
-    queryFn: () => base44.entities.Appliance.filter({ show_on_history_timeline: true }),
+    queryFn: () => base44.entities.RoomItem.filter({ type: 'appliance', show_on_history_timeline: true }),
   });
 
   const categoryColors = {
