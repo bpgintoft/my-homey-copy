@@ -30,6 +30,11 @@ export default function Timeline() {
     queryFn: () => base44.entities.TimelineEvent.list(),
   });
 
+  const { data: appliances = [] } = useQuery({
+    queryKey: ['appliances'],
+    queryFn: () => base44.entities.Appliance.filter({ show_on_history_timeline: true }),
+  });
+
   const categoryColors = {
     structure_systems: 'bg-gray-500 border-gray-500',
     renovations_improvements: 'bg-blue-500 border-blue-500',
@@ -141,12 +146,30 @@ export default function Timeline() {
     }
   };
 
+  // Convert appliances to timeline events
+  const applianceEvents = appliances
+    .filter(a => a.purchase_date)
+    .map(appliance => ({
+      id: `appliance-${appliance.id}`,
+      title: `Purchased and Installed ${appliance.name}`,
+      description: appliance.history_description || '',
+      date_text: new Date(appliance.purchase_date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }),
+      year: new Date(appliance.purchase_date).getFullYear(),
+      month: new Date(appliance.purchase_date).getMonth() + 1,
+      category: 'structure_systems',
+      photos: appliance.photos && appliance.photos.length > 0 ? [appliance.photos[0]] : [],
+      isAppliance: true
+    }));
+
+  // Combine regular events and appliance events
+  const allEvents = [...events, ...applianceEvents];
+
   // Filter events based on search query
   const filteredEvents = searchQuery.trim()
-    ? events.filter(event => 
+    ? allEvents.filter(event => 
         event.title.toLowerCase().includes(searchQuery.toLowerCase())
       )
-    : events;
+    : allEvents;
 
   // Group events by year and sort (most recent first)
   const eventsByYear = filteredEvents
@@ -333,7 +356,7 @@ export default function Timeline() {
                 </div>
                 </div>
 
-                {events.length === 0 ? (
+                {allEvents.length === 0 ? (
               <p className="text-sm text-gray-500 text-center py-8">No events yet. Add your first event to get started.</p>
             ) : filteredEvents.length === 0 ? (
               <p className="text-sm text-gray-500 text-center py-8">No events match "{searchQuery}"</p>
@@ -376,8 +399,10 @@ export default function Timeline() {
                             animate={{ opacity: 1, x: 0 }}
                             className="bg-gray-50 rounded-lg p-2 hover:bg-gray-100 transition-colors cursor-pointer flex-1 ml-6 flex items-center gap-2"
                             onClick={() => {
-                              setSelectedEvent(event);
-                              setEditingEvent(null);
+                              if (!event.isAppliance) {
+                                setSelectedEvent(event);
+                                setEditingEvent(null);
+                              }
                             }}
                           >
                             {event.photos && event.photos.length > 0 && (
