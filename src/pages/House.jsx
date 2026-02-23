@@ -695,6 +695,24 @@ export default function House() {
               onChange={(e) => setNewAppliance({ ...newAppliance, notes: e.target.value })}
               rows={3}
             />
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                id="show-on-timeline"
+                checked={newAppliance.show_on_history_timeline || false}
+                onChange={(e) => setNewAppliance({ ...newAppliance, show_on_history_timeline: e.target.checked })}
+                className="w-4 h-4 rounded border-gray-300"
+              />
+              <label htmlFor="show-on-timeline" className="text-sm font-medium">
+                Show on Property History Timeline
+              </label>
+            </div>
+            <Textarea
+              placeholder="Description for Property History timeline"
+              value={newAppliance.history_description || ''}
+              onChange={(e) => setNewAppliance({ ...newAppliance, history_description: e.target.value })}
+              rows={3}
+            />
             <div>
               <label className="text-sm font-medium mb-2 block">Photos</label>
               <div className="space-y-3">
