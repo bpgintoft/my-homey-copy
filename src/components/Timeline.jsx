@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
+import { createPageUrl } from '@/utils';
 import { base44 } from '@/api/base44Client';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -12,6 +14,7 @@ import { motion } from 'framer-motion';
 import { getThumbnailUrl } from './imageHelpers';
 
 export default function Timeline() {
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [newEvent, setNewEvent] = useState({ date_text: '', year: null, month: null, title: '', description: '', category: '', photos: [] });
@@ -399,10 +402,8 @@ export default function Timeline() {
                             animate={{ opacity: 1, x: 0 }}
                             className="bg-gray-50 rounded-lg p-2 hover:bg-gray-100 transition-colors cursor-pointer flex-1 ml-6 flex items-center gap-2"
                             onClick={() => {
-                              if (!event.isAppliance) {
-                                setSelectedEvent(event);
-                                setEditingEvent(null);
-                              }
+                              setSelectedEvent(event);
+                              setEditingEvent(null);
                             }}
                           >
                             {event.photos && event.photos.length > 0 && (
@@ -471,19 +472,33 @@ export default function Timeline() {
                   </div>
                 )}
                 <div className="flex gap-2 pt-4 border-t">
-                  <Button onClick={() => setEditingEvent({ ...selectedEvent })} className="flex-1">
-                    Edit Event
-                  </Button>
-                  <Button 
-                    variant="destructive" 
-                    onClick={() => {
-                      if (confirm('Are you sure you want to delete this event?')) {
-                        deleteEventMutation.mutate(selectedEvent.id);
-                      }
-                    }}
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </Button>
+                  {selectedEvent.isAppliance ? (
+                    <Button 
+                      onClick={() => {
+                        navigate(createPageUrl('House') + '?tab=appliances');
+                        setSelectedEvent(null);
+                      }} 
+                      className="flex-1"
+                    >
+                      Edit Appliance
+                    </Button>
+                  ) : (
+                    <>
+                      <Button onClick={() => setEditingEvent({ ...selectedEvent })} className="flex-1">
+                        Edit Event
+                      </Button>
+                      <Button 
+                        variant="destructive" 
+                        onClick={() => {
+                          if (confirm('Are you sure you want to delete this event?')) {
+                            deleteEventMutation.mutate(selectedEvent.id);
+                          }
+                        }}
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </>
+                  )}
                 </div>
               </div>
             )}
