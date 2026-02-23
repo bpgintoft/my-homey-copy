@@ -664,7 +664,7 @@ export default function House() {
       </Dialog>
 
       <Dialog open={showApplianceDialog} onOpenChange={setShowApplianceDialog}>
-        <DialogContent>
+        <DialogContent className="max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Add Appliance</DialogTitle>
           </DialogHeader>
@@ -798,8 +798,94 @@ export default function House() {
               Add Appliance
             </Button>
           </div>
-        </DialogContent>
-      </Dialog>
-    </div>
-  );
-}
+          </DialogContent>
+          </Dialog>
+
+          <Dialog open={!!editingAppliance} onOpenChange={(open) => !open && setEditingAppliance(null)}>
+          <DialogContent className="max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Edit Appliance</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <Input
+              placeholder="Appliance name"
+              value={editingAppliance?.name || ''}
+              onChange={(e) => setEditingAppliance({ ...editingAppliance, name: e.target.value })}
+            />
+            <Input
+              placeholder="Brand"
+              value={editingAppliance?.brand || ''}
+              onChange={(e) => setEditingAppliance({ ...editingAppliance, brand: e.target.value })}
+            />
+            <Input
+              placeholder="Model number"
+              value={editingAppliance?.model || ''}
+              onChange={(e) => setEditingAppliance({ ...editingAppliance, model: e.target.value })}
+            />
+            <Select
+              value={editingAppliance?.room_id || ''}
+              onValueChange={(value) => {
+                const room = rooms.find(r => r.id === value);
+                setEditingAppliance({ ...editingAppliance, room_id: value, room_name: room?.name });
+              }}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select room" />
+              </SelectTrigger>
+              <SelectContent>
+                {rooms.map(room => (
+                  <SelectItem key={room.id} value={room.id}>{room.name}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Input
+              type="date"
+              placeholder="Purchase date"
+              value={editingAppliance?.purchase_date || ''}
+              onChange={(e) => setEditingAppliance({ ...editingAppliance, purchase_date: e.target.value })}
+            />
+            <Input
+              placeholder="Serial number (optional)"
+              value={editingAppliance?.serial_number || ''}
+              onChange={(e) => setEditingAppliance({ ...editingAppliance, serial_number: e.target.value })}
+            />
+            <Textarea
+              placeholder="Notes"
+              value={editingAppliance?.notes || ''}
+              onChange={(e) => setEditingAppliance({ ...editingAppliance, notes: e.target.value })}
+              rows={3}
+            />
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                id="edit-show-on-timeline"
+                checked={editingAppliance?.show_on_history_timeline || false}
+                onChange={(e) => setEditingAppliance({ ...editingAppliance, show_on_history_timeline: e.target.checked })}
+                className="w-4 h-4 rounded border-gray-300"
+              />
+              <label htmlFor="edit-show-on-timeline" className="text-sm font-medium">
+                Show on Property History Timeline
+              </label>
+            </div>
+            <Textarea
+              placeholder="Description for Property History timeline"
+              value={editingAppliance?.history_description || ''}
+              onChange={(e) => setEditingAppliance({ ...editingAppliance, history_description: e.target.value })}
+              rows={3}
+            />
+            <Button
+              onClick={() => updateApplianceMutation.mutate({ 
+                id: editingAppliance.id, 
+                data: editingAppliance 
+              })}
+              disabled={!editingAppliance?.name || !editingAppliance?.brand || !editingAppliance?.model}
+              className="w-full bg-gradient-to-r from-[#00D9A3] to-[#00B386] text-white"
+            >
+              Save Changes
+            </Button>
+          </div>
+          </DialogContent>
+          </Dialog>
+          </div>
+          );
+          }
