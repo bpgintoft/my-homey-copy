@@ -341,31 +341,31 @@ export default function FamilyCalendar({ activities }) {
   return (
     <div className="bg-white rounded-3xl shadow-sm p-6">
       {/* Week navigation */}
-      <div className="flex items-center justify-center gap-1 mb-6 px-4">
+      <div className="flex items-center justify-between gap-1 mb-6 px-2">
         <Button
           variant="ghost"
           size="icon"
           onClick={goToPreviousWeek}
-          className="h-9 w-9 rounded-xl flex-shrink-0"
+          className="h-8 w-8 rounded-xl flex-shrink-0"
         >
-          <ChevronLeft className="w-5 h-5" />
+          <ChevronLeft className="w-4 h-4" />
         </Button>
-        <div className="text-base font-semibold text-gray-900 whitespace-nowrap">
+        <div className="text-sm font-semibold text-gray-900 whitespace-nowrap">
           {format(currentWeekStart, 'MMM d')} – {format(addDays(currentWeekStart, 6), 'MMM d')}
         </div>
         <Button
           variant="ghost"
           size="icon"
           onClick={goToNextWeek}
-          className="h-9 w-9 rounded-xl flex-shrink-0"
+          className="h-8 w-8 rounded-xl flex-shrink-0"
         >
-          <ChevronRight className="w-5 h-5" />
+          <ChevronRight className="w-4 h-4" />
         </Button>
         <Button
           variant="outline"
           size="sm"
           onClick={goToToday}
-          className="rounded-xl flex-shrink-0"
+          className="rounded-xl flex-shrink-0 h-8 px-2 text-xs"
         >
           Today
         </Button>
@@ -374,7 +374,7 @@ export default function FamilyCalendar({ activities }) {
             <Button
               variant="outline"
               size="icon"
-              className="h-9 w-9 rounded-xl flex-shrink-0"
+              className="h-8 w-8 rounded-xl flex-shrink-0"
             >
               <Filter className="w-4 h-4" />
             </Button>
@@ -405,11 +405,11 @@ export default function FamilyCalendar({ activities }) {
           </PopoverContent>
         </Popover>
         <Button
-          className="h-9 w-9 rounded-full bg-gradient-to-r from-[#0AACFF] to-[#0890D9] shadow-lg flex-shrink-0"
+          className="h-8 w-8 rounded-full bg-gradient-to-r from-[#0AACFF] to-[#0890D9] shadow-lg flex-shrink-0"
           size="icon"
           onClick={() => setShowAddDialog(true)}
         >
-          <Plus className="w-5 h-5 text-white" />
+          <Plus className="w-4 h-4 text-white" />
         </Button>
       </div>
 
