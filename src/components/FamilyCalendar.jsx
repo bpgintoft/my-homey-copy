@@ -92,7 +92,7 @@ export default function FamilyCalendar({ activities }) {
   return (
     <div className="bg-white rounded-3xl shadow-sm p-6">
       {/* Week navigation */}
-      <div className="flex items-center justify-center gap-1.5 mb-6 px-3">
+      <div className="flex items-center justify-center gap-1 mb-6 px-4">
         <Button
           variant="ghost"
           size="icon"
