@@ -92,44 +92,40 @@ export default function FamilyCalendar({ activities }) {
   return (
     <div className="bg-white rounded-3xl shadow-sm p-6">
       {/* Week navigation */}
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-1">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={goToPreviousWeek}
-            className="h-9 w-9 rounded-xl"
-          >
-            <ChevronLeft className="w-5 h-5" />
-          </Button>
-          <div className="text-base font-semibold text-gray-900 whitespace-nowrap">
-            {format(currentWeekStart, 'MMM d')} – {format(addDays(currentWeekStart, 6), 'MMM d')}
-          </div>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={goToNextWeek}
-            className="h-9 w-9 rounded-xl"
-          >
-            <ChevronRight className="w-5 h-5" />
-          </Button>
+      <div className="flex items-center justify-center gap-2 mb-6">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={goToPreviousWeek}
+          className="h-9 w-9 rounded-xl flex-shrink-0"
+        >
+          <ChevronLeft className="w-5 h-5" />
+        </Button>
+        <div className="text-base font-semibold text-gray-900 whitespace-nowrap">
+          {format(currentWeekStart, 'MMM d')} – {format(addDays(currentWeekStart, 6), 'MMM d')}
         </div>
-        <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={goToToday}
-            className="rounded-xl"
-          >
-            Today
-          </Button>
-          <Button
-            className="h-9 w-9 rounded-full bg-gradient-to-r from-[#0AACFF] to-[#0890D9] shadow-lg"
-            size="icon"
-          >
-            <Plus className="w-5 h-5 text-white" />
-          </Button>
-        </div>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={goToNextWeek}
+          className="h-9 w-9 rounded-xl flex-shrink-0"
+        >
+          <ChevronRight className="w-5 h-5" />
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={goToToday}
+          className="rounded-xl flex-shrink-0"
+        >
+          Today
+        </Button>
+        <Button
+          className="h-9 w-9 rounded-full bg-gradient-to-r from-[#0AACFF] to-[#0890D9] shadow-lg flex-shrink-0"
+          size="icon"
+        >
+          <Plus className="w-5 h-5 text-white" />
+        </Button>
       </div>
 
       {/* Error message */}
