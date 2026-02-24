@@ -356,14 +356,14 @@ export default function FamilyCalendar({ activities }) {
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
                         onClick={() => activity.source === 'google' && handleEditEvent(activity)}
-                        className={`bg-white rounded-xl p-3 shadow-sm hover:shadow-md transition-shadow flex items-center gap-3 ${activity.source === 'google' ? 'cursor-pointer' : ''}`}
+                        className={`bg-white rounded-lg p-2 shadow-sm hover:shadow-md transition-shadow flex items-center gap-2 ${activity.source === 'google' ? 'cursor-pointer' : ''}`}
                         style={{
-                          borderLeft: `4px solid ${activity.backgroundColor || '#8B5CF6'}`
+                          borderLeft: `3px solid ${activity.backgroundColor || '#8B5CF6'}`
                         }}
                       >
                         {/* Icon */}
                         <div 
-                          className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 overflow-hidden"
+                          className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden"
                           style={{
                             backgroundColor: activity.backgroundColor ? `${activity.backgroundColor}20` : '#F3E8FF'
                           }}
@@ -372,32 +372,32 @@ export default function FamilyCalendar({ activities }) {
                             <img 
                               src={activity.icon_url} 
                               alt={activity.title}
-                              className="w-10 h-10 object-contain"
+                              className="w-6 h-6 object-contain"
                             />
                           ) : activity.source === 'manual' ? (
                             <div
-                              className="text-2xl cursor-pointer"
+                              className="text-lg cursor-pointer"
                               onClick={() => generateIconMutation.mutate(activity)}
                               title="Click to generate icon"
                             >
                               {generateIconMutation.isPending ? '⏳' : '🎨'}
                             </div>
                           ) : (
-                            <div className="text-2xl">📅</div>
+                            <div className="text-lg">📅</div>
                           )}
                         </div>
 
                         {/* Event details */}
                         <div className="flex-1 min-w-0">
-                          <div className="font-medium text-gray-900 truncate">
+                          <div className="font-medium text-sm text-gray-900 truncate leading-tight">
                             {activity.title}
                           </div>
-                          <div className="text-sm text-gray-600">
+                          <div className="text-xs text-gray-600 leading-tight">
                             {eventTime}
                             {activity.location && ` • ${activity.location}`}
                           </div>
                           {activity.source === 'google' && activity.calendarName && (
-                            <div className="text-xs text-gray-500">
+                            <div className="text-xs text-gray-500 leading-tight">
                               {activity.calendarName}
                             </div>
                           )}
@@ -405,7 +405,7 @@ export default function FamilyCalendar({ activities }) {
 
                         {/* Member initial */}
                         {activity.child_name && (
-                          <div className={`w-9 h-9 rounded-full ${memberColor} flex items-center justify-center text-white font-semibold text-sm flex-shrink-0`}>
+                          <div className={`w-7 h-7 rounded-full ${memberColor} flex items-center justify-center text-white font-semibold text-xs flex-shrink-0`}>
                             {getInitial(activity.child_name)}
                           </div>
                         )}
