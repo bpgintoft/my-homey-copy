@@ -11,6 +11,7 @@ import { Plus, ChevronLeft, ChevronRight } from 'lucide-react';
 import { format, addDays, startOfWeek, isSameDay, parseISO } from 'date-fns';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
+import LocationAutocomplete from './LocationAutocomplete';
 
 export default function FamilyCalendar({ activities }) {
   const [currentWeekStart, setCurrentWeekStart] = useState(startOfWeek(new Date(), { weekStartsOn: 0 }));
@@ -144,7 +145,19 @@ export default function FamilyCalendar({ activities }) {
       toast.error('Please fill in all required fields');
       return;
     }
-    createEventMutation.mutate(newEvent);
+    
+    // Ensure datetime has seconds (required by Google Calendar API)
+    const eventData = {
+      ...newEvent,
+      start: newEvent.start.includes(':') && newEvent.start.split(':').length === 2 
+        ? `${newEvent.start}:00` 
+        : newEvent.start,
+      end: newEvent.end.includes(':') && newEvent.end.split(':').length === 2 
+        ? `${newEvent.end}:00` 
+        : newEvent.end,
+    };
+    
+    createEventMutation.mutate(eventData);
   };
 
   return (
@@ -371,10 +384,9 @@ export default function FamilyCalendar({ activities }) {
             </div>
             <div className="space-y-2">
               <Label htmlFor="location">Location</Label>
-              <Input
-                id="location"
+              <LocationAutocomplete
                 value={newEvent.location}
-                onChange={(e) => setNewEvent({ ...newEvent, location: e.target.value })}
+                onChange={(value) => setNewEvent({ ...newEvent, location: value })}
                 placeholder="Event location"
               />
             </div>
