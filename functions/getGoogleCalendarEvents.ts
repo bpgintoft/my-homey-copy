@@ -4,15 +4,16 @@ import { google } from 'npm:googleapis@134';
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
+    
+    const { timeMin, timeMax } = await req.json();
+
+    const accessToken = await base44.asServiceRole.connectors.getAccessToken("googlecalendar");
+    
     const user = await base44.auth.me();
 
     if (!user) {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
-
-    const { timeMin, timeMax } = await req.json();
-
-    const accessToken = await base44.asServiceRole.connectors.getAccessToken("googlecalendar");
 
     if (!accessToken) {
       return Response.json({ error: 'Google Calendar not authorized' }, { status: 401 });
