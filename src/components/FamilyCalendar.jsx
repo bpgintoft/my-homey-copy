@@ -2,12 +2,27 @@ import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Plus, ChevronLeft, ChevronRight } from 'lucide-react';
 import { format, addDays, startOfWeek, isSameDay, parseISO } from 'date-fns';
 import { motion, AnimatePresence } from 'framer-motion';
+import { toast } from 'sonner';
 
 export default function FamilyCalendar({ activities }) {
   const [currentWeekStart, setCurrentWeekStart] = useState(startOfWeek(new Date(), { weekStartsOn: 0 }));
+  const [showAddDialog, setShowAddDialog] = useState(false);
+  const [newEvent, setNewEvent] = useState({
+    summary: '',
+    description: '',
+    location: '',
+    start: '',
+    end: '',
+    calendarId: ''
+  });
   const queryClient = useQueryClient();
 
   // Generate a week of dates
@@ -21,6 +36,41 @@ export default function FamilyCalendar({ activities }) {
       const timeMax = addDays(currentWeekStart, 7).toISOString();
       const { data } = await base44.functions.invoke('getGoogleCalendarEvents', { timeMin, timeMax });
       return data.events || [];
+    }
+  });
+
+  // Fetch Google Calendars
+  const { data: calendarsData } = useQuery({
+    queryKey: ['googleCalendars'],
+    queryFn: async () => {
+      const { data } = await base44.functions.invoke('getGoogleCalendars');
+      return data;
+    }
+  });
+
+  const calendars = calendarsData?.calendars || [];
+
+  // Create event mutation
+  const createEventMutation = useMutation({
+    mutationFn: async (eventData) => {
+      const { data } = await base44.functions.invoke('createGoogleCalendarEvent', eventData);
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['googleCalendarEvents'] });
+      setShowAddDialog(false);
+      setNewEvent({
+        summary: '',
+        description: '',
+        location: '',
+        start: '',
+        end: '',
+        calendarId: ''
+      });
+      toast.success('Event created successfully');
+    },
+    onError: (error) => {
+      toast.error('Failed to create event: ' + error.message);
     }
   });
 
@@ -89,6 +139,14 @@ export default function FamilyCalendar({ activities }) {
     setCurrentWeekStart(startOfWeek(new Date(), { weekStartsOn: 0 }));
   };
 
+  const handleCreateEvent = () => {
+    if (!newEvent.summary || !newEvent.start || !newEvent.end || !newEvent.calendarId) {
+      toast.error('Please fill in all required fields');
+      return;
+    }
+    createEventMutation.mutate(newEvent);
+  };
+
   return (
     <div className="bg-white rounded-3xl shadow-sm p-6">
       {/* Week navigation */}
@@ -123,6 +181,7 @@ export default function FamilyCalendar({ activities }) {
         <Button
           className="h-9 w-9 rounded-full bg-gradient-to-r from-[#0AACFF] to-[#0890D9] shadow-lg flex-shrink-0"
           size="icon"
+          onClick={() => setShowAddDialog(true)}
         >
           <Plus className="w-5 h-5 text-white" />
         </Button>
@@ -258,7 +317,90 @@ export default function FamilyCalendar({ activities }) {
         )}
       </div>
 
-
+      {/* Add Event Dialog */}
+      <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Add Calendar Event</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="calendar">Calendar *</Label>
+              <Select
+                value={newEvent.calendarId}
+                onValueChange={(value) => setNewEvent({ ...newEvent, calendarId: value })}
+              >
+                <SelectTrigger id="calendar">
+                  <SelectValue placeholder="Select calendar" />
+                </SelectTrigger>
+                <SelectContent>
+                  {calendars.map((cal) => (
+                    <SelectItem key={cal.id} value={cal.id}>
+                      {cal.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="summary">Title *</Label>
+              <Input
+                id="summary"
+                value={newEvent.summary}
+                onChange={(e) => setNewEvent({ ...newEvent, summary: e.target.value })}
+                placeholder="Event title"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="start">Start Date & Time *</Label>
+              <Input
+                id="start"
+                type="datetime-local"
+                value={newEvent.start}
+                onChange={(e) => setNewEvent({ ...newEvent, start: e.target.value })}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="end">End Date & Time *</Label>
+              <Input
+                id="end"
+                type="datetime-local"
+                value={newEvent.end}
+                onChange={(e) => setNewEvent({ ...newEvent, end: e.target.value })}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="location">Location</Label>
+              <Input
+                id="location"
+                value={newEvent.location}
+                onChange={(e) => setNewEvent({ ...newEvent, location: e.target.value })}
+                placeholder="Event location"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="description">Description</Label>
+              <Textarea
+                id="description"
+                value={newEvent.description}
+                onChange={(e) => setNewEvent({ ...newEvent, description: e.target.value })}
+                placeholder="Event description"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowAddDialog(false)}>
+              Cancel
+            </Button>
+            <Button 
+              onClick={handleCreateEvent}
+              disabled={createEventMutation.isPending}
+            >
+              {createEventMutation.isPending ? 'Creating...' : 'Create Event'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
