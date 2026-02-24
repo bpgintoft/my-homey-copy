@@ -16,18 +16,10 @@ export default function LocationAutocomplete({ value, onChange, placeholder = "E
   } = usePlacesAutocomplete({
     requestOptions: {},
     debounce: 300,
-    initOnMount: false,
   });
 
   const [showSuggestions, setShowSuggestions] = useState(false);
   const wrapperRef = useRef(null);
-
-  // Initialize after Google Maps loads
-  useEffect(() => {
-    if (isGoogleMapsLoaded && window.google?.maps?.places) {
-      setValue(value || '', false);
-    }
-  }, [isGoogleMapsLoaded]);
 
   // Sync external value with internal state
   useEffect(() => {
@@ -68,9 +60,9 @@ export default function LocationAutocomplete({ value, onChange, placeholder = "E
         onChange={handleInput}
         onFocus={() => setShowSuggestions(true)}
         placeholder={placeholder}
-        disabled={!isGoogleMapsLoaded}
+        disabled={!ready}
       />
-      {!isGoogleMapsLoaded && (
+      {!ready && (
         <div className="text-xs text-gray-500 mt-1">Loading location search...</div>
       )}
       {showSuggestions && status === "OK" && (
