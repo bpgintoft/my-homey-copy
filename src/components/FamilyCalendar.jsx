@@ -262,13 +262,7 @@ export default function FamilyCalendar({ activities }) {
         )}
       </div>
 
-      {/* Floating add button */}
-      <Button
-        className="fixed bottom-8 right-8 h-14 w-14 rounded-full bg-gradient-to-r from-[#0AACFF] to-[#0890D9] shadow-lg hover:shadow-xl z-50"
-        size="icon"
-      >
-        <Plus className="w-6 h-6 text-white" />
-      </Button>
+
     </div>
   );
 }
