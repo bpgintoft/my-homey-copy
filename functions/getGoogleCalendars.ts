@@ -20,7 +20,7 @@ Deno.serve(async (req) => {
     const calendars = (calendarsRes.data.items || []).map(cal => ({
       id: cal.id,
       name: cal.summary,
-      backgroundColor: cal.backgroundColor,
+      backgroundColor: cal.backgroundColor || '#4285F4',
       primary: cal.primary || false,
     }));
 
