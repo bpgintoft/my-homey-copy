@@ -452,15 +452,10 @@ export default function FamilyCalendar({ activities }) {
                           <div className="font-medium text-sm text-gray-900 truncate leading-tight">
                             {activity.title}
                           </div>
-                          <div className="text-xs text-gray-600 leading-tight">
+                          <div className="text-xs text-gray-600 leading-tight truncate">
                             {eventTime}
                             {activity.location && ` • ${activity.location}`}
                           </div>
-                          {activity.source === 'google' && activity.calendarName && (
-                            <div className="text-xs text-gray-500 leading-tight">
-                              {activity.calendarName}
-                            </div>
-                          )}
                         </div>
 
                         {/* Member initial */}
