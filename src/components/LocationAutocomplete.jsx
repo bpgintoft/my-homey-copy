@@ -1,31 +1,26 @@
 import React, { useState, useRef, useEffect } from 'react';
-import usePlacesAutocomplete from 'use-places-autocomplete';
 import { Input } from "@/components/ui/input";
 import { MapPin } from 'lucide-react';
 import { useLoadGoogleMaps } from './GoogleMapsLoader';
 
 export default function LocationAutocomplete({ value, onChange, placeholder = "Event location" }) {
   const isGoogleMapsLoaded = useLoadGoogleMaps();
-  
-  const {
-    ready,
-    value: inputValue,
-    suggestions: { status, data },
-    setValue,
-    clearSuggestions,
-  } = usePlacesAutocomplete({
-    requestOptions: {},
-    debounce: 300,
-  });
-
+  const [inputValue, setInputValue] = useState(value || '');
+  const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const wrapperRef = useRef(null);
+  const autocompleteService = useRef(null);
+
+  // Initialize autocomplete service when Google Maps loads
+  useEffect(() => {
+    if (isGoogleMapsLoaded && window.google?.maps?.places) {
+      autocompleteService.current = new window.google.maps.places.AutocompleteService();
+    }
+  }, [isGoogleMapsLoaded]);
 
   // Sync external value with internal state
   useEffect(() => {
-    if (value !== inputValue) {
-      setValue(value, false);
-    }
+    setInputValue(value || '');
   }, [value]);
 
   // Close suggestions when clicking outside
@@ -41,15 +36,34 @@ export default function LocationAutocomplete({ value, onChange, placeholder = "E
 
   const handleInput = (e) => {
     const val = e.target.value;
-    setValue(val);
+    setInputValue(val);
     onChange(val);
-    setShowSuggestions(true);
+
+    if (!val.trim()) {
+      setSuggestions([]);
+      setShowSuggestions(false);
+      return;
+    }
+
+    if (autocompleteService.current) {
+      autocompleteService.current.getPlacePredictions(
+        { input: val },
+        (predictions, status) => {
+          if (status === window.google.maps.places.PlacesServiceStatus.OK && predictions) {
+            setSuggestions(predictions);
+            setShowSuggestions(true);
+          } else {
+            setSuggestions([]);
+          }
+        }
+      );
+    }
   };
 
   const handleSelect = (description) => {
-    setValue(description, false);
+    setInputValue(description);
     onChange(description);
-    clearSuggestions();
+    setSuggestions([]);
     setShowSuggestions(false);
   };
 
@@ -58,30 +72,27 @@ export default function LocationAutocomplete({ value, onChange, placeholder = "E
       <Input
         value={inputValue}
         onChange={handleInput}
-        onFocus={() => setShowSuggestions(true)}
+        onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
         placeholder={placeholder}
       />
-      {!ready && isGoogleMapsLoaded && (
-        <div className="text-xs text-gray-500 mt-1">Initializing location search...</div>
-      )}
-      {showSuggestions && ready && status === "OK" && (
+      {showSuggestions && suggestions.length > 0 && (
         <div className="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-auto">
-          {data.map((suggestion) => {
-            const {
-              place_id,
-              structured_formatting: { main_text, secondary_text },
-            } = suggestion;
+          {suggestions.map((suggestion) => {
+            const mainText = suggestion.structured_formatting?.main_text || suggestion.description;
+            const secondaryText = suggestion.structured_formatting?.secondary_text || '';
 
             return (
               <button
-                key={place_id}
+                key={suggestion.place_id}
                 onClick={() => handleSelect(suggestion.description)}
                 className="w-full px-4 py-3 text-left hover:bg-gray-50 flex items-start gap-3 border-b border-gray-100 last:border-0"
               >
                 <MapPin className="w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0" />
                 <div className="min-w-0">
-                  <div className="font-medium text-gray-900">{main_text}</div>
-                  <div className="text-sm text-gray-500 truncate">{secondary_text}</div>
+                  <div className="font-medium text-gray-900">{mainText}</div>
+                  {secondaryText && (
+                    <div className="text-sm text-gray-500 truncate">{secondaryText}</div>
+                  )}
                 </div>
               </button>
             );
