@@ -92,7 +92,7 @@ export default function FamilyCalendar({ activities }) {
   return (
     <div className="bg-white rounded-3xl shadow-sm p-6">
       {/* Week navigation */}
-      <div className="flex items-center justify-center gap-2 mb-6">
+      <div className="flex items-center justify-center gap-2 mb-6 px-2">
         <Button
           variant="ghost"
           size="icon"
@@ -116,7 +116,7 @@ export default function FamilyCalendar({ activities }) {
           variant="outline"
           size="sm"
           onClick={goToToday}
-          className="rounded-xl flex-shrink-0"
+          className="rounded-xl flex-shrink-0 ml-1"
         >
           Today
         </Button>
