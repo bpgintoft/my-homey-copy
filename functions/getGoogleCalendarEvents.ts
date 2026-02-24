@@ -63,6 +63,10 @@ Deno.serve(async (req) => {
 
     return Response.json({ events: allEvents });
   } catch (error) {
-    return Response.json({ error: error.message }, { status: 500 });
+    console.error('Google Calendar function error:', error);
+    return Response.json({ 
+      error: error.message || 'Unknown error',
+      details: error.stack 
+    }, { status: 500 });
   }
 });
