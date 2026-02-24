@@ -60,10 +60,9 @@ export default function LocationAutocomplete({ value, onChange, placeholder = "E
         onChange={handleInput}
         onFocus={() => setShowSuggestions(true)}
         placeholder={placeholder}
-        disabled={!ready}
       />
-      {!ready && (
-        <div className="text-xs text-gray-500 mt-1">Loading location search...</div>
+      {!ready && isGoogleMapsLoaded && (
+        <div className="text-xs text-gray-500 mt-1">Initializing location search...</div>
       )}
       {showSuggestions && status === "OK" && (
         <div className="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-auto">
