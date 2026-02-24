@@ -15,6 +15,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Plus, Calendar as CalendarIcon, MapPin, DollarSign, Clock, Sparkles, Users, Trash2, ExternalLink, UserPlus, Edit2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, parseISO } from 'date-fns';
+import FamilyCalendar from '../components/FamilyCalendar';
 
 export default function Kids() {
   const navigate = useNavigate();
@@ -177,11 +178,15 @@ export default function Kids() {
       </div>
 
       <div className="container mx-auto px-6 py-8">
-        <Tabs defaultValue="upcoming" className="space-y-6">
+        <Tabs defaultValue="calendar" className="space-y-6">
           <TabsList className="bg-white shadow-sm">
-            <TabsTrigger value="upcoming">Upcoming</TabsTrigger>
             <TabsTrigger value="calendar">Calendar</TabsTrigger>
+            <TabsTrigger value="upcoming">Upcoming</TabsTrigger>
           </TabsList>
+
+          <TabsContent value="calendar">
+            <FamilyCalendar activities={activities} />
+          </TabsContent>
 
           <TabsContent value="upcoming" className="space-y-6">
             <h2 className="text-xl font-semibold text-gray-900">
@@ -313,77 +318,6 @@ export default function Kids() {
                 </Button>
               </Card>
             )}
-          </TabsContent>
-
-          <TabsContent value="calendar">
-            <Card className="bg-white border-0 shadow-sm p-6">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-semibold text-gray-900">
-                  {format(currentDate, 'MMMM yyyy')}
-                </h2>
-                <div className="flex gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setCurrentDate(new Date(currentDate.setMonth(currentDate.getMonth() - 1)))}
-                  >
-                    Previous
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setCurrentDate(new Date())}
-                  >
-                    Today
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setCurrentDate(new Date(currentDate.setMonth(currentDate.getMonth() + 1)))}
-                  >
-                    Next
-                  </Button>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-7 gap-2">
-                {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
-                  <div key={day} className="text-center text-sm font-medium text-gray-500 py-2">
-                    {day}
-                  </div>
-                ))}
-                
-                {Array.from({ length: monthStart.getDay() }).map((_, i) => (
-                  <div key={`empty-${i}`} />
-                ))}
-                
-                {daysInMonth.map(day => {
-                  const dayActivities = getActivitiesForDay(day);
-                  const isToday = isSameDay(day, new Date());
-                  
-                  return (
-                    <div
-                      key={day.toISOString()}
-                      className={`min-h-20 p-2 border rounded-lg ${
-                        isToday ? 'border-blue-500 bg-blue-50' : 'border-gray-200'
-                      }`}
-                    >
-                      <div className={`text-sm font-medium mb-1 ${isToday ? 'text-blue-600' : 'text-gray-700'}`}>
-                        {format(day, 'd')}
-                      </div>
-                      {dayActivities.map(activity => (
-                        <div
-                          key={activity.id}
-                          className="text-xs bg-blue-100 text-blue-700 rounded px-1 py-0.5 mb-1 truncate"
-                        >
-                          {activity.title}
-                        </div>
-                      ))}
-                    </div>
-                  );
-                })}
-              </div>
-            </Card>
           </TabsContent>
         </Tabs>
       </div>
