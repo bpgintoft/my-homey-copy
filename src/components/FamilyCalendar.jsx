@@ -29,7 +29,10 @@ export default function FamilyCalendar({ activities }) {
     location: '',
     start: '',
     end: '',
-    calendarId: ''
+    calendarId: '',
+    recurrence: 'none',
+    recurrenceEnd: '',
+    weeklyDays: []
   });
   const queryClient = useQueryClient();
 
@@ -103,7 +106,10 @@ export default function FamilyCalendar({ activities }) {
         location: '',
         start: '',
         end: '',
-        calendarId: ''
+        calendarId: '',
+        recurrence: 'none',
+        recurrenceEnd: '',
+        weeklyDays: []
       });
       toast.success('Event created successfully');
     },
@@ -258,24 +264,96 @@ export default function FamilyCalendar({ activities }) {
     setHasNavigated(false);
   };
 
+  const generateRecurrenceRule = (recurrence, recurrenceEnd, weeklyDays) => {
+    if (recurrence === 'none') return null;
+    
+    let rrule = 'RRULE:FREQ=';
+    
+    switch (recurrence) {
+      case 'daily':
+        rrule += 'DAILY';
+        break;
+      case 'weekly':
+        rrule += 'WEEKLY';
+        if (weeklyDays.length > 0) {
+          rrule += `;BYDAY=${weeklyDays.join(',')}`;
+        }
+        break;
+      case 'monthly':
+        rrule += 'MONTHLY';
+        break;
+      case 'yearly':
+        rrule += 'YEARLY';
+        break;
+      default:
+        return null;
+    }
+    
+    if (recurrenceEnd) {
+      const endDate = new Date(recurrenceEnd);
+      const until = endDate.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+      rrule += `;UNTIL=${until}`;
+    }
+    
+    return rrule;
+  };
+
   const handleCreateEvent = () => {
     if (!newEvent.summary || !newEvent.start || !newEvent.end || !newEvent.calendarId) {
       toast.error('Please fill in all required fields');
       return;
     }
     
+    const recurrenceRule = generateRecurrenceRule(newEvent.recurrence, newEvent.recurrenceEnd, newEvent.weeklyDays);
+    
     // Ensure datetime has seconds (required by Google Calendar API)
     const eventData = {
-      ...newEvent,
+      summary: newEvent.summary,
+      description: newEvent.description,
+      location: newEvent.location,
+      calendarId: newEvent.calendarId,
       start: newEvent.start.includes(':') && newEvent.start.split(':').length === 2 
         ? `${newEvent.start}:00` 
         : newEvent.start,
       end: newEvent.end.includes(':') && newEvent.end.split(':').length === 2 
         ? `${newEvent.end}:00` 
         : newEvent.end,
+      recurrence: recurrenceRule ? [recurrenceRule] : undefined
     };
     
     createEventMutation.mutate(eventData);
+  };
+
+  const parseRecurrenceRule = (recurrenceArray) => {
+    if (!recurrenceArray || recurrenceArray.length === 0) {
+      return { recurrence: 'none', recurrenceEnd: '', weeklyDays: [] };
+    }
+    
+    const rrule = recurrenceArray[0];
+    let recurrence = 'none';
+    let recurrenceEnd = '';
+    let weeklyDays = [];
+    
+    if (rrule.includes('FREQ=DAILY')) recurrence = 'daily';
+    else if (rrule.includes('FREQ=WEEKLY')) recurrence = 'weekly';
+    else if (rrule.includes('FREQ=MONTHLY')) recurrence = 'monthly';
+    else if (rrule.includes('FREQ=YEARLY')) recurrence = 'yearly';
+    
+    const byDayMatch = rrule.match(/BYDAY=([^;]+)/);
+    if (byDayMatch) {
+      weeklyDays = byDayMatch[1].split(',');
+    }
+    
+    const untilMatch = rrule.match(/UNTIL=([^;]+)/);
+    if (untilMatch) {
+      const untilStr = untilMatch[1];
+      const year = untilStr.substring(0, 4);
+      const month = untilStr.substring(4, 6);
+      const day = untilStr.substring(6, 8);
+      recurrenceEnd = `${year}-${month}-${day}`;
+    }
+    
+    return { recurrence, recurrenceEnd, weeklyDays };
   };
 
   const handleEditEvent = (event) => {
@@ -286,6 +364,8 @@ export default function FamilyCalendar({ activities }) {
       return format(date, "yyyy-MM-dd'T'HH:mm");
     };
 
+    const { recurrence, recurrenceEnd, weeklyDays } = parseRecurrenceRule(event.recurrence);
+
     setEditingEvent({
       id: event.id,
       calendarId: event.calendarId,
@@ -294,6 +374,9 @@ export default function FamilyCalendar({ activities }) {
       location: event.location || '',
       start: formatDateTime(event.start),
       end: formatDateTime(event.end),
+      recurrence,
+      recurrenceEnd,
+      weeklyDays
     });
     setShowEditDialog(true);
   };
@@ -310,6 +393,8 @@ export default function FamilyCalendar({ activities }) {
       return;
     }
 
+    const recurrenceRule = generateRecurrenceRule(editingEvent.recurrence, editingEvent.recurrenceEnd, editingEvent.weeklyDays);
+
     const eventData = {
       id: editingEvent.id,
       calendarId: editingEvent.calendarId,
@@ -322,6 +407,7 @@ export default function FamilyCalendar({ activities }) {
       end: editingEvent.end.includes(':') && editingEvent.end.split(':').length === 2 
         ? `${editingEvent.end}:00` 
         : editingEvent.end,
+      recurrence: recurrenceRule ? [recurrenceRule] : undefined
     };
 
     console.log('Updating event with data:', eventData);
@@ -619,6 +705,67 @@ export default function FamilyCalendar({ activities }) {
                 placeholder="Event description"
               />
             </div>
+            <div className="space-y-2">
+              <Label htmlFor="edit-recurrence">Repeat</Label>
+              <Select
+                value={editingEvent?.recurrence || 'none'}
+                onValueChange={(value) => setEditingEvent({ ...editingEvent, recurrence: value, weeklyDays: [] })}
+              >
+                <SelectTrigger id="edit-recurrence">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">Does not repeat</SelectItem>
+                  <SelectItem value="daily">Daily</SelectItem>
+                  <SelectItem value="weekly">Weekly</SelectItem>
+                  <SelectItem value="monthly">Monthly</SelectItem>
+                  <SelectItem value="yearly">Yearly</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            {editingEvent?.recurrence === 'weekly' && (
+              <div className="space-y-2">
+                <Label>Repeat on</Label>
+                <div className="flex gap-2 flex-wrap">
+                  {[
+                    { label: 'S', value: 'SU' },
+                    { label: 'M', value: 'MO' },
+                    { label: 'T', value: 'TU' },
+                    { label: 'W', value: 'WE' },
+                    { label: 'T', value: 'TH' },
+                    { label: 'F', value: 'FR' },
+                    { label: 'S', value: 'SA' }
+                  ].map((day) => (
+                    <Button
+                      key={day.value}
+                      type="button"
+                      variant={(editingEvent?.weeklyDays || []).includes(day.value) ? "default" : "outline"}
+                      size="sm"
+                      className="w-9 h-9 p-0 rounded-full"
+                      onClick={() => {
+                        const days = (editingEvent?.weeklyDays || []).includes(day.value)
+                          ? editingEvent.weeklyDays.filter(d => d !== day.value)
+                          : [...(editingEvent?.weeklyDays || []), day.value];
+                        setEditingEvent({ ...editingEvent, weeklyDays: days });
+                      }}
+                    >
+                      {day.label}
+                    </Button>
+                  ))}
+                </div>
+              </div>
+            )}
+            {editingEvent?.recurrence !== 'none' && (
+              <div className="space-y-2">
+                <Label htmlFor="edit-recurrence-end">Ends on</Label>
+                <Input
+                  id="edit-recurrence-end"
+                  type="date"
+                  value={editingEvent?.recurrenceEnd || ''}
+                  onChange={(e) => setEditingEvent({ ...editingEvent, recurrenceEnd: e.target.value })}
+                />
+              </div>
+            )}
           </div>
           <DialogFooter className="flex-col sm:flex-row gap-2">
             <Button 
@@ -714,6 +861,67 @@ export default function FamilyCalendar({ activities }) {
                 placeholder="Event description"
               />
             </div>
+            <div className="space-y-2">
+              <Label htmlFor="recurrence">Repeat</Label>
+              <Select
+                value={newEvent.recurrence}
+                onValueChange={(value) => setNewEvent({ ...newEvent, recurrence: value, weeklyDays: [] })}
+              >
+                <SelectTrigger id="recurrence">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">Does not repeat</SelectItem>
+                  <SelectItem value="daily">Daily</SelectItem>
+                  <SelectItem value="weekly">Weekly</SelectItem>
+                  <SelectItem value="monthly">Monthly</SelectItem>
+                  <SelectItem value="yearly">Yearly</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            {newEvent.recurrence === 'weekly' && (
+              <div className="space-y-2">
+                <Label>Repeat on</Label>
+                <div className="flex gap-2 flex-wrap">
+                  {[
+                    { label: 'S', value: 'SU' },
+                    { label: 'M', value: 'MO' },
+                    { label: 'T', value: 'TU' },
+                    { label: 'W', value: 'WE' },
+                    { label: 'T', value: 'TH' },
+                    { label: 'F', value: 'FR' },
+                    { label: 'S', value: 'SA' }
+                  ].map((day) => (
+                    <Button
+                      key={day.value}
+                      type="button"
+                      variant={newEvent.weeklyDays.includes(day.value) ? "default" : "outline"}
+                      size="sm"
+                      className="w-9 h-9 p-0 rounded-full"
+                      onClick={() => {
+                        const days = newEvent.weeklyDays.includes(day.value)
+                          ? newEvent.weeklyDays.filter(d => d !== day.value)
+                          : [...newEvent.weeklyDays, day.value];
+                        setNewEvent({ ...newEvent, weeklyDays: days });
+                      }}
+                    >
+                      {day.label}
+                    </Button>
+                  ))}
+                </div>
+              </div>
+            )}
+            {newEvent.recurrence !== 'none' && (
+              <div className="space-y-2">
+                <Label htmlFor="recurrence-end">Ends on</Label>
+                <Input
+                  id="recurrence-end"
+                  type="date"
+                  value={newEvent.recurrenceEnd}
+                  onChange={(e) => setNewEvent({ ...newEvent, recurrenceEnd: e.target.value })}
+                />
+              </div>
+            )}
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowAddDialog(false)}>
