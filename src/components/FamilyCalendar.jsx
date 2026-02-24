@@ -222,8 +222,18 @@ export default function FamilyCalendar({ activities }) {
       return;
     }
 
+    if (!editingEvent.calendarId || !editingEvent.id) {
+      toast.error('Missing event information');
+      console.error('Missing calendarId or id:', editingEvent);
+      return;
+    }
+
     const eventData = {
-      ...editingEvent,
+      id: editingEvent.id,
+      calendarId: editingEvent.calendarId,
+      summary: editingEvent.summary,
+      description: editingEvent.description || '',
+      location: editingEvent.location || '',
       start: editingEvent.start.includes(':') && editingEvent.start.split(':').length === 2 
         ? `${editingEvent.start}:00` 
         : editingEvent.start,
@@ -232,6 +242,7 @@ export default function FamilyCalendar({ activities }) {
         : editingEvent.end,
     };
 
+    console.log('Updating event with data:', eventData);
     updateEventMutation.mutate(eventData);
   };
 
