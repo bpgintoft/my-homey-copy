@@ -341,23 +341,23 @@ export default function FamilyCalendar({ activities }) {
   return (
     <div className="bg-white rounded-3xl shadow-sm p-6">
       {/* Week navigation */}
-      <div className="flex items-center justify-between gap-1 mb-6 px-2">
+      <div className="flex items-center justify-between gap-0.5 mb-6 px-1">
         <Button
           variant="ghost"
           size="icon"
           onClick={goToPreviousWeek}
-          className="h-8 w-8 rounded-xl flex-shrink-0"
+          className="h-7 w-7 rounded-lg flex-shrink-0 p-0"
         >
           <ChevronLeft className="w-4 h-4" />
         </Button>
-        <div className="text-sm font-semibold text-gray-900 whitespace-nowrap">
+        <div className="text-xs font-semibold text-gray-900 whitespace-nowrap mx-1">
           {format(currentWeekStart, 'MMM d')} – {format(addDays(currentWeekStart, 6), 'MMM d')}
         </div>
         <Button
           variant="ghost"
           size="icon"
           onClick={goToNextWeek}
-          className="h-8 w-8 rounded-xl flex-shrink-0"
+          className="h-7 w-7 rounded-lg flex-shrink-0 p-0"
         >
           <ChevronRight className="w-4 h-4" />
         </Button>
@@ -365,7 +365,7 @@ export default function FamilyCalendar({ activities }) {
           variant="outline"
           size="sm"
           onClick={goToToday}
-          className="rounded-xl flex-shrink-0 h-8 px-2 text-xs"
+          className="rounded-lg flex-shrink-0 h-7 px-2 text-xs"
         >
           Today
         </Button>
@@ -374,9 +374,9 @@ export default function FamilyCalendar({ activities }) {
             <Button
               variant="outline"
               size="icon"
-              className="h-8 w-8 rounded-xl flex-shrink-0"
+              className="h-7 w-7 rounded-lg flex-shrink-0 p-0"
             >
-              <Filter className="w-4 h-4" />
+              <Filter className="w-3.5 h-3.5" />
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-64">
@@ -405,7 +405,7 @@ export default function FamilyCalendar({ activities }) {
           </PopoverContent>
         </Popover>
         <Button
-          className="h-8 w-8 rounded-full bg-gradient-to-r from-[#0AACFF] to-[#0890D9] shadow-lg flex-shrink-0"
+          className="h-7 w-7 rounded-full bg-gradient-to-r from-[#0AACFF] to-[#0890D9] shadow-lg flex-shrink-0 p-0"
           size="icon"
           onClick={() => setShowAddDialog(true)}
         >
