@@ -15,6 +15,7 @@ import LocationAutocomplete from './LocationAutocomplete';
 
 export default function FamilyCalendar({ activities }) {
   const [currentWeekStart, setCurrentWeekStart] = useState(startOfWeek(new Date(), { weekStartsOn: 0 }));
+  const [hasNavigated, setHasNavigated] = useState(false);
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [editingEvent, setEditingEvent] = useState(null);
@@ -218,14 +219,17 @@ export default function FamilyCalendar({ activities }) {
 
   const goToPreviousWeek = () => {
     setCurrentWeekStart(addDays(currentWeekStart, -7));
+    setHasNavigated(true);
   };
 
   const goToNextWeek = () => {
     setCurrentWeekStart(addDays(currentWeekStart, 7));
+    setHasNavigated(true);
   };
 
   const goToToday = () => {
     setCurrentWeekStart(startOfWeek(new Date(), { weekStartsOn: 0 }));
+    setHasNavigated(false);
   };
 
   const handleCreateEvent = () => {
@@ -384,10 +388,10 @@ export default function FamilyCalendar({ activities }) {
             const weekStart = new Date(currentWeekStart);
             weekStart.setHours(0, 0, 0, 0);
             
-            // Only filter out past events if we're viewing the current week
+            // Only filter out past events if we're viewing the current week AND haven't navigated
             const isCurrentWeek = weekStart <= today && today < addDays(weekStart, 7);
             
-            const dayActivities = isCurrentWeek 
+            const dayActivities = (isCurrentWeek && !hasNavigated)
               ? allDayActivities.filter(activity => {
                   if (!activity.start) return true;
                   const eventEnd = activity.end ? parseISO(activity.end) : parseISO(activity.start);
