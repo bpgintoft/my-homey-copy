@@ -7,7 +7,9 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Plus, ChevronLeft, ChevronRight, Filter } from 'lucide-react';
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Checkbox } from "@/components/ui/checkbox";
 import { format, addDays, startOfWeek, isSameDay, parseISO } from 'date-fns';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
@@ -18,6 +20,8 @@ export default function FamilyCalendar({ activities }) {
   const [hasNavigated, setHasNavigated] = useState(false);
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [showEditDialog, setShowEditDialog] = useState(false);
+  const [showCalendarFilter, setShowCalendarFilter] = useState(false);
+  const [selectedCalendarIds, setSelectedCalendarIds] = useState(new Set());
   const [editingEvent, setEditingEvent] = useState(null);
   const [newEvent, setNewEvent] = useState({
     summary: '',
@@ -61,6 +65,28 @@ export default function FamilyCalendar({ activities }) {
   });
 
   const calendars = calendarsData?.calendars || [];
+  
+  // Initialize selected calendars when calendars load
+  React.useEffect(() => {
+    if (calendars.length > 0 && selectedCalendarIds.size === 0) {
+      setSelectedCalendarIds(new Set(calendars.map(c => c.id)));
+    }
+  }, [calendars]);
+  
+  // Filter events by selected calendars
+  const filteredGoogleEvents = googleEvents.filter(event => 
+    selectedCalendarIds.has(event.calendarId)
+  );
+  
+  const toggleCalendar = (calendarId) => {
+    const newSelected = new Set(selectedCalendarIds);
+    if (newSelected.has(calendarId)) {
+      newSelected.delete(calendarId);
+    } else {
+      newSelected.add(calendarId);
+    }
+    setSelectedCalendarIds(newSelected);
+  };
 
   // Create event mutation
   const createEventMutation = useMutation({
@@ -133,7 +159,7 @@ export default function FamilyCalendar({ activities }) {
       start: a.date,
       backgroundColor: '#8B5CF6' // Purple for manual activities
     })),
-    ...googleEvents.map(e => ({
+    ...filteredGoogleEvents.map(e => ({
       ...e,
       source: 'google',
       date: e.start
@@ -343,6 +369,41 @@ export default function FamilyCalendar({ activities }) {
         >
           Today
         </Button>
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-9 w-9 rounded-xl flex-shrink-0"
+            >
+              <Filter className="w-4 h-4" />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-64">
+            <div className="space-y-3">
+              <h4 className="font-semibold text-sm">Filter Calendars</h4>
+              {calendars.map((calendar) => (
+                <div key={calendar.id} className="flex items-center space-x-2">
+                  <Checkbox
+                    id={calendar.id}
+                    checked={selectedCalendarIds.has(calendar.id)}
+                    onCheckedChange={() => toggleCalendar(calendar.id)}
+                  />
+                  <label
+                    htmlFor={calendar.id}
+                    className="text-sm flex items-center gap-2 cursor-pointer flex-1"
+                  >
+                    <div 
+                      className="w-3 h-3 rounded-full" 
+                      style={{ backgroundColor: calendar.backgroundColor }}
+                    />
+                    {calendar.name}
+                  </label>
+                </div>
+              ))}
+            </div>
+          </PopoverContent>
+        </Popover>
         <Button
           className="h-9 w-9 rounded-full bg-gradient-to-r from-[#0AACFF] to-[#0890D9] shadow-lg flex-shrink-0"
           size="icon"
