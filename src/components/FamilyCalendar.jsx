@@ -13,9 +13,35 @@ export default function FamilyCalendar({ activities }) {
   // Generate a week of dates
   const weekDays = Array.from({ length: 7 }, (_, i) => addDays(currentWeekStart, i));
 
-  // Group activities by day
+  // Fetch Google Calendar events
+  const { data: googleEvents = [] } = useQuery({
+    queryKey: ['googleCalendarEvents', currentWeekStart.toISOString()],
+    queryFn: async () => {
+      const timeMin = currentWeekStart.toISOString();
+      const timeMax = addDays(currentWeekStart, 7).toISOString();
+      const { data } = await base44.functions.invoke('getGoogleCalendarEvents', { timeMin, timeMax });
+      return data.events || [];
+    }
+  });
+
+  // Combine activities and Google events
+  const allEvents = [
+    ...activities.map(a => ({
+      ...a,
+      source: 'manual',
+      start: a.date,
+      backgroundColor: '#8B5CF6' // Purple for manual activities
+    })),
+    ...googleEvents.map(e => ({
+      ...e,
+      source: 'google',
+      date: e.start
+    }))
+  ];
+
+  // Group events by day
   const getActivitiesForDay = (day) => {
-    return activities.filter(a => a.date && isSameDay(parseISO(a.date), day));
+    return allEvents.filter(a => a.start && isSameDay(parseISO(a.start), day));
   };
 
   // Generate icon for activity
@@ -131,23 +157,32 @@ export default function FamilyCalendar({ activities }) {
                 <div className="space-y-2">
                   {dayActivities.map((activity) => {
                     const memberColor = memberColors[activity.child_name] || 'bg-gray-400';
+                    const eventTime = activity.start ? format(parseISO(activity.start), 'h:mm a') : (activity.time || 'All day');
                     
                     return (
                       <motion.div
-                        key={activity.id}
+                        key={`${activity.source}-${activity.id}`}
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
                         className="bg-white rounded-xl p-3 shadow-sm hover:shadow-md transition-shadow flex items-center gap-3"
+                        style={{
+                          borderLeft: `4px solid ${activity.backgroundColor || '#8B5CF6'}`
+                        }}
                       >
                         {/* Icon */}
-                        <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-50 to-purple-50 flex items-center justify-center flex-shrink-0 overflow-hidden">
+                        <div 
+                          className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 overflow-hidden"
+                          style={{
+                            backgroundColor: activity.backgroundColor ? `${activity.backgroundColor}20` : '#F3E8FF'
+                          }}
+                        >
                           {activity.icon_url ? (
                             <img 
                               src={activity.icon_url} 
                               alt={activity.title}
                               className="w-10 h-10 object-contain"
                             />
-                          ) : (
+                          ) : activity.source === 'manual' ? (
                             <div
                               className="text-2xl cursor-pointer"
                               onClick={() => generateIconMutation.mutate(activity)}
@@ -155,6 +190,8 @@ export default function FamilyCalendar({ activities }) {
                             >
                               {generateIconMutation.isPending ? '⏳' : '🎨'}
                             </div>
+                          ) : (
+                            <div className="text-2xl">📅</div>
                           )}
                         </div>
 
@@ -164,9 +201,14 @@ export default function FamilyCalendar({ activities }) {
                             {activity.title}
                           </div>
                           <div className="text-sm text-gray-600">
-                            {activity.time || 'All day'}
+                            {eventTime}
                             {activity.location && ` • ${activity.location}`}
                           </div>
+                          {activity.source === 'google' && activity.calendarName && (
+                            <div className="text-xs text-gray-500">
+                              {activity.calendarName}
+                            </div>
+                          )}
                         </div>
 
                         {/* Member initial */}
