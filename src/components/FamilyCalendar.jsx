@@ -379,13 +379,21 @@ export default function FamilyCalendar({ activities }) {
           {weekDays.map((day) => {
             const allDayActivities = getActivitiesForDay(day);
             const now = new Date();
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const weekStart = new Date(currentWeekStart);
+            weekStart.setHours(0, 0, 0, 0);
             
-            // Filter out events that have already ended
-            const dayActivities = allDayActivities.filter(activity => {
-              if (!activity.start) return true;
-              const eventEnd = activity.end ? parseISO(activity.end) : parseISO(activity.start);
-              return eventEnd >= now;
-            });
+            // Only filter out past events if we're viewing the current week
+            const isCurrentWeek = weekStart <= today && today < addDays(weekStart, 7);
+            
+            const dayActivities = isCurrentWeek 
+              ? allDayActivities.filter(activity => {
+                  if (!activity.start) return true;
+                  const eventEnd = activity.end ? parseISO(activity.end) : parseISO(activity.start);
+                  return eventEnd >= now;
+                })
+              : allDayActivities;
             
             if (dayActivities.length === 0) return null;
 
