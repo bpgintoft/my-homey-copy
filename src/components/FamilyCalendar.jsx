@@ -378,7 +378,12 @@ export default function FamilyCalendar({ activities }) {
       </div>
 
       {/* Events list grouped by day */}
-      <div className="space-y-3">
+      <div 
+        className="space-y-3"
+        onScroll={() => setHasNavigated(true)}
+        onTouchMove={() => setHasNavigated(true)}
+        onWheel={() => setHasNavigated(true)}
+      >
         <AnimatePresence>
           {weekDays.map((day) => {
             const allDayActivities = getActivitiesForDay(day);
