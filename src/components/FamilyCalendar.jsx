@@ -14,7 +14,7 @@ export default function FamilyCalendar({ activities }) {
   const weekDays = Array.from({ length: 7 }, (_, i) => addDays(currentWeekStart, i));
 
   // Fetch Google Calendar events
-  const { data: googleEvents = [] } = useQuery({
+  const { data: googleEvents = [], isLoading: isLoadingGoogle, error: googleError } = useQuery({
     queryKey: ['googleCalendarEvents', currentWeekStart.toISOString()],
     queryFn: async () => {
       const timeMin = currentWeekStart.toISOString();
@@ -23,6 +23,11 @@ export default function FamilyCalendar({ activities }) {
       return data.events || [];
     }
   });
+
+  // Debug logging
+  if (googleError) {
+    console.error('Google Calendar error:', googleError);
+  }
 
   // Combine activities and Google events
   const allEvents = [
@@ -118,6 +123,20 @@ export default function FamilyCalendar({ activities }) {
           Today
         </Button>
       </div>
+
+      {/* Error message */}
+      {googleError && (
+        <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-600">
+          Error loading Google Calendar: {googleError.message}
+        </div>
+      )}
+
+      {/* Loading indicator */}
+      {isLoadingGoogle && (
+        <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg text-sm text-blue-600">
+          Loading Google Calendar events...
+        </div>
+      )}
 
       {/* Day labels */}
       <div className="flex gap-2 mb-4 px-2">
