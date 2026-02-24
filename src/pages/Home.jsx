@@ -26,9 +26,26 @@ export default function Home() {
     queryFn: () => base44.entities.MealPlan.list(),
   });
 
-  const { data: activities } = useQuery({
-    queryKey: ['upcomingActivities'],
-    queryFn: () => base44.entities.KidsActivity.list(),
+  const { data: googleEvents = [] } = useQuery({
+    queryKey: ['todayGoogleEvents'],
+    queryFn: async () => {
+      const now = new Date();
+      const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      const endOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59);
+      
+      const { data } = await base44.functions.invoke('getGoogleCalendarEvents', { 
+        timeMin: startOfDay.toISOString(), 
+        timeMax: endOfDay.toISOString() 
+      });
+      
+      // Filter to only events that haven't ended yet
+      const events = data.events || [];
+      return events.filter(event => {
+        if (!event.end) return true;
+        const eventEnd = new Date(event.end);
+        return eventEnd >= now;
+      });
+    }
   });
 
   const { data: appliances } = useQuery({
@@ -41,9 +58,7 @@ export default function Home() {
   const phoenixMember = familyMembers.find(m => m.name === 'Phoenix') || { name: 'Phoenix' };
   const maraMember = familyMembers.find(m => m.name === 'Mara') || { name: 'Mara' };
 
-  const thisWeekMeals = mealPlans?.length || 0;
-  const upcomingEvents = activities?.filter(a => !a.reminder_sent)?.length || 0;
-  const totalAppliances = appliances?.length || 0;
+  const todayEvents = googleEvents?.length || 0;
 
   const sections = [
     { 
@@ -56,7 +71,7 @@ export default function Home() {
     { 
       title: 'Kids Activities', 
       href: 'Kids', 
-      count: upcomingEvents,
+      count: todayEvents,
       imageKey: 'kids',
       bgColor: 'bg-gradient-to-br from-blue-200 to-blue-300'
     },
