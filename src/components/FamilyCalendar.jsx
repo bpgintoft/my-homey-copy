@@ -93,35 +93,43 @@ export default function FamilyCalendar({ activities }) {
     <div className="bg-white rounded-3xl shadow-sm p-6">
       {/* Week navigation */}
       <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-1">
           <Button
             variant="ghost"
             size="icon"
             onClick={goToPreviousWeek}
-            className="h-10 w-10 rounded-xl"
+            className="h-9 w-9 rounded-xl"
           >
             <ChevronLeft className="w-5 h-5" />
           </Button>
-          <div className="text-lg font-semibold text-gray-900">
+          <div className="text-base font-semibold text-gray-900 whitespace-nowrap">
             {format(currentWeekStart, 'MMM d')} – {format(addDays(currentWeekStart, 6), 'MMM d')}
           </div>
           <Button
             variant="ghost"
             size="icon"
             onClick={goToNextWeek}
-            className="h-10 w-10 rounded-xl"
+            className="h-9 w-9 rounded-xl"
           >
             <ChevronRight className="w-5 h-5" />
           </Button>
         </div>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={goToToday}
-          className="rounded-xl"
-        >
-          Today
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={goToToday}
+            className="rounded-xl"
+          >
+            Today
+          </Button>
+          <Button
+            className="h-9 w-9 rounded-full bg-gradient-to-r from-[#0AACFF] to-[#0890D9] shadow-lg"
+            size="icon"
+          >
+            <Plus className="w-5 h-5 text-white" />
+          </Button>
+        </div>
       </div>
 
       {/* Error message */}
