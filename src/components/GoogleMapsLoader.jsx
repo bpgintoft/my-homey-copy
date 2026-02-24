@@ -19,33 +19,39 @@ export function useLoadGoogleMaps() {
     }
 
     isLoading = true;
-    loadPromise = new Promise((resolve) => {
-      const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
-      
-      if (!apiKey) {
-        console.warn('GOOGLE_MAPS_API_KEY not set - location autocomplete will not work');
-        isLoading = false;
-        resolve();
-        return;
-      }
+    loadPromise = (async () => {
+      try {
+        // Fetch API key from backend
+        const response = await fetch('/.netlify/functions/getGoogleMapsKey');
+        const { apiKey } = await response.json();
+        
+        if (!apiKey) {
+          console.warn('GOOGLE_MAPS_API_KEY not available - location autocomplete will not work');
+          isLoading = false;
+          return;
+        }
 
-      const script = document.createElement('script');
-      script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places`;
-      script.async = true;
-      script.defer = true;
-      script.onload = () => {
-        isLoaded = true;
+        const script = document.createElement('script');
+        script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places`;
+        script.async = true;
+        script.defer = true;
+        script.onload = () => {
+          isLoaded = true;
+          isLoading = false;
+          setLoaded(true);
+        };
+        script.onerror = () => {
+          console.error('Failed to load Google Maps API');
+          isLoading = false;
+        };
+        document.head.appendChild(script);
+      } catch (error) {
+        console.error('Error loading Google Maps:', error);
         isLoading = false;
-        setLoaded(true);
-        resolve();
-      };
-      script.onerror = () => {
-        console.error('Failed to load Google Maps API');
-        isLoading = false;
-        resolve();
-      };
-      document.head.appendChild(script);
-    });
+      }
+    })();
+    
+    loadPromise.then(() => setLoaded(true));
   }, []);
 
   return loaded;
