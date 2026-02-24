@@ -16,6 +16,8 @@ import LocationAutocomplete from './LocationAutocomplete';
 export default function FamilyCalendar({ activities }) {
   const [currentWeekStart, setCurrentWeekStart] = useState(startOfWeek(new Date(), { weekStartsOn: 0 }));
   const [showAddDialog, setShowAddDialog] = useState(false);
+  const [showEditDialog, setShowEditDialog] = useState(false);
+  const [editingEvent, setEditingEvent] = useState(null);
   const [newEvent, setNewEvent] = useState({
     summary: '',
     description: '',
@@ -72,6 +74,40 @@ export default function FamilyCalendar({ activities }) {
     },
     onError: (error) => {
       toast.error('Failed to create event: ' + error.message);
+    }
+  });
+
+  // Update event mutation
+  const updateEventMutation = useMutation({
+    mutationFn: async (eventData) => {
+      const { data } = await base44.functions.invoke('updateGoogleCalendarEvent', eventData);
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['googleCalendarEvents'] });
+      setShowEditDialog(false);
+      setEditingEvent(null);
+      toast.success('Event updated successfully');
+    },
+    onError: (error) => {
+      toast.error('Failed to update event: ' + error.message);
+    }
+  });
+
+  // Delete event mutation
+  const deleteEventMutation = useMutation({
+    mutationFn: async ({ calendarId, eventId }) => {
+      const { data } = await base44.functions.invoke('deleteGoogleCalendarEvent', { calendarId, eventId });
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['googleCalendarEvents'] });
+      setShowEditDialog(false);
+      setEditingEvent(null);
+      toast.success('Event deleted successfully');
+    },
+    onError: (error) => {
+      toast.error('Failed to delete event: ' + error.message);
     }
   });
 
@@ -158,6 +194,55 @@ export default function FamilyCalendar({ activities }) {
     };
     
     createEventMutation.mutate(eventData);
+  };
+
+  const handleEditEvent = (event) => {
+    // Convert ISO datetime to datetime-local format
+    const formatDateTime = (isoString) => {
+      if (!isoString) return '';
+      const date = new Date(isoString);
+      return format(date, "yyyy-MM-dd'T'HH:mm");
+    };
+
+    setEditingEvent({
+      id: event.id,
+      calendarId: event.calendarId,
+      summary: event.title || event.summary || '',
+      description: event.description || '',
+      location: event.location || '',
+      start: formatDateTime(event.start),
+      end: formatDateTime(event.end),
+    });
+    setShowEditDialog(true);
+  };
+
+  const handleUpdateEvent = () => {
+    if (!editingEvent.summary || !editingEvent.start || !editingEvent.end) {
+      toast.error('Please fill in all required fields');
+      return;
+    }
+
+    const eventData = {
+      ...editingEvent,
+      start: editingEvent.start.includes(':') && editingEvent.start.split(':').length === 2 
+        ? `${editingEvent.start}:00` 
+        : editingEvent.start,
+      end: editingEvent.end.includes(':') && editingEvent.end.split(':').length === 2 
+        ? `${editingEvent.end}:00` 
+        : editingEvent.end,
+    };
+
+    updateEventMutation.mutate(eventData);
+  };
+
+  const handleDeleteEvent = () => {
+    if (!editingEvent) return;
+    if (confirm('Are you sure you want to delete this event?')) {
+      deleteEventMutation.mutate({
+        calendarId: editingEvent.calendarId,
+        eventId: editingEvent.id
+      });
+    }
   };
 
   return (
@@ -259,7 +344,8 @@ export default function FamilyCalendar({ activities }) {
                         key={`${activity.source}-${activity.id}`}
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
-                        className="bg-white rounded-xl p-3 shadow-sm hover:shadow-md transition-shadow flex items-center gap-3"
+                        onClick={() => activity.source === 'google' && handleEditEvent(activity)}
+                        className={`bg-white rounded-xl p-3 shadow-sm hover:shadow-md transition-shadow flex items-center gap-3 ${activity.source === 'google' ? 'cursor-pointer' : ''}`}
                         style={{
                           borderLeft: `4px solid ${activity.backgroundColor || '#8B5CF6'}`
                         }}
@@ -329,6 +415,83 @@ export default function FamilyCalendar({ activities }) {
           </div>
         )}
       </div>
+
+      {/* Edit Event Dialog */}
+      <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Edit Event</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="edit-summary">Title *</Label>
+              <Input
+                id="edit-summary"
+                value={editingEvent?.summary || ''}
+                onChange={(e) => setEditingEvent({ ...editingEvent, summary: e.target.value })}
+                placeholder="Event title"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="edit-start">Start Date & Time *</Label>
+              <Input
+                id="edit-start"
+                type="datetime-local"
+                value={editingEvent?.start || ''}
+                onChange={(e) => setEditingEvent({ ...editingEvent, start: e.target.value })}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="edit-end">End Date & Time *</Label>
+              <Input
+                id="edit-end"
+                type="datetime-local"
+                value={editingEvent?.end || ''}
+                onChange={(e) => setEditingEvent({ ...editingEvent, end: e.target.value })}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="edit-location">Location</Label>
+              <LocationAutocomplete
+                value={editingEvent?.location || ''}
+                onChange={(value) => setEditingEvent({ ...editingEvent, location: value })}
+                placeholder="Event location"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="edit-description">Description</Label>
+              <Textarea
+                id="edit-description"
+                value={editingEvent?.description || ''}
+                onChange={(e) => setEditingEvent({ ...editingEvent, description: e.target.value })}
+                placeholder="Event description"
+              />
+            </div>
+          </div>
+          <DialogFooter className="flex-col sm:flex-row gap-2">
+            <Button 
+              variant="destructive" 
+              onClick={handleDeleteEvent}
+              disabled={deleteEventMutation.isPending}
+              className="w-full sm:w-auto"
+            >
+              {deleteEventMutation.isPending ? 'Deleting...' : 'Delete'}
+            </Button>
+            <div className="flex gap-2 flex-1">
+              <Button variant="outline" onClick={() => setShowEditDialog(false)} className="flex-1">
+                Cancel
+              </Button>
+              <Button 
+                onClick={handleUpdateEvent}
+                disabled={updateEventMutation.isPending}
+                className="flex-1"
+              >
+                {updateEventMutation.isPending ? 'Updating...' : 'Update'}
+              </Button>
+            </div>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Add Event Dialog */}
       <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>

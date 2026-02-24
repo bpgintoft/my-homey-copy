@@ -1,9 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
-import usePlacesAutocomplete, { getGeocode, getLatLng } from 'use-places-autocomplete';
+import usePlacesAutocomplete from 'use-places-autocomplete';
 import { Input } from "@/components/ui/input";
 import { MapPin } from 'lucide-react';
+import { useLoadGoogleMaps } from './GoogleMapsLoader';
 
 export default function LocationAutocomplete({ value, onChange, placeholder = "Event location" }) {
+  const isGoogleMapsLoaded = useLoadGoogleMaps();
+  
   const {
     ready,
     value: inputValue,
@@ -15,6 +18,7 @@ export default function LocationAutocomplete({ value, onChange, placeholder = "E
       /* Define search scope here if needed */
     },
     debounce: 300,
+    initOnMount: isGoogleMapsLoaded,
   });
 
   const [showSuggestions, setShowSuggestions] = useState(false);
