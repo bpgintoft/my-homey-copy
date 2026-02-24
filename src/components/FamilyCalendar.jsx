@@ -42,6 +42,14 @@ export default function FamilyCalendar({ activities }) {
     }
   });
 
+  // Fetch existing thumbnails for Google Calendar events
+  const { data: thumbnails = [] } = useQuery({
+    queryKey: ['calendarEventThumbnails'],
+    queryFn: async () => {
+      return await base44.entities.CalendarEventThumbnail.list();
+    }
+  });
+
   // Fetch Google Calendars
   const { data: calendarsData } = useQuery({
     queryKey: ['googleCalendars'],
@@ -150,6 +158,50 @@ export default function FamilyCalendar({ activities }) {
       );
     }
   });
+
+  // Generate thumbnail for Google Calendar event
+  const generateGoogleEventThumbnailMutation = useMutation({
+    mutationFn: async ({ eventId, calendarId, title }) => {
+      const { url } = await base44.integrations.Core.GenerateImage({
+        prompt: `A simple, cute, colorful cartoon icon representing "${title}". Style: playful, child-friendly, clean design on white background.`
+      });
+      
+      const thumbnail = await base44.entities.CalendarEventThumbnail.create({
+        google_event_id: eventId,
+        google_calendar_id: calendarId,
+        event_title: title,
+        icon_url: url
+      });
+      
+      return thumbnail;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['calendarEventThumbnails'] });
+    }
+  });
+
+  // Get thumbnail URL for a Google Calendar event
+  const getThumbnailForEvent = (eventId) => {
+    const thumbnail = thumbnails.find(t => t.google_event_id === eventId);
+    return thumbnail?.icon_url;
+  };
+
+  // Auto-generate thumbnails for Google Calendar events without them
+  React.useEffect(() => {
+    if (googleEvents.length > 0 && thumbnails.length >= 0) {
+      googleEvents.forEach(event => {
+        const hasThumbnail = thumbnails.some(t => t.google_event_id === event.id);
+        if (!hasThumbnail && event.title && !generateGoogleEventThumbnailMutation.isPending) {
+          // Auto-generate thumbnail
+          generateGoogleEventThumbnailMutation.mutate({
+            eventId: event.id,
+            calendarId: event.calendarId,
+            title: event.title
+          });
+        }
+      });
+    }
+  }, [googleEvents, thumbnails]);
 
   // Get initials for family member
   const getInitial = (name) => {
@@ -368,13 +420,23 @@ export default function FamilyCalendar({ activities }) {
                             backgroundColor: activity.backgroundColor ? `${activity.backgroundColor}20` : '#F3E8FF'
                           }}
                         >
-                          {activity.icon_url ? (
+                          {activity.source === 'google' ? (
+                            getThumbnailForEvent(activity.id) ? (
+                              <img 
+                                src={getThumbnailForEvent(activity.id)} 
+                                alt={activity.title}
+                                className="w-6 h-6 object-contain"
+                              />
+                            ) : (
+                              <div className="text-lg">⏳</div>
+                            )
+                          ) : activity.icon_url ? (
                             <img 
                               src={activity.icon_url} 
                               alt={activity.title}
                               className="w-6 h-6 object-contain"
                             />
-                          ) : activity.source === 'manual' ? (
+                          ) : (
                             <div
                               className="text-lg cursor-pointer"
                               onClick={() => generateIconMutation.mutate(activity)}
@@ -382,8 +444,6 @@ export default function FamilyCalendar({ activities }) {
                             >
                               {generateIconMutation.isPending ? '⏳' : '🎨'}
                             </div>
-                          ) : (
-                            <div className="text-lg">📅</div>
                           )}
                         </div>
 
