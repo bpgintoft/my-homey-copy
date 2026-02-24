@@ -378,7 +378,13 @@ export default function FamilyCalendar({ activities }) {
         <AnimatePresence>
           {weekDays.map((day) => {
             const dayActivities = getActivitiesForDay(day);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const dayStart = new Date(day);
+            dayStart.setHours(0, 0, 0, 0);
             
+            // Hide past days unless there are no future events in this week
+            if (dayStart < today && dayActivities.length === 0) return null;
             if (dayActivities.length === 0) return null;
 
             const isToday = isSameDay(day, new Date());
