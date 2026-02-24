@@ -21,18 +21,20 @@ export function useLoadGoogleMaps() {
     isLoading = true;
     loadPromise = (async () => {
       try {
-        // Fetch API key from backend
-        const response = await fetch('/.netlify/functions/getGoogleMapsKey');
-        const { apiKey } = await response.json();
+        // Dynamically import base44 SDK
+        const { base44 } = await import('@/api/base44Client');
         
-        if (!apiKey) {
+        // Fetch API key from backend
+        const { data } = await base44.functions.invoke('getGoogleMapsKey', {});
+        
+        if (!data.apiKey) {
           console.warn('GOOGLE_MAPS_API_KEY not available - location autocomplete will not work');
           isLoading = false;
           return;
         }
 
         const script = document.createElement('script');
-        script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places`;
+        script.src = `https://maps.googleapis.com/maps/api/js?key=${data.apiKey}&libraries=places`;
         script.async = true;
         script.defer = true;
         script.onload = () => {
