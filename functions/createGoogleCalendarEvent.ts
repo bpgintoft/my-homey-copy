@@ -5,7 +5,7 @@ Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
     
-    const { calendarId, summary, description, start, end, location } = await req.json();
+    const { calendarId, summary, description, start, end, location, recurrence, isAllDay } = await req.json();
 
     const accessToken = await base44.asServiceRole.connectors.getAccessToken("googlecalendar");
 
@@ -22,14 +22,19 @@ Deno.serve(async (req) => {
       summary,
       description,
       location,
-      start: {
+      start: isAllDay ? {
+        date: start,
+      } : {
         dateTime: start,
         timeZone: 'America/Chicago',
       },
-      end: {
+      end: isAllDay ? {
+        date: end,
+      } : {
         dateTime: end,
         timeZone: 'America/Chicago',
       },
+      recurrence,
     };
 
     const response = await calendar.events.insert({
