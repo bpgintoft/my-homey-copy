@@ -651,7 +651,7 @@ export default function FamilyCalendar({ activities }) {
 
                         {/* Icon */}
                         <div 
-                          className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden"
+                          className="w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden"
                           style={{
                             backgroundColor: activity.backgroundColor ? `${activity.backgroundColor}20` : '#F3E8FF'
                           }}
@@ -661,20 +661,20 @@ export default function FamilyCalendar({ activities }) {
                               <img 
                                 src={getThumbnailForEvent(activity.id)} 
                                 alt={activity.title}
-                                className="w-6 h-6 object-contain"
+                                className="w-10 h-10 object-contain"
                               />
                             ) : (
-                              <div className="text-lg">⏳</div>
+                              <div className="text-2xl">⏳</div>
                             )
                           ) : activity.icon_url ? (
                             <img 
                               src={activity.icon_url} 
                               alt={activity.title}
-                              className="w-6 h-6 object-contain"
+                              className="w-10 h-10 object-contain"
                             />
                           ) : (
                             <div
-                              className="text-lg cursor-pointer"
+                              className="text-2xl cursor-pointer"
                               onClick={() => generateIconMutation.mutate(activity)}
                               title="Click to generate icon"
                             >
