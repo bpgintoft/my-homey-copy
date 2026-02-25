@@ -32,7 +32,8 @@ export default function FamilyCalendar({ activities }) {
     calendarId: '',
     recurrence: 'none',
     recurrenceEnd: '',
-    weeklyDays: []
+    weeklyDays: [],
+    isAllDay: false
   });
   const queryClient = useQueryClient();
 
@@ -109,7 +110,8 @@ export default function FamilyCalendar({ activities }) {
         calendarId: '',
         recurrence: 'none',
         recurrenceEnd: '',
-        weeklyDays: []
+        weeklyDays: [],
+        isAllDay: false
       });
       toast.success('Event created successfully');
     },
@@ -318,7 +320,8 @@ export default function FamilyCalendar({ activities }) {
       end: newEvent.end.includes(':') && newEvent.end.split(':').length === 2 
         ? `${newEvent.end}:00` 
         : newEvent.end,
-      recurrence: recurrenceRule ? [recurrenceRule] : undefined
+      recurrence: recurrenceRule ? [recurrenceRule] : undefined,
+      isAllDay: newEvent.isAllDay
     };
     
     createEventMutation.mutate(eventData);
@@ -365,6 +368,9 @@ export default function FamilyCalendar({ activities }) {
     };
 
     const { recurrence, recurrenceEnd, weeklyDays } = parseRecurrenceRule(event.recurrence);
+    
+    // Check if it's an all-day event (start has no time component)
+    const isAllDay = event.start && !event.start.includes('T');
 
     setEditingEvent({
       id: event.id,
@@ -373,11 +379,12 @@ export default function FamilyCalendar({ activities }) {
       summary: event.title || event.summary || '',
       description: event.description || '',
       location: event.location || '',
-      start: formatDateTime(event.start),
-      end: formatDateTime(event.end),
+      start: isAllDay ? event.start : formatDateTime(event.start),
+      end: isAllDay ? event.end : formatDateTime(event.end),
       recurrence,
       recurrenceEnd,
-      weeklyDays
+      weeklyDays,
+      isAllDay
     });
     setShowEditDialog(true);
   };
@@ -409,7 +416,8 @@ export default function FamilyCalendar({ activities }) {
       end: editingEvent.end.includes(':') && editingEvent.end.split(':').length === 2 
         ? `${editingEvent.end}:00` 
         : editingEvent.end,
-      recurrence: recurrenceRule ? [recurrenceRule] : undefined
+      recurrence: recurrenceRule ? [recurrenceRule] : undefined,
+      isAllDay: editingEvent.isAllDay
     };
 
     console.log('Updating event with data:', eventData);
@@ -690,20 +698,28 @@ export default function FamilyCalendar({ activities }) {
                 placeholder="Event title"
               />
             </div>
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="edit-all-day"
+                checked={editingEvent?.isAllDay || false}
+                onCheckedChange={(checked) => setEditingEvent({ ...editingEvent, isAllDay: checked })}
+              />
+              <Label htmlFor="edit-all-day" className="cursor-pointer">All Day Event</Label>
+            </div>
             <div className="space-y-2">
-              <Label htmlFor="edit-start">Start Date & Time *</Label>
+              <Label htmlFor="edit-start">{editingEvent?.isAllDay ? 'Start Date *' : 'Start Date & Time *'}</Label>
               <Input
                 id="edit-start"
-                type="datetime-local"
+                type={editingEvent?.isAllDay ? "date" : "datetime-local"}
                 value={editingEvent?.start || ''}
                 onChange={(e) => setEditingEvent({ ...editingEvent, start: e.target.value })}
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="edit-end">End Date & Time *</Label>
+              <Label htmlFor="edit-end">{editingEvent?.isAllDay ? 'End Date *' : 'End Date & Time *'}</Label>
               <Input
                 id="edit-end"
-                type="datetime-local"
+                type={editingEvent?.isAllDay ? "date" : "datetime-local"}
                 value={editingEvent?.end || ''}
                 onChange={(e) => setEditingEvent({ ...editingEvent, end: e.target.value })}
               />
@@ -846,20 +862,28 @@ export default function FamilyCalendar({ activities }) {
                 placeholder="Event title"
               />
             </div>
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="new-all-day"
+                checked={newEvent.isAllDay}
+                onCheckedChange={(checked) => setNewEvent({ ...newEvent, isAllDay: checked })}
+              />
+              <Label htmlFor="new-all-day" className="cursor-pointer">All Day Event</Label>
+            </div>
             <div className="space-y-2">
-              <Label htmlFor="start">Start Date & Time *</Label>
+              <Label htmlFor="start">{newEvent.isAllDay ? 'Start Date *' : 'Start Date & Time *'}</Label>
               <Input
                 id="start"
-                type="datetime-local"
+                type={newEvent.isAllDay ? "date" : "datetime-local"}
                 value={newEvent.start}
                 onChange={(e) => setNewEvent({ ...newEvent, start: e.target.value })}
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="end">End Date & Time *</Label>
+              <Label htmlFor="end">{newEvent.isAllDay ? 'End Date *' : 'End Date & Time *'}</Label>
               <Input
                 id="end"
-                type="datetime-local"
+                type={newEvent.isAllDay ? "date" : "datetime-local"}
                 value={newEvent.end}
                 onChange={(e) => setNewEvent({ ...newEvent, end: e.target.value })}
               />

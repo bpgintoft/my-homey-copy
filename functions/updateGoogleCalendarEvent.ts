@@ -4,7 +4,7 @@ import { google } from 'npm:googleapis@144.0.0';
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
-    const { id, calendarId, summary, description, location, start, end, recurrence, originalCalendarId } = await req.json();
+    const { id, calendarId, summary, description, location, start, end, recurrence, originalCalendarId, isAllDay } = await req.json();
 
     if (!id || !calendarId) {
       return Response.json({ error: 'Missing event ID or calendar ID' }, { status: 400 });
@@ -20,11 +20,15 @@ Deno.serve(async (req) => {
       summary,
       description,
       location,
-      start: {
+      start: isAllDay ? {
+        date: start,
+      } : {
         dateTime: start,
         timeZone: 'America/Chicago',
       },
-      end: {
+      end: isAllDay ? {
+        date: end,
+      } : {
         dateTime: end,
         timeZone: 'America/Chicago',
       },
