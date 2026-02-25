@@ -20,6 +20,9 @@ import FamilyCalendar from '../components/FamilyCalendar';
 export default function Kids() {
   const navigate = useNavigate();
   const bannerRef = useRef(null);
+  const [isPulling, setIsPulling] = useState(false);
+  const [pullDistance, setPullDistance] = useState(0);
+  const touchStartY = useRef(0);
   
   useSwipe((direction) => {
     if (direction === 'left') {
@@ -34,6 +37,47 @@ export default function Kids() {
   const [editingActivity, setEditingActivity] = useState(null);
   const [currentDate, setCurrentDate] = useState(new Date());
   const queryClient = useQueryClient();
+
+  // Pull-to-refresh logic
+  React.useEffect(() => {
+    const handleTouchStart = (e) => {
+      if (window.scrollY === 0) {
+        touchStartY.current = e.touches[0].clientY;
+      }
+    };
+
+    const handleTouchMove = (e) => {
+      if (window.scrollY === 0 && touchStartY.current > 0) {
+        const currentY = e.touches[0].clientY;
+        const distance = currentY - touchStartY.current;
+        
+        if (distance > 0) {
+          setIsPulling(true);
+          setPullDistance(Math.min(distance, 100));
+        }
+      }
+    };
+
+    const handleTouchEnd = () => {
+      if (isPulling && pullDistance > 60) {
+        window.location.reload();
+      }
+      
+      setIsPulling(false);
+      setPullDistance(0);
+      touchStartY.current = 0;
+    };
+
+    document.addEventListener('touchstart', handleTouchStart, { passive: true });
+    document.addEventListener('touchmove', handleTouchMove, { passive: true });
+    document.addEventListener('touchend', handleTouchEnd);
+
+    return () => {
+      document.removeEventListener('touchstart', handleTouchStart);
+      document.removeEventListener('touchmove', handleTouchMove);
+      document.removeEventListener('touchend', handleTouchEnd);
+    };
+  }, [isPulling, pullDistance]);
 
   const { data: activities = [] } = useQuery({
     queryKey: ['kidsActivities'],
@@ -126,6 +170,18 @@ export default function Kids() {
 
   return (
     <div className="min-h-screen bg-[#F5F5F7]">
+      {/* Pull-to-refresh indicator */}
+      {isPulling && (
+        <div 
+          className="fixed top-0 left-0 right-0 flex items-center justify-center z-50 bg-white/90 backdrop-blur-sm shadow-sm transition-all"
+          style={{ height: `${pullDistance}px` }}
+        >
+          <div className={`text-gray-600 transition-transform ${pullDistance > 60 ? 'scale-110' : ''}`}>
+            {pullDistance > 60 ? '↻ Release to refresh' : '↓ Pull down to refresh'}
+          </div>
+        </div>
+      )}
+      
       <div className="relative overflow-hidden">
         <style>{`
           .kids-banner-bg {
