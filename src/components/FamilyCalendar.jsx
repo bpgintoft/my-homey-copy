@@ -586,7 +586,9 @@ export default function FamilyCalendar({ activities }) {
                 <div className="space-y-2">
                   {dayActivities.map((activity) => {
                     const memberColor = memberColors[activity.child_name] || 'bg-gray-400';
-                    const eventTime = activity.start ? format(parseISO(activity.start), 'h:mm a') : (activity.time || 'All day');
+                    // Check if event is all-day (no time component in ISO string)
+                    const isAllDay = activity.start && !activity.start.includes('T');
+                    const eventTime = isAllDay ? 'All Day' : (activity.start ? format(parseISO(activity.start), 'h:mm a') : (activity.time || 'All day'));
                     
                     return (
                       <motion.div
