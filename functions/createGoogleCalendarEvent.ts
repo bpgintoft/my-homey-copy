@@ -34,8 +34,12 @@ Deno.serve(async (req) => {
         dateTime: end,
         timeZone: 'America/Chicago',
       },
-      recurrence,
     };
+
+    // Only add recurrence if it exists and is not empty
+    if (recurrence && recurrence.length > 0) {
+      event.recurrence = recurrence;
+    }
 
     const response = await calendar.events.insert({
       calendarId,
