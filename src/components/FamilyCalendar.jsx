@@ -206,7 +206,7 @@ export default function FamilyCalendar({ activities }) {
   const generateIconMutation = useMutation({
     mutationFn: async (activity) => {
       const { url } = await base44.integrations.Core.GenerateImage({
-        prompt: `A simple, cute, colorful cartoon icon representing "${activity.title}". Style: playful, child-friendly, clean design on white background.`
+        prompt: `A minimalist flat icon representing "${activity.title}". Style: very simple shapes, solid colors, minimal detail, flat design, clean white background. No text or words.`
       });
       return { activityId: activity.id, iconUrl: url };
     },
@@ -221,7 +221,7 @@ export default function FamilyCalendar({ activities }) {
   const generateGoogleEventThumbnailMutation = useMutation({
     mutationFn: async ({ eventId, calendarId, title }) => {
       const { url } = await base44.integrations.Core.GenerateImage({
-        prompt: `A simple, cute, colorful cartoon icon representing "${title}". Style: playful, child-friendly, clean design on white background.`
+        prompt: `A minimalist flat icon representing "${title}". Style: very simple shapes, solid colors, minimal detail, flat design, clean white background. No text or words.`
       });
       
       const thumbnail = await base44.entities.CalendarEventThumbnail.create({
