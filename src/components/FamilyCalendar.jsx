@@ -18,6 +18,7 @@ import LocationAutocomplete from './LocationAutocomplete';
 export default function FamilyCalendar({ activities }) {
   const [currentWeekStart, setCurrentWeekStart] = useState(startOfWeek(new Date(), { weekStartsOn: 0 }));
   const [hasNavigated, setHasNavigated] = useState(false);
+  const [hasScrolledUp, setHasScrolledUp] = useState(false);
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [showCalendarFilter, setShowCalendarFilter] = useState(false);
@@ -254,16 +255,41 @@ export default function FamilyCalendar({ activities }) {
   const goToPreviousWeek = () => {
     setCurrentWeekStart(addDays(currentWeekStart, -7));
     setHasNavigated(true);
+    setHasScrolledUp(false);
   };
 
   const goToNextWeek = () => {
     setCurrentWeekStart(addDays(currentWeekStart, 7));
+    setHasScrolledUp(false);
   };
 
   const goToToday = () => {
     setCurrentWeekStart(startOfWeek(new Date(), { weekStartsOn: 0 }));
     setHasNavigated(false);
+    setHasScrolledUp(false);
   };
+
+  // Detect scroll direction
+  React.useEffect(() => {
+    let lastScrollY = window.scrollY;
+    
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      const isCurrentWeek = currentWeekStart <= new Date() && new Date() < addDays(currentWeekStart, 7);
+      
+      if (isCurrentWeek && !hasNavigated) {
+        if (currentScrollY < lastScrollY && !hasScrolledUp) {
+          // Scrolling up
+          setHasScrolledUp(true);
+        }
+      }
+      
+      lastScrollY = currentScrollY;
+    };
+    
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [currentWeekStart, hasNavigated, hasScrolledUp]);
 
   const generateRecurrenceRule = (recurrence, recurrenceEnd, weeklyDays) => {
     if (recurrence === 'none') return null;
@@ -550,8 +576,8 @@ export default function FamilyCalendar({ activities }) {
             
             const isCurrentWeek = weekStart <= today && today < addDays(weekStart, 7);
             
-            // Only filter future events if: current week AND haven't navigated up to previous weeks
-            const dayActivities = (isCurrentWeek && !hasNavigated)
+            // Only filter future events if: current week AND haven't navigated to previous weeks AND haven't scrolled up
+            const dayActivities = (isCurrentWeek && !hasNavigated && !hasScrolledUp)
               ? allDayActivities.filter(activity => {
                   if (!activity.start) return true;
                   const eventEnd = activity.end ? parseISO(activity.end) : parseISO(activity.start);
