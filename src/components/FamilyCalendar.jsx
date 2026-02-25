@@ -258,7 +258,6 @@ export default function FamilyCalendar({ activities }) {
 
   const goToNextWeek = () => {
     setCurrentWeekStart(addDays(currentWeekStart, 7));
-    setHasNavigated(true);
   };
 
   const goToToday = () => {
