@@ -662,6 +662,24 @@ export default function FamilyCalendar({ activities }) {
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
+              <Label htmlFor="edit-calendar">Calendar *</Label>
+              <Select
+                value={editingEvent?.calendarId || ''}
+                onValueChange={(value) => setEditingEvent({ ...editingEvent, calendarId: value })}
+              >
+                <SelectTrigger id="edit-calendar">
+                  <SelectValue placeholder="Select calendar" />
+                </SelectTrigger>
+                <SelectContent>
+                  {calendars.map((cal) => (
+                    <SelectItem key={cal.id} value={cal.id}>
+                      {cal.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
               <Label htmlFor="edit-summary">Title *</Label>
               <Input
                 id="edit-summary"
