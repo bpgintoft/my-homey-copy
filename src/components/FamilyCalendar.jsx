@@ -369,6 +369,7 @@ export default function FamilyCalendar({ activities }) {
     setEditingEvent({
       id: event.id,
       calendarId: event.calendarId,
+      originalCalendarId: event.calendarId,
       summary: event.title || event.summary || '',
       description: event.description || '',
       location: event.location || '',
@@ -398,6 +399,7 @@ export default function FamilyCalendar({ activities }) {
     const eventData = {
       id: editingEvent.id,
       calendarId: editingEvent.calendarId,
+      originalCalendarId: editingEvent.originalCalendarId,
       summary: editingEvent.summary,
       description: editingEvent.description || '',
       location: editingEvent.location || '',

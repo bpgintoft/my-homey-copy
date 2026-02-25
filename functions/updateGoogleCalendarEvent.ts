@@ -4,7 +4,7 @@ import { google } from 'npm:googleapis@144.0.0';
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
-    const { id, calendarId, summary, description, location, start, end } = await req.json();
+    const { id, calendarId, summary, description, location, start, end, recurrence, originalCalendarId } = await req.json();
 
     if (!id || !calendarId) {
       return Response.json({ error: 'Missing event ID or calendar ID' }, { status: 400 });
@@ -28,15 +28,34 @@ Deno.serve(async (req) => {
         dateTime: end,
         timeZone: 'America/Chicago',
       },
+      recurrence,
     };
 
-    const response = await calendar.events.update({
-      calendarId,
-      eventId: id,
-      requestBody: event,
-    });
+    // If calendar has changed, we need to move the event
+    if (originalCalendarId && originalCalendarId !== calendarId) {
+      // Delete from old calendar
+      await calendar.events.delete({
+        calendarId: originalCalendarId,
+        eventId: id,
+      });
 
-    return Response.json({ event: response.data });
+      // Create in new calendar
+      const response = await calendar.events.insert({
+        calendarId,
+        requestBody: event,
+      });
+
+      return Response.json({ event: response.data });
+    } else {
+      // Update in same calendar
+      const response = await calendar.events.update({
+        calendarId,
+        eventId: id,
+        requestBody: event,
+      });
+
+      return Response.json({ event: response.data });
+    }
   } catch (error) {
     console.error('Update Google Calendar event error:', error);
     return Response.json({ error: error.message }, { status: 500 });
