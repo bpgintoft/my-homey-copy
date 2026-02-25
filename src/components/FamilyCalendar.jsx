@@ -549,13 +549,6 @@ export default function FamilyCalendar({ activities }) {
         </div>
       )}
 
-      {/* Loading indicator */}
-      {isLoadingGoogle && (
-        <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg text-sm text-blue-600">
-          Loading Google Calendar events...
-        </div>
-      )}
-
       {/* Day labels */}
       <div className="flex gap-2 mb-4 px-2">
         {weekDays.map((day) => (
