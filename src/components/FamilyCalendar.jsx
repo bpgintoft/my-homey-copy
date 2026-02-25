@@ -49,7 +49,11 @@ export default function FamilyCalendar({ activities }) {
       const timeMax = addDays(currentWeekStart, 7).toISOString();
       const { data } = await base44.functions.invoke('getGoogleCalendarEvents', { timeMin, timeMax });
       return data.events || [];
-    }
+    },
+    staleTime: 5 * 60 * 1000, // Data stays fresh for 5 minutes
+    cacheTime: 30 * 60 * 1000, // Keep in cache for 30 minutes
+    refetchInterval: 5 * 60 * 1000, // Auto-refresh every 5 minutes in background
+    refetchOnWindowFocus: true // Refresh when user returns to tab
   });
 
   // Fetch existing thumbnails for Google Calendar events
