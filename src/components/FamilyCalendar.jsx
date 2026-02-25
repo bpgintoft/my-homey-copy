@@ -634,29 +634,16 @@ export default function FamilyCalendar({ activities }) {
                         key={`${activity.source}-${activity.id}`}
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
-                        onClick={() => activity.source === 'google' && handleEditEvent(activity)}
-                        className={`bg-white rounded-lg p-2 shadow-sm hover:shadow-md transition-shadow flex items-center gap-2 ${activity.source === 'google' ? 'cursor-pointer' : ''}`}
-                        style={{
-                          borderLeft: `3px solid ${activity.backgroundColor || '#8B5CF6'}`
-                        }}
+                        className="flex items-stretch gap-2"
                       >
-                        {/* Avatar for Google Calendar events */}
-                        {avatarUrl && (
-                          <img 
-                            src={avatarUrl} 
-                            alt="Calendar owner"
-                            className="w-8 h-8 rounded-full flex-shrink-0 object-cover"
-                          />
-                        )}
-
-                        {/* Icon */}
-                        <div className="w-14 h-14 flex items-center justify-center flex-shrink-0">
+                        {/* AI Icon - outside event rectangle */}
+                        <div className="flex items-center justify-center flex-shrink-0 w-16">
                           {activity.source === 'google' ? (
                             getThumbnailForEvent(activity.id) ? (
                               <img 
                                 src={getThumbnailForEvent(activity.id)} 
                                 alt={activity.title}
-                                className="w-14 h-14 object-contain"
+                                className="w-full h-full object-contain"
                               />
                             ) : (
                               <div className="text-2xl">⏳</div>
@@ -665,7 +652,7 @@ export default function FamilyCalendar({ activities }) {
                             <img 
                               src={activity.icon_url} 
                               alt={activity.title}
-                              className="w-14 h-14 object-contain"
+                              className="w-full h-full object-contain"
                             />
                           ) : (
                             <div
@@ -678,23 +665,41 @@ export default function FamilyCalendar({ activities }) {
                           )}
                         </div>
 
-                        {/* Event details */}
-                        <div className="flex-1 min-w-0">
-                          <div className="font-medium text-sm text-gray-900 truncate leading-tight">
-                            {activity.title}
-                          </div>
-                          <div className="text-xs text-gray-600 leading-tight truncate">
-                            {eventTime}
-                            {activity.location && ` • ${activity.location}`}
-                          </div>
-                        </div>
+                        {/* Event rectangle */}
+                        <div
+                          onClick={() => activity.source === 'google' && handleEditEvent(activity)}
+                          className={`bg-white rounded-lg p-2 shadow-sm hover:shadow-md transition-shadow flex items-center gap-2 flex-1 ${activity.source === 'google' ? 'cursor-pointer' : ''}`}
+                          style={{
+                            borderLeft: `3px solid ${activity.backgroundColor || '#8B5CF6'}`
+                          }}
+                        >
+                          {/* Avatar for Google Calendar events */}
+                          {avatarUrl && (
+                            <img 
+                              src={avatarUrl} 
+                              alt="Calendar owner"
+                              className="w-8 h-8 rounded-full flex-shrink-0 object-cover"
+                            />
+                          )}
 
-                        {/* Member initial */}
-                        {activity.child_name && (
-                          <div className={`w-7 h-7 rounded-full ${memberColor} flex items-center justify-center text-white font-semibold text-xs flex-shrink-0`}>
-                            {getInitial(activity.child_name)}
+                          {/* Event details */}
+                          <div className="flex-1 min-w-0">
+                            <div className="font-medium text-sm text-gray-900 truncate leading-tight">
+                              {activity.title}
+                            </div>
+                            <div className="text-xs text-gray-600 leading-tight truncate">
+                              {eventTime}
+                              {activity.location && ` • ${activity.location}`}
+                            </div>
                           </div>
-                        )}
+
+                          {/* Member initial */}
+                          {activity.child_name && (
+                            <div className={`w-7 h-7 rounded-full ${memberColor} flex items-center justify-center text-white font-semibold text-xs flex-shrink-0`}>
+                              {getInitial(activity.child_name)}
+                            </div>
+                          )}
+                        </div>
                       </motion.div>
                     );
                   })}
