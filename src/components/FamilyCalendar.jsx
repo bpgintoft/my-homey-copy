@@ -410,12 +410,16 @@ export default function FamilyCalendar({ activities }) {
       summary: editingEvent.summary,
       description: editingEvent.description || '',
       location: editingEvent.location || '',
-      start: editingEvent.start.includes(':') && editingEvent.start.split(':').length === 2 
-        ? `${editingEvent.start}:00` 
-        : editingEvent.start,
-      end: editingEvent.end.includes(':') && editingEvent.end.split(':').length === 2 
-        ? `${editingEvent.end}:00` 
-        : editingEvent.end,
+      start: editingEvent.isAllDay 
+        ? editingEvent.start 
+        : (editingEvent.start.includes(':') && editingEvent.start.split(':').length === 2 
+            ? `${editingEvent.start}:00` 
+            : editingEvent.start),
+      end: editingEvent.isAllDay 
+        ? editingEvent.end 
+        : (editingEvent.end.includes(':') && editingEvent.end.split(':').length === 2 
+            ? `${editingEvent.end}:00` 
+            : editingEvent.end),
       recurrence: recurrenceRule ? [recurrenceRule] : undefined,
       isAllDay: editingEvent.isAllDay
     };
@@ -702,7 +706,20 @@ export default function FamilyCalendar({ activities }) {
               <Checkbox
                 id="edit-all-day"
                 checked={editingEvent?.isAllDay || false}
-                onCheckedChange={(checked) => setEditingEvent({ ...editingEvent, isAllDay: checked })}
+                onCheckedChange={(checked) => {
+                  const newState = { ...editingEvent, isAllDay: checked };
+                  // Convert datetime to date or vice versa
+                  if (checked) {
+                    // Convert to date-only format (YYYY-MM-DD)
+                    if (editingEvent.start && editingEvent.start.includes('T')) {
+                      newState.start = editingEvent.start.split('T')[0];
+                    }
+                    if (editingEvent.end && editingEvent.end.includes('T')) {
+                      newState.end = editingEvent.end.split('T')[0];
+                    }
+                  }
+                  setEditingEvent(newState);
+                }}
               />
               <Label htmlFor="edit-all-day" className="cursor-pointer">All Day Event</Label>
             </div>
