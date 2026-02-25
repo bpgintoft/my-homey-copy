@@ -38,6 +38,24 @@ export default function FamilyCalendar({ activities }) {
   });
   const queryClient = useQueryClient();
 
+  // Avatar mapping for family members
+  const calendarAvatars = {
+    'Bryan': 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/b093cc037_Bryan.png',
+    'Kate': 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/37c391d30_Kate.png',
+    'Mara': 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/08e4782d7_Mara.png',
+    'Phoenix': 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/ef00eaae1_Phoenix.png'
+  };
+
+  // Helper to get avatar for calendar
+  const getCalendarAvatar = (calendarName) => {
+    for (const [name, url] of Object.entries(calendarAvatars)) {
+      if (calendarName?.toLowerCase().includes(name.toLowerCase())) {
+        return url;
+      }
+    }
+    return null;
+  };
+
   // Generate a week of dates
   const weekDays = Array.from({ length: 7 }, (_, i) => addDays(currentWeekStart, i));
 
@@ -607,6 +625,10 @@ export default function FamilyCalendar({ activities }) {
                     const isAllDay = activity.start && !activity.start.includes('T');
                     const eventTime = isAllDay ? 'All Day' : (activity.start ? format(parseISO(activity.start), 'h:mm a') : (activity.time || 'All day'));
                     
+                    const avatarUrl = activity.source === 'google' && activity.calendarName 
+                      ? getCalendarAvatar(activity.calendarName) 
+                      : null;
+                    
                     return (
                       <motion.div
                         key={`${activity.source}-${activity.id}`}
@@ -618,6 +640,15 @@ export default function FamilyCalendar({ activities }) {
                           borderLeft: `3px solid ${activity.backgroundColor || '#8B5CF6'}`
                         }}
                       >
+                        {/* Avatar for Google Calendar events */}
+                        {avatarUrl && (
+                          <img 
+                            src={avatarUrl} 
+                            alt="Calendar owner"
+                            className="w-8 h-8 rounded-full flex-shrink-0 object-cover"
+                          />
+                        )}
+
                         {/* Icon */}
                         <div 
                           className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden"
