@@ -650,18 +650,13 @@ export default function FamilyCalendar({ activities }) {
                         )}
 
                         {/* Icon */}
-                        <div 
-                          className="w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden"
-                          style={{
-                            backgroundColor: activity.backgroundColor ? `${activity.backgroundColor}20` : '#F3E8FF'
-                          }}
-                        >
+                        <div className="w-14 h-14 flex items-center justify-center flex-shrink-0">
                           {activity.source === 'google' ? (
                             getThumbnailForEvent(activity.id) ? (
                               <img 
                                 src={getThumbnailForEvent(activity.id)} 
                                 alt={activity.title}
-                                className="w-10 h-10 object-contain"
+                                className="w-14 h-14 object-contain"
                               />
                             ) : (
                               <div className="text-2xl">⏳</div>
@@ -670,7 +665,7 @@ export default function FamilyCalendar({ activities }) {
                             <img 
                               src={activity.icon_url} 
                               alt={activity.title}
-                              className="w-10 h-10 object-contain"
+                              className="w-14 h-14 object-contain"
                             />
                           ) : (
                             <div
