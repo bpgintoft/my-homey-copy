@@ -549,10 +549,9 @@ export default function FamilyCalendar({ activities }) {
             weekStart.setHours(0, 0, 0, 0);
             
             const isCurrentWeek = weekStart <= today && today < addDays(weekStart, 7);
-            const isPastWeek = addDays(weekStart, 7) <= today;
             
-            // Only filter future events if: current week AND not navigated to past weeks AND not a past week
-            const dayActivities = (isCurrentWeek && !hasNavigated && !isPastWeek)
+            // Only filter future events if: current week AND haven't navigated up to previous weeks
+            const dayActivities = (isCurrentWeek && !hasNavigated)
               ? allDayActivities.filter(activity => {
                   if (!activity.start) return true;
                   const eventEnd = activity.end ? parseISO(activity.end) : parseISO(activity.start);
