@@ -644,7 +644,7 @@ export default function FamilyCalendar({ activities }) {
                         {/* Event rectangle */}
                         <div
                           onClick={() => activity.source === 'google' && handleEditEvent(activity)}
-                          className={`rounded-lg p-2 pr-4 flex items-center gap-2 flex-1 ${activity.source === 'google' ? 'cursor-pointer' : ''}`}
+                          className={`rounded-lg p-2 pr-4 flex items-center gap-2 flex-1 min-w-0 ${activity.source === 'google' ? 'cursor-pointer' : ''}`}
                           style={{
                             borderLeft: `3px solid ${activity.backgroundColor || '#8B5CF6'}`
                           }}
