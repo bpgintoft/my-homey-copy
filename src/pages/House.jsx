@@ -50,6 +50,7 @@ export default function House() {
   const [taskToReschedule, setTaskToReschedule] = useState(null);
   const [showAddTaskDialog, setShowAddTaskDialog] = useState(false);
   const [newMaintenanceTask, setNewMaintenanceTask] = useState({});
+  const [editingTask, setEditingTask] = useState(null);
   const queryClient = useQueryClient();
   const fileInputRef = React.useRef(null);
   const roomPhotoInputRef = React.useRef(null);
@@ -355,6 +356,14 @@ export default function House() {
       queryClient.invalidateQueries(['maintenanceTasks']);
       setShowAddTaskDialog(false);
       setNewMaintenanceTask({});
+    },
+  });
+
+  const updateMaintenanceTaskMutation = useMutation({
+    mutationFn: ({ id, data }) => base44.entities.MaintenanceTask.update(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['maintenanceTasks']);
+      setEditingTask(null);
     },
   });
 
@@ -727,7 +736,7 @@ export default function House() {
                     task={task}
                     onSync={handleSyncTask}
                     onComplete={handleCompleteTask}
-                    onEdit={(task) => {/* Edit dialog */}}
+                    onEdit={setEditingTask}
                   />
                 ))}
               </div>
@@ -767,6 +776,92 @@ export default function House() {
         task={taskToReschedule}
         onConfirm={handleReschedule}
       />
+
+      <Dialog open={!!editingTask} onOpenChange={(open) => !open && setEditingTask(null)}>
+        <DialogContent className="max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Edit Maintenance Task</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <Input
+              placeholder="Task title"
+              value={editingTask?.title || ''}
+              onChange={(e) => setEditingTask({ ...editingTask, title: e.target.value })}
+            />
+            <Textarea
+              placeholder="Description"
+              value={editingTask?.description || ''}
+              onChange={(e) => setEditingTask({ ...editingTask, description: e.target.value })}
+              rows={3}
+            />
+            <Select
+              value={editingTask?.category}
+              onValueChange={(value) => setEditingTask({ ...editingTask, category: value })}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Category" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="hvac">HVAC</SelectItem>
+                <SelectItem value="plumbing">Plumbing</SelectItem>
+                <SelectItem value="electrical">Electrical</SelectItem>
+                <SelectItem value="exterior">Exterior</SelectItem>
+                <SelectItem value="interior">Interior</SelectItem>
+                <SelectItem value="appliances">Appliances</SelectItem>
+                <SelectItem value="safety">Safety</SelectItem>
+                <SelectItem value="seasonal">Seasonal</SelectItem>
+                <SelectItem value="landscaping">Landscaping</SelectItem>
+              </SelectContent>
+            </Select>
+            <Select
+              value={editingTask?.priority}
+              onValueChange={(value) => setEditingTask({ ...editingTask, priority: value })}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Priority" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="low">Low</SelectItem>
+                <SelectItem value="medium">Medium</SelectItem>
+                <SelectItem value="high">High</SelectItem>
+                <SelectItem value="urgent">Urgent</SelectItem>
+              </SelectContent>
+            </Select>
+            <Input
+              type="date"
+              placeholder="Next due date"
+              value={editingTask?.next_due || ''}
+              onChange={(e) => setEditingTask({ ...editingTask, next_due: e.target.value })}
+            />
+            <Select
+              value={editingTask?.frequency}
+              onValueChange={(value) => setEditingTask({ ...editingTask, frequency: value })}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Frequency" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="weekly">Weekly</SelectItem>
+                <SelectItem value="monthly">Monthly</SelectItem>
+                <SelectItem value="quarterly">Quarterly</SelectItem>
+                <SelectItem value="semi-annually">Semi-annually</SelectItem>
+                <SelectItem value="annually">Annually</SelectItem>
+                <SelectItem value="as-needed">As Needed</SelectItem>
+              </SelectContent>
+            </Select>
+            <Button
+              onClick={() => updateMaintenanceTaskMutation.mutate({ 
+                id: editingTask.id, 
+                data: editingTask 
+              })}
+              disabled={!editingTask?.title || !editingTask?.category}
+              className="w-full bg-gradient-to-r from-[#00D9A3] to-[#00B386] text-white"
+            >
+              Save Changes
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       <Dialog open={showAddTaskDialog} onOpenChange={setShowAddTaskDialog}>
         <DialogContent className="max-h-[90vh] overflow-y-auto">
