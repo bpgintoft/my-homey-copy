@@ -48,6 +48,8 @@ export default function House() {
   const [selectedTask, setSelectedTask] = useState(null);
   const [rescheduleDialogOpen, setRescheduleDialogOpen] = useState(false);
   const [taskToReschedule, setTaskToReschedule] = useState(null);
+  const [showAddTaskDialog, setShowAddTaskDialog] = useState(false);
+  const [newMaintenanceTask, setNewMaintenanceTask] = useState({});
   const queryClient = useQueryClient();
   const fileInputRef = React.useRef(null);
   const roomPhotoInputRef = React.useRef(null);
@@ -331,6 +333,30 @@ export default function House() {
     setRescheduleDialogOpen(false);
     setTaskToReschedule(null);
   };
+
+  const handleAddTaskFromTip = (tip) => {
+    setNewMaintenanceTask({
+      title: tip.task,
+      description: tip.description,
+      category: tip.category,
+      frequency: tip.frequency.toLowerCase().includes('annual') ? 'annually' : 
+                 tip.frequency.toLowerCase().includes('seasonal') ? 'quarterly' :
+                 tip.frequency.toLowerCase().includes('monthly') ? 'monthly' :
+                 tip.frequency.toLowerCase().includes('weekly') ? 'weekly' : 'as-needed',
+      status: 'pending',
+      priority: 'medium'
+    });
+    setShowAddTaskDialog(true);
+  };
+
+  const createMaintenanceTaskMutation = useMutation({
+    mutationFn: (data) => base44.entities.MaintenanceTask.create(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['maintenanceTasks']);
+      setShowAddTaskDialog(false);
+      setNewMaintenanceTask({});
+    },
+  });
 
   return (
     <div className="min-h-screen bg-[#F5F5F7]">
@@ -691,7 +717,7 @@ export default function House() {
               </Button>
             </div>
 
-            <MaintenanceTips />
+            <MaintenanceTips onAddTask={handleAddTaskFromTip} />
 
             {maintenanceTasks.length > 0 ? (
               <div className="space-y-4">
@@ -741,6 +767,89 @@ export default function House() {
         task={taskToReschedule}
         onConfirm={handleReschedule}
       />
+
+      <Dialog open={showAddTaskDialog} onOpenChange={setShowAddTaskDialog}>
+        <DialogContent className="max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Add Maintenance Task</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <Input
+              placeholder="Task title"
+              value={newMaintenanceTask.title || ''}
+              onChange={(e) => setNewMaintenanceTask({ ...newMaintenanceTask, title: e.target.value })}
+            />
+            <Textarea
+              placeholder="Description"
+              value={newMaintenanceTask.description || ''}
+              onChange={(e) => setNewMaintenanceTask({ ...newMaintenanceTask, description: e.target.value })}
+              rows={3}
+            />
+            <Select
+              value={newMaintenanceTask.category}
+              onValueChange={(value) => setNewMaintenanceTask({ ...newMaintenanceTask, category: value })}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Category" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="hvac">HVAC</SelectItem>
+                <SelectItem value="plumbing">Plumbing</SelectItem>
+                <SelectItem value="electrical">Electrical</SelectItem>
+                <SelectItem value="exterior">Exterior</SelectItem>
+                <SelectItem value="interior">Interior</SelectItem>
+                <SelectItem value="appliances">Appliances</SelectItem>
+                <SelectItem value="safety">Safety</SelectItem>
+                <SelectItem value="seasonal">Seasonal</SelectItem>
+                <SelectItem value="landscaping">Landscaping</SelectItem>
+              </SelectContent>
+            </Select>
+            <Select
+              value={newMaintenanceTask.priority}
+              onValueChange={(value) => setNewMaintenanceTask({ ...newMaintenanceTask, priority: value })}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Priority" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="low">Low</SelectItem>
+                <SelectItem value="medium">Medium</SelectItem>
+                <SelectItem value="high">High</SelectItem>
+                <SelectItem value="urgent">Urgent</SelectItem>
+              </SelectContent>
+            </Select>
+            <Input
+              type="date"
+              placeholder="Next due date"
+              value={newMaintenanceTask.next_due || ''}
+              onChange={(e) => setNewMaintenanceTask({ ...newMaintenanceTask, next_due: e.target.value })}
+            />
+            <Select
+              value={newMaintenanceTask.frequency}
+              onValueChange={(value) => setNewMaintenanceTask({ ...newMaintenanceTask, frequency: value })}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Frequency" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="weekly">Weekly</SelectItem>
+                <SelectItem value="monthly">Monthly</SelectItem>
+                <SelectItem value="quarterly">Quarterly</SelectItem>
+                <SelectItem value="semi-annually">Semi-annually</SelectItem>
+                <SelectItem value="annually">Annually</SelectItem>
+                <SelectItem value="as-needed">As Needed</SelectItem>
+              </SelectContent>
+            </Select>
+            <Button
+              onClick={() => createMaintenanceTaskMutation.mutate(newMaintenanceTask)}
+              disabled={!newMaintenanceTask.title || !newMaintenanceTask.category}
+              className="w-full bg-gradient-to-r from-[#00D9A3] to-[#00B386] text-white"
+            >
+              Add Task
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       <Dialog open={showRoomDialog} onOpenChange={setShowRoomDialog}>
         <DialogContent>
