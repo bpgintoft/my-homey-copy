@@ -612,11 +612,11 @@ export default function FamilyCalendar({ activities }) {
                 exit={{ opacity: 0, y: -10 }}
                 className="mb-3"
               >
-                <div className="text-sm font-semibold text-gray-800 mb-3 px-4">
+                <div className="text-sm font-semibold text-gray-800 mb-2 px-4">
                   {format(day, 'EEE d')}
                 </div>
                 
-                <div className="space-y-2">
+                <div className="space-y-1">
                   {dayActivities.map((activity) => {
                     const memberColor = memberColors[activity.child_name] || 'bg-gray-400';
                     // Check if event is all-day (no time component in ISO string)
@@ -632,7 +632,7 @@ export default function FamilyCalendar({ activities }) {
                         key={`${activity.source}-${activity.id}`}
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
-                        className="relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] w-screen px-4 py-2 bg-white flex items-stretch gap-2"
+                        className="relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] w-screen px-4 py-1 bg-white flex items-stretch gap-2"
                       >
                         {/* AI Icon - outside event rectangle */}
                         <div className="flex items-center justify-center flex-shrink-0 w-16">
