@@ -632,7 +632,10 @@ export default function FamilyCalendar({ activities }) {
                         key={`${activity.source}-${activity.id}`}
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
-                        className="relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] w-screen px-4 py-1 bg-white flex items-stretch gap-2"
+                        className="relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] w-screen px-4 py-1 flex items-stretch gap-2"
+                        style={{
+                          backgroundColor: activity.backgroundColor || '#8B5CF6'
+                        }}
                       >
                         {/* AI Icon - outside event rectangle */}
                         <div className="flex items-center justify-center flex-shrink-0 w-16">
@@ -666,7 +669,7 @@ export default function FamilyCalendar({ activities }) {
                         {/* Event rectangle */}
                         <div
                           onClick={() => activity.source === 'google' && handleEditEvent(activity)}
-                          className={`rounded-lg p-2 flex items-center gap-2 flex-1 ${activity.source === 'google' ? 'cursor-pointer' : ''}`}
+                          className={`bg-white rounded-lg p-2 flex items-center gap-2 flex-1 ${activity.source === 'google' ? 'cursor-pointer' : ''}`}
                           style={{
                             borderLeft: `3px solid ${activity.backgroundColor || '#8B5CF6'}`
                           }}
