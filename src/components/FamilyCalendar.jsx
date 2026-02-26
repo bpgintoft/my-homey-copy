@@ -632,7 +632,7 @@ export default function FamilyCalendar({ activities }) {
                         key={`${activity.source}-${activity.id}`}
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
-                        className="relative -mx-4 px-4 py-2 bg-white flex items-stretch gap-2"
+                        className="relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] w-screen px-4 py-2 bg-white flex items-stretch gap-2"
                       >
                         {/* AI Icon - outside event rectangle */}
                         <div className="flex items-center justify-center flex-shrink-0 w-16">
