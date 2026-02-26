@@ -14,9 +14,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Label } from "@/components/ui/label";
-import { Plus, Home as HomeIcon, Package, FileText, ExternalLink, Calendar, Sparkles, Upload, Loader2, X } from 'lucide-react';
+import { Plus, Home as HomeIcon, Package, FileText, ExternalLink, Calendar, Sparkles, Upload, Loader2, X, Wrench } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { getThumbnailUrl } from '../components/imageHelpers';
+import MaintenanceTips from '../components/house/MaintenanceTips';
+import MaintenanceTaskCard from '../components/house/MaintenanceTaskCard';
+import SyncToChoreDialog from '../components/house/SyncToChoreDialog';
+import SyncToCalendarDialog from '../components/house/SyncToCalendarDialog';
+import RescheduleDialog from '../components/house/RescheduleDialog';
 
 export default function House() {
   const navigate = useNavigate();
@@ -38,6 +43,11 @@ export default function House() {
   const [newAppliance, setNewAppliance] = useState({ photos: [] });
   const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
   const [isUploadingRoomPhoto, setIsUploadingRoomPhoto] = useState(false);
+  const [syncDialogOpen, setSyncDialogOpen] = useState(false);
+  const [syncType, setSyncType] = useState(null);
+  const [selectedTask, setSelectedTask] = useState(null);
+  const [rescheduleDialogOpen, setRescheduleDialogOpen] = useState(false);
+  const [taskToReschedule, setTaskToReschedule] = useState(null);
   const queryClient = useQueryClient();
   const fileInputRef = React.useRef(null);
   const roomPhotoInputRef = React.useRef(null);
@@ -55,6 +65,16 @@ export default function House() {
   const { data: appliances = [] } = useQuery({
     queryKey: ['appliances'],
     queryFn: () => base44.entities.RoomItem.filter({ type: 'appliance' }),
+  });
+
+  const { data: maintenanceTasks = [] } = useQuery({
+    queryKey: ['maintenanceTasks'],
+    queryFn: () => base44.entities.MaintenanceTask.list(),
+  });
+
+  const { data: familyMembers = [] } = useQuery({
+    queryKey: ['familyMembers'],
+    queryFn: () => base44.entities.FamilyMember.list(),
   });
 
   // Handle URL params for direct editing
@@ -235,6 +255,83 @@ export default function House() {
     return acc;
   }, {});
 
+  const handleSyncTask = (task, type) => {
+    setSelectedTask(task);
+    setSyncType(type);
+    setSyncDialogOpen(true);
+  };
+
+  const handleSyncToChore = async (memberId, memberName) => {
+    // Calculate timing based on next_due date
+    let timing = 'short-term';
+    if (selectedTask.next_due) {
+      const dueDate = new Date(selectedTask.next_due);
+      const now = new Date();
+      const daysUntil = Math.floor((dueDate - now) / (1000 * 60 * 60 * 24));
+      
+      if (daysUntil <= 7) {
+        timing = 'short-term';
+      } else if (daysUntil <= 30) {
+        timing = 'mid-term';
+      } else {
+        timing = 'long-term';
+      }
+    }
+
+    const chore = await base44.entities.Chore.create({
+      title: selectedTask.title,
+      assigned_to_member_id: memberId,
+      assigned_to_name: memberName,
+      timing: timing,
+      next_due: selectedTask.next_due,
+      is_completed: false
+    });
+
+    await base44.entities.MaintenanceTask.update(selectedTask.id, {
+      synced_chore_id: chore.id
+    });
+
+    queryClient.invalidateQueries(['maintenanceTasks']);
+    setSyncDialogOpen(false);
+    setSelectedTask(null);
+  };
+
+  const handleSyncToCalendar = async (calendarId, calendarName) => {
+    const response = await base44.functions.invoke('syncMaintenanceToCalendar', {
+      task: selectedTask,
+      calendarId: calendarId
+    });
+
+    if (response.data?.event?.id) {
+      await base44.entities.MaintenanceTask.update(selectedTask.id, {
+        synced_google_calendar_id: calendarId,
+        synced_google_event_id: response.data.event.id
+      });
+
+      queryClient.invalidateQueries(['maintenanceTasks']);
+    }
+
+    setSyncDialogOpen(false);
+    setSelectedTask(null);
+  };
+
+  const handleCompleteTask = (task) => {
+    setTaskToReschedule(task);
+    setRescheduleDialogOpen(true);
+  };
+
+  const handleReschedule = async (nextDueDate) => {
+    await base44.entities.MaintenanceTask.update(taskToReschedule.id, {
+      status: 'completed',
+      last_completed: new Date().toISOString().split('T')[0],
+      next_due: nextDueDate
+    });
+
+    queryClient.invalidateQueries(['maintenanceTasks']);
+    setRescheduleDialogOpen(false);
+    setTaskToReschedule(null);
+  };
+
   return (
     <div className="min-h-screen bg-[#F5F5F7]">
       <div className="relative overflow-hidden">
@@ -294,6 +391,7 @@ export default function House() {
           <TabsList className="bg-white shadow-sm">
             <TabsTrigger value="rooms">Rooms</TabsTrigger>
             <TabsTrigger value="appliances">Appliances</TabsTrigger>
+            <TabsTrigger value="maintenance">Maintenance</TabsTrigger>
           </TabsList>
 
           <TabsContent value="rooms" className="space-y-6">
@@ -578,8 +676,71 @@ export default function House() {
               </Card>
             )}
           </TabsContent>
+
+          <TabsContent value="maintenance" className="space-y-6">
+            <div className="flex justify-between items-center">
+              <h2 className="text-xl font-semibold text-gray-900">
+                Home Maintenance
+              </h2>
+              <Button
+                onClick={() => {/* Add task dialog */}}
+                className="bg-gradient-to-r from-[#00D9A3] to-[#00B386] text-white"
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                Add Task
+              </Button>
+            </div>
+
+            <MaintenanceTips />
+
+            {maintenanceTasks.length > 0 ? (
+              <div className="space-y-4">
+                {maintenanceTasks.map((task) => (
+                  <MaintenanceTaskCard
+                    key={task.id}
+                    task={task}
+                    onSync={handleSyncTask}
+                    onComplete={handleCompleteTask}
+                    onEdit={(task) => {/* Edit dialog */}}
+                  />
+                ))}
+              </div>
+            ) : (
+              <Card className="bg-white border-0 shadow-sm p-12 text-center">
+                <Wrench className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">No maintenance tasks yet</h3>
+                <p className="text-gray-500">Add tasks to keep your home in top condition</p>
+              </Card>
+            )}
+          </TabsContent>
         </Tabs>
       </div>
+
+      {syncType === 'chore' && (
+        <SyncToChoreDialog
+          open={syncDialogOpen}
+          onOpenChange={setSyncDialogOpen}
+          task={selectedTask}
+          familyMembers={familyMembers}
+          onConfirm={handleSyncToChore}
+        />
+      )}
+
+      {syncType === 'calendar' && (
+        <SyncToCalendarDialog
+          open={syncDialogOpen}
+          onOpenChange={setSyncDialogOpen}
+          task={selectedTask}
+          onConfirm={handleSyncToCalendar}
+        />
+      )}
+
+      <RescheduleDialog
+        open={rescheduleDialogOpen}
+        onOpenChange={setRescheduleDialogOpen}
+        task={taskToReschedule}
+        onConfirm={handleReschedule}
+      />
 
       <Dialog open={showRoomDialog} onOpenChange={setShowRoomDialog}>
         <DialogContent>
