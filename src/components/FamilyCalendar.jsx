@@ -587,6 +587,7 @@ export default function FamilyCalendar({ activities }) {
           </button>
         ))}
       </div>
+      </div>
 
       {/* Events list grouped by day */}
       <div className="space-y-3">
