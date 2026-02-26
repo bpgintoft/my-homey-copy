@@ -634,33 +634,11 @@ export default function FamilyCalendar({ activities }) {
                         animate={{ opacity: 1, scale: 1 }}
                         className="relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] w-screen px-4 py-1 bg-white flex items-stretch gap-2"
                       >
-                        {/* AI Icon - outside event rectangle */}
+                        {/* Time - outside event rectangle */}
                         <div className="flex items-center justify-center flex-shrink-0 w-16">
-                          {activity.source === 'google' ? (
-                            getThumbnailForEvent(activity.id) ? (
-                              <img 
-                                src={getThumbnailForEvent(activity.id)} 
-                                alt={activity.title}
-                                className="w-full h-full object-contain"
-                              />
-                            ) : (
-                              <div className="text-2xl">⏳</div>
-                            )
-                          ) : activity.icon_url ? (
-                            <img 
-                              src={activity.icon_url} 
-                              alt={activity.title}
-                              className="w-full h-full object-contain"
-                            />
-                          ) : (
-                            <div
-                              className="text-2xl cursor-pointer"
-                              onClick={() => generateIconMutation.mutate(activity)}
-                              title="Click to generate icon"
-                            >
-                              {generateIconMutation.isPending ? '⏳' : '🎨'}
-                            </div>
-                          )}
+                          <div className="text-sm font-medium text-gray-700">
+                            {eventTime}
+                          </div>
                         </div>
 
                         {/* Event rectangle */}
@@ -685,10 +663,11 @@ export default function FamilyCalendar({ activities }) {
                             <div className="font-medium text-sm text-gray-900 truncate leading-tight">
                               {activity.title}
                             </div>
-                            <div className="text-xs text-gray-600 leading-tight truncate">
-                              {eventTime}
-                              {activity.location && ` • ${activity.location}`}
-                            </div>
+                            {activity.location && (
+                              <div className="text-xs text-gray-600 leading-tight truncate">
+                                {activity.location}
+                              </div>
+                            )}
                           </div>
 
                           {/* Member initial */}
