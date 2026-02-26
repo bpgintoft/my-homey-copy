@@ -707,10 +707,15 @@ export default function FamilyCalendar({ activities }) {
                                 >
                                   <div className="px-3 pb-3 pt-2 space-y-2">
                                     {activity.location && (
-                                      <div className="flex items-start gap-2 text-sm text-gray-700">
-                                        <MapPin className="w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0" />
-                                        <span>{activity.location}</span>
-                                      </div>
+                                      <a
+                                        href={`https://maps.google.com/?q=${encodeURIComponent(activity.location)}`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="flex items-start gap-2 text-sm text-blue-600 hover:text-blue-700 active:text-blue-800"
+                                      >
+                                        <MapPin className="w-4 h-4 mt-0.5 flex-shrink-0" />
+                                        <span className="underline">{activity.location}</span>
+                                      </a>
                                     )}
                                     {activity.description && (
                                       <div className="flex items-start gap-2 text-sm text-gray-700">
