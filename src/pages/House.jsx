@@ -344,7 +344,7 @@ export default function House() {
                             <img 
                               src={room.photo_url} 
                               alt={room.name}
-                              className="absolute top-0.5 right-[calc(1.25rem-2mm)] bottom-0.5 w-40 h-[calc(100%-4px)] object-cover rounded-lg"
+                              className="absolute top-2 right-[calc(1.25rem-2mm)] bottom-2 w-40 h-[calc(100%-16px)] object-cover rounded-2xl"
                               loading="lazy"
                             />
                           )}
