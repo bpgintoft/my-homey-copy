@@ -19,7 +19,7 @@ export default function SyncToCalendarDialog({
     queryKey: ['googleCalendars'],
     queryFn: async () => {
       const response = await base44.functions.invoke('getGoogleCalendars', {});
-      return Array.isArray(response.data) ? response.data : (response.data?.items || []);
+      return response.data?.calendars || [];
     },
     enabled: open,
   });
@@ -27,7 +27,7 @@ export default function SyncToCalendarDialog({
   const handleConfirm = () => {
     if (!selectedCalendarId) return;
     const calendar = calendars.find(c => c.id === selectedCalendarId);
-    onConfirm(selectedCalendarId, calendar?.summary);
+    onConfirm(selectedCalendarId, calendar?.name);
     setSelectedCalendarId('');
   };
 
@@ -64,8 +64,11 @@ export default function SyncToCalendarDialog({
                   {calendars.map(calendar => (
                     <SelectItem key={calendar.id} value={calendar.id}>
                       <div className="flex items-center gap-2">
-                        <Calendar className="w-4 h-4" />
-                        {calendar.summary}
+                        <div 
+                          className="w-3 h-3 rounded-full" 
+                          style={{ backgroundColor: calendar.backgroundColor }}
+                        />
+                        {calendar.name}
                       </div>
                     </SelectItem>
                   ))}
