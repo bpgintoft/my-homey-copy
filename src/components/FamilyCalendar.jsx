@@ -486,9 +486,9 @@ export default function FamilyCalendar({ activities }) {
   };
 
   return (
-    <div>
+    <div className="-mx-6 px-6">
       {/* Sticky header section */}
-      <div className="sticky top-16 lg:top-0 bg-[#F5F5F7] z-30 pb-3 relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] w-screen px-4">
+      <div className="sticky top-16 lg:top-0 bg-[#F5F5F7] z-30 pb-3 -mx-6 px-6">
       {/* Week navigation */}
       <div className="flex items-center justify-between gap-0.5 mb-3 pt-3">
         <Button
