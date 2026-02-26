@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, ChevronLeft, ChevronRight, Filter } from 'lucide-react';
+import { Plus, ChevronLeft, ChevronRight, Filter, ChevronDown, ChevronUp, Edit2, MapPin, FileText } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Checkbox } from "@/components/ui/checkbox";
 import { format, addDays, startOfWeek, isSameDay, parseISO } from 'date-fns';
@@ -24,6 +24,7 @@ export default function FamilyCalendar({ activities }) {
   const [showCalendarFilter, setShowCalendarFilter] = useState(false);
   const [selectedCalendarIds, setSelectedCalendarIds] = useState(new Set());
   const [editingEvent, setEditingEvent] = useState(null);
+  const [expandedEventId, setExpandedEventId] = useState(null);
   const [newEvent, setNewEvent] = useState({
     summary: '',
     description: '',
@@ -639,50 +640,105 @@ export default function FamilyCalendar({ activities }) {
                         key={`${activity.source}-${activity.id}`}
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
-                        className="relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] w-screen pl-4 pr-6 py-1 bg-white flex items-stretch gap-2"
+                        className="relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] w-screen pl-4 pr-6 py-1 bg-white"
                       >
-                        {/* Time - outside event rectangle */}
-                        <div className="flex items-center justify-center flex-shrink-0 w-16">
-                          <div className="text-sm font-medium text-gray-700">
-                            {eventTime}
-                          </div>
-                        </div>
-
-                        {/* Event rectangle */}
-                        <div
-                          onClick={() => activity.source === 'google' && handleEditEvent(activity)}
-                          className={`rounded-lg p-2 pr-2 flex items-center gap-2 flex-1 min-w-0 ${activity.source === 'google' ? 'cursor-pointer' : ''}`}
-                          style={{
-                            borderLeft: `3px solid ${activity.backgroundColor || '#8B5CF6'}`
-                          }}
-                        >
-                          {/* Avatar for Google Calendar events */}
-                          {avatarUrl && (
-                            <img 
-                              src={avatarUrl} 
-                              alt="Calendar owner"
-                              className="w-8 h-8 rounded-full flex-shrink-0 object-cover"
-                            />
-                          )}
-
-                          {/* Event details */}
-                          <div className="flex-1 min-w-0 overflow-hidden">
-                            <div className="font-medium text-sm text-gray-900 truncate leading-tight">
-                              {activity.title}
+                        <div className="flex items-stretch gap-2">
+                          {/* Time - outside event rectangle */}
+                          <div className="flex items-center justify-center flex-shrink-0 w-16">
+                            <div className="text-sm font-medium text-gray-700">
+                              {eventTime}
                             </div>
-                            {activity.location && (
-                              <div className="text-xs text-gray-600 leading-tight truncate">
-                                {activity.location}
+                          </div>
+
+                          {/* Event rectangle */}
+                          <div className="flex-1 min-w-0">
+                            <div
+                              onClick={() => setExpandedEventId(expandedEventId === activity.id ? null : activity.id)}
+                              className="rounded-lg p-2 pr-2 flex items-center gap-2 cursor-pointer hover:bg-gray-50 transition-colors"
+                              style={{
+                                borderLeft: `3px solid ${activity.backgroundColor || '#8B5CF6'}`
+                              }}
+                            >
+                              {/* Avatar for Google Calendar events */}
+                              {avatarUrl && (
+                                <img 
+                                  src={avatarUrl} 
+                                  alt="Calendar owner"
+                                  className="w-8 h-8 rounded-full flex-shrink-0 object-cover"
+                                />
+                              )}
+
+                              {/* Event details */}
+                              <div className="flex-1 min-w-0 overflow-hidden">
+                                <div className="font-medium text-sm text-gray-900 truncate leading-tight">
+                                  {activity.title}
+                                </div>
+                                {activity.location && !expandedEventId && (
+                                  <div className="text-xs text-gray-600 leading-tight truncate">
+                                    {activity.location}
+                                  </div>
+                                )}
                               </div>
-                            )}
-                          </div>
 
-                          {/* Member initial */}
-                          {activity.child_name && (
-                            <div className={`w-7 h-7 rounded-full ${memberColor} flex items-center justify-center text-white font-semibold text-xs flex-shrink-0`}>
-                              {getInitial(activity.child_name)}
+                              {/* Member initial */}
+                              {activity.child_name && (
+                                <div className={`w-7 h-7 rounded-full ${memberColor} flex items-center justify-center text-white font-semibold text-xs flex-shrink-0`}>
+                                  {getInitial(activity.child_name)}
+                                </div>
+                              )}
+
+                              {/* Expand/collapse icon */}
+                              {expandedEventId === activity.id ? (
+                                <ChevronUp className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                              ) : (
+                                <ChevronDown className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                              )}
                             </div>
-                          )}
+
+                            {/* Expanded details */}
+                            <AnimatePresence>
+                              {expandedEventId === activity.id && (
+                                <motion.div
+                                  initial={{ height: 0, opacity: 0 }}
+                                  animate={{ height: 'auto', opacity: 1 }}
+                                  exit={{ height: 0, opacity: 0 }}
+                                  transition={{ duration: 0.2 }}
+                                  className="overflow-hidden"
+                                >
+                                  <div className="px-3 pb-3 pt-2 space-y-2">
+                                    {activity.location && (
+                                      <div className="flex items-start gap-2 text-sm text-gray-700">
+                                        <MapPin className="w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0" />
+                                        <span>{activity.location}</span>
+                                      </div>
+                                    )}
+                                    {activity.description && (
+                                      <div className="flex items-start gap-2 text-sm text-gray-700">
+                                        <FileText className="w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0" />
+                                        <span className="whitespace-pre-wrap">{activity.description}</span>
+                                      </div>
+                                    )}
+                                    {activity.source === 'google' && (
+                                      <div className="flex justify-end pt-1">
+                                        <Button
+                                          variant="outline"
+                                          size="sm"
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            handleEditEvent(activity);
+                                          }}
+                                          className="h-8 text-xs"
+                                        >
+                                          <Edit2 className="w-3 h-3 mr-1" />
+                                          Edit Event
+                                        </Button>
+                                      </div>
+                                    )}
+                                  </div>
+                                </motion.div>
+                              )}
+                            </AnimatePresence>
+                          </div>
                         </div>
                       </motion.div>
                     );
