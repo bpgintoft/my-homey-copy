@@ -19,7 +19,7 @@ export default function SyncToCalendarDialog({
     queryKey: ['googleCalendars'],
     queryFn: async () => {
       const response = await base44.functions.invoke('getGoogleCalendars', {});
-      return response.data || [];
+      return Array.isArray(response.data) ? response.data : (response.data?.items || []);
     },
     enabled: open,
   });
