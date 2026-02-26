@@ -610,11 +610,9 @@ export default function FamilyCalendar({ activities }) {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
-                className={`rounded-2xl p-4 ${
-                  isToday ? 'bg-blue-50' : 'bg-purple-50/30'
-                }`}
+                className="mb-3"
               >
-                <div className="text-sm font-semibold text-gray-800 mb-3">
+                <div className="text-sm font-semibold text-gray-800 mb-3 px-4">
                   {format(day, 'EEE d')}
                 </div>
                 
@@ -634,7 +632,7 @@ export default function FamilyCalendar({ activities }) {
                         key={`${activity.source}-${activity.id}`}
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
-                        className="flex items-stretch gap-2"
+                        className="relative -mx-4 px-4 py-2 bg-white flex items-stretch gap-2"
                       >
                         {/* AI Icon - outside event rectangle */}
                         <div className="flex items-center justify-center flex-shrink-0 w-16">
@@ -668,7 +666,7 @@ export default function FamilyCalendar({ activities }) {
                         {/* Event rectangle */}
                         <div
                           onClick={() => activity.source === 'google' && handleEditEvent(activity)}
-                          className={`bg-white rounded-lg p-2 shadow-sm hover:shadow-md transition-shadow flex items-center gap-2 flex-1 ${activity.source === 'google' ? 'cursor-pointer' : ''}`}
+                          className={`rounded-lg p-2 flex items-center gap-2 flex-1 ${activity.source === 'google' ? 'cursor-pointer' : ''}`}
                           style={{
                             borderLeft: `3px solid ${activity.backgroundColor || '#8B5CF6'}`
                           }}
