@@ -488,14 +488,14 @@ export default function FamilyCalendar({ activities }) {
   return (
     <div>
       {/* Week navigation */}
-      <div className="flex items-center justify-between gap-0.5 mb-6">
+      <div className="flex items-center justify-between gap-0.5 mb-3">
         <Button
           variant="ghost"
           size="icon"
           onClick={goToPreviousWeek}
-          className="h-7 w-7 rounded-lg flex-shrink-0 p-0"
+          className="h-6 w-6 rounded-lg flex-shrink-0 p-0"
         >
-          <ChevronLeft className="w-4 h-4" />
+          <ChevronLeft className="w-3.5 h-3.5" />
         </Button>
         <div className="text-xs font-semibold text-gray-900 whitespace-nowrap mx-1">
           {format(currentWeekStart, 'MMM d')} – {format(addDays(currentWeekStart, 6), 'MMM d')}
@@ -504,15 +504,15 @@ export default function FamilyCalendar({ activities }) {
           variant="ghost"
           size="icon"
           onClick={goToNextWeek}
-          className="h-7 w-7 rounded-lg flex-shrink-0 p-0"
+          className="h-6 w-6 rounded-lg flex-shrink-0 p-0"
         >
-          <ChevronRight className="w-4 h-4" />
+          <ChevronRight className="w-3.5 h-3.5" />
         </Button>
         <Button
           variant="outline"
           size="sm"
           onClick={goToToday}
-          className="rounded-lg flex-shrink-0 h-7 px-2 text-xs"
+          className="rounded-lg flex-shrink-0 h-6 px-2 text-xs"
         >
           Today
         </Button>
@@ -521,9 +521,9 @@ export default function FamilyCalendar({ activities }) {
             <Button
               variant="outline"
               size="icon"
-              className="h-7 w-7 rounded-lg flex-shrink-0 p-0"
+              className="h-6 w-6 rounded-lg flex-shrink-0 p-0"
             >
-              <Filter className="w-3.5 h-3.5" />
+              <Filter className="w-3 h-3" />
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-64">
@@ -552,11 +552,11 @@ export default function FamilyCalendar({ activities }) {
           </PopoverContent>
         </Popover>
         <Button
-          className="h-7 w-7 rounded-full bg-gradient-to-r from-[#0AACFF] to-[#0890D9] shadow-lg flex-shrink-0 p-0"
+          className="h-6 w-6 rounded-full bg-gradient-to-r from-[#0AACFF] to-[#0890D9] shadow-lg flex-shrink-0 p-0"
           size="icon"
           onClick={() => setShowAddDialog(true)}
         >
-          <Plus className="w-4 h-4 text-white" />
+          <Plus className="w-3.5 h-3.5 text-white" />
         </Button>
       </div>
 
@@ -568,13 +568,20 @@ export default function FamilyCalendar({ activities }) {
       )}
 
       {/* Day labels */}
-      <div className="flex gap-2 mb-4 px-2">
+      <div className="flex gap-2 mb-3 px-2">
         {weekDays.map((day) => (
-          <div key={day.toISOString()} className="flex-1 text-center">
-            <div className="text-sm font-medium text-gray-600">
-              {format(day, 'EEE')}
-            </div>
-          </div>
+          <button
+            key={day.toISOString()}
+            onClick={() => {
+              const dayStart = startOfWeek(day, { weekStartsOn: 0 });
+              setCurrentWeekStart(dayStart);
+              setHasNavigated(true);
+              setHasScrolledUp(false);
+            }}
+            className="flex-1 text-center text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg py-1 transition-colors cursor-pointer"
+          >
+            {format(day, 'EEE')}
+          </button>
         ))}
       </div>
 
