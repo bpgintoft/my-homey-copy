@@ -573,10 +573,11 @@ export default function FamilyCalendar({ activities }) {
           <button
             key={day.toISOString()}
             onClick={() => {
-              const dayStart = startOfWeek(day, { weekStartsOn: 0 });
-              setCurrentWeekStart(dayStart);
-              setHasNavigated(true);
-              setHasScrolledUp(false);
+              const dayId = `day-${format(day, 'yyyy-MM-dd')}`;
+              const element = document.getElementById(dayId);
+              if (element) {
+                element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              }
             }}
             className="flex-1 text-center text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg py-1 transition-colors cursor-pointer"
           >
@@ -614,6 +615,7 @@ export default function FamilyCalendar({ activities }) {
             return (
               <motion.div
                 key={day.toISOString()}
+                id={`day-${format(day, 'yyyy-MM-dd')}`}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
