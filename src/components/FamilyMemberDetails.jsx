@@ -835,6 +835,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
             choreId: rescheduleChore.id,
             maintenanceTaskId: rescheduleChore.maintenance_task_id,
             nextDueDate,
+            choreData: rescheduleChore,
           });
         }}
       />
