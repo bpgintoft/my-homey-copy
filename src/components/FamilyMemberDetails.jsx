@@ -753,7 +753,14 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                                           <div {...provided.dragHandleProps} className="cursor-grab active:cursor-grabbing">
                                              <GripVertical className="w-4 h-4 text-gray-400" />
                                            </div>
-                                           <button onClick={() => toggleChoreMutation.mutate({ id: chore.id, is_completed: !chore.is_completed, maintenance_task_id: chore.maintenance_task_id })}>
+                                           <button onClick={() => {
+                                             if (!chore.is_completed && chore.maintenance_task_id) {
+                                               // Show reschedule dialog for linked chores
+                                               setRescheduleChore(chore);
+                                             } else {
+                                               toggleChoreMutation.mutate({ id: chore.id, is_completed: !chore.is_completed, maintenance_task_id: chore.maintenance_task_id });
+                                             }
+                                           }}>
                                              {chore.is_completed ? (
                                                <CheckCircle2 className="w-5 h-5 text-green-500" />
                                              ) : (
