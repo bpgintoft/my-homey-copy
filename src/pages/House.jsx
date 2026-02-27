@@ -375,6 +375,7 @@ export default function House() {
       status: 'pending',
       priority: 'medium'
     });
+    setNewTaskAssignees([]);
     setShowAddTaskDialog(true);
   };
 
