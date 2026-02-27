@@ -803,6 +803,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
               <LinkedMaintenancePanel
                 maintenanceTaskId={linkedMaintenanceSheetChore.maintenance_task_id}
                 choreId={linkedMaintenanceSheetChore.id}
+                defaultExpanded={true}
               />
             </div>
           )}
