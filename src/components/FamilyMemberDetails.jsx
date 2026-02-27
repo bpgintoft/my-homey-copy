@@ -110,14 +110,30 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
   });
 
   const completeLinkedChoreMutation = useMutation({
-    mutationFn: async ({ choreId, maintenanceTaskId, nextDueDate }) => {
+    mutationFn: async ({ choreId, maintenanceTaskId, nextDueDate, choreData }) => {
       const today = new Date().toISOString().split('T')[0];
+
+      let newChoreId = null;
+      if (nextDueDate) {
+        // Create a new synced chore for the rescheduled task
+        const newChore = await base44.entities.Chore.create({
+          title: choreData.title,
+          timing: choreData.timing || 'short-term',
+          assigned_to_member_id: choreData.assigned_to_member_id,
+          assigned_to_name: choreData.assigned_to_name,
+          next_due: nextDueDate,
+          maintenance_task_id: maintenanceTaskId,
+        });
+        newChoreId = newChore.id;
+      }
+
       await base44.entities.MaintenanceTask.update(maintenanceTaskId, {
         status: nextDueDate ? 'pending' : 'completed',
         last_completed: today,
         next_due: nextDueDate || null,
-        synced_chore_id: null,
+        synced_chore_id: newChoreId || null,
       });
+
       await base44.entities.Chore.delete(choreId);
     },
     onSuccess: () => {
