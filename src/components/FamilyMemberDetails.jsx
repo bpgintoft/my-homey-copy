@@ -102,11 +102,38 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
 
   // Mutations
   const createChoreMutation = useMutation({
-    mutationFn: (data) => base44.entities.Chore.create(data),
+    mutationFn: async ({ choreData, coAssignees }) => {
+      // Create the chore for the current member
+      const primaryChore = await base44.entities.Chore.create(choreData);
+      
+      if (coAssignees.length === 0) return primaryChore;
+
+      // Create chores for co-assignees
+      const coChores = await Promise.all(
+        coAssignees.map(member =>
+          base44.entities.Chore.create({
+            ...choreData,
+            assigned_to_member_id: member.id,
+            assigned_to_name: member.name,
+          })
+        )
+      );
+
+      // Link siblings together
+      const allChores = [primaryChore, ...coChores];
+      await Promise.all(
+        allChores.map(chore => {
+          const sibIds = allChores.filter(c => c.id !== chore.id).map(c => c.id);
+          return base44.entities.Chore.update(chore.id, { linked_chore_ids: sibIds });
+        })
+      );
+      return primaryChore;
+    },
     onSuccess: () => {
-      queryClient.invalidateQueries(['chores', memberId]);
+      queryClient.invalidateQueries(['chores']);
       setDialogOpen({ ...dialogOpen, chore: false });
       setNewChore({ title: '', timing: 'short-term' });
+      setNewChoreCoAssignees([]);
     },
   });
 
