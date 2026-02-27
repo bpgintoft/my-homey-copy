@@ -911,7 +911,7 @@ export default function House() {
         </DialogContent>
       </Dialog>
 
-      <Dialog open={showAddTaskDialog} onOpenChange={setShowAddTaskDialog}>
+      <Dialog open={showAddTaskDialog} onOpenChange={(v) => { setShowAddTaskDialog(v); if (!v) setNewTaskAssignees([]); }}>
         <DialogContent className="max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Add Maintenance Task</DialogTitle>
@@ -983,12 +983,57 @@ export default function House() {
                 <SelectItem value="as-needed">As Needed</SelectItem>
               </SelectContent>
             </Select>
+            <div>
+              <Label className="mb-2 block text-sm text-gray-600">Assign to family members' to-do lists:</Label>
+              <div className="space-y-1">
+                {familyMembers.map(m => (
+                  <div key={m.id} className="flex items-center gap-2 cursor-pointer" onClick={() => setNewTaskAssignees(prev => prev.includes(m.id) ? prev.filter(id => id !== m.id) : [...prev, m.id])}>
+                    <input type="checkbox" checked={newTaskAssignees.includes(m.id)} onChange={() => {}} className="w-4 h-4" />
+                    <span className="text-sm">{m.name}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
             <Button
-              onClick={() => createMaintenanceTaskMutation.mutate(newMaintenanceTask)}
+              onClick={async () => {
+                const task = await createMaintenanceTaskMutation.mutateAsync(newMaintenanceTask);
+                if (newTaskAssignees.length > 0 && task) {
+                  const selectedMembers = familyMembers.filter(m => newTaskAssignees.includes(m.id));
+                  let timing = 'short-term';
+                  if (newMaintenanceTask.next_due) {
+                    const days = Math.floor((new Date(newMaintenanceTask.next_due) - new Date()) / (1000 * 60 * 60 * 24));
+                    if (days > 30) timing = 'long-term';
+                    else if (days > 7) timing = 'mid-term';
+                  }
+                  const chores = await Promise.all(
+                    selectedMembers.map(member =>
+                      base44.entities.Chore.create({
+                        title: newMaintenanceTask.title,
+                        assigned_to_member_id: member.id,
+                        assigned_to_name: member.name,
+                        timing,
+                        next_due: newMaintenanceTask.next_due,
+                        is_completed: false,
+                        maintenance_task_id: task.id,
+                      })
+                    )
+                  );
+                  if (chores.length > 1) {
+                    await Promise.all(chores.map(c => base44.entities.Chore.update(c.id, { linked_chore_ids: chores.filter(x => x.id !== c.id).map(x => x.id) })));
+                  }
+                  await base44.entities.MaintenanceTask.update(task.id, {
+                    synced_chore_id: chores[0].id,
+                    synced_chore_ids: chores.map(c => c.id),
+                  });
+                  queryClient.invalidateQueries(['chores']);
+                  queryClient.invalidateQueries(['maintenanceTasks']);
+                }
+                setNewTaskAssignees([]);
+              }}
               disabled={!newMaintenanceTask.title || !newMaintenanceTask.category}
               className="w-full bg-gradient-to-r from-[#00D9A3] to-[#00B386] text-white"
             >
-              Add Task
+              Add Task{newTaskAssignees.length > 0 ? ` & Assign to ${newTaskAssignees.length} member${newTaskAssignees.length > 1 ? 's' : ''}` : ''}
             </Button>
           </div>
         </DialogContent>
