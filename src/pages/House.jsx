@@ -338,13 +338,27 @@ export default function House() {
   };
 
   const handleReschedule = async (nextDueDate) => {
-    await base44.entities.MaintenanceTask.update(taskToReschedule.id, {
-      status: 'completed',
-      last_completed: new Date().toISOString().split('T')[0],
-      next_due: nextDueDate
+    const today = new Date().toISOString().split('T')[0];
+    const task = taskToReschedule;
+
+    // Delete all existing synced chores
+    const choreIds = task.synced_chore_ids?.length ? task.synced_chore_ids : (task.synced_chore_id ? [task.synced_chore_id] : []);
+    if (choreIds.length > 0) {
+      const allChores = await base44.entities.Chore.list();
+      const choresToDelete = allChores.filter(c => choreIds.includes(c.id));
+      await Promise.all(choresToDelete.map(c => base44.entities.Chore.delete(c.id)));
+    }
+
+    await base44.entities.MaintenanceTask.update(task.id, {
+      status: 'pending',
+      last_completed: today,
+      next_due: nextDueDate,
+      synced_chore_id: null,
+      synced_chore_ids: null,
     });
 
     queryClient.invalidateQueries(['maintenanceTasks']);
+    queryClient.invalidateQueries(['chores']);
     setRescheduleDialogOpen(false);
     setTaskToReschedule(null);
   };
