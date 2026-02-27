@@ -758,7 +758,7 @@ export default function House() {
                 Home Maintenance
               </h2>
               <Button
-                onClick={() => {/* Add task dialog */}}
+                onClick={() => { setNewMaintenanceTask({}); setNewTaskAssignees([]); setShowAddTaskDialog(true); }}
                 className="bg-gradient-to-r from-[#00D9A3] to-[#00B386] text-white"
               >
                 <Plus className="w-4 h-4 mr-2" />
