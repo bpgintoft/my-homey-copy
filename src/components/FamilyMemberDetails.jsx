@@ -12,6 +12,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import SchoolProgramSection from './SchoolProgramSection';
+import LinkedMaintenancePanel from './house/LinkedMaintenancePanel';
 
 export default function FamilyMemberDetails({ memberId, memberName, color = 'blue' }) {
   const queryClient = useQueryClient();

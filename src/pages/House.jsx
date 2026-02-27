@@ -287,7 +287,8 @@ export default function House() {
       assigned_to_name: memberName,
       timing: timing,
       next_due: selectedTask.next_due,
-      is_completed: false
+      is_completed: false,
+      maintenance_task_id: selectedTask.id
     });
 
     await base44.entities.MaintenanceTask.update(selectedTask.id, {
