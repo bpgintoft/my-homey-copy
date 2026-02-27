@@ -50,6 +50,7 @@ export default function House() {
   const [taskToReschedule, setTaskToReschedule] = useState(null);
   const [showAddTaskDialog, setShowAddTaskDialog] = useState(false);
   const [newMaintenanceTask, setNewMaintenanceTask] = useState({});
+  const [newTaskAssignees, setNewTaskAssignees] = useState([]);
   const [editingTask, setEditingTask] = useState(null);
   const queryClient = useQueryClient();
   const fileInputRef = React.useRef(null);
