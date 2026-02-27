@@ -740,7 +740,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                                           <div {...provided.dragHandleProps} className="cursor-grab active:cursor-grabbing">
                                              <GripVertical className="w-4 h-4 text-gray-400" />
                                            </div>
-                                           <button onClick={() => toggleChoreMutation.mutate({ id: chore.id, is_completed: !chore.is_completed })}>
+                                           <button onClick={() => toggleChoreMutation.mutate({ id: chore.id, is_completed: !chore.is_completed, maintenance_task_id: chore.maintenance_task_id })}>
                                              {chore.is_completed ? (
                                                <CheckCircle2 className="w-5 h-5 text-green-500" />
                                              ) : (
@@ -750,20 +750,26 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                                            {editingChoreId === chore.id ? (
                                              <Input value={editingChoreTitle} onChange={(e) => setEditingChoreTitle(e.target.value)} onBlur={() => updateChoreMutation.mutate({ id: chore.id, title: editingChoreTitle })} onKeyDown={(e) => { if (e.key === 'Enter') updateChoreMutation.mutate({ id: chore.id, title: editingChoreTitle }); if (e.key === 'Escape') setEditingChoreId(null); }} autoFocus className="h-8" />
                                            ) : (
-                                             <span className={`cursor-pointer hover:text-blue-600 flex-1 ${chore.is_completed ? 'line-through text-gray-500' : ''}`} onClick={() => { setEditingChoreId(chore.id); setEditingChoreTitle(chore.title); }}>
+                                             <span className={`cursor-pointer hover:text-blue-600 flex-1 ${chore.is_completed ? 'line-through text-gray-500' : ''}`} onClick={() => { if (!chore.maintenance_task_id) { setEditingChoreId(chore.id); setEditingChoreTitle(chore.title); } }}>
                                                {chore.title}
                                              </span>
                                            )}
+                                           {chore.maintenance_task_id && (
+                                             <button
+                                               onClick={() => setLinkedMaintenanceSheetChore(chore)}
+                                               className="flex-shrink-0 p-1 rounded hover:bg-orange-100 transition-colors"
+                                               title="View linked maintenance task"
+                                             >
+                                               <Wrench className="w-4 h-4 text-orange-500" />
+                                             </button>
+                                           )}
                                          </div>
-                                         <Button variant="ghost" size="sm" onClick={() => deleteChoreMutation.mutate(chore.id)}>
-                                           <Trash2 className="w-4 h-4 text-red-500" />
-                                         </Button>
+                                         {!chore.maintenance_task_id && (
+                                           <Button variant="ghost" size="sm" onClick={() => deleteChoreMutation.mutate(chore.id)}>
+                                             <Trash2 className="w-4 h-4 text-red-500" />
+                                           </Button>
+                                         )}
                                         </div>
-                                        {chore.maintenance_task_id && (
-                                          <div className="px-3 pb-3">
-                                            <LinkedMaintenancePanel maintenanceTaskId={chore.maintenance_task_id} choreId={chore.id} />
-                                          </div>
-                                        )}
                                       </div>
                                     )}
                                   </Draggable>
