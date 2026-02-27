@@ -864,7 +864,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                                            )}
                                          </div>
                                          {!chore.maintenance_task_id && (
-                                           <Button variant="ghost" size="sm" onClick={() => deleteChoreMutation.mutate(chore.id)}>
+                                           <Button variant="ghost" size="sm" onClick={() => deleteChoreMutation.mutate({ id: chore.id, linked_chore_ids: chore.linked_chore_ids })}>
                                              <Trash2 className="w-4 h-4 text-red-500" />
                                            </Button>
                                          )}
