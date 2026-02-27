@@ -39,6 +39,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
   const iconColor = iconColorMap[color] || iconColorMap.blue;
   const [dialogOpen, setDialogOpen] = useState({ chore: false, milestone: false, contact: false, link: false });
   const [newChore, setNewChore] = useState({ title: '', timing: 'short-term' });
+  const [newChoreCoAssignees, setNewChoreCoAssignees] = useState([]);
   const [editingChoreId, setEditingChoreId] = useState(null);
   const [editingChoreTitle, setEditingChoreTitle] = useState('');
   const [newMilestone, setNewMilestone] = useState({ title: '', date: '', description: '' });
