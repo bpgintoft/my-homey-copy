@@ -868,6 +868,17 @@ export default function House() {
             >
               Save Changes
             </Button>
+            <Button
+              variant="destructive"
+              onClick={() => {
+                if (confirm('Delete this maintenance task?')) {
+                  deleteMaintenanceTaskMutation.mutate(editingTask.id);
+                }
+              }}
+              className="w-full"
+            >
+              Delete Task
+            </Button>
           </div>
         </DialogContent>
       </Dialog>
