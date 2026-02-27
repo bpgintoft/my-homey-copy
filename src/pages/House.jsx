@@ -15,6 +15,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Label } from "@/components/ui/label";
 import { Plus, Home as HomeIcon, Package, FileText, ExternalLink, Calendar, Sparkles, Upload, Loader2, X, Wrench } from 'lucide-react';
+import { base44 as base44Client } from '@/api/base44Client';
 import { motion, AnimatePresence } from 'framer-motion';
 import { getThumbnailUrl } from '../components/imageHelpers';
 import MaintenanceTips from '../components/house/MaintenanceTips';
@@ -388,8 +389,7 @@ export default function House() {
     },
   });
 
-  // Import Checkbox for the task assignee UI
-  const { Checkbox: CheckboxComp } = React.useMemo(() => ({ Checkbox: require('@radix-ui/react-checkbox') }), []);
+
 
   const updateMaintenanceTaskMutation = useMutation({
     mutationFn: ({ id, data }) => base44.entities.MaintenanceTask.update(id, data),
