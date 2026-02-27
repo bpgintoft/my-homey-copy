@@ -113,28 +113,56 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
     mutationFn: async ({ choreId, maintenanceTaskId, nextDueDate, choreData }) => {
       const today = new Date().toISOString().split('T')[0];
 
-      let newChoreId = null;
+      // Fetch all sibling chores (co-assigned members)
+      const siblingIds = choreData.linked_chore_ids || [];
+      const allChoreIds = [choreId, ...siblingIds];
+
+      // Fetch sibling chore data if we need to recreate them
+      let siblingChores = [];
+      if (siblingIds.length > 0) {
+        const allChores = await base44.entities.Chore.list();
+        siblingChores = allChores.filter(c => siblingIds.includes(c.id));
+      }
+
+      let newChoreIds = [];
       if (nextDueDate) {
-        // Create a new synced chore for the rescheduled task
-        const newChore = await base44.entities.Chore.create({
-          title: choreData.title,
-          timing: choreData.timing || 'short-term',
-          assigned_to_member_id: choreData.assigned_to_member_id,
-          assigned_to_name: choreData.assigned_to_name,
-          next_due: nextDueDate,
-          maintenance_task_id: maintenanceTaskId,
-        });
-        newChoreId = newChore.id;
+        // Recreate chores for all assigned members
+        const allMemberChores = [choreData, ...siblingChores];
+        const newChores = await Promise.all(
+          allMemberChores.map(c =>
+            base44.entities.Chore.create({
+              title: c.title,
+              timing: c.timing || 'short-term',
+              assigned_to_member_id: c.assigned_to_member_id,
+              assigned_to_name: c.assigned_to_name,
+              next_due: nextDueDate,
+              maintenance_task_id: maintenanceTaskId,
+            })
+          )
+        );
+        newChoreIds = newChores.map(c => c.id);
+
+        // Link siblings together
+        if (newChores.length > 1) {
+          await Promise.all(
+            newChores.map(chore => {
+              const sibIds = newChores.filter(c => c.id !== chore.id).map(c => c.id);
+              return base44.entities.Chore.update(chore.id, { linked_chore_ids: sibIds });
+            })
+          );
+        }
       }
 
       await base44.entities.MaintenanceTask.update(maintenanceTaskId, {
         status: nextDueDate ? 'pending' : 'completed',
         last_completed: today,
         next_due: nextDueDate || null,
-        synced_chore_id: newChoreId || null,
+        synced_chore_id: newChoreIds[0] || null,
+        synced_chore_ids: newChoreIds.length ? newChoreIds : null,
       });
 
-      await base44.entities.Chore.delete(choreId);
+      // Delete all old chores (this one + siblings)
+      await Promise.all(allChoreIds.map(id => base44.entities.Chore.delete(id)));
     },
     onSuccess: () => {
       queryClient.invalidateQueries(['chores', memberId]);
