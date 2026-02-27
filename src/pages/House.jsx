@@ -264,35 +264,47 @@ export default function House() {
     setSyncDialogOpen(true);
   };
 
-  const handleSyncToChore = async (memberId, memberName) => {
+  const handleSyncToChore = async (selectedMembers) => {
     // Calculate timing based on next_due date
     let timing = 'short-term';
     if (selectedTask.next_due) {
       const dueDate = new Date(selectedTask.next_due);
       const now = new Date();
       const daysUntil = Math.floor((dueDate - now) / (1000 * 60 * 60 * 24));
-      
-      if (daysUntil <= 7) {
-        timing = 'short-term';
-      } else if (daysUntil <= 30) {
-        timing = 'mid-term';
-      } else {
-        timing = 'long-term';
-      }
+      if (daysUntil <= 7) timing = 'short-term';
+      else if (daysUntil <= 30) timing = 'mid-term';
+      else timing = 'long-term';
     }
 
-    const chore = await base44.entities.Chore.create({
-      title: selectedTask.title,
-      assigned_to_member_id: memberId,
-      assigned_to_name: memberName,
-      timing: timing,
-      next_due: selectedTask.next_due,
-      is_completed: false,
-      maintenance_task_id: selectedTask.id
-    });
+    // Create a chore for each selected member
+    const createdChores = await Promise.all(
+      selectedMembers.map(member =>
+        base44.entities.Chore.create({
+          title: selectedTask.title,
+          assigned_to_member_id: member.id,
+          assigned_to_name: member.name,
+          timing,
+          next_due: selectedTask.next_due,
+          is_completed: false,
+          maintenance_task_id: selectedTask.id,
+        })
+      )
+    );
 
+    // Link sibling chore IDs on each chore
+    if (createdChores.length > 1) {
+      await Promise.all(
+        createdChores.map(chore => {
+          const siblingIds = createdChores.filter(c => c.id !== chore.id).map(c => c.id);
+          return base44.entities.Chore.update(chore.id, { linked_chore_ids: siblingIds });
+        })
+      );
+    }
+
+    const choreIds = createdChores.map(c => c.id);
     await base44.entities.MaintenanceTask.update(selectedTask.id, {
-      synced_chore_id: chore.id
+      synced_chore_id: choreIds[0],
+      synced_chore_ids: choreIds,
     });
 
     queryClient.invalidateQueries(['maintenanceTasks']);
