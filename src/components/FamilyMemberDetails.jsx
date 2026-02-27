@@ -799,7 +799,26 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                         <SelectItem value="long-term">Long-term</SelectItem>
                       </SelectContent>
                     </Select>
-                    <Button onClick={() => createChoreMutation.mutate({ title: newChore.title, timing: newChore.timing, assigned_to_member_id: memberId, assigned_to_name: memberName })} disabled={!newChore.title}>Add Chore</Button>
+                    <div>
+                      <Label className="mb-2 block text-sm text-gray-600">Also assign to other family members:</Label>
+                      <div className="space-y-1">
+                        {familyMembers.filter(m => m.id !== memberId).map(m => (
+                          <div key={m.id} className="flex items-center gap-2 cursor-pointer" onClick={() => setNewChoreCoAssignees(prev => prev.includes(m.id) ? prev.filter(id => id !== m.id) : [...prev, m.id])}>
+                            <Checkbox checked={newChoreCoAssignees.includes(m.id)} onCheckedChange={() => setNewChoreCoAssignees(prev => prev.includes(m.id) ? prev.filter(id => id !== m.id) : [...prev, m.id])} />
+                            <span className="text-sm">{m.name}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    <Button
+                      onClick={() => createChoreMutation.mutate({
+                        choreData: { title: newChore.title, timing: newChore.timing, assigned_to_member_id: memberId, assigned_to_name: memberName },
+                        coAssignees: familyMembers.filter(m => newChoreCoAssignees.includes(m.id)),
+                      })}
+                      disabled={!newChore.title}
+                    >
+                      Add Chore{newChoreCoAssignees.length > 0 ? ` for ${newChoreCoAssignees.length + 1} members` : ''}
+                    </Button>
                   </div>
                 </DialogContent>
               </Dialog>
