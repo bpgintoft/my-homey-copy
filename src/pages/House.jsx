@@ -388,6 +388,9 @@ export default function House() {
     },
   });
 
+  // Import Checkbox for the task assignee UI
+  const { Checkbox: CheckboxComp } = React.useMemo(() => ({ Checkbox: require('@radix-ui/react-checkbox') }), []);
+
   const updateMaintenanceTaskMutation = useMutation({
     mutationFn: ({ id, data }) => base44.entities.MaintenanceTask.update(id, data),
     onSuccess: () => {
