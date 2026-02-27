@@ -239,8 +239,13 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
   };
 
   const deleteChoreMutation = useMutation({
-    mutationFn: (id) => base44.entities.Chore.delete(id),
-    onSuccess: () => queryClient.invalidateQueries(['chores', memberId]),
+    mutationFn: async ({ id, linked_chore_ids }) => {
+      await base44.entities.Chore.delete(id);
+      if (linked_chore_ids?.length) {
+        await Promise.all(linked_chore_ids.map(sibId => base44.entities.Chore.delete(sibId)));
+      }
+    },
+    onSuccess: () => queryClient.invalidateQueries(['chores']),
   });
 
   const createMilestoneMutation = useMutation({
