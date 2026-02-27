@@ -368,6 +368,14 @@ export default function House() {
     },
   });
 
+  const deleteMaintenanceTaskMutation = useMutation({
+    mutationFn: (id) => base44.entities.MaintenanceTask.delete(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['maintenanceTasks']);
+      setEditingTask(null);
+    },
+  });
+
   return (
     <div className="min-h-screen bg-[#F5F5F7]">
       <div className="relative overflow-hidden">
