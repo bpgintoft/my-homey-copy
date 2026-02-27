@@ -31,7 +31,7 @@ export default function RescheduleDialog({
               <span className="font-medium">{task?.title}</span> has been marked as complete!
             </p>
             <p className="text-xs text-gray-600 mt-1">
-              When should this task be done next?
+              Schedule the next due date for this task:
             </p>
           </div>
 
