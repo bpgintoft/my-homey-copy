@@ -789,6 +789,26 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
         </DialogContent>
       </Dialog>
 
+      {/* Linked Maintenance Task Side Sheet */}
+      <Sheet open={!!linkedMaintenanceSheetChore} onOpenChange={(open) => !open && setLinkedMaintenanceSheetChore(null)}>
+        <SheetContent side="right" className="w-full sm:max-w-md overflow-y-auto">
+          <SheetHeader>
+            <SheetTitle className="flex items-center gap-2">
+              <Wrench className="w-5 h-5 text-orange-500" />
+              Linked Maintenance Task
+            </SheetTitle>
+          </SheetHeader>
+          {linkedMaintenanceSheetChore && (
+            <div className="mt-4">
+              <LinkedMaintenancePanel
+                maintenanceTaskId={linkedMaintenanceSheetChore.maintenance_task_id}
+                choreId={linkedMaintenanceSheetChore.id}
+              />
+            </div>
+          )}
+        </SheetContent>
+      </Sheet>
+
       {/* Notes Dialog */}
       <Dialog open={expandedSection === 'notes'} onOpenChange={(open) => !open && setExpandedSection(null)}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
