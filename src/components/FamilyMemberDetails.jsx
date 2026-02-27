@@ -85,6 +85,11 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
     queryFn: () => base44.entities.FamilyMemberLink.filter({ assigned_to_member_id: memberId }),
   });
 
+  const { data: maintenanceTasks = [] } = useQuery({
+    queryKey: ['maintenanceTasks'],
+    queryFn: () => base44.entities.MaintenanceTask.list(),
+  });
+
   const contacts = allContacts.filter(c => 
     !c.linked_to_member_ids || 
     c.linked_to_member_ids.length === 0 || 
