@@ -108,8 +108,23 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
   });
 
   const toggleChoreMutation = useMutation({
-    mutationFn: ({ id, is_completed }) => base44.entities.Chore.update(id, { is_completed }),
-    onSuccess: () => queryClient.invalidateQueries(['chores', memberId]),
+    mutationFn: async ({ id, is_completed, maintenance_task_id }) => {
+      await base44.entities.Chore.update(id, { is_completed });
+      // If completing a linked chore, also mark the maintenance task as complete and remove the chore link
+      if (is_completed && maintenance_task_id) {
+        const today = new Date().toISOString().split('T')[0];
+        await base44.entities.MaintenanceTask.update(maintenance_task_id, {
+          status: 'completed',
+          last_completed: today,
+          synced_chore_id: null,
+        });
+        await base44.entities.Chore.delete(id);
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(['chores', memberId]);
+      queryClient.invalidateQueries(['maintenanceTasks']);
+    },
   });
 
   const updateChoreMutation = useMutation({
