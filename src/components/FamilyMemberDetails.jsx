@@ -51,6 +51,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
   const [editingLink, setEditingLink] = useState(null);
   const [personalNotes, setPersonalNotes] = useState('');
   const [expandedSection, setExpandedSection] = useState(null);
+  const [linkedMaintenanceSheetChore, setLinkedMaintenanceSheetChore] = useState(null);
 
   // Fetch data
   const { data: member } = useQuery({
