@@ -809,6 +809,20 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
         </DialogContent>
       </Dialog>
 
+      {/* Reschedule Dialog for linked maintenance chores */}
+      <RescheduleDialog
+        open={!!rescheduleChore}
+        onOpenChange={(open) => !open && setRescheduleChore(null)}
+        task={rescheduleChore}
+        onConfirm={(nextDueDate) => {
+          completeLinkedChoreMutation.mutate({
+            choreId: rescheduleChore.id,
+            maintenanceTaskId: rescheduleChore.maintenance_task_id,
+            nextDueDate,
+          });
+        }}
+      />
+
       {/* Linked Maintenance Task Side Sheet */}
       <Sheet open={!!linkedMaintenanceSheetChore} onOpenChange={(open) => !open && setLinkedMaintenanceSheetChore(null)}>
         <SheetContent side="right" className="w-full sm:max-w-md overflow-y-auto">
