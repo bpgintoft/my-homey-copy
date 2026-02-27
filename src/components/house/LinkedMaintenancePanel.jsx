@@ -9,9 +9,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Wrench, Calendar, ChevronDown, ChevronRight, Save } from 'lucide-react';
 import { format } from 'date-fns';
 
-export default function LinkedMaintenancePanel({ maintenanceTaskId, choreId }) {
+export default function LinkedMaintenancePanel({ maintenanceTaskId, choreId, defaultExpanded = false }) {
   const queryClient = useQueryClient();
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(defaultExpanded);
   const [isEditing, setIsEditing] = useState(false);
   const [editData, setEditData] = useState(null);
 
