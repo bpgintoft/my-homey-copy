@@ -481,8 +481,8 @@ export default function FamilyCalendar({ activities }) {
     <div className="-mx-6 px-6">
       {/* Sticky header section */}
       <div className="sticky top-16 lg:top-0 bg-[#F5F5F7] z-30 pb-3 -mx-6 px-6">
-      {/* Week navigation */}
-      <div className="flex items-center justify-between gap-0.5 mb-3 pt-3">
+      {/* Combined navigation + day labels row */}
+      <div className="flex items-center gap-1 pt-2 pb-1">
         <Button
           variant="ghost"
           size="icon"
@@ -491,9 +491,32 @@ export default function FamilyCalendar({ activities }) {
         >
           <ChevronLeft className="w-3.5 h-3.5" />
         </Button>
-        <div className="text-xs font-semibold text-gray-900 whitespace-nowrap mx-1">
-          {format(currentWeekStart, 'MMM d')} – {format(addDays(currentWeekStart, 6), 'MMM d')}
+
+        {/* Day labels */}
+        <div className="flex flex-1 gap-0.5">
+          {weekDays.map((day) => {
+            const isToday = isSameDay(day, new Date());
+            return (
+              <button
+                key={day.toISOString()}
+                onClick={() => {
+                  const dayId = `day-${format(day, 'yyyy-MM-dd')}`;
+                  const element = document.getElementById(dayId);
+                  if (element) {
+                    element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                  }
+                }}
+                className={`flex-1 flex flex-col items-center py-0.5 rounded-lg transition-colors cursor-pointer hover:bg-gray-100 ${isToday ? 'text-blue-600' : 'text-gray-600'}`}
+              >
+                <span className="text-[10px] font-medium leading-tight">{format(day, 'EEE')}</span>
+                <span className={`text-[11px] font-bold leading-tight ${isToday ? 'bg-blue-600 text-white w-5 h-5 rounded-full flex items-center justify-center' : ''}`}>
+                  {format(day, 'd')}
+                </span>
+              </button>
+            );
+          })}
         </div>
+
         <Button
           variant="ghost"
           size="icon"
@@ -502,6 +525,7 @@ export default function FamilyCalendar({ activities }) {
         >
           <ChevronRight className="w-3.5 h-3.5" />
         </Button>
+
         <Button
           variant="outline"
           size="sm"
@@ -552,27 +576,6 @@ export default function FamilyCalendar({ activities }) {
         >
           <Plus className="w-3.5 h-3.5 text-white" />
         </Button>
-      </div>
-
-
-
-      {/* Day labels */}
-      <div className="flex gap-2 mb-3 px-2">
-        {weekDays.map((day) => (
-          <button
-            key={day.toISOString()}
-            onClick={() => {
-              const dayId = `day-${format(day, 'yyyy-MM-dd')}`;
-              const element = document.getElementById(dayId);
-              if (element) {
-                element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-              }
-            }}
-            className="flex-1 text-center text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg py-1 transition-colors cursor-pointer"
-          >
-            {format(day, 'EEE')}
-          </button>
-        ))}
       </div>
       </div>
 
