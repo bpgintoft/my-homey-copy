@@ -460,8 +460,8 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
           </CardHeader>
         </Card>
 
-        <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => setExpandedSection('schoolProgram')}>
-          <CardHeader>
+        <Card className="cursor-pointer hover:shadow-lg transition-shadow flex flex-col justify-center min-h-[5rem]" onClick={() => setExpandedSection('schoolProgram')}>
+          <CardHeader className="py-0">
             <CardTitle className="flex items-center gap-3"><Briefcase className={`w-8 h-8 flex-shrink-0 ${member?.person_type !== 'adult' ? 'hidden' : ''} ${iconColor}`} /><GraduationCap className={`w-8 h-8 flex-shrink-0 ${member?.person_type === 'adult' ? 'hidden' : ''} ${iconColor}`} />{member?.school_or_work_name || 'School & Work'}</CardTitle>
           </CardHeader>
         </Card>
