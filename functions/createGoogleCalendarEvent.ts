@@ -37,7 +37,7 @@ Deno.serve(async (req) => {
     };
 
     // Only add recurrence if it exists and is not empty
-    if (recurrence && recurrence.length > 0) {
+    if (recurrence && Array.isArray(recurrence) && recurrence.length > 0 && recurrence[0]) {
       event.recurrence = recurrence;
     }
 
