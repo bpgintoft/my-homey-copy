@@ -804,7 +804,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                       <div className="space-y-1">
                         {familyMembers.filter(m => m.id !== memberId).map(m => (
                           <div key={m.id} className="flex items-center gap-2 cursor-pointer" onClick={() => setNewChoreCoAssignees(prev => prev.includes(m.id) ? prev.filter(id => id !== m.id) : [...prev, m.id])}>
-                            <Checkbox checked={newChoreCoAssignees.includes(m.id)} onCheckedChange={() => setNewChoreCoAssignees(prev => prev.includes(m.id) ? prev.filter(id => id !== m.id) : [...prev, m.id])} />
+                            <Checkbox checked={newChoreCoAssignees.includes(m.id)} onCheckedChange={(checked) => setNewChoreCoAssignees(prev => checked ? [...prev, m.id] : prev.filter(id => id !== m.id))} onClick={(e) => e.stopPropagation()} />
                             <span className="text-sm">{m.name}</span>
                           </div>
                         ))}
