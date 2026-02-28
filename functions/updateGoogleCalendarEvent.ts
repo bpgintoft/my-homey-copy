@@ -63,7 +63,7 @@ Deno.serve(async (req) => {
       // Update in same calendar
       const response = await calendar.events.update({
         calendarId,
-        eventId: id,
+        eventId: baseEventId,
         requestBody: event,
       });
 
