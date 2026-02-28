@@ -340,8 +340,8 @@ export default function FamilyCalendar({ activities }) {
     }
     
     if (recurrenceEnd) {
-      const endDate = new Date(recurrenceEnd);
-      const until = endDate.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+      // Format as YYYYMMDD for date-only UNTIL (avoids timezone issues with all-day events)
+      const until = recurrenceEnd.replace(/-/g, '');
       rrule += `;UNTIL=${until}`;
     }
     
