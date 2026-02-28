@@ -847,46 +847,47 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                                   <Draggable key={chore.id} draggableId={chore.id} index={index}>
                                     {(provided, snapshot) => (
                                       <div ref={provided.innerRef} {...provided.draggableProps} className={`rounded-lg ${itemBg} ${snapshot.isDragging ? 'shadow-lg opacity-90' : ''}`}>
-                                        <div className="flex items-center justify-between p-3">
-                                         <div className="flex items-center gap-3 flex-1 min-w-0">
-                                          <div {...provided.dragHandleProps} className="cursor-grab active:cursor-grabbing">
-                                             <GripVertical className="w-4 h-4 text-gray-400" />
-                                           </div>
-                                           <button onClick={() => {
-                                             if (!chore.is_completed && chore.maintenance_task_id) {
-                                               setRescheduleChore(chore);
-                                             } else {
-                                               toggleChoreMutation.mutate({ id: chore.id, is_completed: !chore.is_completed, maintenance_task_id: chore.maintenance_task_id, linked_chore_ids: chore.linked_chore_ids });
-                                             }
-                                           }}>
-                                             {chore.is_completed ? (
-                                               <CheckCircle2 className="w-5 h-5 text-green-500" />
-                                             ) : (
-                                               <Circle className="w-5 h-5 text-gray-400" />
-                                             )}
-                                           </button>
-                                           {editingChoreId === chore.id ? (
-                                             <Input value={editingChoreTitle} onChange={(e) => setEditingChoreTitle(e.target.value)} onBlur={() => updateChoreMutation.mutate({ id: chore.id, title: editingChoreTitle })} onKeyDown={(e) => { if (e.key === 'Enter') updateChoreMutation.mutate({ id: chore.id, title: editingChoreTitle }); if (e.key === 'Escape') setEditingChoreId(null); }} autoFocus className="h-8" />
-                                           ) : (
-                                             <span className={`cursor-pointer hover:text-blue-600 flex-1 ${chore.is_completed ? 'line-through text-gray-500' : ''}`} onClick={() => { if (!chore.maintenance_task_id) { setEditingChoreId(chore.id); setEditingChoreTitle(chore.title); } }}>
-                                               {chore.title}
-                                             </span>
-                                           )}
-                                           {chore.maintenance_task_id && (
-                                             <button
-                                               onClick={() => setLinkedMaintenanceSheetChore(chore)}
-                                               className="flex-shrink-0 p-1 rounded hover:bg-orange-100 transition-colors"
-                                               title="View linked maintenance task"
-                                             >
-                                               <Wrench className="w-4 h-4 text-orange-500" />
-                                             </button>
-                                           )}
-                                         </div>
-                                         {!chore.maintenance_task_id && (
-                                           <Button variant="ghost" size="sm" onClick={() => deleteChoreMutation.mutate({ id: chore.id, linked_chore_ids: chore.linked_chore_ids })}>
-                                             <Trash2 className="w-4 h-4 text-red-500" />
-                                           </Button>
-                                         )}
+                                        <div className="flex items-center gap-3 p-3">
+                                          <div {...provided.dragHandleProps} className="cursor-grab active:cursor-grabbing flex-shrink-0">
+                                            <GripVertical className="w-4 h-4 text-gray-400" />
+                                          </div>
+                                          <button className="flex-shrink-0" onClick={() => {
+                                            if (!chore.is_completed && chore.maintenance_task_id) {
+                                              setRescheduleChore(chore);
+                                            } else {
+                                              toggleChoreMutation.mutate({ id: chore.id, is_completed: !chore.is_completed, maintenance_task_id: chore.maintenance_task_id, linked_chore_ids: chore.linked_chore_ids });
+                                            }
+                                          }}>
+                                            {chore.is_completed ? (
+                                              <CheckCircle2 className="w-5 h-5 text-green-500" />
+                                            ) : (
+                                              <Circle className="w-5 h-5 text-gray-400" />
+                                            )}
+                                          </button>
+                                          <div className="flex-1 min-w-0">
+                                            {editingChoreId === chore.id ? (
+                                              <Input value={editingChoreTitle} onChange={(e) => setEditingChoreTitle(e.target.value)} onBlur={() => updateChoreMutation.mutate({ id: chore.id, title: editingChoreTitle })} onKeyDown={(e) => { if (e.key === 'Enter') updateChoreMutation.mutate({ id: chore.id, title: editingChoreTitle }); if (e.key === 'Escape') setEditingChoreId(null); }} autoFocus className="h-8" />
+                                            ) : (
+                                              <span className={`cursor-pointer hover:text-blue-600 ${chore.is_completed ? 'line-through text-gray-500' : ''}`} onClick={() => { if (!chore.maintenance_task_id) { setEditingChoreId(chore.id); setEditingChoreTitle(chore.title); } }}>
+                                                {chore.title}
+                                              </span>
+                                            )}
+                                          </div>
+                                          <div className="flex-shrink-0 w-8 flex items-center justify-center">
+                                            {chore.maintenance_task_id ? (
+                                              <button
+                                                onClick={() => setLinkedMaintenanceSheetChore(chore)}
+                                                className="p-1 rounded hover:bg-orange-100 transition-colors"
+                                                title="View linked maintenance task"
+                                              >
+                                                <Wrench className="w-4 h-4 text-orange-500" />
+                                              </button>
+                                            ) : (
+                                              <button className="p-1 rounded hover:bg-red-50 transition-colors" onClick={() => deleteChoreMutation.mutate({ id: chore.id, linked_chore_ids: chore.linked_chore_ids })}>
+                                                <Trash2 className="w-4 h-4 text-red-500" />
+                                              </button>
+                                            )}
+                                          </div>
                                         </div>
                                       </div>
                                     )}
