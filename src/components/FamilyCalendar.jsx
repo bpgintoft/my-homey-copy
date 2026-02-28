@@ -448,6 +448,7 @@ export default function FamilyCalendar({ activities }) {
 
     const recurrenceRule = generateRecurrenceRule(editingEvent.recurrence, editingEvent.recurrenceEnd, editingEvent.weeklyDays);
 
+    const formatTime = (t) => t && t.includes('T') && t.split(':').length === 2 ? `${t}:00` : t;
     const eventData = {
       id: editingEvent.id,
       calendarId: editingEvent.calendarId,
@@ -455,17 +456,9 @@ export default function FamilyCalendar({ activities }) {
       summary: editingEvent.summary,
       description: editingEvent.description || '',
       location: editingEvent.location || '',
-      start: editingEvent.isAllDay 
-        ? editingEvent.start 
-        : (editingEvent.start.includes(':') && editingEvent.start.split(':').length === 2 
-            ? `${editingEvent.start}:00` 
-            : editingEvent.start),
-      end: editingEvent.isAllDay 
-        ? editingEvent.end 
-        : (editingEvent.end.includes(':') && editingEvent.end.split(':').length === 2 
-            ? `${editingEvent.end}:00` 
-            : editingEvent.end),
-      recurrence: recurrenceRule ? [recurrenceRule] : undefined,
+      start: editingEvent.isAllDay ? editingEvent.start : formatTime(editingEvent.start),
+      end: editingEvent.isAllDay ? editingEvent.end : formatTime(editingEvent.end),
+      recurrence: recurrenceRule ? [recurrenceRule] : null,
       isAllDay: editingEvent.isAllDay
     };
 
