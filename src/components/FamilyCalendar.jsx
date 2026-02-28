@@ -340,8 +340,8 @@ export default function FamilyCalendar({ activities }) {
     }
     
     if (recurrenceEnd) {
-      // Format as YYYYMMDD for date-only UNTIL (avoids timezone issues with all-day events)
-      const until = recurrenceEnd.replace(/-/g, '');
+      // Use end-of-day UTC to ensure the last recurrence date is included
+      const until = recurrenceEnd.replace(/-/g, '') + 'T235959Z';
       rrule += `;UNTIL=${until}`;
     }
     
