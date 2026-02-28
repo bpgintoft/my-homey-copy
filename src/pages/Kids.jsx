@@ -233,8 +233,8 @@ export default function Kids() {
         </div>
       </div>
 
-      <div className="container mx-auto px-6 py-8">
-        <Tabs defaultValue="calendar" className="space-y-6">
+      <div className="container mx-auto px-6 pt-4 pb-8">
+        <Tabs defaultValue="calendar" className="space-y-2">
           <TabsList className="bg-white shadow-sm">
             <TabsTrigger value="calendar">Calendar</TabsTrigger>
             <TabsTrigger value="upcoming">Upcoming</TabsTrigger>
