@@ -636,7 +636,7 @@ export default function FamilyCalendar({ activities }) {
                         <div className="flex items-stretch gap-2">
                           {/* Time - outside event rectangle */}
                           <div className="flex items-center justify-center flex-shrink-0 w-16">
-                            <div className="text-sm font-medium text-gray-700">
+                            <div className="text-sm font-medium text-gray-700 whitespace-nowrap">
                               {eventTime}
                             </div>
                           </div>
