@@ -32,8 +32,14 @@ Deno.serve(async (req) => {
         dateTime: end,
         timeZone: 'America/Chicago',
       },
-      recurrence,
     };
+
+    // Only add recurrence if it exists and is not empty
+    if (recurrence && Array.isArray(recurrence) && recurrence.length > 0 && recurrence[0]) {
+      event.recurrence = recurrence;
+    } else {
+      event.recurrence = [];
+    }
 
     // If calendar has changed, we need to move the event
     if (originalCalendarId && originalCalendarId !== calendarId) {
