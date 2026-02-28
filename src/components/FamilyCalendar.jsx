@@ -357,18 +357,15 @@ export default function FamilyCalendar({ activities }) {
     const recurrenceRule = generateRecurrenceRule(newEvent.recurrence, newEvent.recurrenceEnd, newEvent.weeklyDays);
     
     // Ensure datetime has seconds (required by Google Calendar API)
+    const formatTime = (t) => t && t.includes('T') && t.split(':').length === 2 ? `${t}:00` : t;
     const eventData = {
       summary: newEvent.summary,
       description: newEvent.description,
       location: newEvent.location,
       calendarId: newEvent.calendarId,
-      start: newEvent.start.includes(':') && newEvent.start.split(':').length === 2 
-        ? `${newEvent.start}:00` 
-        : newEvent.start,
-      end: newEvent.end.includes(':') && newEvent.end.split(':').length === 2 
-        ? `${newEvent.end}:00` 
-        : newEvent.end,
-      recurrence: recurrenceRule ? [recurrenceRule] : undefined,
+      start: formatTime(newEvent.start),
+      end: formatTime(newEvent.end),
+      recurrence: recurrenceRule ? [recurrenceRule] : null,
       isAllDay: newEvent.isAllDay
     };
     
