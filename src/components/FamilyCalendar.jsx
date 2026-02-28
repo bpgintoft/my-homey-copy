@@ -16,7 +16,7 @@ import { toast } from 'sonner';
 import LocationAutocomplete from './LocationAutocomplete';
 
 export default function FamilyCalendar({ activities }) {
-  const [currentWeekStart, setCurrentWeekStart] = useState(startOfWeek(new Date(), { weekStartsOn: 0 }));
+  const [currentWeekStart, setCurrentWeekStart] = useState(new Date(new Date().setHours(0,0,0,0)));
   const [hasNavigated, setHasNavigated] = useState(false);
   const [hasScrolledUp, setHasScrolledUp] = useState(false);
   const [showAddDialog, setShowAddDialog] = useState(false);
