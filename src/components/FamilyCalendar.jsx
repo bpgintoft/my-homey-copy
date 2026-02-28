@@ -288,7 +288,7 @@ export default function FamilyCalendar({ activities }) {
   };
 
   const goToToday = () => {
-    setCurrentWeekStart(startOfWeek(new Date(), { weekStartsOn: 0 }));
+    setCurrentWeekStart(new Date(new Date().setHours(0,0,0,0)));
     setHasNavigated(false);
     setHasScrolledUp(false);
   };
