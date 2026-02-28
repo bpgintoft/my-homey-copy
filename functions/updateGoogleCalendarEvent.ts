@@ -10,6 +10,9 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Missing event ID or calendar ID' }, { status: 400 });
     }
 
+    // Strip recurring instance suffix (e.g. "eventId_20260227T151500Z" -> "eventId")
+    const baseEventId = id.includes('_') ? id.split('_')[0] : id;
+
     const accessToken = await base44.asServiceRole.connectors.getAccessToken('googlecalendar');
 
     const auth = new google.auth.OAuth2();
