@@ -463,10 +463,10 @@ export default function House() {
 
       <div className="container mx-auto px-6 py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="bg-white shadow-sm">
-            <TabsTrigger value="rooms">Rooms</TabsTrigger>
-            <TabsTrigger value="appliances">Appliances</TabsTrigger>
-            <TabsTrigger value="maintenance">Maintenance</TabsTrigger>
+          <TabsList className="bg-white shadow-sm border-b-2 border-gray-200 rounded-none">
+            <TabsTrigger value="rooms" className="border-b-2 border-transparent data-[state=active]:border-emerald-500 data-[state=active]:bg-transparent rounded-none">Rooms</TabsTrigger>
+            <TabsTrigger value="appliances" className="border-b-2 border-transparent data-[state=active]:border-emerald-500 data-[state=active]:bg-transparent rounded-none">Appliances</TabsTrigger>
+            <TabsTrigger value="maintenance" className="border-b-2 border-transparent data-[state=active]:border-emerald-500 data-[state=active]:bg-transparent rounded-none">Maintenance</TabsTrigger>
           </TabsList>
 
           <TabsContent value="rooms" className="space-y-6">
