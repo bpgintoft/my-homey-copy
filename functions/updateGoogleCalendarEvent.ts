@@ -71,6 +71,9 @@ Deno.serve(async (req) => {
     }
   } catch (error) {
     console.error('Update Google Calendar event error:', error);
-    return Response.json({ error: error.message }, { status: 500 });
+    const message = error.message?.includes('Event type cannot be changed')
+      ? 'This event was automatically created by Google (e.g. from a Gmail email) and cannot be edited via the API. Please edit it directly in Google Calendar.'
+      : error.message;
+    return Response.json({ error: message }, { status: 500 });
   }
 });
