@@ -513,7 +513,7 @@ export default function FamilyCalendar({ activities }) {
       weeklyDays,
       isAllDay,
       isRecurringInstance,
-      recurringEventId: event.recurringEventId || null,
+      recurringEventId: masterEventId,
       originalStartTime: event.start || null,
     });
     setShowEditDialog(true);
