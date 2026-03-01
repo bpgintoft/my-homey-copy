@@ -62,8 +62,15 @@ export default function FamilyCalendar({ activities }) {
   // Generate a week of dates
   const weekDays = Array.from({ length: 7 }, (_, i) => addDays(currentWeekStart, i));
 
-  // Fetch Google Calendar events
-  const { data: googleEvents = [], isLoading: isLoadingGoogle, error: googleError } = useQuery({
+  // Load cached events instantly from DB
+  const { data: cachedEvents = [] } = useQuery({
+    queryKey: ['cachedCalendarEvents'],
+    queryFn: () => base44.entities.CachedCalendarEvent.list(),
+    staleTime: 5 * 60 * 1000,
+  });
+
+  // Also fetch live from Google in background (refreshes cache)
+  const { data: liveGoogleEvents = [], isLoading: isLoadingGoogle, error: googleError } = useQuery({
     queryKey: ['googleCalendarEvents', currentWeekStart.toISOString()],
     queryFn: async () => {
       const timeMin = currentWeekStart.toISOString();
@@ -71,11 +78,38 @@ export default function FamilyCalendar({ activities }) {
       const { data } = await base44.functions.invoke('getGoogleCalendarEvents', { timeMin, timeMax });
       return data.events || [];
     },
-    staleTime: 5 * 60 * 1000, // Data stays fresh for 5 minutes
-    cacheTime: 30 * 60 * 1000, // Keep in cache for 30 minutes
-    refetchInterval: 5 * 60 * 1000, // Auto-refresh every 5 minutes in background
-    refetchOnWindowFocus: true // Refresh when user returns to tab
+    staleTime: 5 * 60 * 1000,
+    cacheTime: 30 * 60 * 1000,
+    refetchInterval: 5 * 60 * 1000,
+    refetchOnWindowFocus: true
   });
+
+  // Use live events if available, otherwise fall back to cached events for the current week
+  const googleEvents = React.useMemo(() => {
+    if (liveGoogleEvents.length > 0) return liveGoogleEvents;
+    // Map cached events to the same shape as live Google events
+    const weekStart = currentWeekStart;
+    const weekEnd = addDays(currentWeekStart, 7);
+    return cachedEvents
+      .filter(e => {
+        if (!e.start) return false;
+        const d = new Date(e.start);
+        return d >= weekStart && d < weekEnd;
+      })
+      .map(e => ({
+        id: e.google_event_id,
+        calendarId: e.calendar_id,
+        calendarName: e.calendar_name,
+        backgroundColor: e.background_color,
+        title: e.title,
+        description: e.description,
+        location: e.location,
+        start: e.start,
+        end: e.end,
+        recurrence: e.recurrence,
+        source: 'google',
+      }));
+  }, [liveGoogleEvents, cachedEvents, currentWeekStart]);
 
   // Fetch existing thumbnails for Google Calendar events
   const { data: thumbnails = [] } = useQuery({
