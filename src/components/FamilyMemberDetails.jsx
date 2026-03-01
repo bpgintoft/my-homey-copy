@@ -261,7 +261,8 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
     const destCategory = result.destination.droppableId;
     const choreId = result.draggableId;
     if (sourceCategory !== destCategory) {
-      updateChoreTimingMutation.mutate({ id: choreId, timing: destCategory });
+      const chore = chores.find(c => c.id === choreId);
+      updateChoreTimingMutation.mutate({ id: choreId, timing: destCategory, linked_chore_ids: chore?.linked_chore_ids });
     }
   };
 
