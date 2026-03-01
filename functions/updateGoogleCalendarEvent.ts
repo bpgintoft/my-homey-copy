@@ -95,7 +95,8 @@ Deno.serve(async (req) => {
       const response = await calendar.events.insert({ calendarId, requestBody: eventBody });
       return Response.json({ event: response.data });
     } else {
-      const response = await calendar.events.update({ calendarId, eventId: id, requestBody: eventBody });
+      // Use patch instead of update — patch works with iCal-format IDs too
+      const response = await calendar.events.patch({ calendarId, eventId: id, requestBody: eventBody });
       return Response.json({ event: response.data });
     }
   } catch (error) {
