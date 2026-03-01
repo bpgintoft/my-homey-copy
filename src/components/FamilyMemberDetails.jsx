@@ -260,11 +260,43 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
     if (!result.destination) return;
     const sourceCategory = result.source.droppableId;
     const destCategory = result.destination.droppableId;
+    const destIndex = result.destination.index;
     const choreId = result.draggableId;
+    const chore = chores.find(c => c.id === choreId);
+
+    // Optimistically reorder locally
+    setLocalChores(prev => {
+      const sourceList = [...(prev[sourceCategory] || [])];
+      const destList = sourceCategory === destCategory ? sourceList : [...(prev[destCategory] || [])];
+      const itemIdx = sourceList.findIndex(c => c.id === choreId);
+      const [removed] = sourceList.splice(itemIdx, 1);
+      const updatedItem = { ...removed, timing: destCategory };
+      if (sourceCategory === destCategory) {
+        sourceList.splice(destIndex, 0, updatedItem);
+        return { ...prev, [sourceCategory]: sourceList };
+      } else {
+        destList.splice(destIndex, 0, updatedItem);
+        return { ...prev, [sourceCategory]: sourceList, [destCategory]: destList };
+      }
+    });
+
+    // Persist timing change if moved between categories
     if (sourceCategory !== destCategory) {
-      const chore = chores.find(c => c.id === choreId);
       updateChoreTimingMutation.mutate({ id: choreId, timing: destCategory, linked_chore_ids: chore?.linked_chore_ids });
     }
+
+    // Persist sort order for all items in the destination list after reorder
+    setTimeout(() => {
+      setLocalChores(prev => {
+        const list = prev[destCategory] || [];
+        list.forEach((c, idx) => {
+          if (c.sort_order !== idx) {
+            base44.entities.Chore.update(c.id, { sort_order: idx });
+          }
+        });
+        return prev;
+      });
+    }, 0);
   };
 
   const deleteChoreMutation = useMutation({
