@@ -1034,18 +1034,18 @@ export default function FamilyCalendar({ activities }) {
         </DialogContent>
       </Dialog>
 
-      {/* Recurring Calendar Move Dialog */}
+      {/* Recurring Edit Scope Dialog */}
       <Dialog open={!!recurringCalendarMoveDialog} onOpenChange={(open) => !open && setRecurringCalendarMoveDialog(null)}>
         <DialogContent className="sm:max-w-sm">
           <DialogHeader>
-            <DialogTitle>Move Recurring Event</DialogTitle>
+            <DialogTitle>Edit Recurring Event</DialogTitle>
           </DialogHeader>
-          <p className="text-sm text-gray-600">This is a recurring event. Do you want to move only this event, or this and all following events?</p>
+          <p className="text-sm text-gray-600">This is a recurring event. Do you want to edit only this occurrence, or this and all following events?</p>
           <DialogFooter className="flex-col sm:flex-row gap-2 mt-2">
             <Button variant="outline" className="flex-1" onClick={() => handleRecurringCalendarMoveChoice('this')}>
               This Event Only
             </Button>
-            <Button className="flex-1" onClick={() => handleRecurringCalendarMoveChoice('all')}>
+            <Button className="flex-1" onClick={() => handleRecurringCalendarMoveChoice('future')}>
               All Future Events
             </Button>
           </DialogFooter>
