@@ -696,8 +696,8 @@ export default function FamilyCalendar({ activities }) {
 
                               {/* Event details */}
                               <div className="flex-1 min-w-0 overflow-hidden">
-                                <div className="font-medium text-sm text-gray-900 truncate leading-tight">
-                                  {activity.title}
+                                <div className={`font-medium text-sm text-gray-900 leading-tight ${expandedEventId === activity.id ? '' : 'truncate'}`}>
+                                   {activity.title}
                                 </div>
                                 {activity.location && !expandedEventId && (
                                   <div className="text-xs text-gray-600 leading-tight truncate">
