@@ -1035,7 +1035,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
 
       {/* School Program Dialog */}
       <Dialog open={expandedSection === 'schoolProgram'} onOpenChange={(open) => !open && setExpandedSection(null)}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto top-4 translate-y-0">
           <SchoolProgramSection memberId={memberId} memberName={memberName} personType={member?.person_type || 'kid'} schoolOrWorkName={member?.school_or_work_name} />
         </DialogContent>
       </Dialog>
