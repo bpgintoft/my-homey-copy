@@ -904,7 +904,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                                             if (!chore.is_completed && chore.maintenance_task_id) {
                                               setRescheduleChore(chore);
                                             } else {
-                                              toggleChoreMutation.mutate({ id: chore.id, is_completed: !chore.is_completed, maintenance_task_id: chore.maintenance_task_id, linked_chore_ids: chore.linked_chore_ids });
+                                              toggleChoreMutation.mutate({ id: chore.id, is_completed: !chore.is_completed, maintenance_task_id: chore.maintenance_task_id, linked_chore_ids: chore.linked_chore_ids, chore_title: chore.title });
                                             }
                                           }}>
                                             {chore.is_completed ? (
