@@ -263,6 +263,36 @@ export default function FamilyCalendar({ activities }) {
     }
   }, [googleEvents, thumbnails]);
 
+  // Get holiday emoji based on event title
+  const getHolidayEmoji = (title) => {
+    if (!title) return '🎉';
+    const t = title.toLowerCase();
+    if (t.includes('christmas')) return '🎄';
+    if (t.includes('halloween')) return '🎃';
+    if (t.includes('thanksgiving')) return '🦃';
+    if (t.includes('easter')) return '🐣';
+    if (t.includes('valentine')) return '❤️';
+    if (t.includes('patrick') || t.includes("st. pat") || t.includes('st pat')) return '🍀';
+    if (t.includes('independence') || t.includes('july 4') || t.includes('4th of july')) return '🎆';
+    if (t.includes('new year')) return '🎆';
+    if (t.includes('memorial')) return '🪖';
+    if (t.includes('labor day')) return '⚒️';
+    if (t.includes('columbus') || t.includes('indigenous')) return '🗺️';
+    if (t.includes('veterans')) return '🎖️';
+    if (t.includes('martin luther') || t.includes('mlk')) return '✊';
+    if (t.includes('presidents')) return '🏛️';
+    if (t.includes('mother')) return '🌸';
+    if (t.includes('father')) return '👔';
+    if (t.includes('hanukkah') || t.includes('chanukah')) return '🕎';
+    if (t.includes('kwanzaa')) return '🕯️';
+    if (t.includes('diwali')) return '🪔';
+    if (t.includes('passover')) return '✡️';
+    if (t.includes('rosh') || t.includes('yom kippur')) return '🍎';
+    if (t.includes('eid')) return '🌙';
+    if (t.includes('juneteenth')) return '✊';
+    return '🎉';
+  };
+
   // Get initials for family member
   const getInitial = (name) => {
     return name ? name.charAt(0).toUpperCase() : '?';
