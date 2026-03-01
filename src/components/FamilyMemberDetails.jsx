@@ -56,6 +56,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
   const [personalNotes, setPersonalNotes] = useState('');
   const [expandedSection, setExpandedSection] = useState(null);
   const [linkedMaintenanceSheetChore, setLinkedMaintenanceSheetChore] = useState(null);
+  const [coAssignedSheetChore, setCoAssignedSheetChore] = useState(null);
   const [rescheduleChore, setRescheduleChore] = useState(null);
 
   // Fetch data
