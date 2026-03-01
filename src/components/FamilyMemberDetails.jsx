@@ -929,7 +929,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                                           </button>
                                           <div className="flex-1 min-w-0">
                                             {editingChoreId === chore.id ? (
-                                              <Input value={editingChoreTitle} onChange={(e) => setEditingChoreTitle(e.target.value)} onBlur={() => updateChoreMutation.mutate({ id: chore.id, title: editingChoreTitle })} onKeyDown={(e) => { if (e.key === 'Enter') updateChoreMutation.mutate({ id: chore.id, title: editingChoreTitle }); if (e.key === 'Escape') setEditingChoreId(null); }} autoFocus className="h-8" />
+                                              <Input value={editingChoreTitle} onChange={(e) => setEditingChoreTitle(e.target.value)} onBlur={() => updateChoreMutation.mutate({ id: chore.id, title: editingChoreTitle, linked_chore_ids: chore.linked_chore_ids })} onKeyDown={(e) => { if (e.key === 'Enter') updateChoreMutation.mutate({ id: chore.id, title: editingChoreTitle, linked_chore_ids: chore.linked_chore_ids }); if (e.key === 'Escape') setEditingChoreId(null); }} autoFocus className="h-8" />
                                             ) : (
                                               <div>
                                                 <span className={`cursor-pointer hover:text-blue-600 ${chore.is_completed ? 'line-through text-gray-500' : ''}`} onClick={() => { if (!chore.maintenance_task_id) { setEditingChoreId(chore.id); setEditingChoreTitle(chore.title); } }}>
