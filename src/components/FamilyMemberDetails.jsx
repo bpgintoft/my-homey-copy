@@ -355,10 +355,25 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
     }
   }, [member]);
 
+  const sortChores = (choreList) => {
+    return [...choreList].sort((a, b) => {
+      // Maintenance-linked chores: sort by next_due date
+      if (a.maintenance_task_id && b.maintenance_task_id) {
+        const aDate = a.next_due ? new Date(a.next_due) : new Date('9999-01-01');
+        const bDate = b.next_due ? new Date(b.next_due) : new Date('9999-01-01');
+        return aDate - bDate;
+      }
+      // Maintenance chores sink to bottom within their group
+      if (a.maintenance_task_id && !b.maintenance_task_id) return 1;
+      if (!a.maintenance_task_id && b.maintenance_task_id) return -1;
+      return 0;
+    });
+  };
+
   const choresByTiming = {
-    'short-term': chores.filter(c => c.timing === 'short-term'),
-    'mid-term': chores.filter(c => c.timing === 'mid-term'),
-    'long-term': chores.filter(c => c.timing === 'long-term'),
+    'short-term': sortChores(chores.filter(c => c.timing === 'short-term')),
+    'mid-term': sortChores(chores.filter(c => c.timing === 'mid-term')),
+    'long-term': sortChores(chores.filter(c => c.timing === 'long-term')),
   };
 
   const linksByCategory = links.reduce((acc, link) => {
