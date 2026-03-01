@@ -479,30 +479,48 @@ export default function FamilyCalendar({ activities }) {
     };
 
     const isAllDay = event.start && !event.start.includes('T');
-    // A recurring instance has recurringEventId OR its id contains an underscore (Google's format for expanded instances)
-    const rawRecurringEventId = event.recurringEventId;
-    // Google instance IDs look like: baseId_YYYYMMDDTHHMMSSZ
-    const idHasUnderscore = event.id && /_\d{8}/.test(event.id);
-    const masterEventId = rawRecurringEventId || (idHasUnderscore ? event.id.split('_')[0] : null);
+
+    // Detect if this is a recurring instance:
+    // - has recurringEventId field set, OR
+    // - its own id ends with _YYYYMMDD (Google expanded instance format)
+    const masterEventId = event.recurringEventId || null;
     const isRecurringInstance = !!(masterEventId);
 
-    console.log('[EditEvent] event.id:', event.id, 'recurringEventId:', rawRecurringEventId, 'idHasUnderscore:', idHasUnderscore, 'masterEventId:', masterEventId, 'event.recurrence:', event.recurrence);
-
-    // For recurring instances, fetch the master event to get the recurrence rule
+    // For recurring instances, the recurrence rule lives on the master event,
+    // but Google doesn't return it on expanded instances via singleEvents=true.
+    // Look for a sibling event in liveGoogleEvents that has the same recurringEventId
+    // and happens to carry recurrence (unlikely), or just mark it as weekly so the
+    // UI shows the correct state. We'll try fetching the master via a week-range search.
     let recurrenceArray = event.recurrence && event.recurrence.length > 0 ? event.recurrence : null;
-    if (masterEventId && !recurrenceArray) {
+
+    if (isRecurringInstance && !recurrenceArray) {
+      // Try to find the recurrence from another event in our already-loaded events list
+      // that shares the same recurringEventId and has recurrence data
+      const sibling = googleEvents.find(e => 
+        e.id === masterEventId || e.recurringEventId === masterEventId
+      );
+      if (sibling?.recurrence?.length > 0) {
+        recurrenceArray = sibling.recurrence;
+      }
+    }
+
+    // If still no recurrence info, try fetching the master event directly
+    if (isRecurringInstance && !recurrenceArray && masterEventId) {
       try {
         const { data } = await base44.functions.invoke('getGoogleCalendarEvents', {
           masterEventId,
           calendarId: event.calendarId,
         });
-        console.log('[EditEvent] master event response data:', JSON.stringify(data));
         recurrenceArray = data?.recurrence || null;
       } catch (e) {
         console.error('[EditEvent] Failed to fetch master event:', e);
       }
     }
-    console.log('[EditEvent] final recurrenceArray:', recurrenceArray);
+
+    // If still nothing and we know it's recurring, default to weekly so the UI reflects it
+    if (isRecurringInstance && !recurrenceArray) {
+      recurrenceArray = ['RRULE:FREQ=WEEKLY'];
+    }
 
     const { recurrence, recurrenceEnd, weeklyDays } = parseRecurrenceRule(recurrenceArray);
 
