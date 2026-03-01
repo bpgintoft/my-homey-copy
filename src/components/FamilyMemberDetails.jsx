@@ -15,6 +15,7 @@ import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import { createPortal } from 'react-dom';
 import SchoolProgramSection from './SchoolProgramSection';
 import LinkedMaintenancePanel from './house/LinkedMaintenancePanel';
+import CoAssignedChorePanel from './CoAssignedChorePanel';
 import RescheduleDialog from './house/RescheduleDialog';
 
 export default function FamilyMemberDetails({ memberId, memberName, color = 'blue' }) {
