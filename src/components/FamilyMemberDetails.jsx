@@ -1066,6 +1066,23 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
         }}
       />
 
+      {/* Co-Assigned Chore Side Sheet */}
+      <Sheet open={!!coAssignedSheetChore} onOpenChange={(open) => !open && setCoAssignedSheetChore(null)}>
+        <SheetContent side="right" className="w-full sm:max-w-md overflow-y-auto">
+          <SheetHeader>
+            <SheetTitle className="flex items-center gap-2">
+              <Users className="w-5 h-5 text-blue-500" />
+              Co-Assigned Task
+            </SheetTitle>
+          </SheetHeader>
+          {coAssignedSheetChore && (
+            <div className="mt-4">
+              <CoAssignedChorePanel chore={coAssignedSheetChore} />
+            </div>
+          )}
+        </SheetContent>
+      </Sheet>
+
       {/* Linked Maintenance Task Side Sheet */}
       <Sheet open={!!linkedMaintenanceSheetChore} onOpenChange={(open) => !open && setLinkedMaintenanceSheetChore(null)}>
         <SheetContent side="right" className="w-full sm:max-w-md overflow-y-auto">
