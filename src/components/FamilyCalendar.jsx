@@ -526,10 +526,19 @@ export default function FamilyCalendar({ activities }) {
 
     if (!editingEvent.calendarId || !editingEvent.id) {
       toast.error('Missing event information');
-      console.error('Missing calendarId or id:', editingEvent);
       return;
     }
 
+    // If this is a recurring instance, always ask scope first
+    if (editingEvent.isRecurringInstance) {
+      setRecurringCalendarMoveDialog({ pendingEdit: true });
+      return;
+    }
+
+    submitUpdate();
+  };
+
+  const submitUpdate = (recurringEditScope) => {
     const recurrenceRule = generateRecurrenceRule(editingEvent.recurrence, editingEvent.recurrenceEnd, editingEvent.weeklyDays);
     const formatTime = (t) => t && t.includes('T') && t.split(':').length === 2 ? `${t}:00` : t;
     const eventData = {
@@ -542,33 +551,18 @@ export default function FamilyCalendar({ activities }) {
       start: editingEvent.isAllDay ? editingEvent.start : formatTime(editingEvent.start),
       end: editingEvent.isAllDay ? editingEvent.end : formatTime(editingEvent.end),
       recurrence: recurrenceRule ? [recurrenceRule] : null,
-      isAllDay: editingEvent.isAllDay
+      isAllDay: editingEvent.isAllDay,
+      recurringEditScope: recurringEditScope || undefined,
+      recurringEventId: editingEvent.recurringEventId || undefined,
+      originalStartTime: editingEvent.originalStartTime || undefined,
     };
-
-    // If calendar changed AND this is a recurring event, ask user scope
-    const isCalendarChange = editingEvent.originalCalendarId && editingEvent.originalCalendarId !== editingEvent.calendarId;
-    const isRecurring = editingEvent.recurrence && editingEvent.recurrence !== 'none';
-
-    if (isCalendarChange && isRecurring) {
-      setRecurringCalendarMoveDialog({ eventData });
-      return;
-    }
 
     updateEventMutation.mutate(eventData);
   };
 
   const handleRecurringCalendarMoveChoice = (scope) => {
-    if (!recurringCalendarMoveDialog) return;
-    const { eventData } = recurringCalendarMoveDialog;
     setRecurringCalendarMoveDialog(null);
-
-    if (scope === 'this') {
-      // Move only this instance: strip recurrence, use the specific instance id
-      updateEventMutation.mutate({ ...eventData, recurrence: null });
-    } else {
-      // Move all future events: keep recurrence
-      updateEventMutation.mutate(eventData);
-    }
+    submitUpdate(scope);
   };
 
   const handleDeleteEvent = () => {
