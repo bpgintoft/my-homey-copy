@@ -41,7 +41,7 @@ export default function ChoreNotificationsDialog({ memberId }) {
           </DialogTitle>
         </DialogHeader>
         <div className="space-y-3 py-2">
-          <p className="text-sm text-gray-500">The following co-assigned tasks were completed while you were away:</p>
+          <p className="text-sm text-gray-500">The following co-assigned tasks were completed or removed while you were away:</p>
           {notifications.map((n) => (
             <div key={n.id} className="flex items-center justify-between bg-green-50 border border-green-100 rounded-lg px-4 py-3">
               <div>
