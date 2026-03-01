@@ -921,9 +921,16 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                                             {editingChoreId === chore.id ? (
                                               <Input value={editingChoreTitle} onChange={(e) => setEditingChoreTitle(e.target.value)} onBlur={() => updateChoreMutation.mutate({ id: chore.id, title: editingChoreTitle })} onKeyDown={(e) => { if (e.key === 'Enter') updateChoreMutation.mutate({ id: chore.id, title: editingChoreTitle }); if (e.key === 'Escape') setEditingChoreId(null); }} autoFocus className="h-8" />
                                             ) : (
-                                              <span className={`cursor-pointer hover:text-blue-600 ${chore.is_completed ? 'line-through text-gray-500' : ''}`} onClick={() => { if (!chore.maintenance_task_id) { setEditingChoreId(chore.id); setEditingChoreTitle(chore.title); } }}>
-                                                {chore.title}
-                                              </span>
+                                              <div>
+                                                <span className={`cursor-pointer hover:text-blue-600 ${chore.is_completed ? 'line-through text-gray-500' : ''}`} onClick={() => { if (!chore.maintenance_task_id) { setEditingChoreId(chore.id); setEditingChoreTitle(chore.title); } }}>
+                                                  {chore.title}
+                                                </span>
+                                                {chore.next_due && !chore.maintenance_task_id && (
+                                                  <div className="text-xs text-gray-400 mt-0.5">
+                                                    Due {new Date(chore.next_due + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                                                  </div>
+                                                )}
+                                              </div>
                                             )}
                                           </div>
                                           <div className="flex-shrink-0 w-8 flex items-center justify-center">
