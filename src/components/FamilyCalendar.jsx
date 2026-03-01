@@ -1229,13 +1229,34 @@ export default function FamilyCalendar({ activities }) {
             )}
             {newEvent.recurrence !== 'none' && (
               <div className="space-y-2">
-                <Label htmlFor="recurrence-end">Ends on</Label>
-                <Input
-                  id="recurrence-end"
-                  type="date"
-                  value={newEvent.recurrenceEnd}
-                  onChange={(e) => setNewEvent({ ...newEvent, recurrenceEnd: e.target.value })}
-                />
+                <Label htmlFor="recurrence-end">Ends</Label>
+                <Select
+                  value={newEvent.recurrenceEnd ? 'on' : 'never'}
+                  onValueChange={(value) => {
+                    if (value === 'never') {
+                      setNewEvent({ ...newEvent, recurrenceEnd: '' });
+                    } else {
+                      const defaultEnd = newEvent.recurrenceEnd || format(new Date(Date.now() + 90*24*60*60*1000), 'yyyy-MM-dd');
+                      setNewEvent({ ...newEvent, recurrenceEnd: defaultEnd });
+                    }
+                  }}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="never">Never</SelectItem>
+                    <SelectItem value="on">On date</SelectItem>
+                  </SelectContent>
+                </Select>
+                {newEvent.recurrenceEnd && (
+                  <Input
+                    id="recurrence-end"
+                    type="date"
+                    value={newEvent.recurrenceEnd}
+                    onChange={(e) => setNewEvent({ ...newEvent, recurrenceEnd: e.target.value })}
+                  />
+                )}
               </div>
             )}
           </div>
