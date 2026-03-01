@@ -233,16 +233,26 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
   });
 
   const updateChoreMutation = useMutation({
-    mutationFn: ({ id, title }) => base44.entities.Chore.update(id, { title }),
+    mutationFn: async ({ id, title, linked_chore_ids }) => {
+      await base44.entities.Chore.update(id, { title });
+      if (linked_chore_ids?.length) {
+        await Promise.all(linked_chore_ids.map(sibId => base44.entities.Chore.update(sibId, { title })));
+      }
+    },
     onSuccess: () => {
-      queryClient.invalidateQueries(['chores', memberId]);
+      queryClient.invalidateQueries(['chores']);
       setEditingChoreId(null);
     },
   });
 
   const updateChoreTimingMutation = useMutation({
-    mutationFn: ({ id, timing }) => base44.entities.Chore.update(id, { timing }),
-    onSuccess: () => queryClient.invalidateQueries(['chores', memberId]),
+    mutationFn: async ({ id, timing, linked_chore_ids }) => {
+      await base44.entities.Chore.update(id, { timing });
+      if (linked_chore_ids?.length) {
+        await Promise.all(linked_chore_ids.map(sibId => base44.entities.Chore.update(sibId, { timing })));
+      }
+    },
+    onSuccess: () => queryClient.invalidateQueries(['chores']),
   });
 
   const handleDragEnd = (result) => {
