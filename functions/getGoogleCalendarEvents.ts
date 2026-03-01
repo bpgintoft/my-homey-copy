@@ -45,6 +45,9 @@ Deno.serve(async (req) => {
           location: event.location,
           description: event.description,
           backgroundColor: cal.backgroundColor || '#4285F4',
+          recurrence: event.recurrence || null,
+          recurringEventId: event.recurringEventId || null,
+          originalStartTime: event.originalStartTime || null,
         }));
         
         allEvents = allEvents.concat(events);
