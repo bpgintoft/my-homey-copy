@@ -5,7 +5,8 @@ Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
     
-    const { timeMin, timeMax } = await req.json();
+    const body = await req.json();
+    const { timeMin, timeMax, masterEventId, calendarId: singleCalendarId } = body;
 
     const accessToken = await base44.asServiceRole.connectors.getAccessToken("googlecalendar");
 
@@ -15,8 +16,13 @@ Deno.serve(async (req) => {
 
     const auth = new google.auth.OAuth2();
     auth.setCredentials({ access_token: accessToken });
-
     const calendar = google.calendar({ version: 'v3', auth });
+
+    // If fetching a single master event for its recurrence rule
+    if (masterEventId && singleCalendarId) {
+      const eventRes = await calendar.events.get({ calendarId: singleCalendarId, eventId: masterEventId });
+      return Response.json({ recurrence: eventRes.data.recurrence || null });
+    }
 
     // Get list of all calendars
     const calendarsRes = await calendar.calendarList.list();
