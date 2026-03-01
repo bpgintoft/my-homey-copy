@@ -805,7 +805,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
 
       {/* Chores Dialog */}
       <Dialog open={expandedSection === 'chores'} onOpenChange={(open) => !open && setExpandedSection(null)}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto top-4 translate-y-0">
           <DialogHeader>
             <DialogTitle className="flex items-center justify-between">
               <span>To-Do List & Chores</span>
