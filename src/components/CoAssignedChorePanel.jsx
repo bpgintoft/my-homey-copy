@@ -81,6 +81,12 @@ export default function CoAssignedChorePanel({ chore, onEdit }) {
             ))}
           </div>
         </div>
+
+        {onEdit && (
+          <Button variant="outline" className="w-full mt-1" onClick={onEdit}>
+            Edit Task
+          </Button>
+        )}
       </div>
     </div>
   );
