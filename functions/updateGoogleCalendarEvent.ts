@@ -54,9 +54,26 @@ Deno.serve(async (req) => {
     if (recurringEditScope === 'future') {
       const masterEventId = recurringEventId || id;
 
-      // 1. Fetch master event (iCal IDs work with events.get too)
-      const masterEvent = await calendar.events.get({ calendarId, eventId: masterEventId });
-      const masterRecurrence = masterEvent.data.recurrence || [];
+      // 1. Fetch master event — the master may live on a different calendar than the instance.
+      //    Try the provided calendarId first, then fall back to fetching all calendars and searching.
+      let masterRecurrence = [];
+      let masterCalendarId = calendarId;
+      try {
+        const masterEvent = await calendar.events.get({ calendarId, eventId: masterEventId });
+        masterRecurrence = masterEvent.data.recurrence || [];
+      } catch (_e) {
+        // Fallback: search all calendars for the master event
+        const calListRes = await calendar.calendarList.list();
+        const allCals = calListRes.data.items || [];
+        for (const cal of allCals) {
+          try {
+            const ev = await calendar.events.get({ calendarId: cal.id, eventId: masterEventId });
+            masterRecurrence = ev.data.recurrence || [];
+            masterCalendarId = cal.id;
+            break;
+          } catch (_) { /* keep trying */ }
+        }
+      }
 
       // 2. Truncate the original series to end just before this instance
       const instanceStart = new Date(
