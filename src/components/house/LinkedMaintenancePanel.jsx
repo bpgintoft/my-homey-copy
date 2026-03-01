@@ -16,6 +16,7 @@ export default function LinkedMaintenancePanel({ maintenanceTaskId, choreId, def
   const [isExpanded, setIsExpanded] = useState(defaultExpanded);
   const [isEditing, setIsEditing] = useState(false);
   const [editData, setEditData] = useState(null);
+  const [newCoAssignees, setNewCoAssignees] = useState([]);
 
   const { data: tasks = [] } = useQuery({
     queryKey: ['maintenanceTasks'],
@@ -23,18 +24,60 @@ export default function LinkedMaintenancePanel({ maintenanceTaskId, choreId, def
     enabled: !!maintenanceTaskId,
   });
 
+  const { data: familyMembers = [] } = useQuery({
+    queryKey: ['familyMembers'],
+    queryFn: () => base44.entities.FamilyMember.list(),
+  });
+
+  const { data: allChores = [] } = useQuery({
+    queryKey: ['chores'],
+    queryFn: () => base44.entities.Chore.list(),
+  });
+
   const task = tasks.find(t => t.id === maintenanceTaskId);
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }) => base44.entities.MaintenanceTask.update(id, data),
-    onSuccess: (updatedTask) => {
-      queryClient.invalidateQueries(['maintenanceTasks']);
-      // Also sync next_due back to the chore
-      if (choreId && editData?.next_due) {
-        base44.entities.Chore.update(choreId, { next_due: editData.next_due, title: editData.title });
-        queryClient.invalidateQueries(['chores']);
+    mutationFn: async ({ id, data }) => {
+      await base44.entities.MaintenanceTask.update(id, data);
+      // Sync next_due/title back to the triggering chore
+      if (choreId && (editData?.next_due || editData?.title)) {
+        await base44.entities.Chore.update(choreId, { next_due: editData.next_due, title: editData.title });
       }
+      // Also sync to any other already-linked chores
+      const existingChoreIds = (task?.synced_chore_ids || []).filter(cid => cid !== choreId);
+      for (const cid of existingChoreIds) {
+        await base44.entities.Chore.update(cid, { next_due: editData.next_due, title: editData.title });
+      }
+      // Add new co-assignees if selected
+      if (newCoAssignees.length > 0) {
+        const selectedMembers = familyMembers.filter(m => newCoAssignees.includes(m.id));
+        const existingChores = allChores.filter(c => (task?.synced_chore_ids || []).includes(c.id));
+        const newChores = await Promise.all(
+          selectedMembers.map(member =>
+            base44.entities.Chore.create({
+              title: editData.title || task.title,
+              assigned_to_member_id: member.id,
+              assigned_to_name: member.name,
+              timing: 'short-term',
+              next_due: editData.next_due || task.next_due,
+              is_completed: false,
+              maintenance_task_id: id,
+            })
+          )
+        );
+        const allChoreIds = [...(task?.synced_chore_ids || []), ...newChores.map(c => c.id)];
+        // Link all sibling IDs on each chore
+        for (const chore of [...existingChores, ...newChores]) {
+          await base44.entities.Chore.update(chore.id, { linked_chore_ids: allChoreIds.filter(cid => cid !== chore.id) });
+        }
+        await base44.entities.MaintenanceTask.update(id, { synced_chore_ids: allChoreIds });
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(['maintenanceTasks']);
+      queryClient.invalidateQueries(['chores']);
       setIsEditing(false);
+      setNewCoAssignees([]);
     },
   });
 
