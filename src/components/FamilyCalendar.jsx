@@ -1025,13 +1025,35 @@ export default function FamilyCalendar({ activities }) {
             )}
             {editingEvent?.recurrence !== 'none' && (
               <div className="space-y-2">
-                <Label htmlFor="edit-recurrence-end">Ends on</Label>
-                <Input
-                  id="edit-recurrence-end"
-                  type="date"
-                  value={editingEvent?.recurrenceEnd || ''}
-                  onChange={(e) => setEditingEvent({ ...editingEvent, recurrenceEnd: e.target.value })}
-                />
+                <Label htmlFor="edit-recurrence-end">Ends</Label>
+                <Select
+                  value={editingEvent?.recurrenceEnd ? 'on' : 'never'}
+                  onValueChange={(value) => {
+                    if (value === 'never') {
+                      setEditingEvent({ ...editingEvent, recurrenceEnd: '' });
+                    } else {
+                      // Set a default date 3 months out if none set
+                      const defaultEnd = editingEvent?.recurrenceEnd || format(new Date(Date.now() + 90*24*60*60*1000), 'yyyy-MM-dd');
+                      setEditingEvent({ ...editingEvent, recurrenceEnd: defaultEnd });
+                    }
+                  }}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="never">Never</SelectItem>
+                    <SelectItem value="on">On date</SelectItem>
+                  </SelectContent>
+                </Select>
+                {editingEvent?.recurrenceEnd && (
+                  <Input
+                    id="edit-recurrence-end"
+                    type="date"
+                    value={editingEvent?.recurrenceEnd || ''}
+                    onChange={(e) => setEditingEvent({ ...editingEvent, recurrenceEnd: e.target.value })}
+                  />
+                )}
               </div>
             )}
           </div>
