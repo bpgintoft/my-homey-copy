@@ -446,7 +446,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
               }
             }}
           >
-            <div className="text-xs text-gray-500 mb-1">👟 Shoe Size</div>
+            <div className="text-xs text-gray-500 mb-1 whitespace-nowrap">👟 Shoe Size</div>
             <div className="text-sm font-semibold">
               {member?.shoe_size || 'Not set'}
             </div>
