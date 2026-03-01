@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { Users, Calendar, ChevronDown } from 'lucide-react';
 
-export default function CoAssignedChorePanel({ chore }) {
+export default function CoAssignedChorePanel({ chore, onEdit }) {
   const { data: familyMembers = [] } = useQuery({
     queryKey: ['familyMembers'],
     queryFn: () => base44.entities.FamilyMember.list(),
