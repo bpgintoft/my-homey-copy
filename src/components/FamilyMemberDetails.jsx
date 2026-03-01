@@ -861,7 +861,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                     </div>
                     <Button
                       onClick={() => createChoreMutation.mutate({
-                        choreData: { title: newChore.title, timing: newChore.timing, assigned_to_member_id: memberId, assigned_to_name: memberName },
+                        choreData: { title: newChore.title, timing: newChore.timing, assigned_to_member_id: memberId, assigned_to_name: memberName, ...(newChore.next_due ? { next_due: newChore.next_due } : {}) },
                         coAssignees: familyMembers.filter(m => newChoreCoAssignees.includes(m.id)),
                       })}
                       disabled={!newChore.title}
