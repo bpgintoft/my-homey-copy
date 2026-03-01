@@ -470,7 +470,7 @@ export default function FamilyCalendar({ activities }) {
     return { recurrence, recurrenceEnd, weeklyDays };
   };
 
-  const handleEditEvent = (event) => {
+  const handleEditEvent = async (event) => {
     // Convert ISO datetime to datetime-local format
     const formatDateTime = (isoString) => {
       if (!isoString) return '';
@@ -478,10 +478,25 @@ export default function FamilyCalendar({ activities }) {
       return format(date, "yyyy-MM-dd'T'HH:mm");
     };
 
-    const { recurrence, recurrenceEnd, weeklyDays } = parseRecurrenceRule(event.recurrence);
-    
-    // Check if it's an all-day event (start has no time component)
     const isAllDay = event.start && !event.start.includes('T');
+    const isRecurringInstance = !!event.recurringEventId;
+
+    // For recurring instances, fetch the master event to get the recurrence rule
+    let recurrenceArray = event.recurrence;
+    if (isRecurringInstance && (!recurrenceArray || recurrenceArray.length === 0)) {
+      try {
+        const masterEventId = event.recurringEventId;
+        const { data } = await base44.functions.invoke('getGoogleCalendarEvents', {
+          masterEventId,
+          calendarId: event.calendarId,
+        });
+        recurrenceArray = data?.recurrence || null;
+      } catch (e) {
+        // fallback: will show as non-repeating but we still know it's recurring
+      }
+    }
+
+    const { recurrence, recurrenceEnd, weeklyDays } = parseRecurrenceRule(recurrenceArray);
 
     setEditingEvent({
       id: event.id,
@@ -495,7 +510,10 @@ export default function FamilyCalendar({ activities }) {
       recurrence,
       recurrenceEnd,
       weeklyDays,
-      isAllDay
+      isAllDay,
+      isRecurringInstance,
+      recurringEventId: event.recurringEventId || null,
+      originalStartTime: event.start || null,
     });
     setShowEditDialog(true);
   };
