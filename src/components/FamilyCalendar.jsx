@@ -682,7 +682,11 @@ export default function FamilyCalendar({ activities }) {
                               }}
                             >
                               {/* Avatar for Google Calendar events */}
-                              {avatarUrl && (
+                              {isHoliday ? (
+                                <div className="w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center text-xl">
+                                  {getHolidayEmoji(activity.title)}
+                                </div>
+                              ) : avatarUrl && (
                                 <img 
                                   src={avatarUrl} 
                                   alt="Calendar owner"
