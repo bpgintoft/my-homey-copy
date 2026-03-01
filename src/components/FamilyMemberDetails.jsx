@@ -908,15 +908,14 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                               {timingChores.length === 0 && !snapshot.isDraggingOver ? (
                                 <p className="text-xs text-gray-400 text-center py-2">Drop items here</p>
                               ) : (
-                                timingChores.map((chore, index) => (
-                                  <Draggable key={chore.id} draggableId={chore.id} index={index} isDragDisabled={!!chore.maintenance_task_id}>
-                                  {(provided, snapshot) => {
+                                timingChores.map((chore, index) => {
+                                  const choreEl = (provided, snapshot) => {
                                     const child = (
-                                    <div ref={provided.innerRef} {...provided.draggableProps} className={`rounded-lg ${itemBg} ${snapshot.isDragging ? 'shadow-lg opacity-90' : ''}`}>
-                                      <div className="flex items-center gap-3 p-3">
-                                        <div {...(!chore.maintenance_task_id ? provided.dragHandleProps : {})} className={`flex-shrink-0 ${chore.maintenance_task_id ? 'opacity-0 pointer-events-none' : 'cursor-grab active:cursor-grabbing'}`}>
-                                          <GripVertical className="w-4 h-4 text-gray-400" />
-                                        </div>
+                                      <div ref={provided.innerRef} {...provided.draggableProps} className={`rounded-lg ${itemBg} ${snapshot.isDragging ? 'shadow-lg opacity-90' : ''}`}>
+                                        <div className="flex items-center gap-3 p-3">
+                                          <div {...(!chore.maintenance_task_id ? provided.dragHandleProps : {})} className={`flex-shrink-0 ${chore.maintenance_task_id ? 'opacity-0 pointer-events-none' : 'cursor-grab active:cursor-grabbing'}`}>
+                                            <GripVertical className="w-4 h-4 text-gray-400" />
+                                          </div>
                                           <button className="flex-shrink-0" onClick={() => {
                                             if (!chore.is_completed && chore.maintenance_task_id) {
                                               setRescheduleChore(chore);
@@ -965,10 +964,13 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                                       </div>
                                     );
                                     return snapshot.isDragging ? createPortal(child, document.body) : child;
-                                    }}
+                                  };
+                                  return (
+                                    <Draggable key={chore.id} draggableId={chore.id} index={index} isDragDisabled={!!chore.maintenance_task_id}>
+                                      {choreEl}
                                     </Draggable>
-
-                                ))
+                                  );
+                                })
                               )}
                               {provided.placeholder}
                             </div>
