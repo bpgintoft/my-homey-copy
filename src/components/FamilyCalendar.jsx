@@ -479,27 +479,30 @@ export default function FamilyCalendar({ activities }) {
     };
 
     const isAllDay = event.start && !event.start.includes('T');
-    // A recurring instance has recurringEventId OR its id contains an underscore (Google's format)
-    const isRecurringInstance = !!event.recurringEventId || (event.id && event.id.includes('_'));
-    const masterEventId = event.recurringEventId || (event.id && event.id.includes('_') ? event.id.split('_')[0] : null);
+    // A recurring instance has recurringEventId OR its id contains an underscore (Google's format for expanded instances)
+    const rawRecurringEventId = event.recurringEventId;
+    // Google instance IDs look like: baseId_YYYYMMDDTHHMMSSZ
+    const idHasUnderscore = event.id && /_\d{8}/.test(event.id);
+    const masterEventId = rawRecurringEventId || (idHasUnderscore ? event.id.split('_')[0] : null);
+    const isRecurringInstance = !!(masterEventId);
 
-    console.log('[EditEvent] id:', event.id, 'recurringEventId:', event.recurringEventId, 'isRecurringInstance:', isRecurringInstance, 'masterEventId:', masterEventId);
+    console.log('[EditEvent] event.id:', event.id, 'recurringEventId:', rawRecurringEventId, 'idHasUnderscore:', idHasUnderscore, 'masterEventId:', masterEventId, 'event.recurrence:', event.recurrence);
 
-    // For recurring instances, always fetch the master event to get the recurrence rule
-    let recurrenceArray = event.recurrence;
-    if (isRecurringInstance && masterEventId) {
+    // For recurring instances, fetch the master event to get the recurrence rule
+    let recurrenceArray = event.recurrence && event.recurrence.length > 0 ? event.recurrence : null;
+    if (masterEventId && !recurrenceArray) {
       try {
         const { data } = await base44.functions.invoke('getGoogleCalendarEvents', {
           masterEventId,
           calendarId: event.calendarId,
         });
-        console.log('[EditEvent] master event response:', data);
+        console.log('[EditEvent] master event response data:', JSON.stringify(data));
         recurrenceArray = data?.recurrence || null;
       } catch (e) {
         console.error('[EditEvent] Failed to fetch master event:', e);
       }
     }
-    console.log('[EditEvent] recurrenceArray:', recurrenceArray);
+    console.log('[EditEvent] final recurrenceArray:', recurrenceArray);
 
     const { recurrence, recurrenceEnd, weeklyDays } = parseRecurrenceRule(recurrenceArray);
 
