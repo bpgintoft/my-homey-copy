@@ -566,7 +566,11 @@ export default function FamilyCalendar({ activities }) {
 
   const submitUpdate = (recurringEditScope) => {
     const recurrenceRule = generateRecurrenceRule(editingEvent.recurrence, editingEvent.recurrenceEnd, editingEvent.weeklyDays);
-    const formatTime = (t) => t && t.includes('T') && t.split(':').length === 2 ? `${t}:00` : t;
+    const formatTime = (t) => {
+      if (!t) return t;
+      if (t.includes('T') && t.split(':').length === 2) return `${t}:00`;
+      return t;
+    };
     const eventData = {
       id: editingEvent.id,
       calendarId: editingEvent.calendarId,
@@ -576,13 +580,14 @@ export default function FamilyCalendar({ activities }) {
       location: editingEvent.location || '',
       start: editingEvent.isAllDay ? editingEvent.start : formatTime(editingEvent.start),
       end: editingEvent.isAllDay ? editingEvent.end : formatTime(editingEvent.end),
-      recurrence: recurrenceRule ? [recurrenceRule] : null,
+      recurrence: recurrenceRule ? [recurrenceRule] : [],
       isAllDay: editingEvent.isAllDay,
       recurringEditScope: recurringEditScope || undefined,
       recurringEventId: editingEvent.recurringEventId || undefined,
       originalStartTime: editingEvent.originalStartTime || undefined,
     };
 
+    console.log('[submitUpdate] payload:', JSON.stringify(eventData));
     updateEventMutation.mutate(eventData);
   };
 
