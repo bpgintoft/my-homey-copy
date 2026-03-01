@@ -555,8 +555,8 @@ export default function FamilyCalendar({ activities }) {
       return;
     }
 
-    // If this is a recurring instance, always ask scope first
-    if (editingEvent.isRecurringInstance) {
+    // If this is a recurring instance, ask scope first (unless recurrence is set to 'none' meaning user cleared it)
+    if (editingEvent.isRecurringInstance && editingEvent.recurrence !== 'none') {
       setRecurringCalendarMoveDialog({ pendingEdit: true });
       return;
     }
