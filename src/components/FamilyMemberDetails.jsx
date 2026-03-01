@@ -978,7 +978,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
 
       {/* Notes Dialog */}
       <Dialog open={expandedSection === 'notes'} onOpenChange={(open) => !open && setExpandedSection(null)}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto top-4 translate-y-0">
           <DialogHeader>
             <DialogTitle>Personal Notes & Reminders</DialogTitle>
           </DialogHeader>
