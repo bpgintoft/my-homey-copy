@@ -479,7 +479,6 @@ export default function FamilyCalendar({ activities }) {
     }
 
     const recurrenceRule = generateRecurrenceRule(editingEvent.recurrence, editingEvent.recurrenceEnd, editingEvent.weeklyDays);
-
     const formatTime = (t) => t && t.includes('T') && t.split(':').length === 2 ? `${t}:00` : t;
     const eventData = {
       id: editingEvent.id,
@@ -494,8 +493,30 @@ export default function FamilyCalendar({ activities }) {
       isAllDay: editingEvent.isAllDay
     };
 
-    console.log('Updating event with data:', eventData);
+    // If calendar changed AND this is a recurring event, ask user scope
+    const isCalendarChange = editingEvent.originalCalendarId && editingEvent.originalCalendarId !== editingEvent.calendarId;
+    const isRecurring = editingEvent.recurrence && editingEvent.recurrence !== 'none';
+
+    if (isCalendarChange && isRecurring) {
+      setRecurringCalendarMoveDialog({ eventData });
+      return;
+    }
+
     updateEventMutation.mutate(eventData);
+  };
+
+  const handleRecurringCalendarMoveChoice = (scope) => {
+    if (!recurringCalendarMoveDialog) return;
+    const { eventData } = recurringCalendarMoveDialog;
+    setRecurringCalendarMoveDialog(null);
+
+    if (scope === 'this') {
+      // Move only this instance: strip recurrence, use the specific instance id
+      updateEventMutation.mutate({ ...eventData, recurrence: null });
+    } else {
+      // Move all future events: keep recurrence
+      updateEventMutation.mutate(eventData);
+    }
   };
 
   const handleDeleteEvent = () => {
