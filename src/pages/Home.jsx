@@ -69,7 +69,7 @@ export default function Home() {
       bgColor: 'bg-gradient-to-br from-pink-200 to-pink-300'
     },
     { 
-      title: 'Kids Activities', 
+      title: 'Calendar', 
       href: 'Kids', 
       count: todayEvents,
       imageKey: 'kids',
