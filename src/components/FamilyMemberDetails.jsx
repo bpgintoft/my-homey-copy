@@ -200,12 +200,29 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
   });
 
   const toggleChoreMutation = useMutation({
-    mutationFn: async ({ id, is_completed, maintenance_task_id, linked_chore_ids }) => {
+    mutationFn: async ({ id, is_completed, maintenance_task_id, linked_chore_ids, chore_title }) => {
       if (!is_completed || !maintenance_task_id) {
         // Normal chore toggle — also toggle all sibling chores
         await base44.entities.Chore.update(id, { is_completed });
         if (linked_chore_ids?.length) {
           await Promise.all(linked_chore_ids.map(sibId => base44.entities.Chore.update(sibId, { is_completed })));
+
+          // If marking complete, create notifications for co-assigned members
+          if (is_completed) {
+            const allChores = await base44.entities.Chore.list();
+            const siblingChores = allChores.filter(c => linked_chore_ids.includes(c.id));
+            await Promise.all(
+              siblingChores.map(sib =>
+                base44.entities.Notification.create({
+                  recipient_member_id: sib.assigned_to_member_id,
+                  triggering_member_name: memberName,
+                  chore_title: chore_title,
+                  chore_id: id,
+                  is_read: false,
+                })
+              )
+            );
+          }
         }
       }
       // For linked maintenance chores being completed, we handle via reschedule dialog
