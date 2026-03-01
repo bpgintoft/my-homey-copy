@@ -517,10 +517,12 @@ export default function FamilyCalendar({ activities }) {
       }
     }
 
-    // If still nothing and we know it's recurring, default to weekly so the UI reflects it
+    // If still nothing and we know it's recurring, default to weekly
     if (isRecurringInstance && !recurrenceArray) {
       recurrenceArray = ['RRULE:FREQ=WEEKLY'];
     }
+
+    console.log('[handleEditEvent] recurrenceArray:', JSON.stringify(recurrenceArray));
 
     const { recurrence, recurrenceEnd, weeklyDays } = parseRecurrenceRule(recurrenceArray);
 
