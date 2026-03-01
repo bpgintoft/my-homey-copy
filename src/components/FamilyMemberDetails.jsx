@@ -1077,7 +1077,15 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
           </SheetHeader>
           {coAssignedSheetChore && (
             <div className="mt-4">
-              <CoAssignedChorePanel chore={coAssignedSheetChore} />
+              <CoAssignedChorePanel
+                chore={coAssignedSheetChore}
+                onEdit={() => {
+                  setCoAssignedSheetChore(null);
+                  setEditingChoreId(coAssignedSheetChore.id);
+                  setEditingChoreTitle(coAssignedSheetChore.title);
+                  setExpandedSection('chores');
+                }}
+              />
             </div>
           )}
         </SheetContent>
