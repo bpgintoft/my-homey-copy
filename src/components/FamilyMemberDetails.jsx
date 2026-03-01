@@ -132,7 +132,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
     onSuccess: () => {
       queryClient.invalidateQueries(['chores']);
       setDialogOpen({ ...dialogOpen, chore: false });
-      setNewChore({ title: '', timing: 'short-term' });
+      setNewChore({ title: '', timing: 'short-term', next_due: '' });
       setNewChoreCoAssignees([]);
     },
   });
