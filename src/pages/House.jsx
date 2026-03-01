@@ -991,7 +991,7 @@ export default function House() {
               <div className="space-y-1">
                 {familyMembers.map(m => (
                   <div key={m.id} className="flex items-center gap-2 cursor-pointer" onClick={() => setNewTaskAssignees(prev => prev.includes(m.id) ? prev.filter(id => id !== m.id) : [...prev, m.id])}>
-                    <input type="checkbox" checked={newTaskAssignees.includes(m.id)} onChange={(e) => { e.stopPropagation(); setNewTaskAssignees(prev => e.target.checked ? [...prev, m.id] : prev.filter(id => id !== m.id)); }} className="w-4 h-4" />
+                    <input type="checkbox" checked={newTaskAssignees.includes(m.id)} onChange={() => {}} className="w-4 h-4 pointer-events-none" />
                     <span className="text-sm">{m.name}</span>
                   </div>
                 ))}
