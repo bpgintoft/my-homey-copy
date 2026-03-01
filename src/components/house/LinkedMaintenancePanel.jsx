@@ -173,6 +173,24 @@ export default function LinkedMaintenancePanel({ maintenanceTaskId, choreId, def
                 onChange={(e) => setEditData({ ...editData, next_due: e.target.value })}
                 className="text-sm h-8"
               />
+              {/* Co-assign to other family members not already assigned */}
+              {(() => {
+                const alreadyAssignedChores = allChores.filter(c => (task?.synced_chore_ids || []).includes(c.id));
+                const alreadyAssignedMemberIds = alreadyAssignedChores.map(c => c.assigned_to_member_id);
+                const available = familyMembers.filter(m => !alreadyAssignedMemberIds.includes(m.id));
+                if (available.length === 0) return null;
+                return (
+                  <div className="space-y-1.5">
+                    <Label className="text-xs text-gray-600">Also assign to:</Label>
+                    {available.map(m => (
+                      <div key={m.id} className="flex items-center gap-2 cursor-pointer" onClick={() => setNewCoAssignees(prev => prev.includes(m.id) ? prev.filter(id => id !== m.id) : [...prev, m.id])}>
+                        <Checkbox checked={newCoAssignees.includes(m.id)} onCheckedChange={() => {}} className="pointer-events-none" />
+                        <span className="text-sm">{m.name}</span>
+                      </div>
+                    ))}
+                  </div>
+                );
+              })()}
               <div className="flex gap-2">
                 <Button
                   size="sm"
