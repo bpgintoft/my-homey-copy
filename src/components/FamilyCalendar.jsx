@@ -483,6 +483,8 @@ export default function FamilyCalendar({ activities }) {
     const isRecurringInstance = !!event.recurringEventId || (event.id && event.id.includes('_'));
     const masterEventId = event.recurringEventId || (event.id && event.id.includes('_') ? event.id.split('_')[0] : null);
 
+    console.log('[EditEvent] id:', event.id, 'recurringEventId:', event.recurringEventId, 'isRecurringInstance:', isRecurringInstance, 'masterEventId:', masterEventId);
+
     // For recurring instances, always fetch the master event to get the recurrence rule
     let recurrenceArray = event.recurrence;
     if (isRecurringInstance && masterEventId) {
@@ -491,11 +493,13 @@ export default function FamilyCalendar({ activities }) {
           masterEventId,
           calendarId: event.calendarId,
         });
+        console.log('[EditEvent] master event response:', data);
         recurrenceArray = data?.recurrence || null;
       } catch (e) {
-        // fallback
+        console.error('[EditEvent] Failed to fetch master event:', e);
       }
     }
+    console.log('[EditEvent] recurrenceArray:', recurrenceArray);
 
     const { recurrence, recurrenceEnd, weeklyDays } = parseRecurrenceRule(recurrenceArray);
 
