@@ -655,6 +655,7 @@ export default function FamilyCalendar({ activities }) {
                     const avatarUrl = activity.source === 'google' && activity.calendarName 
                       ? getCalendarAvatar(activity.calendarName) 
                       : null;
+                    const isHoliday = activity.source === 'google' && activity.calendarName?.toLowerCase().includes('holiday');
                     
                     return (
                       <motion.div
