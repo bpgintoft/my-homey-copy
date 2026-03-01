@@ -80,9 +80,12 @@ export default function BryanPage() {
       </div>
 
       {bryan && (
-        <div className="max-w-2xl mx-auto px-4 sm:px-6 pt-2 pb-6 space-y-4">
-          <FamilyMemberDetails memberId={bryan.id} memberName="Bryan" color="blue" />
-        </div>
+        <>
+          <ChoreNotificationsDialog memberId={bryan.id} />
+          <div className="max-w-2xl mx-auto px-4 sm:px-6 pt-2 pb-6 space-y-4">
+            <FamilyMemberDetails memberId={bryan.id} memberName="Bryan" color="blue" />
+          </div>
+        </>
       )}
     </div>
   );

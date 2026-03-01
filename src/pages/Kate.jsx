@@ -80,9 +80,12 @@ export default function KatePage() {
       </div>
 
       {kate && (
-        <div className="max-w-2xl mx-auto px-4 sm:px-6 pt-2 pb-6 space-y-4">
-          <FamilyMemberDetails memberId={kate.id} memberName="Kate" color="green" />
-        </div>
+        <>
+          <ChoreNotificationsDialog memberId={kate.id} />
+          <div className="max-w-2xl mx-auto px-4 sm:px-6 pt-2 pb-6 space-y-4">
+            <FamilyMemberDetails memberId={kate.id} memberName="Kate" color="green" />
+          </div>
+        </>
       )}
     </div>
   );

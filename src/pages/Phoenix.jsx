@@ -80,9 +80,12 @@ export default function PhoenixPage() {
       </div>
 
       {phoenix && (
-        <div className="max-w-2xl mx-auto px-4 sm:px-6 pt-2 pb-6 space-y-4">
-          <FamilyMemberDetails memberId={phoenix.id} memberName="Phoenix" color="orange" />
-        </div>
+        <>
+          <ChoreNotificationsDialog memberId={phoenix.id} />
+          <div className="max-w-2xl mx-auto px-4 sm:px-6 pt-2 pb-6 space-y-4">
+            <FamilyMemberDetails memberId={phoenix.id} memberName="Phoenix" color="orange" />
+          </div>
+        </>
       )}
     </div>
   );

@@ -80,9 +80,12 @@ export default function MaraPage() {
       </div>
 
       {mara && (
-        <div className="max-w-2xl mx-auto px-4 sm:px-6 pt-2 pb-6 space-y-4">
-          <FamilyMemberDetails memberId={mara.id} memberName="Mara" color="purple" />
-        </div>
+        <>
+          <ChoreNotificationsDialog memberId={mara.id} />
+          <div className="max-w-2xl mx-auto px-4 sm:px-6 pt-2 pb-6 space-y-4">
+            <FamilyMemberDetails memberId={mara.id} memberName="Mara" color="purple" />
+          </div>
+        </>
       )}
     </div>
   );
