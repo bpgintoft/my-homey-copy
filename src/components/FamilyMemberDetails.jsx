@@ -988,7 +988,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
 
       {/* Milestones Dialog */}
       <Dialog open={expandedSection === 'milestones'} onOpenChange={(open) => !open && setExpandedSection(null)}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto top-4 translate-y-0">
           <DialogHeader>
             <DialogTitle className="flex items-center justify-between">
               <span>Goals & Milestones</span>
