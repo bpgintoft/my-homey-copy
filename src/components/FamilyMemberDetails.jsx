@@ -300,11 +300,28 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
   };
 
   const deleteChoreMutation = useMutation({
-    mutationFn: async ({ id, linked_chore_ids }) => {
-      await base44.entities.Chore.delete(id);
+    mutationFn: async ({ id, linked_chore_ids, chore_title }) => {
       if (linked_chore_ids?.length) {
+        // Fetch sibling chores to get their assigned member info
+        const allChores = await base44.entities.Chore.list();
+        const siblingChores = allChores.filter(c => linked_chore_ids.includes(c.id));
+
+        // Notify co-assigned members
+        await Promise.all(
+          siblingChores.map(sib =>
+            base44.entities.Notification.create({
+              recipient_member_id: sib.assigned_to_member_id,
+              triggering_member_name: memberName,
+              chore_title: chore_title,
+              chore_id: id,
+              is_read: false,
+            })
+          )
+        );
+
         await Promise.all(linked_chore_ids.map(sibId => base44.entities.Chore.delete(sibId)));
       }
+      await base44.entities.Chore.delete(id);
     },
     onSuccess: () => queryClient.invalidateQueries(['chores']),
   });
