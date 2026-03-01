@@ -386,20 +386,34 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
 
   const sortChores = (choreList) => {
     return [...choreList].sort((a, b) => {
+      // Maintenance chores sink to bottom within their group
+      if (a.maintenance_task_id && !b.maintenance_task_id) return 1;
+      if (!a.maintenance_task_id && b.maintenance_task_id) return -1;
       // Maintenance-linked chores: sort by next_due date
       if (a.maintenance_task_id && b.maintenance_task_id) {
         const aDate = a.next_due ? new Date(a.next_due) : new Date('9999-01-01');
         const bDate = b.next_due ? new Date(b.next_due) : new Date('9999-01-01');
         return aDate - bDate;
       }
-      // Maintenance chores sink to bottom within their group
-      if (a.maintenance_task_id && !b.maintenance_task_id) return 1;
-      if (!a.maintenance_task_id && b.maintenance_task_id) return -1;
-      return 0;
+      // Manual sort order
+      const aOrder = a.sort_order ?? 999999;
+      const bOrder = b.sort_order ?? 999999;
+      return aOrder - bOrder;
     });
   };
 
-  const choresByTiming = {
+  const [localChores, setLocalChores] = React.useState({});
+
+  React.useEffect(() => {
+    const grouped = {
+      'short-term': sortChores(chores.filter(c => c.timing === 'short-term')),
+      'mid-term': sortChores(chores.filter(c => c.timing === 'mid-term')),
+      'long-term': sortChores(chores.filter(c => c.timing === 'long-term')),
+    };
+    setLocalChores(grouped);
+  }, [chores]);
+
+  const choresByTiming = localChores['short-term'] ? localChores : {
     'short-term': sortChores(chores.filter(c => c.timing === 'short-term')),
     'mid-term': sortChores(chores.filter(c => c.timing === 'mid-term')),
     'long-term': sortChores(chores.filter(c => c.timing === 'long-term')),
