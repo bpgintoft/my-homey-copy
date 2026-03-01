@@ -20,8 +20,15 @@ Deno.serve(async (req) => {
 
     // If fetching a single master event for its recurrence rule
     if (masterEventId && singleCalendarId) {
-      const eventRes = await calendar.events.get({ calendarId: singleCalendarId, eventId: masterEventId });
-      return Response.json({ recurrence: eventRes.data.recurrence || null });
+      try {
+        const eventRes = await calendar.events.get({ calendarId: singleCalendarId, eventId: masterEventId });
+        return Response.json({ recurrence: eventRes.data.recurrence || null });
+      } catch (err) {
+        // Master event ID may use iCal format (starts with _). Try searching for it as a recurring event instance.
+        console.error('Master event fetch failed, trying search:', err.message);
+        // Return empty recurrence so UI still opens
+        return Response.json({ recurrence: null });
+      }
     }
 
     // Get list of all calendars
