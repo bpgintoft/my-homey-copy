@@ -30,7 +30,7 @@ Deno.serve(async (req) => {
         end: isAllDay ? { date: end } : { dateTime: end, timeZone: 'America/Chicago' },
       };
       if (includeRecurrence) {
-        // Only include RRULE lines, not EXDATE — Google rejects UNTIL on EXDATE lines
+        // Only include RRULE lines — Google rejects UNTIL on EXDATE lines
         const rruleLines = (recurrence && Array.isArray(recurrence))
           ? recurrence.filter(r => r && r.startsWith('RRULE'))
           : [];
@@ -39,38 +39,12 @@ Deno.serve(async (req) => {
       return event;
     };
 
-    // Helper: resolve an iCal-format event ID (starts with _) to a real Google event ID
-    // by searching the calendar for events around that time.
-    const resolveEventId = async (calId, eventId, startTime) => {
-      if (!eventId.startsWith('_')) return eventId;
-      // iCal IDs cannot be used directly; search by time window
-      const searchStart = new Date(startTime);
-      searchStart.setHours(searchStart.getHours() - 1);
-      const searchEnd = new Date(startTime);
-      searchEnd.setHours(searchEnd.getHours() + 1);
-      const res = await calendar.events.list({
-        calendarId: calId,
-        timeMin: searchStart.toISOString(),
-        timeMax: searchEnd.toISOString(),
-        singleEvents: true,
-        maxResults: 50,
-      });
-      const events = res.data.items || [];
-      // Match by iCalUID or by matching iCal-formatted ID
-      const match = events.find(e =>
-        e.id === eventId ||
-        (e.iCalUID && ('_' + e.iCalUID.replace(/@.*/,'').replace(/-/g,'').toLowerCase()) === eventId.toLowerCase()) ||
-        e.iCalUID?.toLowerCase().startsWith(eventId.replace(/^_/, '').toLowerCase())
-      );
-      return match ? match.id : eventId;
-    };
-
     // --- Edit this instance only ---
     if (recurringEditScope === 'this') {
-      const resolvedId = await resolveEventId(calendarId, id, start);
+      // Google supports iCal-format instance IDs (e.g. _xxx_20260325T151500Z) directly with patch
       const response = await calendar.events.patch({
         calendarId,
-        eventId: resolvedId,
+        eventId: id,
         requestBody: buildEventBody(false),
       });
       return Response.json({ event: response.data });
@@ -79,14 +53,15 @@ Deno.serve(async (req) => {
     // --- Edit all future events (split the series) ---
     if (recurringEditScope === 'future') {
       const masterEventId = recurringEventId || id;
-      const resolvedMasterId = await resolveEventId(calendarId, masterEventId, start);
 
-      // 1. Truncate the original series to end just before this instance
-      const masterEvent = await calendar.events.get({ calendarId, eventId: resolvedMasterId });
+      // 1. Fetch master event (iCal IDs work with events.get too)
+      const masterEvent = await calendar.events.get({ calendarId, eventId: masterEventId });
       const masterRecurrence = masterEvent.data.recurrence || [];
 
-      // Build an UNTIL date from the original start time of this instance (day before)
-      const instanceStart = new Date(originalStartTime?.dateTime || originalStartTime?.date || start);
+      // 2. Truncate the original series to end just before this instance
+      const instanceStart = new Date(
+        (originalStartTime && (originalStartTime.dateTime || originalStartTime.date)) || start
+      );
       instanceStart.setDate(instanceStart.getDate() - 1);
       const until = instanceStart.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
 
@@ -98,11 +73,11 @@ Deno.serve(async (req) => {
 
       await calendar.events.patch({
         calendarId,
-        eventId: resolvedMasterId,
+        eventId: masterEventId,
         requestBody: { recurrence: truncatedRecurrence },
       });
 
-      // 2. Create a new event for this and future occurrences
+      // 3. Create a new event for this and future occurrences
       const newEvent = buildEventBody(true);
       const response = await calendar.events.insert({
         calendarId,
@@ -112,17 +87,15 @@ Deno.serve(async (req) => {
     }
 
     // --- Non-recurring: update the event directly ---
-    const resolvedId = await resolveEventId(calendarId, id, start);
     const eventBody = buildEventBody(true);
 
     if (originalCalendarId && originalCalendarId !== calendarId) {
       // Moving to a different calendar: delete from old, insert into new
-      const originalResolvedId = await resolveEventId(originalCalendarId, id, start);
-      await calendar.events.delete({ calendarId: originalCalendarId, eventId: originalResolvedId });
+      await calendar.events.delete({ calendarId: originalCalendarId, eventId: id });
       const response = await calendar.events.insert({ calendarId, requestBody: eventBody });
       return Response.json({ event: response.data });
     } else {
-      const response = await calendar.events.update({ calendarId, eventId: resolvedId, requestBody: eventBody });
+      const response = await calendar.events.update({ calendarId, eventId: id, requestBody: eventBody });
       return Response.json({ event: response.data });
     }
   } catch (error) {
