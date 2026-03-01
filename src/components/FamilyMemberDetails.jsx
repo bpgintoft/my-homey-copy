@@ -999,7 +999,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                                               <Input value={editingChoreTitle} onChange={(e) => setEditingChoreTitle(e.target.value)} onBlur={() => updateChoreMutation.mutate({ id: chore.id, title: editingChoreTitle, linked_chore_ids: chore.linked_chore_ids })} onKeyDown={(e) => { if (e.key === 'Enter') updateChoreMutation.mutate({ id: chore.id, title: editingChoreTitle, linked_chore_ids: chore.linked_chore_ids }); if (e.key === 'Escape') setEditingChoreId(null); }} autoFocus className="h-8" />
                                             ) : (
                                               <div>
-                                                <span className={`cursor-pointer hover:text-blue-600 ${chore.is_completed ? 'line-through text-gray-500' : ''}`} onClick={() => { if (!chore.maintenance_task_id) { setEditingChoreId(chore.id); setEditingChoreTitle(chore.title); } }}>
+                                                <span className={`cursor-pointer hover:text-blue-600 ${chore.is_completed ? 'line-through text-gray-500' : ''}`} onClick={() => { if (!chore.maintenance_task_id) { if (chore.linked_chore_ids?.length > 0) { setCoAssignedSheetChore(chore); } else { setEditingChoreId(chore.id); setEditingChoreTitle(chore.title); } } }}>
                                                   {chore.title}
                                                 </span>
                                                 {chore.next_due && !chore.maintenance_task_id && (
