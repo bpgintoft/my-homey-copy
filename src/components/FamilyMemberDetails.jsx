@@ -910,7 +910,8 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                               ) : (
                                 timingChores.map((chore, index) => (
                                   <Draggable key={chore.id} draggableId={chore.id} index={index} isDragDisabled={!!chore.maintenance_task_id}>
-                                  {(provided, snapshot) => (
+                                  {(provided, snapshot) => {
+                                    const child = (
                                     <div ref={provided.innerRef} {...provided.draggableProps} className={`rounded-lg ${itemBg} ${snapshot.isDragging ? 'shadow-lg opacity-90' : ''}`}>
                                       <div className="flex items-center gap-3 p-3">
                                         <div {...(!chore.maintenance_task_id ? provided.dragHandleProps : {})} className={`flex-shrink-0 ${chore.maintenance_task_id ? 'opacity-0 pointer-events-none' : 'cursor-grab active:cursor-grabbing'}`}>
