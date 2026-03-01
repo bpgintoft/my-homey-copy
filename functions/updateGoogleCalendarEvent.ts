@@ -40,7 +40,7 @@ Deno.serve(async (req) => {
     // --- Edit this instance only ---
     if (recurringEditScope === 'this') {
       // Update just this occurrence using its instance id
-      const response = await calendar.events.update({
+      const response = await calendar.events.patch({
         calendarId,
         eventId: id,
         requestBody: buildEventBody(false),
@@ -50,7 +50,8 @@ Deno.serve(async (req) => {
 
     // --- Edit all future events (split the series) ---
     if (recurringEditScope === 'future') {
-      const masterEventId = recurringEventId || (id.includes('_') ? id.split('_')[0] : id);
+      // masterEventId may be an iCal-format ID (starts with _), use recurringEventId if available
+      const masterEventId = recurringEventId || id;
 
       // 1. Truncate the original series to end just before this instance
       const masterEvent = await calendar.events.get({ calendarId, eventId: masterEventId });
