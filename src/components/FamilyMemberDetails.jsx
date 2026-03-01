@@ -12,6 +12,7 @@ import { Plus, Trash2, ExternalLink, CheckCircle2, Circle, Loader2, Edit2, GripV
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
+import { createPortal } from 'react-dom';
 import SchoolProgramSection from './SchoolProgramSection';
 import LinkedMaintenancePanel from './house/LinkedMaintenancePanel';
 import RescheduleDialog from './house/RescheduleDialog';
