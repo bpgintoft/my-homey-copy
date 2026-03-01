@@ -1018,7 +1018,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                                                 <Wrench className="w-4 h-4 text-orange-500" />
                                               </button>
                                             ) : (
-                                              <button className="p-1 rounded hover:bg-red-50 transition-colors" onClick={() => deleteChoreMutation.mutate({ id: chore.id, linked_chore_ids: chore.linked_chore_ids })}>
+                                              <button className="p-1 rounded hover:bg-red-50 transition-colors" onClick={() => deleteChoreMutation.mutate({ id: chore.id, linked_chore_ids: chore.linked_chore_ids, chore_title: chore.title })}>
                                                 <Trash2 className="w-4 h-4 text-red-500" />
                                               </button>
                                             )}
