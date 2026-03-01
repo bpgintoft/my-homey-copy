@@ -963,8 +963,10 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                                           </div>
                                         </div>
                                       </div>
-                                    )}
-                                  </Draggable>
+                                    );
+                                    return snapshot.isDragging ? createPortal(child, document.body) : child;
+                                    }}
+                                    </Draggable>
                                 ))
                               )}
                               {provided.placeholder}
