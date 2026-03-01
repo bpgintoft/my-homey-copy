@@ -849,6 +849,10 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                       </SelectContent>
                     </Select>
                     <div>
+                      <Label className="mb-1 block text-sm text-gray-600">Due date (optional):</Label>
+                      <Input type="date" value={newChore.next_due} onChange={(e) => setNewChore({ ...newChore, next_due: e.target.value })} />
+                    </div>
+                    <div>
                       <Label className="mb-2 block text-sm text-gray-600">Also assign to other family members:</Label>
                       <div className="space-y-1">
                         {familyMembers.filter(m => m.id !== memberId).map(m => (
