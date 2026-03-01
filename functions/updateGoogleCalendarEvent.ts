@@ -89,7 +89,7 @@ Deno.serve(async (req) => {
       });
 
       await calendar.events.patch({
-        calendarId,
+        calendarId: masterCalendarId,
         eventId: masterEventId,
         requestBody: { recurrence: truncatedRecurrence },
       });
