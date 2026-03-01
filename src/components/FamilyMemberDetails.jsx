@@ -436,20 +436,37 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
             </div>
           </div>
         )}
-        <div 
-          className="cursor-pointer flex flex-col items-center text-center ml-5"
-          onClick={() => {
-            const newPlate = prompt('Enter license plate number:');
-            if (newPlate !== null) {
-              updateExpirationDatesMutation.mutate({ license_plate_number: newPlate });
-            }
-          }}
-        >
-          <div className="text-xs text-gray-500 mb-1">🚗 Plate #</div>
-          <div className="text-sm font-semibold">
-            {member?.license_plate_number || 'Not set'}
+        {member?.person_type === 'kid' ? (
+          <div 
+            className="cursor-pointer flex flex-col items-center text-center ml-5"
+            onClick={() => {
+              const newSize = prompt('Enter shoe size:');
+              if (newSize !== null) {
+                updateExpirationDatesMutation.mutate({ shoe_size: newSize });
+              }
+            }}
+          >
+            <div className="text-xs text-gray-500 mb-1">👟 Shoe Size</div>
+            <div className="text-sm font-semibold">
+              {member?.shoe_size || 'Not set'}
+            </div>
           </div>
-        </div>
+        ) : (
+          <div 
+            className="cursor-pointer flex flex-col items-center text-center ml-5"
+            onClick={() => {
+              const newPlate = prompt('Enter license plate number:');
+              if (newPlate !== null) {
+                updateExpirationDatesMutation.mutate({ license_plate_number: newPlate });
+              }
+            }}
+          >
+            <div className="text-xs text-gray-500 mb-1">🚗 Plate #</div>
+            <div className="text-sm font-semibold">
+              {member?.license_plate_number || 'Not set'}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* 2-Column Grid for Sections */}
