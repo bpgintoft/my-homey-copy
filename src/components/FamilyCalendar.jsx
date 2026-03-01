@@ -479,20 +479,21 @@ export default function FamilyCalendar({ activities }) {
     };
 
     const isAllDay = event.start && !event.start.includes('T');
-    const isRecurringInstance = !!event.recurringEventId;
+    // A recurring instance has recurringEventId OR its id contains an underscore (Google's format)
+    const isRecurringInstance = !!event.recurringEventId || (event.id && event.id.includes('_'));
+    const masterEventId = event.recurringEventId || (event.id && event.id.includes('_') ? event.id.split('_')[0] : null);
 
-    // For recurring instances, fetch the master event to get the recurrence rule
+    // For recurring instances, always fetch the master event to get the recurrence rule
     let recurrenceArray = event.recurrence;
-    if (isRecurringInstance && (!recurrenceArray || recurrenceArray.length === 0)) {
+    if (isRecurringInstance && masterEventId) {
       try {
-        const masterEventId = event.recurringEventId;
         const { data } = await base44.functions.invoke('getGoogleCalendarEvents', {
           masterEventId,
           calendarId: event.calendarId,
         });
         recurrenceArray = data?.recurrence || null;
       } catch (e) {
-        // fallback: will show as non-repeating but we still know it's recurring
+        // fallback
       }
     }
 
