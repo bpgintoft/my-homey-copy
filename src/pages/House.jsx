@@ -1036,7 +1036,7 @@ export default function House() {
               disabled={!newMaintenanceTask.title || !newMaintenanceTask.category}
               className="w-full bg-gradient-to-r from-[#00D9A3] to-[#00B386] text-white"
             >
-              Add Task{newTaskAssignees.length > 0 ? ` & Assign to ${newTaskAssignees.length} member${newTaskAssignees.length > 1 ? 's' : ''}` : ''}
+              {newTaskAssignees.length > 0 ? `Add Task & Assign to ${newTaskAssignees.length} member${newTaskAssignees.length > 1 ? 's' : ''}` : 'Add Task'}
             </Button>
           </div>
         </DialogContent>
