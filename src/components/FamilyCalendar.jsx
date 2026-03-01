@@ -25,6 +25,7 @@ export default function FamilyCalendar({ activities }) {
   const [selectedCalendarIds, setSelectedCalendarIds] = useState(new Set());
   const [editingEvent, setEditingEvent] = useState(null);
   const [expandedEventId, setExpandedEventId] = useState(null);
+  const [recurringCalendarMoveDialog, setRecurringCalendarMoveDialog] = useState(null); // { eventData }
   const [newEvent, setNewEvent] = useState({
     summary: '',
     description: '',
