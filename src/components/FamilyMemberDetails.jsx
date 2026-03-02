@@ -941,8 +941,22 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                       </SelectContent>
                     </Select>
                     <div>
-                      <Label className="mb-1 block text-sm text-gray-600">Due date (optional):</Label>
-                      <Input type="date" value={newChore.next_due} onChange={(e) => setNewChore({ ...newChore, next_due: e.target.value })} />
+                      <Input
+                        type="date"
+                        value={newChore.next_due}
+                        onChange={(e) => setNewChore({ ...newChore, next_due: e.target.value })}
+                        placeholder="Enter date (optional)"
+                        className="text-gray-700 [&:not([value]):before]:content-['Enter_date_(optional)'] [&:not([value]):before]:text-gray-400"
+                        onFocus={(e) => e.target.showPicker?.()}
+                        style={!newChore.next_due ? { color: 'transparent' } : {}}
+                        onBlur={(e) => { if (!e.target.value) e.target.style.color = 'transparent'; else e.target.style.color = ''; }}
+                        onInput={(e) => { e.target.style.color = e.target.value ? '' : 'transparent'; }}
+                      />
+                      {!newChore.next_due && (
+                        <div className="relative -mt-9 ml-3 pointer-events-none">
+                          <span className="text-gray-400 text-sm">Enter date (optional)</span>
+                        </div>
+                      )}
                     </div>
                     <div>
                       <Label className="mb-2 block text-sm text-gray-600">Also assign to other family members:</Label>
