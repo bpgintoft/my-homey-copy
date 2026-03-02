@@ -469,7 +469,7 @@ export default function House() {
             <TabsTrigger value="appliances" className="border-b-2 border-transparent data-[state=active]:border-emerald-500 data-[state=active]:bg-transparent rounded-none text-xs sm:text-sm py-3 px-3">Appliances</TabsTrigger>
             <TabsTrigger value="maintenance" className="border-b-2 border-transparent data-[state=active]:border-emerald-500 data-[state=active]:bg-transparent rounded-none text-xs sm:text-sm py-3 px-3">Maintenance</TabsTrigger>
             <TabsTrigger value="hardware" className="border-b-2 border-transparent data-[state=active]:border-emerald-500 data-[state=active]:bg-transparent rounded-none text-xs sm:text-sm py-3 px-3">
-              <ShoppingCart className="w-3 h-3 mr-1 hidden sm:inline" />Hardware
+              <ShoppingCart className="w-3 h-3 mr-1" />Shop
             </TabsTrigger>
           </TabsList>
 
