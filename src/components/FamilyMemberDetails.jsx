@@ -1012,7 +1012,14 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                                               </div>
                                             )}
                                           </div>
-                                          <div className="flex-shrink-0 w-8 flex items-center justify-center">
+                                          <div className="flex-shrink-0 flex items-center gap-0.5">
+                                            <button
+                                              className="p-1 rounded hover:bg-blue-50 transition-colors"
+                                              title="Sync to Google Calendar"
+                                              onClick={() => setSyncCalendarChore(chore)}
+                                            >
+                                              <CalendarPlus className="w-4 h-4 text-blue-400" />
+                                            </button>
                                             {chore.maintenance_task_id ? (
                                               <button
                                                 onClick={() => setLinkedMaintenanceSheetChore(chore)}
