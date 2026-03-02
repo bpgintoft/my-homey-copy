@@ -464,10 +464,13 @@ export default function House() {
 
       <div className="container mx-auto px-6 py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="bg-white shadow-sm border-b-2 border-gray-200 rounded-none">
-            <TabsTrigger value="rooms" className="border-b-2 border-transparent data-[state=active]:border-emerald-500 data-[state=active]:bg-transparent rounded-none">Rooms</TabsTrigger>
-            <TabsTrigger value="appliances" className="border-b-2 border-transparent data-[state=active]:border-emerald-500 data-[state=active]:bg-transparent rounded-none">Appliances</TabsTrigger>
-            <TabsTrigger value="maintenance" className="border-b-2 border-transparent data-[state=active]:border-emerald-500 data-[state=active]:bg-transparent rounded-none">Maintenance</TabsTrigger>
+          <TabsList className="bg-white shadow-sm border-b-2 border-gray-200 rounded-none w-full justify-start overflow-x-auto">
+            <TabsTrigger value="rooms" className="border-b-2 border-transparent data-[state=active]:border-emerald-500 data-[state=active]:bg-transparent rounded-none whitespace-nowrap">Rooms</TabsTrigger>
+            <TabsTrigger value="appliances" className="border-b-2 border-transparent data-[state=active]:border-emerald-500 data-[state=active]:bg-transparent rounded-none whitespace-nowrap">Appliances</TabsTrigger>
+            <TabsTrigger value="maintenance" className="border-b-2 border-transparent data-[state=active]:border-emerald-500 data-[state=active]:bg-transparent rounded-none whitespace-nowrap">Maintenance</TabsTrigger>
+            <TabsTrigger value="hardware" className="border-b-2 border-transparent data-[state=active]:border-emerald-500 data-[state=active]:bg-transparent rounded-none whitespace-nowrap">
+              <ShoppingCart className="w-3.5 h-3.5 mr-1.5" />Hardware List
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="rooms" className="space-y-6">
