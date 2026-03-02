@@ -90,7 +90,7 @@ export default function HardwareList() {
           onChange={(e) => setNewItem({ ...newItem, quantity: e.target.value })}
           className="w-32 flex-shrink-0"
         />
-        <Select value={newItem.category} onValueChange={(v) => setNewItem({ ...newItem, category: v })}>
+        <Select value={newItem.category || undefined} onValueChange={(v) => setNewItem({ ...newItem, category: v })}>
           <SelectTrigger className="w-36 flex-shrink-0">
             <SelectValue placeholder="Category" />
           </SelectTrigger>
