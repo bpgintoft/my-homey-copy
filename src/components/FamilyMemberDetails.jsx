@@ -197,6 +197,23 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
 
       // Delete all old chores (this one + siblings)
       await Promise.all(allChoreIds.map(id => base44.entities.Chore.delete(id)));
+
+      // Notify all other adult family members of the completed maintenance task
+      const allMembers = await base44.entities.FamilyMember.list();
+      const otherAdults = allMembers.filter(m => m.id !== memberId && m.person_type === 'adult');
+      await Promise.all(
+        otherAdults.map(adult =>
+          base44.entities.Notification.create({
+            recipient_member_id: adult.id,
+            triggering_member_name: memberName,
+            triggering_member_id: memberId,
+            chore_title: choreData.title,
+            chore_id: choreId,
+            completed_date: new Date().toISOString(),
+            is_read: false,
+          })
+        )
+      );
     },
     onSuccess: () => {
       queryClient.invalidateQueries(['chores', memberId]);
