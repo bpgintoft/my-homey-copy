@@ -238,10 +238,22 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
   });
 
   const updateChoreMutation = useMutation({
-    mutationFn: async ({ id, title, linked_chore_ids }) => {
+    mutationFn: async ({ id, title, linked_chore_ids, chore }) => {
       await base44.entities.Chore.update(id, { title });
       if (linked_chore_ids?.length) {
         await Promise.all(linked_chore_ids.map(sibId => base44.entities.Chore.update(sibId, { title })));
+      }
+      // Auto-sync to Google Calendar if linked
+      if (chore?.synced_google_calendar_id && chore?.synced_google_event_id) {
+        await base44.functions.invoke('updateGoogleCalendarEvent', {
+          calendarId: chore.synced_google_calendar_id,
+          eventId: chore.synced_google_event_id,
+          summary: title,
+          description: `Family to-do: ${title}`,
+          start: chore.next_due || null,
+          end: chore.next_due || null,
+          isAllDay: true,
+        });
       }
     },
     onSuccess: () => {
