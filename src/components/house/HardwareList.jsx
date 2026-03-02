@@ -38,12 +38,13 @@ export default function HardwareList() {
     onSuccess: () => queryClient.invalidateQueries(['hardwareItems']),
   });
 
-  const handleAdd = () => {
+  const handleAdd = (e) => {
+    if (e) { e.preventDefault(); e.stopPropagation(); }
     if (!newItem.name.trim()) return;
     createMutation.mutate({
       name: newItem.name.trim(),
       category: newItem.category || 'other',
-      quantity: newItem.quantity.trim(),
+      quantity: (newItem.quantity || '').trim(),
       purchased: false,
     });
   };
