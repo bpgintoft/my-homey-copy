@@ -66,10 +66,26 @@ export default function CoAssignedChorePanel({ chore, onEdit }) {
       <div className="bg-white mx-3 mb-3 rounded-lg p-4 space-y-3">
         <div>
           <h3 className="font-bold text-gray-900 text-base">{chore.title}</h3>
-          {chore.next_due && (
-            <div className="flex items-center gap-1.5 mt-1 text-sm text-gray-500">
+          {editingDue ? (
+            <div className="flex items-center gap-2 mt-2">
+              <input
+                type="date"
+                value={newDue}
+                onChange={(e) => setNewDue(e.target.value)}
+                className="border rounded px-2 py-1 text-sm"
+                autoFocus
+              />
+              <Button size="sm" onClick={() => updateDueMutation.mutate(newDue)} disabled={updateDueMutation.isPending}>Save</Button>
+              <Button size="sm" variant="ghost" onClick={() => setEditingDue(false)}>Cancel</Button>
+            </div>
+          ) : (
+            <div
+              className="flex items-center gap-1.5 mt-1 text-sm text-gray-500 cursor-pointer hover:text-blue-600 group"
+              onClick={() => setEditingDue(true)}
+            >
               <Calendar className="w-3.5 h-3.5" />
-              <span>Due: {new Date(chore.next_due + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+              <span>{chore.next_due ? `Due: ${new Date(chore.next_due + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}` : 'Set due date'}</span>
+              <span className="text-xs text-blue-400 opacity-0 group-hover:opacity-100 ml-1">✏️</span>
             </div>
           )}
         </div>
