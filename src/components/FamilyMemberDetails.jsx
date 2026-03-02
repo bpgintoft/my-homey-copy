@@ -45,6 +45,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
   const [newChoreCoAssignees, setNewChoreCoAssignees] = useState([]);
   const [editingChoreId, setEditingChoreId] = useState(null);
   const [editingChoreTitle, setEditingChoreTitle] = useState('');
+  const [editingChoreRef, setEditingChoreRef] = useState(null);
   const [newMilestone, setNewMilestone] = useState({ title: '', date: '', description: '' });
   const [newContact, setNewContact] = useState({ name: '', type: '', phone: '', email: '', address: '', website: '', linked_to_member_ids: ['Everyone'] });
   const [editingContact, setEditingContact] = useState(null);
