@@ -14,7 +14,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Label } from "@/components/ui/label";
-import { Plus, Home as HomeIcon, Package, FileText, ExternalLink, Calendar, Sparkles, Upload, Loader2, X, Wrench } from 'lucide-react';
+import { Plus, Home as HomeIcon, Package, FileText, ExternalLink, Calendar, Sparkles, Upload, Loader2, X, Wrench, ShoppingCart } from 'lucide-react';
+import HardwareList from '../components/house/HardwareList';
 
 import { motion, AnimatePresence } from 'framer-motion';
 import { getThumbnailUrl } from '../components/imageHelpers';
