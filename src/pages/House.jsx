@@ -464,11 +464,11 @@ export default function House() {
 
       <div className="container mx-auto px-6 py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="bg-white shadow-sm border-b-2 border-gray-200 rounded-none w-full grid grid-cols-4 p-0 h-auto">
-            <TabsTrigger value="rooms" className="border-b-2 border-transparent data-[state=active]:border-emerald-500 data-[state=active]:bg-transparent rounded-none text-xs sm:text-sm py-3 flex-1 justify-center">Rooms</TabsTrigger>
-            <TabsTrigger value="appliances" className="border-b-2 border-transparent data-[state=active]:border-emerald-500 data-[state=active]:bg-transparent rounded-none text-xs sm:text-sm py-3 flex-1 justify-center">Appliances</TabsTrigger>
-            <TabsTrigger value="maintenance" className="border-b-2 border-transparent data-[state=active]:border-emerald-500 data-[state=active]:bg-transparent rounded-none text-xs sm:text-sm py-3 flex-1 justify-center">Maintenance</TabsTrigger>
-            <TabsTrigger value="hardware" className="border-b-2 border-transparent data-[state=active]:border-emerald-500 data-[state=active]:bg-transparent rounded-none text-xs sm:text-sm py-3 flex-1 justify-center">
+          <TabsList className="bg-white shadow-sm border-b-2 border-gray-200 rounded-none w-full flex justify-around p-0 h-auto">
+            <TabsTrigger value="rooms" className="border-b-2 border-transparent data-[state=active]:border-emerald-500 data-[state=active]:bg-transparent rounded-none text-xs sm:text-sm py-3 px-3">Rooms</TabsTrigger>
+            <TabsTrigger value="appliances" className="border-b-2 border-transparent data-[state=active]:border-emerald-500 data-[state=active]:bg-transparent rounded-none text-xs sm:text-sm py-3 px-3">Appliances</TabsTrigger>
+            <TabsTrigger value="maintenance" className="border-b-2 border-transparent data-[state=active]:border-emerald-500 data-[state=active]:bg-transparent rounded-none text-xs sm:text-sm py-3 px-3">Maintenance</TabsTrigger>
+            <TabsTrigger value="hardware" className="border-b-2 border-transparent data-[state=active]:border-emerald-500 data-[state=active]:bg-transparent rounded-none text-xs sm:text-sm py-3 px-3">
               <ShoppingCart className="w-3 h-3 mr-1 hidden sm:inline" />Hardware
             </TabsTrigger>
           </TabsList>
