@@ -1100,6 +1100,13 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
         </SheetContent>
       </Sheet>
 
+      {/* Sync Chore to Google Calendar */}
+      <SyncChoreToCalendarDialog
+        open={!!syncCalendarChore}
+        onOpenChange={(open) => !open && setSyncCalendarChore(null)}
+        chore={syncCalendarChore}
+      />
+
       {/* Linked Maintenance Task Side Sheet */}
       <Sheet open={!!linkedMaintenanceSheetChore} onOpenChange={(open) => !open && setLinkedMaintenanceSheetChore(null)}>
         <SheetContent side="right" className="w-full sm:max-w-md overflow-y-auto">
