@@ -100,13 +100,14 @@ export default function HardwareList() {
             ))}
           </SelectContent>
         </Select>
-        <Button
+        <button
+          type="button"
           onClick={handleAdd}
           disabled={!newItem.name.trim()}
-          className="bg-gradient-to-r from-[#00D9A3] to-[#00B386] text-white flex-shrink-0"
+          className="bg-gradient-to-r from-[#00D9A3] to-[#00B386] text-white flex-shrink-0 px-4 py-2 rounded-md disabled:opacity-50 flex items-center justify-center"
         >
           <Plus className="w-4 h-4" />
-        </Button>
+        </button>
       </div>
 
       {/* List */}
