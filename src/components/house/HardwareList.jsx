@@ -49,6 +49,8 @@ export default function HardwareList() {
     onSuccess: () => queryClient.invalidateQueries(['hardwareItems']),
   });
 
+  const [editingNames, setEditingNames] = useState({});
+
   const updateNameMutation = useMutation({
     mutationFn: ({ id, name }) => base44.entities.HardwareItem.update(id, { name }),
     onSuccess: () => queryClient.invalidateQueries(['hardwareItems']),
