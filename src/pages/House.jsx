@@ -792,6 +792,10 @@ export default function House() {
               </Card>
             )}
           </TabsContent>
+
+          <TabsContent value="hardware" className="space-y-6">
+            <HardwareList />
+          </TabsContent>
         </Tabs>
       </div>
 
