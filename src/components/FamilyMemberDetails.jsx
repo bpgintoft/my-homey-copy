@@ -212,23 +212,25 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
         await base44.entities.Chore.update(id, { is_completed });
         if (linked_chore_ids?.length) {
           await Promise.all(linked_chore_ids.map(sibId => base44.entities.Chore.update(sibId, { is_completed })));
+        }
 
-          // If marking complete, create notifications for co-assigned members
-          if (is_completed) {
-            const allChores = await base44.entities.Chore.list();
-            const siblingChores = allChores.filter(c => linked_chore_ids.includes(c.id));
-            await Promise.all(
-              siblingChores.map(sib =>
-                base44.entities.Notification.create({
-                  recipient_member_id: sib.assigned_to_member_id,
-                  triggering_member_name: memberName,
-                  chore_title: chore_title,
-                  chore_id: id,
-                  is_read: false,
-                })
-              )
-            );
-          }
+        // If marking complete, notify ALL other adult family members
+        if (is_completed) {
+          const allMembers = await base44.entities.FamilyMember.list();
+          const otherAdults = allMembers.filter(m => m.id !== memberId && m.person_type === 'adult');
+          await Promise.all(
+            otherAdults.map(adult =>
+              base44.entities.Notification.create({
+                recipient_member_id: adult.id,
+                triggering_member_name: memberName,
+                triggering_member_id: memberId,
+                chore_title: chore_title,
+                chore_id: id,
+                completed_date: new Date().toISOString(),
+                is_read: false,
+              })
+            )
+          );
         }
       }
       // For linked maintenance chores being completed, we handle via reschedule dialog
