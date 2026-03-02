@@ -5,6 +5,21 @@ import { Users, Calendar, ChevronDown } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 
 export default function CoAssignedChorePanel({ chore, onEdit }) {
+  const queryClient = useQueryClient();
+  const [editingDue, setEditingDue] = useState(false);
+  const [newDue, setNewDue] = useState(chore.next_due || '');
+
+  const updateDueMutation = useMutation({
+    mutationFn: async (date) => {
+      const allChoreIds = [chore.id, ...(chore.linked_chore_ids || [])];
+      await Promise.all(allChoreIds.map(id => base44.entities.Chore.update(id, { next_due: date || null })));
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(['chores']);
+      setEditingDue(false);
+    },
+  });
+
   const { data: familyMembers = [] } = useQuery({
     queryKey: ['familyMembers'],
     queryFn: () => base44.entities.FamilyMember.list(),
