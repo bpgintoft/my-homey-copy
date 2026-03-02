@@ -110,14 +110,20 @@ export default function SyncChoreToCalendarDialog({ open, onOpenChange, chore })
             </div>
           )}
 
-          <div>
-            <Label className="mb-1 block text-sm text-gray-600">Date</Label>
-            <Input
-              type="date"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-            />
-          </div>
+          {date ? (
+            <p className="text-sm text-gray-500">
+              Event date: <span className="font-medium text-gray-700">{new Date(date + 'T12:00:00').toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</span>
+            </p>
+          ) : (
+            <div>
+              <Label className="mb-1 block text-sm text-gray-600">Date <span className="text-gray-400">(no due date set on this chore)</span></Label>
+              <Input
+                type="date"
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
+              />
+            </div>
+          )}
 
           <div>
             <Label className="mb-2 block text-sm text-gray-600">Choose a calendar</Label>
