@@ -59,6 +59,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
   const [linkedMaintenanceSheetChore, setLinkedMaintenanceSheetChore] = useState(null);
   const [coAssignedSheetChore, setCoAssignedSheetChore] = useState(null);
   const [rescheduleChore, setRescheduleChore] = useState(null);
+  const [syncCalendarChore, setSyncCalendarChore] = useState(null);
 
   // Fetch data
   const { data: member } = useQuery({
