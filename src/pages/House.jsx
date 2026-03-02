@@ -919,7 +919,7 @@ export default function House() {
               variant="destructive"
               onClick={() => {
                 if (confirm('Delete this maintenance task?')) {
-                  deleteMaintenanceTaskMutation.mutate(editingTask.id);
+                  deleteMaintenanceTaskMutation.mutate(editingTask);
                 }
               }}
               className="w-full"
