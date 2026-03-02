@@ -23,6 +23,7 @@ export default function HardwareList() {
   const [showPurchased, setShowPurchased] = useState(false);
   const [showAddForm, setShowAddForm] = useState(false);
   const [newItem, setNewItem] = useState({ name: '', category: '', quantity: '1' });
+  const [expandedQtyId, setExpandedQtyId] = useState(null);
 
   const { data: items = [] } = useQuery({
     queryKey: ['hardwareItems'],
