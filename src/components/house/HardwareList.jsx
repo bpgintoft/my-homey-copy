@@ -4,16 +4,25 @@ import { base44 } from '@/api/base44Client';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, Trash2, Eye, EyeOff, ShoppingCart } from 'lucide-react';
-import { Card } from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Plus, Trash2, ShoppingCart } from 'lucide-react';
+import { Card, CardContent } from "@/components/ui/card";
 
-const CATEGORIES = ["plumbing", "electrical", "tools", "lumber", "paint", "hardware", "outdoor", "other"];
+const CATEGORIES = [
+  { key: 'plumbing', label: 'Plumbing', emoji: '🔧' },
+  { key: 'electrical', label: 'Electrical', emoji: '⚡' },
+  { key: 'tools', label: 'Tools', emoji: '🔨' },
+  { key: 'lumber', label: 'Lumber', emoji: '🪵' },
+  { key: 'paint', label: 'Paint', emoji: '🎨' },
+  { key: 'hardware', label: 'Hardware', emoji: '🔩' },
+  { key: 'outdoor', label: 'Outdoor', emoji: '🌿' },
+  { key: 'other', label: 'Other', emoji: '🛒' },
+];
 
 export default function HardwareList() {
   const queryClient = useQueryClient();
   const [showPurchased, setShowPurchased] = useState(false);
-  const [newItem, setNewItem] = useState({ name: '', category: '', quantity: '' });
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [newItem, setNewItem] = useState({ name: '', category: '', quantity: '1' });
 
   const { data: items = [] } = useQuery({
     queryKey: ['hardwareItems'],
@@ -24,7 +33,8 @@ export default function HardwareList() {
     mutationFn: (data) => base44.entities.HardwareItem.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries(['hardwareItems']);
-      setNewItem({ name: '', category: '', quantity: '' });
+      setNewItem({ name: '', category: '', quantity: '1' });
+      setShowAddForm(false);
     },
   });
 
@@ -33,129 +43,199 @@ export default function HardwareList() {
     onSuccess: () => queryClient.invalidateQueries(['hardwareItems']),
   });
 
+  const updateQuantityMutation = useMutation({
+    mutationFn: ({ id, quantity }) => base44.entities.HardwareItem.update(id, { quantity }),
+    onSuccess: () => queryClient.invalidateQueries(['hardwareItems']),
+  });
+
+  const updateNameMutation = useMutation({
+    mutationFn: ({ id, name }) => base44.entities.HardwareItem.update(id, { name }),
+    onSuccess: () => queryClient.invalidateQueries(['hardwareItems']),
+  });
+
   const deleteMutation = useMutation({
     mutationFn: (id) => base44.entities.HardwareItem.delete(id),
     onSuccess: () => queryClient.invalidateQueries(['hardwareItems']),
   });
 
-  const handleAdd = (e) => {
-    if (e) { e.preventDefault(); e.stopPropagation(); }
+  const clearAllMutation = useMutation({
+    mutationFn: async () => {
+      for (const item of items) {
+        await base44.entities.HardwareItem.delete(item.id);
+      }
+    },
+    onSuccess: () => queryClient.invalidateQueries(['hardwareItems']),
+  });
+
+  const handleAdd = () => {
     if (!newItem.name.trim()) return;
     createMutation.mutate({
       name: newItem.name.trim(),
       category: newItem.category || 'other',
-      quantity: (newItem.quantity || '').trim(),
+      quantity: newItem.quantity || '1',
       purchased: false,
     });
   };
 
-  const visibleItems = showPurchased ? items : items.filter(i => !i.purchased);
   const purchasedCount = items.filter(i => i.purchased).length;
 
-  const byCategory = visibleItems.reduce((acc, item) => {
-    const cat = item.category || 'other';
-    if (!acc[cat]) acc[cat] = [];
-    acc[cat].push(item);
-    return acc;
-  }, {});
-
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h2 className="text-xl font-semibold text-gray-900">Hardware Shopping List</h2>
-        {purchasedCount > 0 && (
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setShowPurchased(!showPurchased)}
-            className="text-gray-600 gap-2"
-          >
-            {showPurchased ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-            {showPurchased ? 'Hide' : 'Show'} purchased ({purchasedCount})
-          </Button>
+    <div className="space-y-4">
+      {/* Action bar */}
+      <div className="flex gap-1.5">
+        <Button
+          onClick={() => setShowAddForm(!showAddForm)}
+          size="sm"
+          className="bg-gradient-to-r from-[#00D9A3] to-[#00B386] text-white"
+        >
+          <Plus className="w-4 h-4 mr-1" />
+          Add
+        </Button>
+        {items.length > 0 && (
+          <>
+            <Button
+              onClick={() => setShowPurchased(!showPurchased)}
+              size="sm"
+              variant="outline"
+              className="flex-1 border-emerald-200 text-emerald-600 hover:bg-emerald-50 whitespace-nowrap text-xs"
+            >
+              {showPurchased ? 'Hide' : 'Show'} Purchased ({purchasedCount})
+            </Button>
+            <Button
+              onClick={() => clearAllMutation.mutate()}
+              disabled={clearAllMutation.isPending}
+              size="sm"
+              variant="outline"
+              className="border-red-200 text-red-600 hover:bg-red-50"
+            >
+              <Trash2 className="w-4 h-4 mr-1" />
+              Clear
+            </Button>
+          </>
         )}
       </div>
 
-      {/* Add item row */}
-      <div className="flex gap-2 flex-wrap sm:flex-nowrap">
-        <Input
-          placeholder="Item name"
-          value={newItem.name}
-          onChange={(e) => setNewItem({ ...newItem, name: e.target.value })}
-          onKeyDown={(e) => e.key === 'Enter' && handleAdd()}
-          className="flex-1 min-w-0"
-        />
-        <Input
-          placeholder="Qty (optional)"
-          value={newItem.quantity}
-          onChange={(e) => setNewItem({ ...newItem, quantity: e.target.value })}
-          className="w-32 flex-shrink-0"
-        />
-        <Select value={newItem.category || undefined} onValueChange={(v) => setNewItem({ ...newItem, category: v })}>
-          <SelectTrigger className="w-36 flex-shrink-0">
-            <SelectValue placeholder="Category" />
-          </SelectTrigger>
-          <SelectContent>
-            {CATEGORIES.map(c => (
-              <SelectItem key={c} value={c} className="capitalize">{c}</SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        <button
-          type="button"
-          onMouseDown={(e) => { e.preventDefault(); handleAdd(e); }}
-          disabled={!newItem.name.trim()}
-          className="bg-gradient-to-r from-[#00D9A3] to-[#00B386] text-white flex-shrink-0 px-4 py-2 rounded-md disabled:opacity-50 flex items-center justify-center"
-        >
-          <Plus className="w-4 h-4" />
-        </button>
-      </div>
+      {/* Add form */}
+      {showAddForm && (
+        <Card className="bg-white border-0 shadow-sm">
+          <CardContent className="p-4 space-y-3">
+            <Input
+              placeholder="Item name"
+              value={newItem.name}
+              onChange={(e) => setNewItem({ ...newItem, name: e.target.value })}
+              onKeyDown={(e) => e.key === 'Enter' && handleAdd()}
+              autoFocus
+            />
+            <Select value={newItem.category || undefined} onValueChange={(v) => setNewItem({ ...newItem, category: v })}>
+              <SelectTrigger>
+                <SelectValue placeholder="Category" />
+              </SelectTrigger>
+              <SelectContent>
+                {CATEGORIES.map(c => (
+                  <SelectItem key={c.key} value={c.key}>{c.emoji} {c.label}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <div className="flex gap-2">
+              <Button
+                onClick={handleAdd}
+                disabled={!newItem.name.trim() || createMutation.isPending}
+                className="flex-1 bg-gradient-to-r from-[#00D9A3] to-[#00B386] text-white"
+              >
+                Add Item
+              </Button>
+              <Button
+                onClick={() => { setShowAddForm(false); setNewItem({ name: '', category: '', quantity: '1' }); }}
+                variant="outline"
+              >
+                Cancel
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
-      {/* List */}
-      {visibleItems.length === 0 ? (
+      {/* Empty state */}
+      {items.length === 0 ? (
         <Card className="bg-white border-0 shadow-sm p-12 text-center">
           <ShoppingCart className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">
-            {items.length === 0 ? 'No items yet' : 'All items purchased!'}
-          </h3>
-          <p className="text-gray-500">
-            {items.length === 0 ? 'Add hardware items you need to buy' : 'Toggle "Show purchased" to see them'}
-          </p>
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">Hardware Shopping List</h3>
+          <p className="text-gray-500">Add hardware items you need to buy</p>
         </Card>
       ) : (
         <div className="space-y-4">
-          {Object.entries(byCategory).map(([category, catItems]) => (
-            <div key={category}>
-              <h4 className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-2 capitalize">{category}</h4>
-              <div className="space-y-2">
-                {catItems.map(item => (
-                  <div
-                    key={item.id}
-                    className={`flex items-center gap-3 p-3 rounded-lg bg-white shadow-sm transition-opacity ${item.purchased ? 'opacity-50' : ''}`}
-                  >
-                    <Checkbox
-                      checked={item.purchased}
-                      onCheckedChange={(checked) => toggleMutation.mutate({ id: item.id, purchased: !!checked })}
-                    />
-                    <div className="flex-1 min-w-0">
-                      <span className={`text-sm font-medium ${item.purchased ? 'line-through text-gray-400' : 'text-gray-900'}`}>
-                        {item.name}
-                      </span>
-                      {item.quantity && (
-                        <span className="text-xs text-gray-400 ml-2">({item.quantity})</span>
-                      )}
-                    </div>
-                    <button
-                      onClick={() => deleteMutation.mutate(item.id)}
-                      className="p-1 rounded hover:bg-red-50 transition-colors flex-shrink-0"
-                    >
-                      <Trash2 className="w-3.5 h-3.5 text-red-400" />
-                    </button>
+          {CATEGORIES.map(({ key, label, emoji }) => {
+            const categoryItems = items.filter(item =>
+              item.category === key && (showPurchased || !item.purchased)
+            );
+            if (categoryItems.length === 0) return null;
+
+            return (
+              <Card key={key} className="bg-white border-0 shadow-sm">
+                <CardContent className="p-5">
+                  <h3 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                    <span className="text-xl">{emoji}</span>
+                    {label}
+                  </h3>
+                  <div className="space-y-2">
+                    {categoryItems.map(item => (
+                      <div
+                        key={item.id}
+                        className={`flex items-center gap-3 p-3 rounded-lg transition-all ${
+                          item.purchased ? 'bg-gray-100' : 'bg-white border-2 border-emerald-200'
+                        }`}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={item.purchased || false}
+                          onChange={(e) => toggleMutation.mutate({ id: item.id, purchased: e.target.checked })}
+                          className="w-5 h-5 rounded border-gray-300 text-emerald-600 focus:ring-emerald-500 cursor-pointer"
+                        />
+                        <div className="flex-1 min-w-0">
+                          <input
+                            type="text"
+                            value={item.name}
+                            onChange={(e) => updateNameMutation.mutate({ id: item.id, name: e.target.value })}
+                            className={`text-sm font-medium bg-transparent border-none outline-none w-full focus:bg-white focus:px-2 focus:py-1 focus:rounded transition-all ${item.purchased ? 'line-through text-gray-400' : 'text-gray-900'}`}
+                          />
+                          {item.notes && (
+                            <span className="text-xs text-gray-400">{item.notes}</span>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-1 bg-white border border-gray-200 rounded-lg">
+                          <button
+                            onClick={() => {
+                              const qty = parseInt(item.quantity) || 1;
+                              if (qty > 1) updateQuantityMutation.mutate({ id: item.id, quantity: (qty - 1).toString() });
+                            }}
+                            className="px-2 py-1 text-gray-500 hover:text-gray-900"
+                          >
+                            −
+                          </button>
+                          <span className="w-8 text-center font-medium text-sm">{item.quantity || 1}</span>
+                          <button
+                            onClick={() => {
+                              const qty = parseInt(item.quantity) || 1;
+                              updateQuantityMutation.mutate({ id: item.id, quantity: (qty + 1).toString() });
+                            }}
+                            className="px-2 py-1 text-gray-500 hover:text-gray-900"
+                          >
+                            +
+                          </button>
+                        </div>
+                        <button
+                          onClick={() => deleteMutation.mutate(item.id)}
+                          className="text-gray-400 hover:text-red-500 transition-colors p-1"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
-            </div>
-          ))}
+                </CardContent>
+              </Card>
+            );
+          })}
         </div>
       )}
     </div>
