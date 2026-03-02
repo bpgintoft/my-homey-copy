@@ -197,8 +197,15 @@ export default function HardwareList() {
                         <div className="flex-1 min-w-0">
                           <input
                             type="text"
-                            value={item.name}
-                            onChange={(e) => updateNameMutation.mutate({ id: item.id, name: e.target.value })}
+                            value={editingNames[item.id] !== undefined ? editingNames[item.id] : item.name}
+                            onChange={(e) => setEditingNames(prev => ({ ...prev, [item.id]: e.target.value }))}
+                            onBlur={(e) => {
+                              const newName = e.target.value.trim();
+                              if (newName && newName !== item.name) {
+                                updateNameMutation.mutate({ id: item.id, name: newName });
+                              }
+                              setEditingNames(prev => { const n = { ...prev }; delete n[item.id]; return n; });
+                            }}
                             className={`text-sm font-medium bg-transparent border-none outline-none w-full focus:bg-white focus:px-2 focus:py-1 focus:rounded transition-all ${item.purchased ? 'line-through text-gray-400' : 'text-gray-900'}`}
                           />
                           {item.notes && (
