@@ -401,9 +401,17 @@ export default function House() {
   });
 
   const deleteMaintenanceTaskMutation = useMutation({
-    mutationFn: (id) => base44.entities.MaintenanceTask.delete(id),
+    mutationFn: async (task) => {
+      // Delete all synced chores first
+      const choreIds = task.synced_chore_ids?.length ? task.synced_chore_ids : (task.synced_chore_id ? [task.synced_chore_id] : []);
+      if (choreIds.length > 0) {
+        await Promise.all(choreIds.map(id => base44.entities.Chore.delete(id)));
+      }
+      await base44.entities.MaintenanceTask.delete(task.id);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries(['maintenanceTasks']);
+      queryClient.invalidateQueries(['chores']);
       setEditingTask(null);
     },
   });
