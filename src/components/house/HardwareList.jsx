@@ -203,27 +203,41 @@ export default function HardwareList() {
                             <span className="text-xs text-gray-400">{item.notes}</span>
                           )}
                         </div>
-                        <div className="flex items-center gap-1 bg-white border border-gray-200 rounded-lg">
-                          <button
-                            onClick={() => {
-                              const qty = parseInt(item.quantity) || 1;
-                              if (qty > 1) updateQuantityMutation.mutate({ id: item.id, quantity: (qty - 1).toString() });
-                            }}
-                            className="px-2 py-1 text-gray-500 hover:text-gray-900"
+                        {expandedQtyId === item.id ? (
+                          <div className="flex items-center gap-1 bg-white border border-gray-200 rounded-lg">
+                            <button
+                              onClick={() => {
+                                const qty = parseInt(item.quantity) || 1;
+                                if (qty > 1) updateQuantityMutation.mutate({ id: item.id, quantity: (qty - 1).toString() });
+                              }}
+                              className="px-2 py-1 text-gray-500 hover:text-gray-900"
+                            >
+                              −
+                            </button>
+                            <span
+                              className="w-8 text-center font-medium text-sm cursor-pointer"
+                              onClick={() => setExpandedQtyId(null)}
+                            >
+                              {item.quantity || 1}
+                            </span>
+                            <button
+                              onClick={() => {
+                                const qty = parseInt(item.quantity) || 1;
+                                updateQuantityMutation.mutate({ id: item.id, quantity: (qty + 1).toString() });
+                              }}
+                              className="px-2 py-1 text-gray-500 hover:text-gray-900"
+                            >
+                              +
+                            </button>
+                          </div>
+                        ) : (
+                          <span
+                            onClick={() => setExpandedQtyId(item.id)}
+                            className="w-8 text-center font-medium text-sm cursor-pointer text-gray-700 hover:text-emerald-600"
                           >
-                            −
-                          </button>
-                          <span className="w-8 text-center font-medium text-sm">{item.quantity || 1}</span>
-                          <button
-                            onClick={() => {
-                              const qty = parseInt(item.quantity) || 1;
-                              updateQuantityMutation.mutate({ id: item.id, quantity: (qty + 1).toString() });
-                            }}
-                            className="px-2 py-1 text-gray-500 hover:text-gray-900"
-                          >
-                            +
-                          </button>
-                        </div>
+                            {item.quantity || 1}
+                          </span>
+                        )}
                         <button
                           onClick={() => deleteMutation.mutate(item.id)}
                           className="text-gray-400 hover:text-red-500 transition-colors p-1"
