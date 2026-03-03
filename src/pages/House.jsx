@@ -980,12 +980,14 @@ export default function House() {
                 <SelectItem value="urgent">Urgent</SelectItem>
               </SelectContent>
             </Select>
-            <Input
-              type="date"
-              placeholder="Next due date"
-              value={newMaintenanceTask.next_due || ''}
-              onChange={(e) => setNewMaintenanceTask({ ...newMaintenanceTask, next_due: e.target.value })}
-            />
+            <div>
+              <Label className="text-sm text-gray-600 mb-1 block">Next due date (optional)</Label>
+              <Input
+                type="date"
+                value={newMaintenanceTask.next_due || ''}
+                onChange={(e) => setNewMaintenanceTask({ ...newMaintenanceTask, next_due: e.target.value })}
+              />
+            </div>
             <Select
               value={newMaintenanceTask.frequency}
               onValueChange={(value) => setNewMaintenanceTask({ ...newMaintenanceTask, frequency: value })}
