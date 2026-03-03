@@ -134,7 +134,22 @@ export default function Layout({ children, currentPageName }) {
       </header>
 
       {/* Main Content */}
-      <main className="lg:ml-64 pt-16 lg:pt-0">
+      <main
+        ref={mainRef}
+        className="lg:ml-64 pt-16 lg:pt-0 overflow-y-auto h-screen"
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+      >
+        {/* Pull to refresh indicator */}
+        <div
+          style={{ height: pullDistance, opacity: pullDistance / 80 }}
+          className="flex items-center justify-center transition-all overflow-hidden"
+        >
+          <div className={`w-7 h-7 rounded-full border-2 border-gray-400 border-t-transparent ${isRefreshing ? 'animate-spin' : ''}`}
+            style={{ transform: `rotate(${pullDistance * 3}deg)` }}
+          />
+        </div>
         <AnimatePresence mode="wait">
           <motion.div
             key={currentPageName}
