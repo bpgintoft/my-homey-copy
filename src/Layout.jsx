@@ -162,6 +162,7 @@ export default function Layout({ children, currentPageName }) {
           </motion.div>
         </AnimatePresence>
       </main>
+
     </div>
   );
 }
