@@ -16,6 +16,36 @@ import VoiceAssistant from './components/VoiceAssistant';
 
 export default function Layout({ children, currentPageName }) {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [pullDistance, setPullDistance] = useState(0);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const touchStartY = useRef(0);
+  const mainRef = useRef(null);
+
+  const handleTouchStart = useCallback((e) => {
+    const el = mainRef.current;
+    if (el && el.scrollTop === 0) {
+      touchStartY.current = e.touches[0].clientY;
+    } else {
+      touchStartY.current = 0;
+    }
+  }, []);
+
+  const handleTouchMove = useCallback((e) => {
+    if (!touchStartY.current) return;
+    const dist = e.touches[0].clientY - touchStartY.current;
+    if (dist > 0) {
+      setPullDistance(Math.min(dist * 0.4, 80));
+    }
+  }, []);
+
+  const handleTouchEnd = useCallback(() => {
+    if (pullDistance > 60) {
+      setIsRefreshing(true);
+      setTimeout(() => window.location.reload(), 300);
+    } else {
+      setPullDistance(0);
+    }
+  }, [pullDistance]);
 
   const navItems = [
     { name: 'Home', icon: Home, href: 'Home' },
