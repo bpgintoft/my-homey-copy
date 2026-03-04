@@ -61,6 +61,55 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
   const [coAssignedSheetChore, setCoAssignedSheetChore] = useState(null);
   const [rescheduleChore, setRescheduleChore] = useState(null);
   const [syncCalendarChore, setSyncCalendarChore] = useState(null);
+  const [isCustomizing, setIsCustomizing] = useState(false);
+  const [currentUser, setCurrentUser] = React.useState(null);
+  const [customSectionOrder, setCustomSectionOrder] = useState(null); // null = use saved/default
+
+  const DEFAULT_SECTIONS = [
+    { key: 'chores', label: 'To-Do List' },
+    { key: 'schoolProgram', label: 'School & Work' },
+    { key: 'links', label: 'Important Links' },
+    { key: 'contacts', label: 'Important Contacts' },
+    { key: 'notes', label: 'Personal Notes' },
+    { key: 'milestones', label: 'Goals & Milestones' },
+    { key: 'health', label: 'Health & Medical' },
+    { key: 'documents', label: 'Documents & IDs' },
+    { key: 'vehicles', label: 'Vehicles & Travel' },
+    { key: 'personalInfo', label: 'Personal Info Hub' },
+  ];
+
+  React.useEffect(() => {
+    base44.auth.me().then(u => setCurrentUser(u)).catch(() => {});
+  }, []);
+
+  const savedOrder = currentUser?.family_member_page_layouts?.[memberId];
+  const activeSectionKeys = customSectionOrder || savedOrder || DEFAULT_SECTIONS.map(s => s.key);
+
+  const handleCustomizeDragEnd = (result) => {
+    if (!result.destination) return;
+    const newOrder = [...activeSectionKeys];
+    const [moved] = newOrder.splice(result.source.index, 1);
+    newOrder.splice(result.destination.index, 0, moved);
+    setCustomSectionOrder(newOrder);
+  };
+
+  const handleSaveLayout = async () => {
+    const updated = {
+      family_member_page_layouts: {
+        ...(currentUser?.family_member_page_layouts || {}),
+        [memberId]: activeSectionKeys,
+      }
+    };
+    await base44.auth.updateMe(updated);
+    setCurrentUser(prev => ({ ...prev, ...updated }));
+    setIsCustomizing(false);
+    setCustomSectionOrder(null);
+  };
+
+  const handleCancelCustomize = () => {
+    setIsCustomizing(false);
+    setCustomSectionOrder(null);
+  };
 
   // Fetch data
   const { data: member } = useQuery({
