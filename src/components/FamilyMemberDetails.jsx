@@ -613,54 +613,26 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
       </div>
 
       {/* 2-Column Grid for Sections */}
-      <div className="grid grid-cols-2 gap-4">
-        <Card className="cursor-pointer hover:shadow-lg transition-shadow flex items-center" onClick={() => setExpandedSection('chores')}>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-3"><ListTodo className={`w-8 h-8 flex-shrink-0 ${iconColor}`} />To-Do List</CardTitle>
-          </CardHeader>
-        </Card>
-
-        <Card className="cursor-pointer hover:shadow-lg transition-shadow flex items-center" onClick={() => setExpandedSection('schoolProgram')}>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-3"><Briefcase className={`w-8 h-8 flex-shrink-0 ${member?.person_type !== 'adult' ? 'hidden' : ''} ${iconColor}`} /><GraduationCap className={`w-8 h-8 flex-shrink-0 ${member?.person_type === 'adult' ? 'hidden' : ''} ${iconColor}`} />{member?.school_or_work_name || 'School & Work'}</CardTitle>
-          </CardHeader>
-        </Card>
-
-        <Card className="cursor-pointer hover:shadow-lg transition-shadow flex items-center" onClick={() => setExpandedSection('links')}>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-3"><Link2 className={`w-8 h-8 flex-shrink-0 ${iconColor}`} />Important Links</CardTitle>
-          </CardHeader>
-        </Card>
-
-        <Card className="cursor-pointer hover:shadow-lg transition-shadow flex items-center" onClick={() => setExpandedSection('contacts')}>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-3"><Users className={`w-8 h-8 flex-shrink-0 ${iconColor}`} />Important Contacts</CardTitle>
-          </CardHeader>
-        </Card>
-
-        <Card className="cursor-pointer hover:shadow-lg transition-shadow flex items-center" onClick={() => setExpandedSection('notes')}>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-3"><Lightbulb className={`w-8 h-8 flex-shrink-0 ${iconColor}`} />Personal Notes</CardTitle>
-          </CardHeader>
-        </Card>
-
-        <Card className="cursor-pointer hover:shadow-lg transition-shadow flex items-center" onClick={() => setExpandedSection('milestones')}>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-3"><Target className={`w-8 h-8 flex-shrink-0 ${iconColor}`} />Goals & Milestones</CardTitle>
-          </CardHeader>
-        </Card>
-
-        <Card className="cursor-pointer hover:shadow-lg transition-shadow flex items-center" onClick={() => setExpandedSection('health')}>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-3"><HeartPulse className={`w-8 h-8 flex-shrink-0 ${iconColor}`} />Health & Medical</CardTitle>
-          </CardHeader>
-        </Card>
-
-        <Card className="cursor-pointer hover:shadow-lg transition-shadow flex items-center" onClick={() => setExpandedSection('documents')}>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-3"><FolderOpen className={`w-8 h-8 flex-shrink-0 ${iconColor}`} />Documents & IDs</CardTitle>
-          </CardHeader>
-        </Card>
+      <div className="grid grid-cols-2 gap-2">
+        {[
+          { key: 'chores', icon: <ListTodo className={`w-5 h-5 flex-shrink-0 ${iconColor}`} />, label: 'To-Do List' },
+          { key: 'schoolProgram', icon: member?.person_type !== 'adult' ? <GraduationCap className={`w-5 h-5 flex-shrink-0 ${iconColor}`} /> : <Briefcase className={`w-5 h-5 flex-shrink-0 ${iconColor}`} />, label: member?.school_or_work_name || 'School & Work' },
+          { key: 'links', icon: <Link2 className={`w-5 h-5 flex-shrink-0 ${iconColor}`} />, label: 'Important Links' },
+          { key: 'contacts', icon: <Users className={`w-5 h-5 flex-shrink-0 ${iconColor}`} />, label: 'Important Contacts' },
+          { key: 'notes', icon: <Lightbulb className={`w-5 h-5 flex-shrink-0 ${iconColor}`} />, label: 'Personal Notes' },
+          { key: 'milestones', icon: <Target className={`w-5 h-5 flex-shrink-0 ${iconColor}`} />, label: 'Goals & Milestones' },
+          { key: 'health', icon: <HeartPulse className={`w-5 h-5 flex-shrink-0 ${iconColor}`} />, label: 'Health & Medical' },
+          { key: 'documents', icon: <FolderOpen className={`w-5 h-5 flex-shrink-0 ${iconColor}`} />, label: 'Documents & IDs' },
+        ].map(({ key, icon, label }) => (
+          <button
+            key={key}
+            onClick={() => setExpandedSection(key)}
+            className={`flex items-center gap-2 p-3 rounded-lg border bg-white hover:shadow-md transition-shadow text-left w-full`}
+          >
+            {icon}
+            <span className="font-semibold text-sm text-gray-800 leading-tight">{label}</span>
+          </button>
+        ))}
       </div>
 
       {/* Links Dialog */}
