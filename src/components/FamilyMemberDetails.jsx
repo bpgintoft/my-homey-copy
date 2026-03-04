@@ -948,7 +948,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
         <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto top-4 translate-y-0">
           <DialogHeader>
             <DialogTitle className="flex items-center justify-between">
-              <span>To-Do List & Chores</span>
+              <span>To-Do List</span>
               <Dialog open={dialogOpen.chore} onOpenChange={(open) => setDialogOpen({ ...dialogOpen, chore: open })}>
                 <DialogTrigger asChild>
                   <Button size="sm" className="mr-10">
