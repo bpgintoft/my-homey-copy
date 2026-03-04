@@ -1243,6 +1243,26 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
         </DialogContent>
       </Dialog>
 
+      {/* Health & Medical Dialog */}
+      <Dialog open={expandedSection === 'health'} onOpenChange={(open) => !open && setExpandedSection(null)}>
+        <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto top-4 translate-y-0">
+          <DialogHeader>
+            <DialogTitle>Health & Medical</DialogTitle>
+          </DialogHeader>
+          <p className="text-sm text-gray-500">Health & Medical information coming soon.</p>
+        </DialogContent>
+      </Dialog>
+
+      {/* Documents & IDs Dialog */}
+      <Dialog open={expandedSection === 'documents'} onOpenChange={(open) => !open && setExpandedSection(null)}>
+        <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto top-4 translate-y-0">
+          <DialogHeader>
+            <DialogTitle>Documents & IDs</DialogTitle>
+          </DialogHeader>
+          <p className="text-sm text-gray-500">Documents & IDs coming soon.</p>
+        </DialogContent>
+      </Dialog>
+
       {/* School Program Dialog */}
       <Dialog open={expandedSection === 'schoolProgram'} onOpenChange={(open) => !open && setExpandedSection(null)}>
         <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto top-4 translate-y-0">
