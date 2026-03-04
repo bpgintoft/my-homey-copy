@@ -288,14 +288,22 @@ export default function SchoolProgramSection({ memberId, memberName, programTitl
                   )}
                 </div>
               ) : (
-                <Input
-                  type="url"
-                  placeholder="https://..."
-                  value={program.url || ''}
-                  onChange={(e) => handleUpdateUrl(e.target.value)}
-                  onBlur={(e) => handleUpdateUrl(e.target.value)}
-                  className="mt-1"
-                />
+                <div className="space-y-2">
+                  <Input
+                    placeholder="Display title (e.g. School Portal)"
+                    defaultValue={program.website_title || ''}
+                    onBlur={(e) => handleUpdateWebsiteTitle(e.target.value)}
+                    className="text-sm"
+                  />
+                  <Input
+                    type="url"
+                    placeholder="https://..."
+                    value={program.url || ''}
+                    onChange={(e) => handleUpdateUrl(e.target.value)}
+                    onBlur={(e) => handleUpdateUrl(e.target.value)}
+                    className="text-sm"
+                  />
+                </div>
               )}
             </div>
 
