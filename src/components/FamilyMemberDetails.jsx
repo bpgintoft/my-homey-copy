@@ -662,28 +662,111 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
       </div>
 
       {/* 2-Column Grid for Sections */}
-      <div className="grid grid-cols-2 gap-2">
-        {[
-          { key: 'chores', icon: <ListTodo className={`w-5 h-5 flex-shrink-0 ${iconColor}`} />, label: 'To-Do List' },
-          { key: 'schoolProgram', icon: member?.person_type !== 'adult' ? <GraduationCap className={`w-5 h-5 flex-shrink-0 ${iconColor}`} /> : <Briefcase className={`w-5 h-5 flex-shrink-0 ${iconColor}`} />, label: member?.school_or_work_name || 'School & Work' },
-          { key: 'links', icon: <Link2 className={`w-5 h-5 flex-shrink-0 ${iconColor}`} />, label: 'Important Links' },
-          { key: 'contacts', icon: <Users className={`w-5 h-5 flex-shrink-0 ${iconColor}`} />, label: 'Important Contacts' },
-          { key: 'notes', icon: <Lightbulb className={`w-5 h-5 flex-shrink-0 ${iconColor}`} />, label: 'Personal Notes' },
-          { key: 'milestones', icon: <Target className={`w-5 h-5 flex-shrink-0 ${iconColor}`} />, label: 'Goals & Milestones' },
-          { key: 'health', icon: <HeartPulse className={`w-5 h-5 flex-shrink-0 ${iconColor}`} />, label: 'Health & Medical' },
-          { key: 'documents', icon: <FolderOpen className={`w-5 h-5 flex-shrink-0 ${iconColor}`} />, label: 'Documents & IDs' },
-          { key: 'vehicles', icon: <Car className={`w-5 h-5 flex-shrink-0 ${iconColor}`} />, label: 'Vehicles & Travel' },
-          { key: 'personalInfo', icon: <User className={`w-5 h-5 flex-shrink-0 ${iconColor}`} />, label: 'Personal Info Hub' },
-        ].map(({ key, icon, label }) => (
-          <button
-            key={key}
-            onClick={() => setExpandedSection(key)}
-            className={`flex items-center gap-2 p-3 rounded-lg border bg-white hover:shadow-md transition-shadow text-left w-full`}
-          >
-            {icon}
-            <span className="font-semibold text-sm text-gray-800 leading-tight">{label}</span>
-          </button>
-        ))}
+      <div className="space-y-2">
+        <div className="flex justify-end">
+          {isCustomizing ? (
+            <div className="flex gap-2">
+              <button
+                onClick={handleSaveLayout}
+                className="flex items-center gap-1 text-xs px-2.5 py-1 rounded-full bg-green-100 text-green-700 hover:bg-green-200 transition-colors font-medium"
+              >
+                <Check className="w-3 h-3" /> Save
+              </button>
+              <button
+                onClick={handleCancelCustomize}
+                className="flex items-center gap-1 text-xs px-2.5 py-1 rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors font-medium"
+              >
+                <X className="w-3 h-3" /> Cancel
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={() => setIsCustomizing(true)}
+              className="flex items-center gap-1 text-xs px-2.5 py-1 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 transition-colors"
+              title="Customize section order"
+            >
+              <Settings2 className="w-3 h-3" /> Customize
+            </button>
+          )}
+        </div>
+
+        {(() => {
+          const sectionIconMap = {
+            chores: <ListTodo className={`w-5 h-5 flex-shrink-0 ${iconColor}`} />,
+            schoolProgram: member?.person_type !== 'adult' ? <GraduationCap className={`w-5 h-5 flex-shrink-0 ${iconColor}`} /> : <Briefcase className={`w-5 h-5 flex-shrink-0 ${iconColor}`} />,
+            links: <Link2 className={`w-5 h-5 flex-shrink-0 ${iconColor}`} />,
+            contacts: <Users className={`w-5 h-5 flex-shrink-0 ${iconColor}`} />,
+            notes: <Lightbulb className={`w-5 h-5 flex-shrink-0 ${iconColor}`} />,
+            milestones: <Target className={`w-5 h-5 flex-shrink-0 ${iconColor}`} />,
+            health: <HeartPulse className={`w-5 h-5 flex-shrink-0 ${iconColor}`} />,
+            documents: <FolderOpen className={`w-5 h-5 flex-shrink-0 ${iconColor}`} />,
+            vehicles: <Car className={`w-5 h-5 flex-shrink-0 ${iconColor}`} />,
+            personalInfo: <User className={`w-5 h-5 flex-shrink-0 ${iconColor}`} />,
+          };
+          const sectionLabelMap = {
+            chores: 'To-Do List',
+            schoolProgram: member?.school_or_work_name || 'School & Work',
+            links: 'Important Links',
+            contacts: 'Important Contacts',
+            notes: 'Personal Notes',
+            milestones: 'Goals & Milestones',
+            health: 'Health & Medical',
+            documents: 'Documents & IDs',
+            vehicles: 'Vehicles & Travel',
+            personalInfo: 'Personal Info Hub',
+          };
+
+          const orderedSections = activeSectionKeys.map(key => ({ key, icon: sectionIconMap[key], label: sectionLabelMap[key] }));
+
+          if (isCustomizing) {
+            return (
+              <DragDropContext onDragEnd={handleCustomizeDragEnd}>
+                <Droppable droppableId="section-grid" direction="horizontal">
+                  {(provided) => (
+                    <div
+                      ref={provided.innerRef}
+                      {...provided.droppableProps}
+                      className="grid grid-cols-2 gap-2"
+                    >
+                      {orderedSections.map(({ key, icon, label }, index) => (
+                        <Draggable key={key} draggableId={key} index={index}>
+                          {(provided, snapshot) => (
+                            <div
+                              ref={provided.innerRef}
+                              {...provided.draggableProps}
+                              {...provided.dragHandleProps}
+                              className={`flex items-center gap-2 p-3 rounded-lg border bg-white text-left w-full cursor-grab active:cursor-grabbing select-none ${snapshot.isDragging ? 'shadow-lg ring-2 ring-blue-300 opacity-90' : 'shadow-sm'}`}
+                            >
+                              <GripVertical className="w-4 h-4 text-gray-300 flex-shrink-0" />
+                              {icon}
+                              <span className="font-semibold text-sm text-gray-800 leading-tight">{label}</span>
+                            </div>
+                          )}
+                        </Draggable>
+                      ))}
+                      {provided.placeholder}
+                    </div>
+                  )}
+                </Droppable>
+              </DragDropContext>
+            );
+          }
+
+          return (
+            <div className="grid grid-cols-2 gap-2">
+              {orderedSections.map(({ key, icon, label }) => (
+                <button
+                  key={key}
+                  onClick={() => setExpandedSection(key)}
+                  className="flex items-center gap-2 p-3 rounded-lg border bg-white hover:shadow-md transition-shadow text-left w-full"
+                >
+                  {icon}
+                  <span className="font-semibold text-sm text-gray-800 leading-tight">{label}</span>
+                </button>
+              ))}
+            </div>
+          );
+        })()}
       </div>
 
       {/* Links Dialog */}
