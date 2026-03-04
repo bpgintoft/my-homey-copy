@@ -1237,6 +1237,26 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
         </DialogContent>
       </Dialog>
 
+      {/* Vehicles & Travel Dialog */}
+      <Dialog open={expandedSection === 'vehicles'} onOpenChange={(open) => !open && setExpandedSection(null)}>
+        <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto top-4 translate-y-0">
+          <DialogHeader>
+            <DialogTitle>Vehicles & Travel</DialogTitle>
+          </DialogHeader>
+          <p className="text-sm text-gray-500">Vehicles & Travel information coming soon.</p>
+        </DialogContent>
+      </Dialog>
+
+      {/* Personal Info Hub Dialog */}
+      <Dialog open={expandedSection === 'personalInfo'} onOpenChange={(open) => !open && setExpandedSection(null)}>
+        <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto top-4 translate-y-0">
+          <DialogHeader>
+            <DialogTitle>Personal Info Hub</DialogTitle>
+          </DialogHeader>
+          <p className="text-sm text-gray-500">Personal Info Hub coming soon.</p>
+        </DialogContent>
+      </Dialog>
+
       {/* School Program Dialog */}
       <Dialog open={expandedSection === 'schoolProgram'} onOpenChange={(open) => !open && setExpandedSection(null)}>
         <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto top-4 translate-y-0">
