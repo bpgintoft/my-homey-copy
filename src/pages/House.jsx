@@ -20,6 +20,7 @@ import HardwareList from '../components/house/HardwareList';
 import { motion, AnimatePresence } from 'framer-motion';
 import { getThumbnailUrl } from '../components/imageHelpers';
 import MaintenanceTips from '../components/house/MaintenanceTips';
+import ApplianceDocuments from '../components/house/ApplianceDocuments';
 import MaintenanceTaskCard from '../components/house/MaintenanceTaskCard';
 import SyncToChoreDialog from '../components/house/SyncToChoreDialog';
 import SyncToCalendarDialog from '../components/house/SyncToCalendarDialog';
