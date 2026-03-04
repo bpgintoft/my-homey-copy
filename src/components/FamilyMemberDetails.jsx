@@ -662,33 +662,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
       </div>
 
       {/* 2-Column Grid for Sections */}
-      <div className="space-y-2">
-        <div className="flex justify-end">
-          {isCustomizing ? (
-            <div className="flex gap-2">
-              <button
-                onClick={handleSaveLayout}
-                className="flex items-center gap-1 text-xs px-2.5 py-1 rounded-full bg-green-100 text-green-700 hover:bg-green-200 transition-colors font-medium"
-              >
-                <Check className="w-3 h-3" /> Save
-              </button>
-              <button
-                onClick={handleCancelCustomize}
-                className="flex items-center gap-1 text-xs px-2.5 py-1 rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors font-medium"
-              >
-                <X className="w-3 h-3" /> Cancel
-              </button>
-            </div>
-          ) : (
-            <button
-              onClick={() => setIsCustomizing(true)}
-              className="flex items-center gap-1 text-xs px-2.5 py-1 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 transition-colors"
-              title="Customize section order"
-            >
-              <Settings2 className="w-3 h-3" /> Customize
-            </button>
-          )}
-        </div>
+      <div className="relative">
 
         {(() => {
           const sectionIconMap = {
