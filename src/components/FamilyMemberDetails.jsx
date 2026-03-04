@@ -616,7 +616,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
       <div className="grid grid-cols-2 gap-4">
         <Card className="cursor-pointer hover:shadow-lg transition-shadow flex items-center" onClick={() => setExpandedSection('chores')}>
           <CardHeader>
-            <CardTitle className="flex items-center gap-3"><ListTodo className={`w-8 h-8 flex-shrink-0 ${iconColor}`} />To-Do List & Chores</CardTitle>
+            <CardTitle className="flex items-center gap-3"><ListTodo className={`w-8 h-8 flex-shrink-0 ${iconColor}`} />To-Do List</CardTitle>
           </CardHeader>
         </Card>
 
@@ -640,13 +640,25 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
 
         <Card className="cursor-pointer hover:shadow-lg transition-shadow flex items-center" onClick={() => setExpandedSection('notes')}>
           <CardHeader>
-            <CardTitle className="flex items-center gap-3"><Lightbulb className={`w-8 h-8 flex-shrink-0 ${iconColor}`} />Personal Notes & Reminders</CardTitle>
+            <CardTitle className="flex items-center gap-3"><Lightbulb className={`w-8 h-8 flex-shrink-0 ${iconColor}`} />Personal Notes</CardTitle>
           </CardHeader>
         </Card>
 
         <Card className="cursor-pointer hover:shadow-lg transition-shadow flex items-center" onClick={() => setExpandedSection('milestones')}>
           <CardHeader>
             <CardTitle className="flex items-center gap-3"><Target className={`w-8 h-8 flex-shrink-0 ${iconColor}`} />Goals & Milestones</CardTitle>
+          </CardHeader>
+        </Card>
+
+        <Card className="cursor-pointer hover:shadow-lg transition-shadow flex items-center" onClick={() => setExpandedSection('health')}>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-3"><HeartPulse className={`w-8 h-8 flex-shrink-0 ${iconColor}`} />Health & Medical</CardTitle>
+          </CardHeader>
+        </Card>
+
+        <Card className="cursor-pointer hover:shadow-lg transition-shadow flex items-center" onClick={() => setExpandedSection('documents')}>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-3"><FolderOpen className={`w-8 h-8 flex-shrink-0 ${iconColor}`} />Documents & IDs</CardTitle>
           </CardHeader>
         </Card>
       </div>
