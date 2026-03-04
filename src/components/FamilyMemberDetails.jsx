@@ -1345,7 +1345,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
 
       {/* Health & Medical Dialog */}
       <Dialog open={expandedSection === 'health'} onOpenChange={(open) => !open && setExpandedSection(null)}>
-        <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto top-4 translate-y-0">
+        <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto top-4 translate-y-0" onOpenAutoFocus={(e) => e.preventDefault()}>
           <DialogHeader>
             <DialogTitle>Health & Medical</DialogTitle>
           </DialogHeader>
