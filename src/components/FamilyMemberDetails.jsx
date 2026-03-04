@@ -738,10 +738,10 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                 }
 
                 return (
-                <div className="relative group/grid">
+                <div className="relative">
                 <button
                 onClick={() => setIsCustomizing(true)}
-                className="absolute -top-2 -right-2 z-10 opacity-0 group-hover/grid:opacity-100 transition-opacity w-6 h-6 rounded-full bg-gray-200 hover:bg-gray-300 flex items-center justify-center"
+                className="absolute -top-2 -right-2 z-10 w-6 h-6 rounded-full bg-gray-200 hover:bg-gray-300 flex items-center justify-center transition-colors"
                 title="Customize section order"
                 >
                 <Settings2 className="w-3 h-3 text-gray-500" />
