@@ -1190,7 +1190,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
       <Dialog open={expandedSection === 'notes'} onOpenChange={(open) => !open && setExpandedSection(null)}>
         <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto top-4 translate-y-0">
           <DialogHeader>
-            <DialogTitle>Personal Notes & Reminders</DialogTitle>
+            <DialogTitle>Personal Notes</DialogTitle>
           </DialogHeader>
           <Textarea placeholder="Add personal notes or reminders..." value={personalNotes} onChange={(e) => setPersonalNotes(e.target.value)} onBlur={() => updateNotesMutation.mutate(personalNotes)} rows={6} className="w-full" />
         </DialogContent>
