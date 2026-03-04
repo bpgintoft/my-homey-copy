@@ -70,10 +70,10 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
     { key: 'schoolProgram', label: 'School & Work' },
     { key: 'links', label: 'Important Links' },
     { key: 'contacts', label: 'Important Contacts' },
-    { key: 'notes', label: 'Personal Notes' },
     { key: 'milestones', label: 'Goals & Milestones' },
     { key: 'health', label: 'Health & Medical' },
     { key: 'documents', label: 'Documents & IDs' },
+    { key: 'notes', label: 'Personal Notes' },
     { key: 'vehicles', label: 'Vehicles & Travel' },
     { key: 'personalInfo', label: 'Personal Info Hub' },
   ];
