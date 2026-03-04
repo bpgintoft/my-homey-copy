@@ -623,6 +623,8 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
           { key: 'milestones', icon: <Target className={`w-5 h-5 flex-shrink-0 ${iconColor}`} />, label: 'Goals & Milestones' },
           { key: 'health', icon: <HeartPulse className={`w-5 h-5 flex-shrink-0 ${iconColor}`} />, label: 'Health & Medical' },
           { key: 'documents', icon: <FolderOpen className={`w-5 h-5 flex-shrink-0 ${iconColor}`} />, label: 'Documents & IDs' },
+          { key: 'vehicles', icon: <Car className={`w-5 h-5 flex-shrink-0 ${iconColor}`} />, label: 'Vehicles & Travel' },
+          { key: 'personalInfo', icon: <User className={`w-5 h-5 flex-shrink-0 ${iconColor}`} />, label: 'Personal Info Hub' },
         ].map(({ key, icon, label }) => (
           <button
             key={key}
