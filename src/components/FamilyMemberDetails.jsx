@@ -731,26 +731,36 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                     </div>
                   )}
                 </Droppable>
-              </DragDropContext>
-            );
-          }
+                </DragDropContext>
+                </>
+                );
+                }
 
-          return (
-            <div className="grid grid-cols-2 gap-2">
-              {orderedSections.map(({ key, icon, label }) => (
+                return (
+                <div className="relative group/grid">
                 <button
-                  key={key}
-                  onClick={() => setExpandedSection(key)}
-                  className="flex items-center gap-2 p-3 rounded-lg border bg-white hover:shadow-md transition-shadow text-left w-full"
+                onClick={() => setIsCustomizing(true)}
+                className="absolute -top-2 -right-2 z-10 opacity-0 group-hover/grid:opacity-100 transition-opacity w-6 h-6 rounded-full bg-gray-200 hover:bg-gray-300 flex items-center justify-center"
+                title="Customize section order"
                 >
-                  {icon}
-                  <span className="font-semibold text-sm text-gray-800 leading-tight">{label}</span>
+                <Settings2 className="w-3 h-3 text-gray-500" />
                 </button>
-              ))}
-            </div>
-          );
-        })()}
-      </div>
+                <div className="grid grid-cols-2 gap-2">
+                {orderedSections.map(({ key, icon, label }) => (
+                <button
+                key={key}
+                onClick={() => setExpandedSection(key)}
+                className="flex items-center gap-2 p-3 rounded-lg border bg-white hover:shadow-md transition-shadow text-left w-full"
+                >
+                {icon}
+                <span className="font-semibold text-sm text-gray-800 leading-tight">{label}</span>
+                </button>
+                ))}
+                </div>
+                </div>
+                );
+                })()}
+                </div>
 
       {/* Links Dialog */}
       <Dialog open={expandedSection === 'links'} onOpenChange={(open) => !open && setExpandedSection(null)}>
