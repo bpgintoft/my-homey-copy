@@ -73,8 +73,8 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
     { key: 'milestones', label: 'Goals & Milestones' },
     { key: 'health', label: 'Health & Medical' },
     { key: 'documents', label: 'Documents & IDs' },
-    { key: 'notes', label: 'Personal Notes' },
     { key: 'vehicles', label: 'Vehicles & Travel' },
+    { key: 'notes', label: 'Personal Notes' },
     { key: 'personalInfo', label: 'Personal Info Hub' },
   ];
 
