@@ -733,6 +733,10 @@ export default function House() {
                                         </div>
                                       )}
 
+                                      <div onClick={(e) => e.stopPropagation()}>
+                                        <ApplianceDocuments appliance={appliance} />
+                                      </div>
+
                                       <Button
                                         size="sm"
                                         variant="outline"
