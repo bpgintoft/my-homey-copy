@@ -1377,11 +1377,11 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
 
       {/* Personal Info Hub Dialog */}
       <Dialog open={expandedSection === 'personalInfo'} onOpenChange={(open) => !open && setExpandedSection(null)}>
-        <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto top-4 translate-y-0">
+        <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto top-4 translate-y-0" onOpenAutoFocus={(e) => e.preventDefault()}>
           <DialogHeader>
             <DialogTitle>Personal Info Hub</DialogTitle>
           </DialogHeader>
-          <p className="text-sm text-gray-500">Personal Info Hub coming soon.</p>
+          {member && <PersonalInfoSection member={member} color={color} />}
         </DialogContent>
       </Dialog>
 
