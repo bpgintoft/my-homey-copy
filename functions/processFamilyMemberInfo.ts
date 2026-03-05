@@ -210,15 +210,18 @@ Text: "${input}"`,
       await base44.asServiceRole.entities.FamilyMember.update(familyMemberId, updates);
     }
 
+    // Fetch member name once
+    const member = await base44.asServiceRole.entities.FamilyMember.filter({ id: familyMemberId }).then(res => res[0]);
+    const memberName = member?.name || 'Unknown';
+
     // Create Chores from to_do_list
     if (aiResponse.to_do_list?.length > 0) {
-      const member = await base44.asServiceRole.entities.FamilyMember.filter({ id: familyMemberId }).then(res => res[0]);
       for (const chore of aiResponse.to_do_list) {
         await base44.asServiceRole.entities.Chore.create({
           title: chore.title,
           timing: chore.timing === 'daily' ? 'short-term' : chore.timing || 'short-term',
           assigned_to_member_id: familyMemberId,
-          assigned_to_name: member?.name || 'Unknown'
+          assigned_to_name: memberName
         });
       }
     }
@@ -239,14 +242,13 @@ Text: "${input}"`,
 
     // Create Links
     if (aiResponse.important_links?.length > 0) {
-      const member = await base44.asServiceRole.entities.FamilyMember.filter({ id: familyMemberId }).then(res => res[0]);
       for (const link of aiResponse.important_links) {
         await base44.asServiceRole.entities.FamilyMemberLink.create({
           url: link.url,
           title: link.title,
           category: link.category,
           assigned_to_member_id: familyMemberId,
-          assigned_to_name: member?.name || 'Unknown'
+          assigned_to_name: memberName
         });
       }
     }
@@ -263,12 +265,11 @@ Text: "${input}"`,
 
     // Create Milestones
     if (aiResponse.goals_milestones?.length > 0) {
-      const member = await base44.asServiceRole.entities.FamilyMember.filter({ id: familyMemberId }).then(res => res[0]);
       for (const milestone of aiResponse.goals_milestones) {
         await base44.asServiceRole.entities.Milestone.create({
           ...milestone,
           assigned_to_member_id: familyMemberId,
-          assigned_to_name: member?.name || 'Unknown'
+          assigned_to_name: memberName
         });
       }
     }
