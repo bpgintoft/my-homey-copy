@@ -27,6 +27,7 @@ export default function SchoolProgramSection({ memberId, memberName, programTitl
   const fileInputRef = React.useRef(null);
   const [localPhone, setLocalPhone] = useState('');
   const [localEmail, setLocalEmail] = useState('');
+  const [localTeacher, setLocalTeacher] = useState('');
 
   // Fetch school program data
   const { data: program } = useQuery({
