@@ -7,7 +7,9 @@ import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { toast } from 'sonner';
 
-export default function VoiceAssistant() {
+const FAMILY_MEMBER_PAGES = ['Bryan', 'Kate', 'Mara', 'Phoenix'];
+
+export default function VoiceAssistant({ currentPageName }) {
   const [isListening, setIsListening] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [showDialog, setShowDialog] = useState(false);
