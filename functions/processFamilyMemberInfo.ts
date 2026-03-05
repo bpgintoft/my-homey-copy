@@ -214,14 +214,14 @@ Return JSON with ONLY found categories and fields.`,
 
     // Update FamilyMember
     if (Object.keys(updates).length > 0) {
-      await base44.entities.FamilyMember.update(familyMemberId, updates);
+      await base44.asServiceRole.entities.FamilyMember.update(familyMemberId, updates);
     }
 
     // Create Chores from to_do_list
     if (aiResponse.to_do_list?.length > 0) {
-      const member = await base44.entities.FamilyMember.filter({ id: familyMemberId }).then(res => res[0]);
+      const member = await base44.asServiceRole.entities.FamilyMember.filter({ id: familyMemberId }).then(res => res[0]);
       for (const chore of aiResponse.to_do_list) {
-        await base44.entities.Chore.create({
+        await base44.asServiceRole.entities.Chore.create({
           title: chore.title,
           timing: chore.timing === 'daily' ? 'short-term' : chore.timing || 'short-term',
           assigned_to_member_id: familyMemberId,
@@ -232,23 +232,23 @@ Return JSON with ONLY found categories and fields.`,
 
     // Create/Update SchoolProgram
     if (aiResponse.bright_horizons) {
-      const existing = await base44.entities.SchoolProgram.filter({ family_member_id: familyMemberId }).then(res => res[0]);
+      const existing = await base44.asServiceRole.entities.SchoolProgram.filter({ family_member_id: familyMemberId }).then(res => res[0]);
       const programData = {
         family_member_id: familyMemberId,
         ...aiResponse.bright_horizons
       };
       if (existing) {
-        await base44.entities.SchoolProgram.update(existing.id, programData);
+        await base44.asServiceRole.entities.SchoolProgram.update(existing.id, programData);
       } else {
-        await base44.entities.SchoolProgram.create(programData);
+        await base44.asServiceRole.entities.SchoolProgram.create(programData);
       }
     }
 
     // Create Links
     if (aiResponse.important_links?.length > 0) {
-      const member = await base44.entities.FamilyMember.filter({ id: familyMemberId }).then(res => res[0]);
+      const member = await base44.asServiceRole.entities.FamilyMember.filter({ id: familyMemberId }).then(res => res[0]);
       for (const link of aiResponse.important_links) {
-        await base44.entities.FamilyMemberLink.create({
+        await base44.asServiceRole.entities.FamilyMemberLink.create({
           url: link.url,
           title: link.title,
           category: link.category,
@@ -261,7 +261,7 @@ Return JSON with ONLY found categories and fields.`,
     // Create Contacts
     if (aiResponse.important_contacts?.length > 0) {
       for (const contact of aiResponse.important_contacts) {
-        await base44.entities.ImportantContact.create({
+        await base44.asServiceRole.entities.ImportantContact.create({
           ...contact,
           linked_to_member_ids: [familyMemberId]
         });
@@ -270,9 +270,9 @@ Return JSON with ONLY found categories and fields.`,
 
     // Create Milestones
     if (aiResponse.goals_milestones?.length > 0) {
-      const member = await base44.entities.FamilyMember.filter({ id: familyMemberId }).then(res => res[0]);
+      const member = await base44.asServiceRole.entities.FamilyMember.filter({ id: familyMemberId }).then(res => res[0]);
       for (const milestone of aiResponse.goals_milestones) {
-        await base44.entities.Milestone.create({
+        await base44.asServiceRole.entities.Milestone.create({
           ...milestone,
           assigned_to_member_id: familyMemberId,
           assigned_to_name: member?.name || 'Unknown'
@@ -283,7 +283,7 @@ Return JSON with ONLY found categories and fields.`,
     // Create Documents
     if (aiResponse.documents_ids?.length > 0) {
       for (const doc of aiResponse.documents_ids) {
-        await base44.entities.Document.create({
+        await base44.asServiceRole.entities.Document.create({
           title: doc.title,
           type: doc.type,
           ...(doc.expiration_date && { expiration_date: doc.expiration_date })
