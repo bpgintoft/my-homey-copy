@@ -52,14 +52,23 @@ Text: "${input}"`,
     const updates = {};
 
     // Direct FamilyMember updates
-    if (aiResponse.health_medical?.insurance_provider) {
-      updates.insurance_provider = aiResponse.health_medical.insurance_provider;
+    if (aiResponse.health_medical?.health_insurance_provider) {
+      updates.insurance_provider = aiResponse.health_medical.health_insurance_provider;
     }
-    if (aiResponse.health_medical?.insurance_member_id) {
-      updates.insurance_member_id = aiResponse.health_medical.insurance_member_id;
+    if (aiResponse.health_medical?.health_insurance_member_id) {
+      updates.insurance_member_id = aiResponse.health_medical.health_insurance_member_id;
     }
-    if (aiResponse.health_medical?.insurance_group_number) {
-      updates.insurance_group_number = aiResponse.health_medical.insurance_group_number;
+    if (aiResponse.health_medical?.health_insurance_group_number) {
+      updates.insurance_group_number = aiResponse.health_medical.health_insurance_group_number;
+    }
+    if (aiResponse.health_medical?.dental_insurance_provider) {
+      updates.dental_insurance_provider = aiResponse.health_medical.dental_insurance_provider;
+    }
+    if (aiResponse.health_medical?.dental_insurance_member_id) {
+      updates.dental_insurance_member_id = aiResponse.health_medical.dental_insurance_member_id;
+    }
+    if (aiResponse.health_medical?.dental_insurance_group_number) {
+      updates.dental_insurance_group_number = aiResponse.health_medical.dental_insurance_group_number;
     }
     if (aiResponse.health_medical?.dentist) {
       updates.dentist = aiResponse.health_medical.dentist;
