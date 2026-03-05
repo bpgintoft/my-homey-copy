@@ -167,8 +167,8 @@ export default function VehiclesTravelSection({ member, color = 'blue' }) {
           <div>
             <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2">Roadside Assistance</h3>
             <div className="space-y-1.5">
-              {hasRoadsideProvider && <ViewRow label="Provider" value={form.roadside_assistance_provider} />}
-              {hasRoadsideMemberNum && <ViewRow label="Member Number" value={form.roadside_assistance_member_number} />}
+              {hasRoadsideProvider && <ViewRow label="Provider" copyKey="road_provider" value={form.roadside_assistance_provider} />}
+              {hasRoadsideMemberNum && <ViewRow label="Member Number" copyKey="road_member" value={form.roadside_assistance_member_number} />}
             </div>
           </div>
         )}
