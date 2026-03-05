@@ -105,7 +105,7 @@ export default function VehiclesTravelSection({ member, color = 'blue' }) {
   const hasAnyRoadside = hasRoadsideProvider || hasRoadsideMemberNum;
   const hasAnyLicense = isAdult && (hasLicenseNumber || hasLicenseIssueDate);
 
-  const hasAnything = hasVehicle || hasVin || hasRegExpiry || hasAnyVehicleInsurance || hasAnyRoadside || hasAnyLicense || hasFrequentFlyer;
+  const hasAnything = hasVehicle || hasLicensePlate || hasVin || hasRegExpiry || hasAnyVehicleInsurance || hasAnyRoadside || hasAnyLicense || hasFrequentFlyer;
 
   const [copiedKey, setCopiedKey] = useState(null);
   const handleCopy = (value, key) => {
