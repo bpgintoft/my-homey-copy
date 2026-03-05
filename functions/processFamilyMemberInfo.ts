@@ -17,24 +17,23 @@ Deno.serve(async (req) => {
 
     // Call LLM to parse and categorize the input
     const aiResponse = await base44.integrations.Core.InvokeLLM({
-      prompt: `Extract and categorize family member information from the following input. Return structured JSON data organized by the 10 categories below. For each field, only include it if it was found in the input text.
+      prompt: `Extract and categorize this family member info into ONE or more of these categories. Return ONLY the relevant data found.
 
-Categories to extract:
+Categories:
 1. personal_info_hub: email, phone, role, responsibilities
-2. to_do_list: tasks/chores with title and timing (daily/short-term/mid-term/long-term)
-3. bright_horizons: school/work programs with title, grade, teacher, schedule, website, passcodes
-4. important_links: urls with title and category (school, sports_extracurriculars, medical, social, shopping, entertainment, other)
-5. important_contacts: contacts with name, type, phone, email, address, website
-6. goals_milestones: milestones with title, date, description
-7. health_medical: blood_type, height, weight, insurance info, doctor names, vaccination history
-8. documents_ids: documents with type (warranty, receipt, manual, insurance, contract, permit, diagram, other), title, expiration_date
-9. vehicles_travel: vehicle details, license plate, passport info, frequent flyer programs
-10. personal_notes: any general notes or observations
+2. to_do_list: tasks with title and timing
+3. bright_horizons: school/work program info
+4. important_links: URLs with title and category
+5. important_contacts: contact info
+6. goals_milestones: goals with dates
+7. health_medical: blood type, height, weight, insurance, doctors, vaccines
+8. documents_ids: documents with type and dates
+9. vehicles_travel: vehicles, license, passport, frequent flyer
+10. personal_notes: general notes
 
-Input text:
-"${input}"
+Text: "${input}"
 
-Return a JSON object with only the categories that contain extracted data. For each category, include only the fields that were mentioned.`,
+Return JSON with ONLY found categories and fields.`,
       response_json_schema: {
         type: "object",
         properties: {
