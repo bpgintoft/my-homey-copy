@@ -101,6 +101,7 @@ export default function VehiclesTravelSection({ member, color = 'blue' }) {
   const hasFrequentFlyer = form.frequent_flyer_programs.filter(p => p.airline || p.number).length > 0;
 
   const hasAnyVehicleInsurance = hasInsuranceProvider || hasInsurancePolicyNum;
+
   const hasAnyRoadside = hasRoadsideProvider || hasRoadsideMemberNum;
   const hasAnyLicense = isAdult && (hasLicenseNumber || hasLicenseIssueDate);
 
