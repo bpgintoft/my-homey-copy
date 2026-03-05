@@ -600,18 +600,6 @@ export default function SchoolProgramSection({ memberId, memberName, programTitl
 
             {/* Contact Information */}
             <div className="border-t pt-4 space-y-3">
-              {isKid && (
-                <div>
-                  <label className="text-sm font-medium">Teacher</label>
-                  <Input
-                    placeholder="Teacher's name"
-                    value={localTeacher}
-                    onChange={(e) => setLocalTeacher(e.target.value)}
-                    onBlur={handleUpdateTeacher}
-                    className="mt-1"
-                  />
-                </div>
-              )}
               <div>
                 <label className="text-sm font-medium">Phone Number</label>
                 <Input
