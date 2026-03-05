@@ -4,7 +4,7 @@ import { base44 } from '@/api/base44Client';
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Plus, Trash2 } from 'lucide-react';
+import { Plus, Trash2, Pencil, Check } from 'lucide-react';
 
 const inputColorMap = {
   blue: 'border-blue-400 focus-visible:ring-blue-500 bg-blue-50',
@@ -17,6 +17,7 @@ const inputColorMap = {
 export default function VehiclesTravelSection({ member, color = 'blue' }) {
   const inputClass = inputColorMap[color] || inputColorMap.blue;
   const queryClient = useQueryClient();
+  const [editing, setEditing] = useState(false);
   const [form, setForm] = useState({
     vehicle_make: member?.vehicle_make ?? '',
     vehicle_model: member?.vehicle_model ?? '',
@@ -38,6 +39,7 @@ export default function VehiclesTravelSection({ member, color = 'blue' }) {
     onSuccess: () => {
       queryClient.invalidateQueries(['familyMember', member?.id]);
       setSaved(true);
+      setEditing(false);
       setTimeout(() => setSaved(false), 2000);
     },
   });
@@ -74,8 +76,122 @@ export default function VehiclesTravelSection({ member, color = 'blue' }) {
 
   const isAdult = member?.person_type !== 'kid';
 
+  // Check which fields have values
+  const hasVehicle = form.vehicle_year || form.vehicle_make || form.vehicle_model;
+  const hasVin = !!form.vehicle_vin;
+  const hasRegExpiry = !!form.vehicle_registration_expiration;
+  const hasInsuranceProvider = !!form.vehicle_insurance_provider;
+  const hasInsurancePolicyNum = !!form.vehicle_insurance_policy_number;
+  const hasRoadsideProvider = !!form.roadside_assistance_provider;
+  const hasRoadsideMemberNum = !!form.roadside_assistance_member_number;
+  const hasLicenseNumber = !!form.license_number;
+  const hasLicenseIssueDate = !!form.license_issue_date;
+  const hasFrequentFlyer = form.frequent_flyer_programs.filter(p => p.airline || p.number).length > 0;
+
+  const hasAnyVehicleInsurance = hasInsuranceProvider || hasInsurancePolicyNum;
+  const hasAnyRoadside = hasRoadsideProvider || hasRoadsideMemberNum;
+  const hasAnyLicense = isAdult && (hasLicenseNumber || hasLicenseIssueDate);
+
+  const hasAnything = hasVehicle || hasVin || hasRegExpiry || hasAnyVehicleInsurance || hasAnyRoadside || hasAnyLicense || hasFrequentFlyer;
+
+  // In view mode, show a read-only field row
+  const ViewRow = ({ label, value }) => (
+    <div className="flex items-baseline gap-2">
+      <span className="text-xs text-gray-500 shrink-0 w-32">{label}</span>
+      <span className="text-sm text-gray-800 font-medium">{value}</span>
+    </div>
+  );
+
+  if (!editing) {
+    return (
+      <div className="space-y-5 relative">
+        <button
+          onClick={() => setEditing(true)}
+          className="absolute top-0 right-0 p-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors"
+          title="Edit"
+        >
+          <Pencil className="w-4 h-4" />
+        </button>
+
+        {!hasAnything && (
+          <p className="text-sm text-gray-400 italic">No vehicle or travel info added yet. Click the edit icon to add details.</p>
+        )}
+
+        {/* Vehicle */}
+        {(hasVehicle || hasVin || hasRegExpiry) && (
+          <div>
+            <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2">Vehicle</h3>
+            <div className="space-y-1.5">
+              {hasVehicle && (
+                <ViewRow
+                  label="Vehicle"
+                  value={[form.vehicle_year, form.vehicle_make, form.vehicle_model].filter(Boolean).join(' ')}
+                />
+              )}
+              {hasVin && <ViewRow label="VIN" value={form.vehicle_vin} />}
+              {hasRegExpiry && <ViewRow label="Reg. Expiration" value={form.vehicle_registration_expiration} />}
+            </div>
+          </div>
+        )}
+
+        {/* Vehicle Insurance */}
+        {hasAnyVehicleInsurance && (
+          <div>
+            <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2">Vehicle Insurance</h3>
+            <div className="space-y-1.5">
+              {hasInsuranceProvider && <ViewRow label="Provider" value={form.vehicle_insurance_provider} />}
+              {hasInsurancePolicyNum && <ViewRow label="Policy Number" value={form.vehicle_insurance_policy_number} />}
+            </div>
+          </div>
+        )}
+
+        {/* Roadside Assistance */}
+        {hasAnyRoadside && (
+          <div>
+            <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2">Roadside Assistance</h3>
+            <div className="space-y-1.5">
+              {hasRoadsideProvider && <ViewRow label="Provider" value={form.roadside_assistance_provider} />}
+              {hasRoadsideMemberNum && <ViewRow label="Member Number" value={form.roadside_assistance_member_number} />}
+            </div>
+          </div>
+        )}
+
+        {/* Driver's License */}
+        {hasAnyLicense && (
+          <div>
+            <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2">Driver's License</h3>
+            <div className="space-y-1.5">
+              {hasLicenseNumber && <ViewRow label="License Number" value={form.license_number} />}
+              {hasLicenseIssueDate && <ViewRow label="Issue Date" value={form.license_issue_date} />}
+            </div>
+          </div>
+        )}
+
+        {/* Frequent Flyer */}
+        {hasFrequentFlyer && (
+          <div>
+            <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2">Frequent Flyer Programs</h3>
+            <div className="space-y-1.5">
+              {form.frequent_flyer_programs.filter(p => p.airline || p.number).map((program, i) => (
+                <ViewRow key={i} label={program.airline || '—'} value={program.number || '—'} />
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // Edit mode — show all fields
   return (
-    <div className="space-y-5">
+    <div className="space-y-5 relative">
+      <button
+        onClick={() => setEditing(false)}
+        className="absolute top-0 right-0 p-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors"
+        title="Done editing"
+      >
+        <Check className="w-4 h-4" />
+      </button>
 
       {/* Vehicle */}
       <div>
@@ -168,16 +284,16 @@ export default function VehiclesTravelSection({ member, color = 'blue' }) {
             {form.frequent_flyer_programs.map((program, index) => (
               <div key={index} className="flex gap-2 items-center">
                 <Input
-                placeholder="Airline"
-                value={program.airline}
-                onChange={(e) => updateFrequentFlyer(index, 'airline', e.target.value)}
-                className={`flex-1 ${inputClass}`}
+                  placeholder="Airline"
+                  value={program.airline}
+                  onChange={(e) => updateFrequentFlyer(index, 'airline', e.target.value)}
+                  className={`flex-1 ${inputClass}`}
                 />
                 <Input
-                placeholder="Member #"
-                value={program.number}
-                onChange={(e) => updateFrequentFlyer(index, 'number', e.target.value)}
-                className={`flex-1 ${inputClass}`}
+                  placeholder="Member #"
+                  value={program.number}
+                  onChange={(e) => updateFrequentFlyer(index, 'number', e.target.value)}
+                  className={`flex-1 ${inputClass}`}
                 />
                 <Button variant="ghost" size="icon" className="h-8 w-8 flex-shrink-0" onClick={() => removeFrequentFlyer(index)}>
                   <Trash2 className="w-4 h-4 text-red-500" />
