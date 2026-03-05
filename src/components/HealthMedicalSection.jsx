@@ -189,10 +189,27 @@ export default function HealthMedicalSection({ member, color = 'blue' }) {
         {hasAnyInsurance && (
           <div>
             <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2">Insurance</h3>
-            <div className="space-y-1.5">
-              {hasInsuranceProvider && <ViewRow label="Provider" copyKey="ins_provider" value={form.insurance_provider} />}
-              {hasInsuranceMemberId && <ViewRow label="Member ID" copyKey="ins_member" value={form.insurance_member_id} />}
-              {hasInsuranceGroup && <ViewRow label="Group Number" copyKey="ins_group" value={form.insurance_group_number} />}
+            <div className="space-y-3">
+              {hasAnyHealthInsurance && (
+                <div>
+                  <p className="text-xs font-semibold text-gray-600 mb-1.5">Health Insurance</p>
+                  <div className="space-y-1.5">
+                    {hasInsuranceProvider && <ViewRow label="Provider" copyKey="ins_provider" value={form.insurance_provider} />}
+                    {hasInsuranceMemberId && <ViewRow label="Member ID" copyKey="ins_member" value={form.insurance_member_id} />}
+                    {hasInsuranceGroup && <ViewRow label="Group Number" copyKey="ins_group" value={form.insurance_group_number} />}
+                  </div>
+                </div>
+              )}
+              {hasAnyDentalInsurance && (
+                <div>
+                  <p className="text-xs font-semibold text-gray-600 mb-1.5">Dental Insurance</p>
+                  <div className="space-y-1.5">
+                    {hasDentalInsuranceProvider && <ViewRow label="Provider" copyKey="dental_ins_provider" value={form.dental_insurance_provider} />}
+                    {hasDentalInsuranceMemberId && <ViewRow label="Member ID" copyKey="dental_ins_member" value={form.dental_insurance_member_id} />}
+                    {hasDentalInsuranceGroup && <ViewRow label="Group Number" copyKey="dental_ins_group" value={form.dental_insurance_group_number} />}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         )}
