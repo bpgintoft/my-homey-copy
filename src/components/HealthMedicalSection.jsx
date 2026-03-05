@@ -6,11 +6,31 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { Pencil, Check, Copy } from 'lucide-react';
 
 const BLOOD_TYPES = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-", "Unknown"];
 
-export default function HealthMedicalSection({ member }) {
+const inputColorMap = {
+  blue: 'border-blue-400 focus-visible:ring-blue-500 bg-blue-50',
+  green: 'border-green-400 focus-visible:ring-green-500 bg-green-50',
+  purple: 'border-purple-400 focus-visible:ring-purple-500 bg-purple-50',
+  orange: 'border-orange-400 focus-visible:ring-orange-500 bg-orange-50',
+  pink: 'border-pink-400 focus-visible:ring-pink-500 bg-pink-50',
+};
+
+const valueColorMap = {
+  blue: 'text-blue-700',
+  green: 'text-green-700',
+  purple: 'text-purple-700',
+  orange: 'text-orange-700',
+  pink: 'text-pink-700',
+};
+
+export default function HealthMedicalSection({ member, color = 'blue' }) {
+  const inputClass = inputColorMap[color] || inputColorMap.blue;
+  const valueColor = valueColorMap[color] || valueColorMap.blue;
   const queryClient = useQueryClient();
+  const [editing, setEditing] = useState(false);
   const [form, setForm] = useState({
     height_feet: member?.height_feet ?? '',
     height_inches: member?.height_inches ?? '',
@@ -25,18 +45,20 @@ export default function HealthMedicalSection({ member }) {
     vaccination_history: member?.vaccination_history ?? '',
   });
   const [saved, setSaved] = useState(false);
+  const [copiedKey, setCopiedKey] = useState(null);
 
   const updateMutation = useMutation({
     mutationFn: (data) => base44.entities.FamilyMember.update(member.id, data),
     onSuccess: () => {
       queryClient.invalidateQueries(['familyMember', member?.id]);
       setSaved(true);
+      setEditing(false);
       setTimeout(() => setSaved(false), 2000);
     },
   });
 
   const handleSave = () => {
-    const data = {
+    updateMutation.mutate({
       height_feet: form.height_feet !== '' ? Number(form.height_feet) : null,
       height_inches: form.height_inches !== '' ? Number(form.height_inches) : null,
       weight_lbs: form.weight_lbs !== '' ? Number(form.weight_lbs) : null,
@@ -48,14 +70,143 @@ export default function HealthMedicalSection({ member }) {
       pediatrician: form.pediatrician || null,
       dentist: form.dentist || null,
       vaccination_history: form.vaccination_history || null,
-    };
-    updateMutation.mutate(data);
+    });
   };
+
+  const handleCopy = (value, key) => {
+    navigator.clipboard.writeText(String(value));
+    setCopiedKey(key);
+    setTimeout(() => setCopiedKey(null), 1500);
+  };
+
+  const ViewRow = ({ label, value, copyKey }) => (
+    <div className="flex items-center gap-2">
+      <span className="text-xs text-gray-500 shrink-0 w-32">{label}</span>
+      <span className={`text-sm font-medium flex-1 ${valueColor}`}>{value}</span>
+      <button
+        onClick={() => handleCopy(value, copyKey || label)}
+        className="p-1 rounded text-gray-400 hover:text-gray-600 transition-colors shrink-0"
+        title="Copy"
+      >
+        {copiedKey === (copyKey || label)
+          ? <Check className="w-3.5 h-3.5 text-green-500" />
+          : <Copy className="w-3.5 h-3.5" />}
+      </button>
+    </div>
+  );
 
   const isKid = member?.person_type === 'kid';
 
+  const hasHeight = form.height_feet !== '' || form.height_inches !== '';
+  const hasWeight = form.weight_lbs !== '';
+  const hasBloodType = !!form.blood_type;
+  const hasInsuranceProvider = !!form.insurance_provider;
+  const hasInsuranceMemberId = !!form.insurance_member_id;
+  const hasInsuranceGroup = !!form.insurance_group_number;
+  const hasPhysician = isKid ? !!form.pediatrician : !!form.primary_care_physician;
+  const hasDentist = !!form.dentist;
+  const hasVaccinations = !!form.vaccination_history;
+
+  const hasAnyPhysical = hasHeight || hasWeight || hasBloodType;
+  const hasAnyInsurance = hasInsuranceProvider || hasInsuranceMemberId || hasInsuranceGroup;
+  const hasAnyDoctors = hasPhysician || hasDentist;
+  const hasAnything = hasAnyPhysical || hasAnyInsurance || hasAnyDoctors || hasVaccinations;
+
+  if (!editing) {
+    return (
+      <div className="space-y-5 relative">
+        <button
+          onClick={() => setEditing(true)}
+          className="absolute top-0 right-0 p-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors"
+          title="Edit"
+        >
+          <Pencil className="w-4 h-4" />
+        </button>
+
+        {!hasAnything && (
+          <p className="text-sm text-gray-400 italic">No health or medical info added yet. Click the edit icon to add details.</p>
+        )}
+
+        {/* Physical */}
+        {hasAnyPhysical && (
+          <div>
+            <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2">Physical</h3>
+            <div className="space-y-1.5">
+              {hasHeight && (
+                <ViewRow
+                  label="Height"
+                  copyKey="height"
+                  value={[form.height_feet !== '' ? `${form.height_feet} ft` : null, form.height_inches !== '' ? `${form.height_inches} in` : null].filter(Boolean).join(' ')}
+                />
+              )}
+              {hasWeight && <ViewRow label="Weight" copyKey="weight" value={`${form.weight_lbs} lbs`} />}
+              {hasBloodType && <ViewRow label="Blood Type" copyKey="blood_type" value={form.blood_type} />}
+            </div>
+          </div>
+        )}
+
+        {/* Insurance */}
+        {hasAnyInsurance && (
+          <div>
+            <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2">Insurance</h3>
+            <div className="space-y-1.5">
+              {hasInsuranceProvider && <ViewRow label="Provider" copyKey="ins_provider" value={form.insurance_provider} />}
+              {hasInsuranceMemberId && <ViewRow label="Member ID" copyKey="ins_member" value={form.insurance_member_id} />}
+              {hasInsuranceGroup && <ViewRow label="Group Number" copyKey="ins_group" value={form.insurance_group_number} />}
+            </div>
+          </div>
+        )}
+
+        {/* Doctors */}
+        {hasAnyDoctors && (
+          <div>
+            <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2">Doctors</h3>
+            <div className="space-y-1.5">
+              {hasPhysician && (
+                <ViewRow
+                  label={isKid ? 'Pediatrician' : 'PCP'}
+                  copyKey="physician"
+                  value={isKid ? form.pediatrician : form.primary_care_physician}
+                />
+              )}
+              {hasDentist && <ViewRow label="Dentist" copyKey="dentist" value={form.dentist} />}
+            </div>
+          </div>
+        )}
+
+        {/* Vaccinations */}
+        {hasVaccinations && (
+          <div>
+            <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2">Vaccination History</h3>
+            <div className="flex items-start gap-2">
+              <span className={`text-sm font-medium flex-1 ${valueColor} whitespace-pre-wrap`}>{form.vaccination_history}</span>
+              <button
+                onClick={() => handleCopy(form.vaccination_history, 'vaccinations')}
+                className="p-1 rounded text-gray-400 hover:text-gray-600 transition-colors shrink-0 mt-0.5"
+                title="Copy"
+              >
+                {copiedKey === 'vaccinations'
+                  ? <Check className="w-3.5 h-3.5 text-green-500" />
+                  : <Copy className="w-3.5 h-3.5" />}
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // Edit mode
   return (
-    <div className="space-y-5">
+    <div className="space-y-5 relative">
+      <button
+        onClick={() => setEditing(false)}
+        className="absolute top-0 right-0 p-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors"
+        title="Done editing"
+      >
+        <Check className="w-4 h-4" />
+      </button>
+
       {/* Physical */}
       <div>
         <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">Physical</h3>
@@ -63,39 +214,16 @@ export default function HealthMedicalSection({ member }) {
           <div>
             <Label className="text-xs text-gray-600 mb-1 block">Height</Label>
             <div className="flex gap-2 items-center">
-              <Input
-                type="number"
-                placeholder="ft"
-                min={0}
-                max={8}
-                value={form.height_feet}
-                onChange={(e) => setForm({ ...form, height_feet: e.target.value })}
-                className="w-16 text-center"
-              />
+              <Input type="number" placeholder="ft" min={0} max={8} value={form.height_feet} onChange={(e) => setForm({ ...form, height_feet: e.target.value })} className={`w-16 text-center ${inputClass}`} />
               <span className="text-sm text-gray-500">ft</span>
-              <Input
-                type="number"
-                placeholder="in"
-                min={0}
-                max={11}
-                value={form.height_inches}
-                onChange={(e) => setForm({ ...form, height_inches: e.target.value })}
-                className="w-16 text-center"
-              />
+              <Input type="number" placeholder="in" min={0} max={11} value={form.height_inches} onChange={(e) => setForm({ ...form, height_inches: e.target.value })} className={`w-16 text-center ${inputClass}`} />
               <span className="text-sm text-gray-500">in</span>
             </div>
           </div>
           <div>
             <Label className="text-xs text-gray-600 mb-1 block">Weight</Label>
             <div className="flex gap-2 items-center">
-              <Input
-                type="number"
-                placeholder="lbs"
-                min={0}
-                value={form.weight_lbs}
-                onChange={(e) => setForm({ ...form, weight_lbs: e.target.value })}
-                className="w-24 text-center"
-              />
+              <Input type="number" placeholder="lbs" min={0} value={form.weight_lbs} onChange={(e) => setForm({ ...form, weight_lbs: e.target.value })} className={`w-24 text-center ${inputClass}`} />
               <span className="text-sm text-gray-500">lbs</span>
             </div>
           </div>
@@ -103,7 +231,7 @@ export default function HealthMedicalSection({ member }) {
         <div className="mt-3">
           <Label className="text-xs text-gray-600 mb-1 block">Blood Type</Label>
           <Select value={form.blood_type} onValueChange={(val) => setForm({ ...form, blood_type: val })}>
-            <SelectTrigger className="w-36">
+            <SelectTrigger className={`w-36 ${inputClass}`}>
               <SelectValue placeholder="Select..." />
             </SelectTrigger>
             <SelectContent>
@@ -121,16 +249,16 @@ export default function HealthMedicalSection({ member }) {
         <div className="space-y-3">
           <div>
             <Label className="text-xs text-gray-600 mb-1 block">Provider</Label>
-            <Input placeholder="e.g., Blue Cross Blue Shield" value={form.insurance_provider} onChange={(e) => setForm({ ...form, insurance_provider: e.target.value })} />
+            <Input placeholder="e.g., Blue Cross Blue Shield" value={form.insurance_provider} onChange={(e) => setForm({ ...form, insurance_provider: e.target.value })} className={inputClass} />
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
               <Label className="text-xs text-gray-600 mb-1 block">Member ID</Label>
-              <Input placeholder="Member ID" value={form.insurance_member_id} onChange={(e) => setForm({ ...form, insurance_member_id: e.target.value })} />
+              <Input placeholder="Member ID" value={form.insurance_member_id} onChange={(e) => setForm({ ...form, insurance_member_id: e.target.value })} className={inputClass} />
             </div>
             <div>
               <Label className="text-xs text-gray-600 mb-1 block">Group Number</Label>
-              <Input placeholder="Group #" value={form.insurance_group_number} onChange={(e) => setForm({ ...form, insurance_group_number: e.target.value })} />
+              <Input placeholder="Group #" value={form.insurance_group_number} onChange={(e) => setForm({ ...form, insurance_group_number: e.target.value })} className={inputClass} />
             </div>
           </div>
         </div>
@@ -143,17 +271,17 @@ export default function HealthMedicalSection({ member }) {
           {isKid ? (
             <div>
               <Label className="text-xs text-gray-600 mb-1 block">Pediatrician</Label>
-              <Input placeholder="Pediatrician name" value={form.pediatrician} onChange={(e) => setForm({ ...form, pediatrician: e.target.value })} />
+              <Input placeholder="Pediatrician name" value={form.pediatrician} onChange={(e) => setForm({ ...form, pediatrician: e.target.value })} className={inputClass} />
             </div>
           ) : (
             <div>
               <Label className="text-xs text-gray-600 mb-1 block">Primary Care Physician</Label>
-              <Input placeholder="PCP name" value={form.primary_care_physician} onChange={(e) => setForm({ ...form, primary_care_physician: e.target.value })} />
+              <Input placeholder="PCP name" value={form.primary_care_physician} onChange={(e) => setForm({ ...form, primary_care_physician: e.target.value })} className={inputClass} />
             </div>
           )}
           <div>
             <Label className="text-xs text-gray-600 mb-1 block">Dentist</Label>
-            <Input placeholder="Dentist name" value={form.dentist} onChange={(e) => setForm({ ...form, dentist: e.target.value })} />
+            <Input placeholder="Dentist name" value={form.dentist} onChange={(e) => setForm({ ...form, dentist: e.target.value })} className={inputClass} />
           </div>
         </div>
       </div>
@@ -166,6 +294,7 @@ export default function HealthMedicalSection({ member }) {
           value={form.vaccination_history}
           onChange={(e) => setForm({ ...form, vaccination_history: e.target.value })}
           rows={4}
+          className={inputClass}
         />
       </div>
 
