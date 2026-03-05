@@ -101,13 +101,14 @@ export default function VehiclesTravelSection({ member, color = 'blue' }) {
   const hasLicenseNumber = !!form.license_number;
   const hasLicenseIssueDate = !!form.license_issue_date;
   const hasFrequentFlyer = form.frequent_flyer_programs.filter(p => p.airline || p.number).length > 0;
+  const hasPassport = !!form.passport_expiration_date;
 
   const hasAnyVehicleInsurance = hasInsuranceProvider || hasInsurancePolicyNum;
 
   const hasAnyRoadside = hasRoadsideProvider || hasRoadsideMemberNum;
   const hasAnyLicense = isAdult && (hasLicenseNumber || hasLicenseIssueDate);
 
-  const hasAnything = hasVehicle || hasLicensePlate || hasVin || hasRegExpiry || hasAnyVehicleInsurance || hasAnyRoadside || hasAnyLicense || hasFrequentFlyer;
+  const hasAnything = hasVehicle || hasLicensePlate || hasVin || hasRegExpiry || hasAnyVehicleInsurance || hasAnyRoadside || hasAnyLicense || hasFrequentFlyer || hasPassport;
 
   const [copiedKey, setCopiedKey] = useState(null);
   const handleCopy = (value, key) => {
