@@ -321,6 +321,15 @@ export default function VehiclesTravelSection({ member, color = 'blue' }) {
         </div>
       )}
 
+      {/* Travel Documents */}
+      <div>
+        <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">Travel Documents</h3>
+        <div>
+          <Label className="text-xs text-gray-600 mb-1 block">Passport Expiration Date</Label>
+          <Input type="date" value={form.passport_expiration_date} onChange={(e) => setForm({ ...form, passport_expiration_date: e.target.value })} className={inputClass} />
+        </div>
+      </div>
+
       {/* Frequent Flyer */}
       <div>
         <div className="flex items-center justify-between mb-3">
