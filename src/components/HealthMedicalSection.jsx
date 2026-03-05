@@ -67,12 +67,18 @@ export default function HealthMedicalSection({ member, color = 'blue' }) {
   const updateMutation = useMutation({
     mutationFn: async (data) => {
       await base44.entities.FamilyMember.update(member.id, data);
-      // Sync insurance to selected other members
+      // Sync all insurance types to selected other members
       if (syncMemberIds.length > 0) {
         const insuranceData = {
           insurance_provider: data.insurance_provider,
           insurance_member_id: data.insurance_member_id,
           insurance_group_number: data.insurance_group_number,
+          dental_insurance_provider: data.dental_insurance_provider,
+          dental_insurance_member_id: data.dental_insurance_member_id,
+          dental_insurance_group_number: data.dental_insurance_group_number,
+          vision_insurance_provider: data.vision_insurance_provider,
+          vision_insurance_member_id: data.vision_insurance_member_id,
+          vision_insurance_group_number: data.vision_insurance_group_number,
         };
         await Promise.all(syncMemberIds.map(id => base44.entities.FamilyMember.update(id, insuranceData)));
       }
@@ -86,6 +92,22 @@ export default function HealthMedicalSection({ member, color = 'blue' }) {
       setTimeout(() => setSaved(false), 2000);
     },
   });
+
+  const SyncCheckboxes = () => (
+    otherMembers.length > 0 && (
+      <div className="pt-2 border-t">
+        <Label className="text-xs text-gray-600 mb-2 block">Sync to:</Label>
+        <div className="flex flex-wrap gap-3">
+          {otherMembers.map(m => (
+            <div key={m.id} className="flex items-center gap-1.5 cursor-pointer" onClick={() => toggleSyncMember(m.id)}>
+              <Checkbox checked={syncMemberIds.includes(m.id)} onCheckedChange={() => toggleSyncMember(m.id)} onClick={e => e.stopPropagation()} />
+              <span className="text-sm text-gray-700">{m.name}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    )
+  );
 
   const handleSave = () => {
     updateMutation.mutate({
@@ -348,19 +370,7 @@ export default function HealthMedicalSection({ member, color = 'blue' }) {
                   <Input placeholder="Group #" value={form.insurance_group_number} onChange={(e) => setForm({ ...form, insurance_group_number: e.target.value })} className={inputClass} />
                 </div>
               </div>
-              {otherMembers.length > 0 && (
-                <div className="pt-1">
-                  <Label className="text-xs text-gray-600 mb-2 block">Also sync to:</Label>
-                  <div className="flex flex-wrap gap-3">
-                    {otherMembers.map(m => (
-                      <div key={m.id} className="flex items-center gap-1.5 cursor-pointer" onClick={() => toggleSyncMember(m.id)}>
-                        <Checkbox checked={syncMemberIds.includes(m.id)} onCheckedChange={() => toggleSyncMember(m.id)} onClick={e => e.stopPropagation()} />
-                        <span className="text-sm text-gray-700">{m.name}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
+              <SyncCheckboxes />
             </div>
           </div>
 
@@ -381,6 +391,7 @@ export default function HealthMedicalSection({ member, color = 'blue' }) {
                   <Input placeholder="Group #" value={form.dental_insurance_group_number} onChange={(e) => setForm({ ...form, dental_insurance_group_number: e.target.value })} className={inputClass} />
                 </div>
               </div>
+              <SyncCheckboxes />
             </div>
           </div>
 
@@ -401,6 +412,7 @@ export default function HealthMedicalSection({ member, color = 'blue' }) {
                   <Input placeholder="Group #" value={form.vision_insurance_group_number} onChange={(e) => setForm({ ...form, vision_insurance_group_number: e.target.value })} className={inputClass} />
                 </div>
               </div>
+              <SyncCheckboxes />
             </div>
           </div>
         </div>
