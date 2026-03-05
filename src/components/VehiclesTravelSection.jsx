@@ -24,6 +24,7 @@ const valueColorMap = {
 
 export default function VehiclesTravelSection({ member, color = 'blue' }) {
   const inputClass = inputColorMap[color] || inputColorMap.blue;
+  const valueColor = valueColorMap[color] || valueColorMap.blue;
   const queryClient = useQueryClient();
   const [editing, setEditing] = useState(false);
   const [form, setForm] = useState({
