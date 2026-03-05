@@ -92,7 +92,7 @@ export default function VehiclesTravelSection({ member, color = 'blue' }) {
             </div>
             <div>
               <Label className="text-xs text-gray-600 mb-1 block">Model</Label>
-              <Input placeholder="Camry" value={form.vehicle_model} onChange={(e) => setForm({ ...form, vehicle_model: e.target.value })} />
+              <Input placeholder="Camry" value={form.vehicle_model} onChange={(e) => setForm({ ...form, vehicle_model: e.target.value })} className={inputClass} />
             </div>
           </div>
           <div>
