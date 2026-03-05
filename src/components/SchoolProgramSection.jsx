@@ -257,6 +257,32 @@ export default function SchoolProgramSection({ memberId, memberName, programTitl
         <CardTitle>{schoolOrWorkName || program?.title || sectionLabel}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
+            {/* Grade and Teacher - Kids only */}
+            {isKid && (
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-sm font-medium">Grade</label>
+                  <Input
+                    placeholder="e.g., 3rd Grade"
+                    value={localGrade}
+                    onChange={(e) => setLocalGrade(e.target.value)}
+                    onBlur={handleUpdateGrade}
+                    className="mt-1"
+                  />
+                </div>
+                <div>
+                  <label className="text-sm font-medium">Teacher</label>
+                  <Input
+                    placeholder="Teacher's name"
+                    value={localTeacher}
+                    onChange={(e) => setLocalTeacher(e.target.value)}
+                    onBlur={handleUpdateTeacher}
+                    className="mt-1"
+                  />
+                </div>
+              </div>
+            )}
+
             {/* Website Link */}
             <div className="space-y-2">
               <label className="text-sm font-medium">Website</label>
