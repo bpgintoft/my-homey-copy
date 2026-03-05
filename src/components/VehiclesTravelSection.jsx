@@ -178,8 +178,8 @@ export default function VehiclesTravelSection({ member, color = 'blue' }) {
           <div>
             <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2">Driver's License</h3>
             <div className="space-y-1.5">
-              {hasLicenseNumber && <ViewRow label="License Number" value={form.license_number} />}
-              {hasLicenseIssueDate && <ViewRow label="Issue Date" value={form.license_issue_date} />}
+              {hasLicenseNumber && <ViewRow label="License Number" copyKey="lic_number" value={form.license_number} />}
+              {hasLicenseIssueDate && <ViewRow label="Issue Date" copyKey="lic_issue" value={form.license_issue_date} />}
             </div>
           </div>
         )}
