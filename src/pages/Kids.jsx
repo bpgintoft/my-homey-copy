@@ -377,6 +377,10 @@ export default function Kids() {
               </Card>
             )}
           </TabsContent>
+
+          <TabsContent value="important">
+            <ImportantDatesTab />
+          </TabsContent>
         </Tabs>
       </div>
 
