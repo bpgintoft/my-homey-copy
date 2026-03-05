@@ -42,6 +42,7 @@ export default function SchoolProgramSection({ memberId, memberName, programTitl
       setLocalPhone(program.phone || '');
       setLocalEmail(program.email || '');
       setLocalTeacher(program.teacher || '');
+      setLocalGrade(program.grade || '');
     }
   }, [program]);
 
