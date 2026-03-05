@@ -239,6 +239,7 @@ export default function Kids() {
           <TabsList className="bg-white shadow-sm border-b-2 border-gray-200 rounded-none">
             <TabsTrigger value="calendar" className="border-b-2 border-transparent data-[state=active]:border-blue-500 data-[state=active]:bg-transparent rounded-none">Calendar</TabsTrigger>
             <TabsTrigger value="upcoming" className="border-b-2 border-transparent data-[state=active]:border-blue-500 data-[state=active]:bg-transparent rounded-none">Upcoming</TabsTrigger>
+            <TabsTrigger value="important" className="border-b-2 border-transparent data-[state=active]:border-blue-500 data-[state=active]:bg-transparent rounded-none">Important Dates</TabsTrigger>
           </TabsList>
 
           <TabsContent value="calendar">
