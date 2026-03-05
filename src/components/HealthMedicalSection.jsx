@@ -137,13 +137,18 @@ export default function HealthMedicalSection({ member, color = 'blue' }) {
   const hasInsuranceProvider = !!form.insurance_provider;
   const hasInsuranceMemberId = !!form.insurance_member_id;
   const hasInsuranceGroup = !!form.insurance_group_number;
+  const hasDentalInsuranceProvider = !!form.dental_insurance_provider;
+  const hasDentalInsuranceMemberId = !!form.dental_insurance_member_id;
+  const hasDentalInsuranceGroup = !!form.dental_insurance_group_number;
   const hasPhysician = isKid ? !!form.pediatrician : !!form.primary_care_physician;
   const hasDentist = !!form.dentist;
   const hasSpecialists = form.specialists?.some(s => s.specialty || s.name);
   const hasVaccinations = !!form.vaccination_history;
 
   const hasAnyPhysical = hasHeight || hasWeight || hasBloodType;
-  const hasAnyInsurance = hasInsuranceProvider || hasInsuranceMemberId || hasInsuranceGroup;
+  const hasAnyHealthInsurance = hasInsuranceProvider || hasInsuranceMemberId || hasInsuranceGroup;
+  const hasAnyDentalInsurance = hasDentalInsuranceProvider || hasDentalInsuranceMemberId || hasDentalInsuranceGroup;
+  const hasAnyInsurance = hasAnyHealthInsurance || hasAnyDentalInsurance;
   const hasAnyDoctors = hasPhysician || hasDentist || hasSpecialists;
   const hasAnything = hasAnyPhysical || hasAnyInsurance || hasAnyDoctors || hasVaccinations;
 
