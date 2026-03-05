@@ -235,6 +235,8 @@ Parse this and extract complete data to add an appliance. Return: name, brand, m
     }
   };
 
+  if (FAMILY_MEMBER_PAGES.includes(currentPageName)) return null;
+
   return (
     <>
       <button
