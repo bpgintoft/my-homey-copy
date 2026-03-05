@@ -168,16 +168,16 @@ export default function VehiclesTravelSection({ member, color = 'blue' }) {
             {form.frequent_flyer_programs.map((program, index) => (
               <div key={index} className="flex gap-2 items-center">
                 <Input
-                  placeholder="Airline"
-                  value={program.airline}
-                  onChange={(e) => updateFrequentFlyer(index, 'airline', e.target.value)}
-                  className="flex-1"
+                placeholder="Airline"
+                value={program.airline}
+                onChange={(e) => updateFrequentFlyer(index, 'airline', e.target.value)}
+                className={`flex-1 ${inputClass}`}
                 />
                 <Input
-                  placeholder="Member #"
-                  value={program.number}
-                  onChange={(e) => updateFrequentFlyer(index, 'number', e.target.value)}
-                  className="flex-1"
+                placeholder="Member #"
+                value={program.number}
+                onChange={(e) => updateFrequentFlyer(index, 'number', e.target.value)}
+                className={`flex-1 ${inputClass}`}
                 />
                 <Button variant="ghost" size="icon" className="h-8 w-8 flex-shrink-0" onClick={() => removeFrequentFlyer(index)}>
                   <Trash2 className="w-4 h-4 text-red-500" />
