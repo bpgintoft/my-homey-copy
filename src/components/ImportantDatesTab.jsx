@@ -156,59 +156,66 @@ export default function ImportantDatesTab() {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
             {items.map(d => (
               <motion.div key={d.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
-                <Card className="bg-white border-0 shadow-sm hover:shadow-md transition-shadow">
+                <Card
+                  className="bg-white border-0 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+                  onClick={() => setExpandedId(expandedId === d.id ? null : d.id)}
+                >
                   <CardContent className="p-5">
-                    <div className="flex items-start justify-between mb-2">
-                      <div className="flex-1 pr-2">
+                    {/* Always visible: title + date */}
+                    <div className="flex items-center justify-between">
+                      <div className="flex-1 min-w-0">
                         <h4 className="font-semibold text-gray-900">{d.title}</h4>
+                        <div className="flex items-center gap-1.5 text-sm text-gray-500 mt-1">
+                          <Calendar className="w-3.5 h-3.5 flex-shrink-0" />
+                          <span>
+                            {format(parseISO(d.date), 'MMM d, yyyy')}
+                            {d.end_date && d.end_date !== d.date && ` – ${format(parseISO(d.end_date), 'MMM d, yyyy')}`}
+                          </span>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-1">
-                        <Button variant="ghost" size="icon" className="h-7 w-7 text-gray-400 hover:text-blue-600"
-                          onClick={() => openEdit(d)}>
-                          <Edit2 className="w-3.5 h-3.5" />
-                        </Button>
-                        <Button variant="ghost" size="icon" className="h-7 w-7 text-gray-400 hover:text-red-500"
-                          onClick={() => deleteMutation.mutate(d.id)}>
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </Button>
-                      </div>
+                      <span className="text-gray-300 text-xs ml-2">{expandedId === d.id ? '▲' : '▼'}</span>
                     </div>
 
-                    <div className="flex items-center gap-2 text-sm text-gray-600 mb-2">
-                      <Calendar className="w-4 h-4 flex-shrink-0" />
-                      <span>
-                        {format(parseISO(d.date), 'MMM d, yyyy')}
-                        {d.end_date && d.end_date !== d.date && ` – ${format(parseISO(d.end_date), 'MMM d, yyyy')}`}
-                      </span>
-                    </div>
-
-                    {d.applies_to && (
-                      <div className="flex items-center gap-2 text-sm text-gray-500 mb-2">
-                        <Users className="w-4 h-4 flex-shrink-0" />
-                        <span>{d.applies_to}</span>
+                    {/* Expanded details */}
+                    {expandedId === d.id && (
+                      <div className="mt-4 space-y-2 border-t pt-3">
+                        {d.applies_to && (
+                          <div className="flex items-center gap-2 text-sm text-gray-500">
+                            <Users className="w-4 h-4 flex-shrink-0" />
+                            <span>{d.applies_to}</span>
+                          </div>
+                        )}
+                        {d.description && (
+                          <p className="text-sm text-gray-500">{d.description}</p>
+                        )}
+                        <div className="flex items-center justify-between pt-1">
+                          <Badge className={categoryConfig[cat]?.color}>{categoryConfig[cat]?.label}</Badge>
+                          <div className="flex items-center gap-1">
+                            {d.synced_google_event_id ? (
+                              <span className="flex items-center gap-1 text-xs text-green-600">
+                                <CheckCircle2 className="w-3.5 h-3.5" /> Synced
+                              </span>
+                            ) : (
+                              <Button variant="ghost" size="sm"
+                                className="text-xs text-gray-400 hover:text-blue-600 h-7 px-2"
+                                disabled={syncingId === d.id}
+                                onClick={(e) => { e.stopPropagation(); openSync(d); }}>
+                                <RefreshCw className={`w-3 h-3 mr-1 ${syncingId === d.id ? 'animate-spin' : ''}`} />
+                                Sync
+                              </Button>
+                            )}
+                            <Button variant="ghost" size="icon" className="h-7 w-7 text-gray-400 hover:text-blue-600"
+                              onClick={(e) => { e.stopPropagation(); openEdit(d); }}>
+                              <Edit2 className="w-3.5 h-3.5" />
+                            </Button>
+                            <Button variant="ghost" size="icon" className="h-7 w-7 text-gray-400 hover:text-red-500"
+                              onClick={(e) => { e.stopPropagation(); deleteMutation.mutate(d.id); }}>
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </Button>
+                          </div>
+                        </div>
                       </div>
                     )}
-
-                    {d.description && (
-                      <p className="text-sm text-gray-500 mb-3">{d.description}</p>
-                    )}
-
-                    <div className="flex items-center justify-between mt-2">
-                      <Badge className={categoryConfig[cat]?.color}>{categoryConfig[cat]?.label}</Badge>
-                      {d.synced_google_event_id ? (
-                        <span className="flex items-center gap-1 text-xs text-green-600">
-                          <CheckCircle2 className="w-3.5 h-3.5" /> Synced
-                        </span>
-                      ) : (
-                        <Button variant="ghost" size="sm"
-                          className="text-xs text-gray-400 hover:text-blue-600 h-7 px-2"
-                          disabled={syncingId === d.id}
-                          onClick={() => openSync(d)}>
-                          <RefreshCw className={`w-3 h-3 mr-1 ${syncingId === d.id ? 'animate-spin' : ''}`} />
-                          Sync to Calendar
-                        </Button>
-                      )}
-                    </div>
                   </CardContent>
                 </Card>
               </motion.div>
