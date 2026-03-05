@@ -24,23 +24,9 @@ Deno.serve(async (req) => {
 
     // Call LLM to parse and categorize the input
     const aiResponse = await base44.integrations.Core.InvokeLLM({
-      prompt: `Extract and categorize this family member info into ONE or more of these categories. Return ONLY the relevant data found.
-
-Categories:
-1. personal_info_hub: email, phone, role, responsibilities
-2. to_do_list: tasks with title and timing
-3. bright_horizons: school/work program info
-4. important_links: URLs with title and category
-5. important_contacts: contact info
-6. goals_milestones: goals with dates
-7. health_medical: blood type, height, weight, insurance, doctors, vaccines
-8. documents_ids: documents with type and dates
-9. vehicles_travel: vehicles, license, passport, frequent flyer
-10. personal_notes: general notes
-
-Text: "${input}"
-
-Return JSON with ONLY found categories and fields.`,
+      prompt: `Extract info into categories. Return ONLY found data in JSON format.
+Categories: personal_info_hub (email, phone, role, responsibilities), to_do_list (tasks), bright_horizons (school), important_links (URLs), important_contacts (names, phone), goals_milestones (goals with dates), health_medical (blood type, insurance, doctors), documents_ids (documents), vehicles_travel (vehicles, license, passport), personal_notes (notes).
+Text: "${input}"`,
       response_json_schema: {
         type: "object",
         properties: {
