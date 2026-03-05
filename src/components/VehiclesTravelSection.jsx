@@ -136,7 +136,7 @@ export default function VehiclesTravelSection({ member }) {
               <Label className="text-xs text-gray-600 mb-1 block">License Number</Label>
               <Input placeholder="License #" value={form.license_number} onChange={(e) => setForm({ ...form, license_number: e.target.value })} />
             </div>
-            <div className="flex-shrink-0">
+            <div className="w-36 flex-shrink-0">
               <Label className="text-xs text-gray-600 mb-1 block">Issue Date</Label>
               <Input type="date" value={form.license_issue_date} onChange={(e) => setForm({ ...form, license_issue_date: e.target.value })} />
             </div>
