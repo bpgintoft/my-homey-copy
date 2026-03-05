@@ -30,55 +30,15 @@ Text: "${input}"`,
       response_json_schema: {
         type: "object",
         properties: {
-          personal_info_hub: {
+          health_medical: {
             type: "object",
             properties: {
-              email: { type: "string" },
-              phone: { type: "string" },
-              role: { type: "string" },
-              responsibilities: { type: "array", items: { type: "string" } }
-            }
-          },
-          to_do_list: {
-            type: "array",
-            items: {
-              type: "object",
-              properties: {
-                title: { type: "string" },
-                timing: { type: "string", enum: ["daily", "short-term", "mid-term", "long-term"] }
-              }
-            }
-          },
-          bright_horizons: {
-            type: "object",
-            properties: {
-              title: { type: "string" },
-              grade: { type: "string" },
-              teacher: { type: "string" },
-              schedule: {
-                type: "object",
-                properties: {
-                  monday: { type: "string" },
-                  tuesday: { type: "string" },
-                  wednesday: { type: "string" },
-                  thursday: { type: "string" },
-                  friday: { type: "string" }
-                }
-              },
-              website_title: { type: "string" },
-              url: { type: "string" },
-              passcodes: {
-                type: "array",
-                items: {
-                  type: "object",
-                  properties: {
-                    name: { type: "string" },
-                    code: { type: "string" }
-                  }
-                }
-              },
-              phone: { type: "string" },
-              email: { type: "string" }
+              insurance_provider: { type: "string" },
+              insurance_member_id: { type: "string" },
+              insurance_group_number: { type: "string" },
+              dentist: { type: "string" },
+              blood_type: { type: "string" },
+              weight_lbs: { type: "number" }
             }
           },
           important_links: {
@@ -87,88 +47,11 @@ Text: "${input}"`,
               type: "object",
               properties: {
                 url: { type: "string" },
-                title: { type: "string" },
-                category: { type: "string", enum: ["school", "sports_extracurriculars", "medical", "social", "shopping", "entertainment", "other"] }
+                title: { type: "string" }
               }
             }
           },
-          important_contacts: {
-            type: "array",
-            items: {
-              type: "object",
-              properties: {
-                name: { type: "string" },
-                type: { type: "string" },
-                phone: { type: "string" },
-                email: { type: "string" },
-                address: { type: "string" },
-                website: { type: "string" }
-              }
-            }
-          },
-          goals_milestones: {
-            type: "array",
-            items: {
-              type: "object",
-              properties: {
-                title: { type: "string" },
-                date: { type: "string", format: "date" },
-                description: { type: "string" }
-              }
-            }
-          },
-          health_medical: {
-            type: "object",
-            properties: {
-              blood_type: { type: "string" },
-              height_feet: { type: "number" },
-              height_inches: { type: "number" },
-              weight_lbs: { type: "number" },
-              insurance_provider: { type: "string" },
-              insurance_member_id: { type: "string" },
-              insurance_group_number: { type: "string" },
-              primary_care_physician: { type: "string" },
-              pediatrician: { type: "string" },
-              dentist: { type: "string" },
-              vaccination_history: { type: "string" }
-            }
-          },
-          documents_ids: {
-            type: "array",
-            items: {
-              type: "object",
-              properties: {
-                type: { type: "string", enum: ["warranty", "receipt", "manual", "insurance", "contract", "permit", "diagram", "other"] },
-                title: { type: "string" },
-                expiration_date: { type: "string", format: "date" }
-              }
-            }
-          },
-          vehicles_travel: {
-            type: "object",
-            properties: {
-              vehicle_make: { type: "string" },
-              vehicle_model: { type: "string" },
-              vehicle_year: { type: "number" },
-              license_plate_number: { type: "string" },
-              license_number: { type: "string" },
-              license_expiration_date: { type: "string", format: "date" },
-              passport_expiration_date: { type: "string", format: "date" },
-              frequent_flyer_programs: {
-                type: "array",
-                items: {
-                  type: "object",
-                  properties: {
-                    airline: { type: "string" },
-                    number: { type: "string" }
-                  }
-                }
-              }
-            }
-          },
-          personal_notes: {
-            type: "string"
-          }
+          personal_notes: { type: "string" }
         }
       }
     });
