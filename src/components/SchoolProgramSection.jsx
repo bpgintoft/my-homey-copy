@@ -131,6 +131,15 @@ export default function SchoolProgramSection({ memberId, memberName, programTitl
     }
   };
 
+  const handleUpdateTeacher = () => {
+    if (program && localTeacher !== program.teacher) {
+      updateProgramMutation.mutate({
+        id: program.id,
+        data: { teacher: localTeacher },
+      });
+    }
+  };
+
   const handleUpdateUrl = (url) => {
     if (program) {
       updateProgramMutation.mutate({
