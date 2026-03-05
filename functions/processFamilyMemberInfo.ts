@@ -24,8 +24,7 @@ Deno.serve(async (req) => {
 
     // Call LLM to parse and categorize the input
     const aiResponse = await base44.integrations.Core.InvokeLLM({
-      prompt: `Extract info into categories. Return ONLY found data in JSON format.
-Categories: personal_info_hub (email, phone, role, responsibilities), to_do_list (tasks), bright_horizons (school), important_links (URLs), important_contacts (names, phone), goals_milestones (goals with dates), health_medical (blood type, insurance, doctors), documents_ids (documents), vehicles_travel (vehicles, license, passport), personal_notes (notes).
+      prompt: `Extract insurance and contact info from this text. Return JSON with only found data.
 Text: "${input}"`,
       response_json_schema: {
         type: "object",
@@ -36,9 +35,7 @@ Text: "${input}"`,
               insurance_provider: { type: "string" },
               insurance_member_id: { type: "string" },
               insurance_group_number: { type: "string" },
-              dentist: { type: "string" },
-              blood_type: { type: "string" },
-              weight_lbs: { type: "number" }
+              dentist: { type: "string" }
             }
           },
           important_links: {
@@ -50,121 +47,44 @@ Text: "${input}"`,
                 title: { type: "string" }
               }
             }
-          },
-          personal_notes: { type: "string" }
+          }
         }
       }
     });
 
-    // Process and save the extracted data
     const updates = {};
 
     // Direct FamilyMember updates
-    if (aiResponse.personal_info_hub?.email) updates.email = aiResponse.personal_info_hub.email;
-    if (aiResponse.personal_info_hub?.phone) updates.phone = aiResponse.personal_info_hub.phone;
-    if (aiResponse.personal_info_hub?.role) updates.role = aiResponse.personal_info_hub.role;
-    if (aiResponse.personal_info_hub?.responsibilities) updates.responsibilities = aiResponse.personal_info_hub.responsibilities;
-
-    if (aiResponse.health_medical?.blood_type) updates.blood_type = aiResponse.health_medical.blood_type;
-    if (aiResponse.health_medical?.height_feet !== undefined) updates.height_feet = aiResponse.health_medical.height_feet;
-    if (aiResponse.health_medical?.height_inches !== undefined) updates.height_inches = aiResponse.health_medical.height_inches;
-    if (aiResponse.health_medical?.weight_lbs !== undefined) updates.weight_lbs = aiResponse.health_medical.weight_lbs;
-    if (aiResponse.health_medical?.insurance_provider) updates.insurance_provider = aiResponse.health_medical.insurance_provider;
-    if (aiResponse.health_medical?.insurance_member_id) updates.insurance_member_id = aiResponse.health_medical.insurance_member_id;
-    if (aiResponse.health_medical?.insurance_group_number) updates.insurance_group_number = aiResponse.health_medical.insurance_group_number;
-    if (aiResponse.health_medical?.primary_care_physician) updates.primary_care_physician = aiResponse.health_medical.primary_care_physician;
-    if (aiResponse.health_medical?.pediatrician) updates.pediatrician = aiResponse.health_medical.pediatrician;
-    if (aiResponse.health_medical?.dentist) updates.dentist = aiResponse.health_medical.dentist;
-    if (aiResponse.health_medical?.vaccination_history) updates.vaccination_history = aiResponse.health_medical.vaccination_history;
-
-    if (aiResponse.vehicles_travel?.vehicle_make) updates.vehicle_make = aiResponse.vehicles_travel.vehicle_make;
-    if (aiResponse.vehicles_travel?.vehicle_model) updates.vehicle_model = aiResponse.vehicles_travel.vehicle_model;
-    if (aiResponse.vehicles_travel?.vehicle_year) updates.vehicle_year = aiResponse.vehicles_travel.vehicle_year;
-    if (aiResponse.vehicles_travel?.license_plate_number) updates.license_plate_number = aiResponse.vehicles_travel.license_plate_number;
-    if (aiResponse.vehicles_travel?.license_number) updates.license_number = aiResponse.vehicles_travel.license_number;
-    if (aiResponse.vehicles_travel?.license_expiration_date) updates.license_expiration_date = aiResponse.vehicles_travel.license_expiration_date;
-    if (aiResponse.vehicles_travel?.passport_expiration_date) updates.passport_expiration_date = aiResponse.vehicles_travel.passport_expiration_date;
-    if (aiResponse.vehicles_travel?.frequent_flyer_programs) updates.frequent_flyer_programs = aiResponse.vehicles_travel.frequent_flyer_programs;
-
-    if (aiResponse.personal_notes) updates.personal_notes = aiResponse.personal_notes;
+    if (aiResponse.health_medical?.insurance_provider) {
+      updates.insurance_provider = aiResponse.health_medical.insurance_provider;
+    }
+    if (aiResponse.health_medical?.insurance_member_id) {
+      updates.insurance_member_id = aiResponse.health_medical.insurance_member_id;
+    }
+    if (aiResponse.health_medical?.insurance_group_number) {
+      updates.insurance_group_number = aiResponse.health_medical.insurance_group_number;
+    }
+    if (aiResponse.health_medical?.dentist) {
+      updates.dentist = aiResponse.health_medical.dentist;
+    }
 
     // Update FamilyMember
     if (Object.keys(updates).length > 0) {
       await base44.asServiceRole.entities.FamilyMember.update(familyMemberId, updates);
     }
 
-    // Fetch member name once
-    const member = await base44.asServiceRole.entities.FamilyMember.filter({ id: familyMemberId }).then(res => res[0]);
-    const memberName = member?.name || 'Unknown';
-
-    // Create Chores from to_do_list
-    if (aiResponse.to_do_list?.length > 0) {
-      for (const chore of aiResponse.to_do_list) {
-        await base44.asServiceRole.entities.Chore.create({
-          title: chore.title,
-          timing: chore.timing === 'daily' ? 'short-term' : chore.timing || 'short-term',
-          assigned_to_member_id: familyMemberId,
-          assigned_to_name: memberName
-        });
-      }
-    }
-
-    // Create/Update SchoolProgram
-    if (aiResponse.bright_horizons) {
-      const existing = await base44.asServiceRole.entities.SchoolProgram.filter({ family_member_id: familyMemberId }).then(res => res[0]);
-      const programData = {
-        family_member_id: familyMemberId,
-        ...aiResponse.bright_horizons
-      };
-      if (existing) {
-        await base44.asServiceRole.entities.SchoolProgram.update(existing.id, programData);
-      } else {
-        await base44.asServiceRole.entities.SchoolProgram.create(programData);
-      }
-    }
-
     // Create Links
     if (aiResponse.important_links?.length > 0) {
       for (const link of aiResponse.important_links) {
-        await base44.asServiceRole.entities.FamilyMemberLink.create({
-          url: link.url,
-          title: link.title,
-          category: link.category,
-          assigned_to_member_id: familyMemberId,
-          assigned_to_name: memberName
-        });
-      }
-    }
-
-    // Create Contacts
-    if (aiResponse.important_contacts?.length > 0) {
-      for (const contact of aiResponse.important_contacts) {
-        await base44.asServiceRole.entities.ImportantContact.create({
-          ...contact,
-          linked_to_member_ids: [familyMemberId]
-        });
-      }
-    }
-
-    // Create Milestones
-    if (aiResponse.goals_milestones?.length > 0) {
-      for (const milestone of aiResponse.goals_milestones) {
-        await base44.asServiceRole.entities.Milestone.create({
-          ...milestone,
-          assigned_to_member_id: familyMemberId,
-          assigned_to_name: memberName
-        });
-      }
-    }
-
-    // Create Documents
-    if (aiResponse.documents_ids?.length > 0) {
-      for (const doc of aiResponse.documents_ids) {
-        await base44.asServiceRole.entities.Document.create({
-          title: doc.title,
-          type: doc.type,
-          ...(doc.expiration_date && { expiration_date: doc.expiration_date })
-        });
+        if (link.url) {
+          await base44.asServiceRole.entities.FamilyMemberLink.create({
+            url: link.url,
+            title: link.title || 'Link',
+            category: 'other',
+            assigned_to_member_id: familyMemberId,
+            assigned_to_name: 'Member'
+          });
+        }
       }
     }
 
