@@ -199,6 +199,9 @@ export default function HealthMedicalSection({ member, color = 'blue' }) {
                 />
               )}
               {hasDentist && <ViewRow label="Dentist" copyKey="dentist" value={form.dentist} />}
+              {hasSpecialists && form.specialists.filter(s => s.specialty || s.name).map((s, i) => (
+                <ViewRow key={i} label={s.specialty || 'Specialist'} copyKey={`specialist_${i}`} value={s.name} />
+              ))}
             </div>
           </div>
         )}
