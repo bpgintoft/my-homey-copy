@@ -51,6 +51,7 @@ export default function HealthMedicalSection({ member, color = 'blue' }) {
     primary_care_physician: member?.primary_care_physician ?? '',
     pediatrician: member?.pediatrician ?? '',
     dentist: member?.dentist ?? '',
+    specialists: member?.specialists ?? [],
     vaccination_history: member?.vaccination_history ?? '',
   });
   const [saved, setSaved] = useState(false);
