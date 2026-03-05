@@ -306,34 +306,59 @@ export default function HealthMedicalSection({ member, color = 'blue' }) {
       {/* Insurance */}
       <div>
         <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">Insurance</h3>
-        <div className="space-y-3">
+        <div className="space-y-4">
           <div>
-            <Label className="text-xs text-gray-600 mb-1 block">Provider</Label>
-            <Input placeholder="e.g., Blue Cross Blue Shield" value={form.insurance_provider} onChange={(e) => setForm({ ...form, insurance_provider: e.target.value })} className={inputClass} />
-          </div>
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <Label className="text-xs text-gray-600 mb-1 block">Member ID</Label>
-              <Input placeholder="Member ID" value={form.insurance_member_id} onChange={(e) => setForm({ ...form, insurance_member_id: e.target.value })} className={inputClass} />
-            </div>
-            <div>
-              <Label className="text-xs text-gray-600 mb-1 block">Group Number</Label>
-              <Input placeholder="Group #" value={form.insurance_group_number} onChange={(e) => setForm({ ...form, insurance_group_number: e.target.value })} className={inputClass} />
-            </div>
-          </div>
-          {otherMembers.length > 0 && (
-            <div className="pt-1">
-              <Label className="text-xs text-gray-600 mb-2 block">Also sync insurance to:</Label>
-              <div className="flex flex-wrap gap-3">
-                {otherMembers.map(m => (
-                  <div key={m.id} className="flex items-center gap-1.5 cursor-pointer" onClick={() => toggleSyncMember(m.id)}>
-                    <Checkbox checked={syncMemberIds.includes(m.id)} onCheckedChange={() => toggleSyncMember(m.id)} onClick={e => e.stopPropagation()} />
-                    <span className="text-sm text-gray-700">{m.name}</span>
+            <h4 className="text-xs font-semibold text-gray-600 mb-2 block">Health Insurance</h4>
+            <div className="space-y-3">
+              <div>
+                <Label className="text-xs text-gray-600 mb-1 block">Provider</Label>
+                <Input placeholder="e.g., Blue Cross Blue Shield" value={form.insurance_provider} onChange={(e) => setForm({ ...form, insurance_provider: e.target.value })} className={inputClass} />
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <Label className="text-xs text-gray-600 mb-1 block">Member ID</Label>
+                  <Input placeholder="Member ID" value={form.insurance_member_id} onChange={(e) => setForm({ ...form, insurance_member_id: e.target.value })} className={inputClass} />
+                </div>
+                <div>
+                  <Label className="text-xs text-gray-600 mb-1 block">Group Number</Label>
+                  <Input placeholder="Group #" value={form.insurance_group_number} onChange={(e) => setForm({ ...form, insurance_group_number: e.target.value })} className={inputClass} />
+                </div>
+              </div>
+              {otherMembers.length > 0 && (
+                <div className="pt-1">
+                  <Label className="text-xs text-gray-600 mb-2 block">Also sync to:</Label>
+                  <div className="flex flex-wrap gap-3">
+                    {otherMembers.map(m => (
+                      <div key={m.id} className="flex items-center gap-1.5 cursor-pointer" onClick={() => toggleSyncMember(m.id)}>
+                        <Checkbox checked={syncMemberIds.includes(m.id)} onCheckedChange={() => toggleSyncMember(m.id)} onClick={e => e.stopPropagation()} />
+                        <span className="text-sm text-gray-700">{m.name}</span>
+                      </div>
+                    ))}
                   </div>
-                ))}
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className="border-t pt-4">
+            <h4 className="text-xs font-semibold text-gray-600 mb-2 block">Dental Insurance</h4>
+            <div className="space-y-3">
+              <div>
+                <Label className="text-xs text-gray-600 mb-1 block">Provider</Label>
+                <Input placeholder="e.g., Dental Care Plus" value={form.dental_insurance_provider} onChange={(e) => setForm({ ...form, dental_insurance_provider: e.target.value })} className={inputClass} />
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <Label className="text-xs text-gray-600 mb-1 block">Member ID</Label>
+                  <Input placeholder="Member ID" value={form.dental_insurance_member_id} onChange={(e) => setForm({ ...form, dental_insurance_member_id: e.target.value })} className={inputClass} />
+                </div>
+                <div>
+                  <Label className="text-xs text-gray-600 mb-1 block">Group Number</Label>
+                  <Input placeholder="Group #" value={form.dental_insurance_group_number} onChange={(e) => setForm({ ...form, dental_insurance_group_number: e.target.value })} className={inputClass} />
+                </div>
               </div>
             </div>
-          )}
+          </div>
         </div>
       </div>
 
