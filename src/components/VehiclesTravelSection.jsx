@@ -243,6 +243,10 @@ export default function VehiclesTravelSection({ member, color = 'blue' }) {
             </div>
           </div>
           <div>
+            <Label className="text-xs text-gray-600 mb-1 block">License Plate</Label>
+            <Input placeholder="e.g., ABC 1234" value={form.license_plate_number} onChange={(e) => setForm({ ...form, license_plate_number: e.target.value })} className={inputClass} />
+          </div>
+          <div>
             <Label className="text-xs text-gray-600 mb-1 block">VIN</Label>
             <Input placeholder="Vehicle Identification Number" value={form.vehicle_vin} onChange={(e) => setForm({ ...form, vehicle_vin: e.target.value })} className={inputClass} />
           </div>
