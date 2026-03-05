@@ -26,9 +26,12 @@ Text: "${input}"`,
           health_medical: {
             type: "object",
             properties: {
-              insurance_provider: { type: "string" },
-              insurance_member_id: { type: "string" },
-              insurance_group_number: { type: "string" },
+              health_insurance_provider: { type: "string" },
+              health_insurance_member_id: { type: "string" },
+              health_insurance_group_number: { type: "string" },
+              dental_insurance_provider: { type: "string" },
+              dental_insurance_member_id: { type: "string" },
+              dental_insurance_group_number: { type: "string" },
               dentist: { type: "string" }
             }
           },
