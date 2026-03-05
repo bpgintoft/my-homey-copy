@@ -108,7 +108,7 @@ export default function VehiclesTravelSection({ member, color = 'blue' }) {
       <span className="text-sm text-gray-800 font-medium flex-1">{value}</span>
       <button
         onClick={() => handleCopy(value, copyKey || label)}
-        className="p-1 rounded text-gray-300 hover:text-gray-600 transition-colors shrink-0"
+        className="p-1 rounded text-gray-400 hover:text-gray-600 transition-colors shrink-0"
         title="Copy"
       >
         {copiedKey === (copyKey || label)
