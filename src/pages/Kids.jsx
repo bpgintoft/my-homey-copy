@@ -16,6 +16,7 @@ import { Plus, Calendar as CalendarIcon, MapPin, DollarSign, Clock, Sparkles, Us
 import { motion } from 'framer-motion';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, parseISO } from 'date-fns';
 import FamilyCalendar from '../components/FamilyCalendar';
+import ImportantDatesTab from '../components/ImportantDatesTab';
 
 export default function Kids() {
   const navigate = useNavigate();
