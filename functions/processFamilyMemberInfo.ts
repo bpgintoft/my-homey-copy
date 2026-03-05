@@ -1,4 +1,4 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.20';
+import { createClientFromRequest, createServiceRoleClient } from 'npm:@base44/sdk@0.8.20';
 
 Deno.serve(async (req) => {
   try {
@@ -8,6 +8,11 @@ Deno.serve(async (req) => {
     if (!user) {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
+
+    // Create a service role client for entity operations
+    const serviceBase44 = createServiceRoleClient({
+      appId: Deno.env.get('BASE44_APP_ID')
+    });
 
     let body;
     try {
