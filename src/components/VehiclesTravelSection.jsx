@@ -89,6 +89,7 @@ export default function VehiclesTravelSection({ member, color = 'blue' }) {
 
   // Check which fields have values
   const hasVehicle = form.vehicle_year || form.vehicle_make || form.vehicle_model;
+  const hasLicensePlate = !!form.license_plate_number;
   const hasVin = !!form.vehicle_vin;
   const hasRegExpiry = !!form.vehicle_registration_expiration;
   const hasInsuranceProvider = !!form.vehicle_insurance_provider;
