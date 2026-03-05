@@ -7,8 +7,11 @@ import { base44 } from '@/api/base44Client';
 import { useSwipe } from '../components/useSwipe';
 import FamilyMemberDetails from '../components/FamilyMemberDetails';
 import ChoreNotificationsDialog from '../components/ChoreNotificationsDialog';
+import AIMemberInfoDialog from '../components/AIMemberInfoDialog';
+import { useQueryClient } from '@tanstack/react-query';
 
 export default function MaraPage() {
+  const queryClient = useQueryClient();
   const navigate = useNavigate();
   const bannerRef = useRef(null);
   
@@ -82,6 +85,7 @@ export default function MaraPage() {
       {mara && (
         <>
           <ChoreNotificationsDialog memberId={mara.id} />
+          <AIMemberInfoDialog memberId={mara.id} memberName="Mara" onSuccess={() => queryClient.invalidateQueries(['familyMember', mara.id])} />
           <div className="max-w-2xl mx-auto px-4 sm:px-6 pt-2 pb-6 space-y-4">
             <FamilyMemberDetails memberId={mara.id} memberName="Mara" color="purple" />
           </div>
