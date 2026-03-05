@@ -201,6 +201,20 @@ export default function VehiclesTravelSection({ member, color = 'blue' }) {
           </div>
         )}
 
+        {/* Passport */}
+        {hasPassport && (
+          <div>
+            <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2">Travel Documents</h3>
+            <div className="space-y-1.5">
+              <ViewRow
+                label="Passport Exp."
+                copyKey="passport_exp"
+                value={new Date(form.passport_expiration_date + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+              />
+            </div>
+          </div>
+        )}
+
         {/* Frequent Flyer */}
         {hasFrequentFlyer && (
           <div>
