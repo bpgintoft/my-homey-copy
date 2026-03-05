@@ -90,6 +90,18 @@ Text: "${input}"`,
       updates.optometrist = aiResponse.health_medical.optometrist;
     }
 
+    // Also sync vision insurance to selected other members if specified
+    if (syncMemberIds.length > 0) {
+      const visionInsuranceData = {
+        vision_insurance_provider: updates.vision_insurance_provider,
+        vision_insurance_member_id: updates.vision_insurance_member_id,
+        vision_insurance_group_number: updates.vision_insurance_group_number,
+      };
+      const updatedMembers = [
+        ...syncMemberIds.map(id => ({ id, data: { ...insuranceData, ...visionInsuranceData } }))
+      ];
+    }
+
     // Update FamilyMember
     if (Object.keys(updates).length > 0) {
       await base44.asServiceRole.entities.FamilyMember.update(familyMemberId, updates);

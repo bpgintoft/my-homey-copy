@@ -51,9 +51,13 @@ export default function HealthMedicalSection({ member, color = 'blue' }) {
     dental_insurance_provider: member?.dental_insurance_provider ?? '',
     dental_insurance_member_id: member?.dental_insurance_member_id ?? '',
     dental_insurance_group_number: member?.dental_insurance_group_number ?? '',
+    vision_insurance_provider: member?.vision_insurance_provider ?? '',
+    vision_insurance_member_id: member?.vision_insurance_member_id ?? '',
+    vision_insurance_group_number: member?.vision_insurance_group_number ?? '',
     primary_care_physician: member?.primary_care_physician ?? '',
     pediatrician: member?.pediatrician ?? '',
     dentist: member?.dentist ?? '',
+    optometrist: member?.optometrist ?? '',
     specialists: member?.specialists ?? [],
     vaccination_history: member?.vaccination_history ?? '',
   });
@@ -246,6 +250,7 @@ export default function HealthMedicalSection({ member, color = 'blue' }) {
                 />
               )}
               {hasDentist && <ViewRow label="Dentist" copyKey="dentist" value={form.dentist} />}
+              {hasOptometrist && <ViewRow label="Optometrist" copyKey="optometrist" value={form.optometrist} />}
               {hasSpecialists && form.specialists.filter(s => s.specialty || s.name).map((s, i) => (
                 <ViewRow key={i} label={s.specialty || 'Specialist'} copyKey={`specialist_${i}`} value={s.name} />
               ))}
@@ -419,6 +424,10 @@ export default function HealthMedicalSection({ member, color = 'blue' }) {
           <div>
             <Label className="text-xs text-gray-600 mb-1 block">Dentist</Label>
             <Input placeholder="Dentist name" value={form.dentist} onChange={(e) => setForm({ ...form, dentist: e.target.value })} className={inputClass} />
+          </div>
+          <div>
+            <Label className="text-xs text-gray-600 mb-1 block">Optometrist</Label>
+            <Input placeholder="Optometrist name" value={form.optometrist} onChange={(e) => setForm({ ...form, optometrist: e.target.value })} className={inputClass} />
           </div>
           {/* Specialists */}
           <div>
