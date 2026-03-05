@@ -92,6 +92,7 @@ export default function HealthMedicalSection({ member, color = 'blue' }) {
       primary_care_physician: form.primary_care_physician || null,
       pediatrician: form.pediatrician || null,
       dentist: form.dentist || null,
+      specialists: form.specialists.filter(s => s.specialty || s.name),
       vaccination_history: form.vaccination_history || null,
     });
   };
