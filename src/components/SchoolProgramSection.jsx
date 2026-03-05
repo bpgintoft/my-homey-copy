@@ -28,6 +28,7 @@ export default function SchoolProgramSection({ memberId, memberName, programTitl
   const [localPhone, setLocalPhone] = useState('');
   const [localEmail, setLocalEmail] = useState('');
   const [localTeacher, setLocalTeacher] = useState('');
+  const [localGrade, setLocalGrade] = useState('');
 
   // Fetch school program data
   const { data: program } = useQuery({
