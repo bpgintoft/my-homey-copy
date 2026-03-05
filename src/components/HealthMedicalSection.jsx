@@ -138,7 +138,7 @@ export default function HealthMedicalSection({ member, color = 'blue' }) {
 
   const hasAnyPhysical = hasHeight || hasWeight || hasBloodType;
   const hasAnyInsurance = hasInsuranceProvider || hasInsuranceMemberId || hasInsuranceGroup;
-  const hasAnyDoctors = hasPhysician || hasDentist;
+  const hasAnyDoctors = hasPhysician || hasDentist || hasSpecialists;
   const hasAnything = hasAnyPhysical || hasAnyInsurance || hasAnyDoctors || hasVaccinations;
 
   if (!editing) {
