@@ -1350,7 +1350,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
           <DialogHeader>
             <DialogTitle>Health & Medical</DialogTitle>
           </DialogHeader>
-          {member && <HealthMedicalSection member={member} />}
+          {member && <HealthMedicalSection member={member} color={color} />}
         </DialogContent>
       </Dialog>
 
