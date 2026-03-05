@@ -2,13 +2,6 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.20';
 
 Deno.serve(async (req) => {
   try {
-    const base44 = createClientFromRequest(req);
-    const user = await base44.auth.me();
-
-    if (!user) {
-      return Response.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
     let body;
     try {
       body = await req.json();
@@ -23,7 +16,8 @@ Deno.serve(async (req) => {
     }
 
     // Call LLM to parse and categorize the input
-    const aiResponse = await base44.integrations.Core.InvokeLLM({
+    const base44 = createClientFromRequest(req);
+    const aiResponse = await base44.asServiceRole.integrations.Core.InvokeLLM({
       prompt: `Extract insurance and contact info from this text. Return JSON with only found data.
 Text: "${input}"`,
       response_json_schema: {
