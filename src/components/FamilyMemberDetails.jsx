@@ -1366,11 +1366,11 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
 
       {/* Vehicles & Travel Dialog */}
       <Dialog open={expandedSection === 'vehicles'} onOpenChange={(open) => !open && setExpandedSection(null)}>
-        <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto top-4 translate-y-0">
+        <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto top-4 translate-y-0" onOpenAutoFocus={(e) => e.preventDefault()}>
           <DialogHeader>
             <DialogTitle>Vehicles & Travel</DialogTitle>
           </DialogHeader>
-          <p className="text-sm text-gray-500">Vehicles & Travel information coming soon.</p>
+          {member && <VehiclesTravelSection member={member} />}
         </DialogContent>
       </Dialog>
 
