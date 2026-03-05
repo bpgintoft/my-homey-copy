@@ -14,6 +14,14 @@ const inputColorMap = {
   pink: 'border-pink-400 focus-visible:ring-pink-500 bg-pink-50',
 };
 
+const valueColorMap = {
+  blue: 'text-blue-700',
+  green: 'text-green-700',
+  purple: 'text-purple-700',
+  orange: 'text-orange-700',
+  pink: 'text-pink-700',
+};
+
 export default function VehiclesTravelSection({ member, color = 'blue' }) {
   const inputClass = inputColorMap[color] || inputColorMap.blue;
   const queryClient = useQueryClient();
