@@ -84,7 +84,7 @@ export default function VehiclesTravelSection({ member, color = 'blue' }) {
           <div className="grid grid-cols-3 gap-3">
             <div>
               <Label className="text-xs text-gray-600 mb-1 block">Year</Label>
-              <Input type="number" placeholder="2022" value={form.vehicle_year} onChange={(e) => setForm({ ...form, vehicle_year: e.target.value })} />
+              <Input type="number" placeholder="2022" value={form.vehicle_year} onChange={(e) => setForm({ ...form, vehicle_year: e.target.value })} className={inputClass} />
             </div>
             <div>
               <Label className="text-xs text-gray-600 mb-1 block">Make</Label>
