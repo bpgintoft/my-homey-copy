@@ -50,7 +50,7 @@ export default function AIMemberInfoDialog({ memberId, memberName, onSuccess }) 
           <Sparkles className="w-6 h-6" />
         </button>
       </DialogTrigger>
-      <DialogContent className="max-w-2xl">
+      <DialogContent className="max-w-2xl top-0 translate-y-0">
         <DialogHeader>
           <DialogTitle>Add Information for {memberName}</DialogTitle>
         </DialogHeader>
