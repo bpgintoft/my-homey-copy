@@ -6,7 +6,16 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Plus, Trash2 } from 'lucide-react';
 
-export default function VehiclesTravelSection({ member }) {
+const inputColorMap = {
+  blue: 'border-blue-400 focus-visible:ring-blue-500 bg-blue-50',
+  green: 'border-green-400 focus-visible:ring-green-500 bg-green-50',
+  purple: 'border-purple-400 focus-visible:ring-purple-500 bg-purple-50',
+  orange: 'border-orange-400 focus-visible:ring-orange-500 bg-orange-50',
+  pink: 'border-pink-400 focus-visible:ring-pink-500 bg-pink-50',
+};
+
+export default function VehiclesTravelSection({ member, color = 'blue' }) {
+  const inputClass = inputColorMap[color] || inputColorMap.blue;
   const queryClient = useQueryClient();
   const [form, setForm] = useState({
     vehicle_make: member?.vehicle_make ?? '',
