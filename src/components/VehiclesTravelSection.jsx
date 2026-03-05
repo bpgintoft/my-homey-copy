@@ -94,11 +94,27 @@ export default function VehiclesTravelSection({ member, color = 'blue' }) {
 
   const hasAnything = hasVehicle || hasVin || hasRegExpiry || hasAnyVehicleInsurance || hasAnyRoadside || hasAnyLicense || hasFrequentFlyer;
 
+  const [copiedKey, setCopiedKey] = useState(null);
+  const handleCopy = (value, key) => {
+    navigator.clipboard.writeText(value);
+    setCopiedKey(key);
+    setTimeout(() => setCopiedKey(null), 1500);
+  };
+
   // In view mode, show a read-only field row
-  const ViewRow = ({ label, value }) => (
-    <div className="flex items-baseline gap-2">
+  const ViewRow = ({ label, value, copyKey }) => (
+    <div className="flex items-center gap-2">
       <span className="text-xs text-gray-500 shrink-0 w-32">{label}</span>
-      <span className="text-sm text-gray-800 font-medium">{value}</span>
+      <span className="text-sm text-gray-800 font-medium flex-1">{value}</span>
+      <button
+        onClick={() => handleCopy(value, copyKey || label)}
+        className="p-1 rounded text-gray-300 hover:text-gray-600 transition-colors shrink-0"
+        title="Copy"
+      >
+        {copiedKey === (copyKey || label)
+          ? <Check className="w-3.5 h-3.5 text-green-500" />
+          : <Copy className="w-3.5 h-3.5" />}
+      </button>
     </div>
   );
 
