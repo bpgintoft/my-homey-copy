@@ -190,7 +190,7 @@ export default function VehiclesTravelSection({ member, color = 'blue' }) {
             <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2">Frequent Flyer Programs</h3>
             <div className="space-y-1.5">
               {form.frequent_flyer_programs.filter(p => p.airline || p.number).map((program, i) => (
-                <ViewRow key={i} label={program.airline || '—'} value={program.number || '—'} />
+                <ViewRow key={i} label={program.airline || '—'} copyKey={`ff_${i}`} value={program.number || '—'} />
               ))}
             </div>
           </div>
