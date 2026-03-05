@@ -95,9 +95,13 @@ export default function HealthMedicalSection({ member, color = 'blue' }) {
       dental_insurance_provider: form.dental_insurance_provider || null,
       dental_insurance_member_id: form.dental_insurance_member_id || null,
       dental_insurance_group_number: form.dental_insurance_group_number || null,
+      vision_insurance_provider: form.vision_insurance_provider || null,
+      vision_insurance_member_id: form.vision_insurance_member_id || null,
+      vision_insurance_group_number: form.vision_insurance_group_number || null,
       primary_care_physician: form.primary_care_physician || null,
       pediatrician: form.pediatrician || null,
       dentist: form.dentist || null,
+      optometrist: form.optometrist || null,
       specialists: form.specialists.filter(s => s.specialty || s.name),
       vaccination_history: form.vaccination_history || null,
     });
@@ -140,16 +144,21 @@ export default function HealthMedicalSection({ member, color = 'blue' }) {
   const hasDentalInsuranceProvider = !!form.dental_insurance_provider;
   const hasDentalInsuranceMemberId = !!form.dental_insurance_member_id;
   const hasDentalInsuranceGroup = !!form.dental_insurance_group_number;
+  const hasVisionInsuranceProvider = !!form.vision_insurance_provider;
+  const hasVisionInsuranceMemberId = !!form.vision_insurance_member_id;
+  const hasVisionInsuranceGroup = !!form.vision_insurance_group_number;
   const hasPhysician = isKid ? !!form.pediatrician : !!form.primary_care_physician;
   const hasDentist = !!form.dentist;
+  const hasOptometrist = !!form.optometrist;
   const hasSpecialists = form.specialists?.some(s => s.specialty || s.name);
   const hasVaccinations = !!form.vaccination_history;
 
   const hasAnyPhysical = hasHeight || hasWeight || hasBloodType;
   const hasAnyHealthInsurance = hasInsuranceProvider || hasInsuranceMemberId || hasInsuranceGroup;
   const hasAnyDentalInsurance = hasDentalInsuranceProvider || hasDentalInsuranceMemberId || hasDentalInsuranceGroup;
-  const hasAnyInsurance = hasAnyHealthInsurance || hasAnyDentalInsurance;
-  const hasAnyDoctors = hasPhysician || hasDentist || hasSpecialists;
+  const hasAnyVisionInsurance = hasVisionInsuranceProvider || hasVisionInsuranceMemberId || hasVisionInsuranceGroup;
+  const hasAnyInsurance = hasAnyHealthInsurance || hasAnyDentalInsurance || hasAnyVisionInsurance;
+  const hasAnyDoctors = hasPhysician || hasDentist || hasOptometrist || hasSpecialists;
   const hasAnything = hasAnyPhysical || hasAnyInsurance || hasAnyDoctors || hasVaccinations;
 
   if (!editing) {
@@ -207,6 +216,16 @@ export default function HealthMedicalSection({ member, color = 'blue' }) {
                     {hasDentalInsuranceProvider && <ViewRow label="Provider" copyKey="dental_ins_provider" value={form.dental_insurance_provider} />}
                     {hasDentalInsuranceMemberId && <ViewRow label="Member ID" copyKey="dental_ins_member" value={form.dental_insurance_member_id} />}
                     {hasDentalInsuranceGroup && <ViewRow label="Group Number" copyKey="dental_ins_group" value={form.dental_insurance_group_number} />}
+                  </div>
+                </div>
+              )}
+              {hasAnyVisionInsurance && (
+                <div>
+                  <p className="text-xs font-semibold text-gray-600 mb-1.5">Vision Insurance</p>
+                  <div className="space-y-1.5">
+                    {hasVisionInsuranceProvider && <ViewRow label="Provider" copyKey="vision_ins_provider" value={form.vision_insurance_provider} />}
+                    {hasVisionInsuranceMemberId && <ViewRow label="Member ID" copyKey="vision_ins_member" value={form.vision_insurance_member_id} />}
+                    {hasVisionInsuranceGroup && <ViewRow label="Group Number" copyKey="vision_ins_group" value={form.vision_insurance_group_number} />}
                   </div>
                 </div>
               )}
@@ -355,6 +374,26 @@ export default function HealthMedicalSection({ member, color = 'blue' }) {
                 <div>
                   <Label className="text-xs text-gray-600 mb-1 block">Group Number</Label>
                   <Input placeholder="Group #" value={form.dental_insurance_group_number} onChange={(e) => setForm({ ...form, dental_insurance_group_number: e.target.value })} className={inputClass} />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="border-t pt-4">
+            <h4 className="text-xs font-semibold text-gray-600 mb-2 block">Vision Insurance</h4>
+            <div className="space-y-3">
+              <div>
+                <Label className="text-xs text-gray-600 mb-1 block">Provider</Label>
+                <Input placeholder="e.g., VSP Vision" value={form.vision_insurance_provider} onChange={(e) => setForm({ ...form, vision_insurance_provider: e.target.value })} className={inputClass} />
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <Label className="text-xs text-gray-600 mb-1 block">Member ID</Label>
+                  <Input placeholder="Member ID" value={form.vision_insurance_member_id} onChange={(e) => setForm({ ...form, vision_insurance_member_id: e.target.value })} className={inputClass} />
+                </div>
+                <div>
+                  <Label className="text-xs text-gray-600 mb-1 block">Group Number</Label>
+                  <Input placeholder="Group #" value={form.vision_insurance_group_number} onChange={(e) => setForm({ ...form, vision_insurance_group_number: e.target.value })} className={inputClass} />
                 </div>
               </div>
             </div>

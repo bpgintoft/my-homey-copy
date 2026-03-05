@@ -32,7 +32,11 @@ Text: "${input}"`,
               dental_insurance_provider: { type: "string" },
               dental_insurance_member_id: { type: "string" },
               dental_insurance_group_number: { type: "string" },
-              dentist: { type: "string" }
+              vision_insurance_provider: { type: "string" },
+              vision_insurance_member_id: { type: "string" },
+              vision_insurance_group_number: { type: "string" },
+              dentist: { type: "string" },
+              optometrist: { type: "string" }
             }
           },
           important_links: {
@@ -70,8 +74,20 @@ Text: "${input}"`,
     if (aiResponse.health_medical?.dental_insurance_group_number) {
       updates.dental_insurance_group_number = aiResponse.health_medical.dental_insurance_group_number;
     }
+    if (aiResponse.health_medical?.vision_insurance_provider) {
+      updates.vision_insurance_provider = aiResponse.health_medical.vision_insurance_provider;
+    }
+    if (aiResponse.health_medical?.vision_insurance_member_id) {
+      updates.vision_insurance_member_id = aiResponse.health_medical.vision_insurance_member_id;
+    }
+    if (aiResponse.health_medical?.vision_insurance_group_number) {
+      updates.vision_insurance_group_number = aiResponse.health_medical.vision_insurance_group_number;
+    }
     if (aiResponse.health_medical?.dentist) {
       updates.dentist = aiResponse.health_medical.dentist;
+    }
+    if (aiResponse.health_medical?.optometrist) {
+      updates.optometrist = aiResponse.health_medical.optometrist;
     }
 
     // Update FamilyMember
