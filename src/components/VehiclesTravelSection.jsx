@@ -141,11 +141,12 @@ export default function VehiclesTravelSection({ member, color = 'blue' }) {
               {hasVehicle && (
                 <ViewRow
                   label="Vehicle"
+                  copyKey="vehicle"
                   value={[form.vehicle_year, form.vehicle_make, form.vehicle_model].filter(Boolean).join(' ')}
                 />
               )}
-              {hasVin && <ViewRow label="VIN" value={form.vehicle_vin} />}
-              {hasRegExpiry && <ViewRow label="Reg. Expiration" value={form.vehicle_registration_expiration} />}
+              {hasVin && <ViewRow label="VIN" copyKey="vin" value={form.vehicle_vin} />}
+              {hasRegExpiry && <ViewRow label="Reg. Expiration" copyKey="reg_expiry" value={form.vehicle_registration_expiration} />}
             </div>
           </div>
         )}
