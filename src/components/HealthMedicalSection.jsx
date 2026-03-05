@@ -328,6 +328,52 @@ export default function HealthMedicalSection({ member, color = 'blue' }) {
             <Label className="text-xs text-gray-600 mb-1 block">Dentist</Label>
             <Input placeholder="Dentist name" value={form.dentist} onChange={(e) => setForm({ ...form, dentist: e.target.value })} className={inputClass} />
           </div>
+          {/* Specialists */}
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <Label className="text-xs text-gray-600">Specialists</Label>
+              <button
+                type="button"
+                onClick={() => setForm({ ...form, specialists: [...(form.specialists || []), { specialty: '', name: '' }] })}
+                className="text-xs text-blue-500 hover:text-blue-700 flex items-center gap-1"
+              >
+                <Plus className="w-3 h-3" /> Add
+              </button>
+            </div>
+            <div className="space-y-2">
+              {(form.specialists || []).map((s, i) => (
+                <div key={i} className="flex gap-2 items-center">
+                  <Input
+                    placeholder="Specialty (e.g., Cardiologist)"
+                    value={s.specialty}
+                    onChange={(e) => {
+                      const updated = [...form.specialists];
+                      updated[i] = { ...updated[i], specialty: e.target.value };
+                      setForm({ ...form, specialists: updated });
+                    }}
+                    className={`${inputClass} flex-1`}
+                  />
+                  <Input
+                    placeholder="Doctor name"
+                    value={s.name}
+                    onChange={(e) => {
+                      const updated = [...form.specialists];
+                      updated[i] = { ...updated[i], name: e.target.value };
+                      setForm({ ...form, specialists: updated });
+                    }}
+                    className={`${inputClass} flex-1`}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setForm({ ...form, specialists: form.specialists.filter((_, idx) => idx !== i) })}
+                    className="text-gray-400 hover:text-red-500 transition-colors shrink-0"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
 
