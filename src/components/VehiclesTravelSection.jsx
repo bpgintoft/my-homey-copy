@@ -114,7 +114,7 @@ export default function VehiclesTravelSection({ member, color = 'blue' }) {
   const ViewRow = ({ label, value, copyKey }) => (
     <div className="flex items-center gap-2">
       <span className="text-xs text-gray-500 shrink-0 w-32">{label}</span>
-      <span className="text-sm text-gray-800 font-medium flex-1">{value}</span>
+      <span className={`text-sm font-medium flex-1 ${valueColor}`}>{value}</span>
       <button
         onClick={() => handleCopy(value, copyKey || label)}
         className="p-1 rounded text-gray-400 hover:text-gray-600 transition-colors shrink-0"
