@@ -27,6 +27,7 @@ const EMPTY_FORM = { title: '', date: '', end_date: '', description: '', categor
 
 export default function ImportantDatesTab() {
   const queryClient = useQueryClient();
+  const [expandedId, setExpandedId] = useState(null);
   const [showDialog, setShowDialog] = useState(false);
   const [editing, setEditing] = useState(null);
   const [form, setForm] = useState(EMPTY_FORM);
