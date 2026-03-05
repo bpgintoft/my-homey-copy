@@ -70,14 +70,14 @@ Text: "${input}"`,
 
     // Update FamilyMember
     if (Object.keys(updates).length > 0) {
-      await base44.asServiceRole.entities.FamilyMember.update(familyMemberId, updates);
+      await base44.entities.FamilyMember.update(familyMemberId, updates);
     }
 
     // Create Links
     if (aiResponse.important_links?.length > 0) {
       for (const link of aiResponse.important_links) {
         if (link.url) {
-          await base44.asServiceRole.entities.FamilyMemberLink.create({
+          await base44.entities.FamilyMemberLink.create({
             url: link.url,
             title: link.title || 'Link',
             category: 'other',
