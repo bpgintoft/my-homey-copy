@@ -287,6 +287,19 @@ export default function HealthMedicalSection({ member, color = 'blue' }) {
               <Input placeholder="Group #" value={form.insurance_group_number} onChange={(e) => setForm({ ...form, insurance_group_number: e.target.value })} className={inputClass} />
             </div>
           </div>
+          {otherMembers.length > 0 && (
+            <div className="pt-1">
+              <Label className="text-xs text-gray-600 mb-2 block">Also sync insurance to:</Label>
+              <div className="flex flex-wrap gap-3">
+                {otherMembers.map(m => (
+                  <div key={m.id} className="flex items-center gap-1.5 cursor-pointer" onClick={() => toggleSyncMember(m.id)}>
+                    <Checkbox checked={syncMemberIds.includes(m.id)} onCheckedChange={() => toggleSyncMember(m.id)} onClick={e => e.stopPropagation()} />
+                    <span className="text-sm text-gray-700">{m.name}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
