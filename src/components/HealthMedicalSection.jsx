@@ -57,11 +57,24 @@ export default function HealthMedicalSection({ member, color = 'blue' }) {
   const [copiedKey, setCopiedKey] = useState(null);
 
   const updateMutation = useMutation({
-    mutationFn: (data) => base44.entities.FamilyMember.update(member.id, data),
+    mutationFn: async (data) => {
+      await base44.entities.FamilyMember.update(member.id, data);
+      // Sync insurance to selected other members
+      if (syncMemberIds.length > 0) {
+        const insuranceData = {
+          insurance_provider: data.insurance_provider,
+          insurance_member_id: data.insurance_member_id,
+          insurance_group_number: data.insurance_group_number,
+        };
+        await Promise.all(syncMemberIds.map(id => base44.entities.FamilyMember.update(id, insuranceData)));
+      }
+    },
     onSuccess: () => {
       queryClient.invalidateQueries(['familyMember', member?.id]);
+      if (syncMemberIds.length > 0) queryClient.invalidateQueries(['familyMember']);
       setSaved(true);
       setEditing(false);
+      setSyncMemberIds([]);
       setTimeout(() => setSaved(false), 2000);
     },
   });
@@ -80,6 +93,10 @@ export default function HealthMedicalSection({ member, color = 'blue' }) {
       dentist: form.dentist || null,
       vaccination_history: form.vaccination_history || null,
     });
+  };
+
+  const toggleSyncMember = (id) => {
+    setSyncMemberIds(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
   };
 
   const handleCopy = (value, key) => {
