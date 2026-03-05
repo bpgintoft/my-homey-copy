@@ -131,7 +131,7 @@ export default function VehiclesTravelSection({ member, color = 'blue' }) {
           </div>
           <div>
             <Label className="text-xs text-gray-600 mb-1 block">Member Number</Label>
-            <Input placeholder="Membership #" value={form.roadside_assistance_member_number} onChange={(e) => setForm({ ...form, roadside_assistance_member_number: e.target.value })} />
+            <Input placeholder="Membership #" value={form.roadside_assistance_member_number} onChange={(e) => setForm({ ...form, roadside_assistance_member_number: e.target.value })} className={inputClass} />
           </div>
         </div>
       </div>
