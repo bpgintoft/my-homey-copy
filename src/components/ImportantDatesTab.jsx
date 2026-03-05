@@ -44,10 +44,11 @@ export default function ImportantDatesTab() {
     queryKey: ['googleCalendars'],
     queryFn: async () => {
       const res = await base44.functions.invoke('getGoogleCalendars');
-      return res.data?.calendars || [];
+      const data = res?.data ?? res;
+      return Array.isArray(data?.calendars) ? data.calendars : [];
     },
   });
-  const calendars = calendarsData || [];
+  const calendars = Array.isArray(calendarsData) ? calendarsData : [];
 
   const createMutation = useMutation({
     mutationFn: (data) => base44.entities.ImportantDate.create(data),
