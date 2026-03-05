@@ -15,6 +15,7 @@ import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import { createPortal } from 'react-dom';
 import SchoolProgramSection from './SchoolProgramSection';
 import HealthMedicalSection from './HealthMedicalSection';
+import VehiclesTravelSection from './VehiclesTravelSection';
 import LinkedMaintenancePanel from './house/LinkedMaintenancePanel';
 import CoAssignedChorePanel from './CoAssignedChorePanel';
 import RescheduleDialog from './house/RescheduleDialog';
