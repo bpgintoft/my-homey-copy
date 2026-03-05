@@ -31,6 +31,7 @@ export default function VehiclesTravelSection({ member, color = 'blue' }) {
     vehicle_make: member?.vehicle_make ?? '',
     vehicle_model: member?.vehicle_model ?? '',
     vehicle_year: member?.vehicle_year ?? '',
+    license_plate_number: member?.license_plate_number ?? '',
     vehicle_vin: member?.vehicle_vin ?? '',
     vehicle_insurance_provider: member?.vehicle_insurance_provider ?? '',
     vehicle_insurance_policy_number: member?.vehicle_insurance_policy_number ?? '',
