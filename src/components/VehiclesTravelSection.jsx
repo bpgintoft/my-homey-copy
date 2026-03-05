@@ -131,7 +131,7 @@ export default function VehiclesTravelSection({ member }) {
       {isAdult && (
         <div>
           <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">Driver's License</h3>
-          <div className="flex gap-3 items-end">
+          <div className="flex gap-3 items-start">
             <div className="flex-1 min-w-0">
               <Label className="text-xs text-gray-600 mb-1 block">License Number</Label>
               <Input placeholder="License #" value={form.license_number} onChange={(e) => setForm({ ...form, license_number: e.target.value })} className="h-9" />
