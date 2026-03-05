@@ -32,6 +32,14 @@ export default function HealthMedicalSection({ member, color = 'blue' }) {
   const valueColor = valueColorMap[color] || valueColorMap.blue;
   const queryClient = useQueryClient();
   const [editing, setEditing] = useState(false);
+  const [syncMemberIds, setSyncMemberIds] = useState([]);
+
+  const { data: allFamilyMembers = [] } = useQuery({
+    queryKey: ['familyMembers'],
+    queryFn: () => base44.entities.FamilyMember.list(),
+    enabled: editing,
+  });
+  const otherMembers = allFamilyMembers.filter(m => m.id !== member?.id);
   const [form, setForm] = useState({
     height_feet: member?.height_feet ?? '',
     height_inches: member?.height_inches ?? '',
