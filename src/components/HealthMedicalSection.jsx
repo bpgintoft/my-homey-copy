@@ -133,6 +133,7 @@ export default function HealthMedicalSection({ member, color = 'blue' }) {
   const hasInsuranceGroup = !!form.insurance_group_number;
   const hasPhysician = isKid ? !!form.pediatrician : !!form.primary_care_physician;
   const hasDentist = !!form.dentist;
+  const hasSpecialists = form.specialists?.some(s => s.specialty || s.name);
   const hasVaccinations = !!form.vaccination_history;
 
   const hasAnyPhysical = hasHeight || hasWeight || hasBloodType;
