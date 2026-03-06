@@ -272,7 +272,7 @@ export default function ImportantDatesTab() {
                               <Edit2 className="w-3.5 h-3.5" />
                             </Button>
                             <Button variant="ghost" size="icon" className="h-7 w-7 text-gray-400 hover:text-red-500"
-                              onClick={(e) => { e.stopPropagation(); deleteMutation.mutate(d.id); }}>
+                              onClick={(e) => { e.stopPropagation(); handleDelete(d); }}>
                               <Trash2 className="w-3.5 h-3.5" />
                             </Button>
                           </div>
