@@ -23,7 +23,7 @@ const categoryConfig = {
 
 const categoryOrder = ['deadline', 'school_holiday', 'trip', 'summer_plan', 'work_leave', 'other'];
 
-const EMPTY_FORM = { title: '', date: '', end_date: '', description: '', category: '', applies_to: 'Everyone' };
+const EMPTY_FORM = { title: '', date: '', end_date: '', description: '', category: '', custom_category: '', applies_to: 'Everyone' };
 
 export default function ImportantDatesTab() {
   const queryClient = useQueryClient();
