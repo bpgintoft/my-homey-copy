@@ -201,7 +201,7 @@ export default function ImportantDatesTab() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <p className="text-sm text-gray-500">{dates.length} important date{dates.length !== 1 ? 's' : ''} saved</p>
+        <p className="text-sm text-gray-500">{upcomingDates.length} upcoming date{upcomingDates.length !== 1 ? 's' : ''}</p>
         <Button onClick={openAdd} className="bg-gradient-to-r from-[#0AACFF] to-[#0890D9] text-white">
           <Plus className="w-4 h-4 mr-2" /> Add Date
         </Button>
