@@ -157,11 +157,22 @@ export default function FamilyCalendar({ activities }) {
   // Create event mutation
   const createEventMutation = useMutation({
     mutationFn: async (eventData) => {
-      const { data } = await base44.functions.invoke('createGoogleCalendarEvent', eventData);
+      const { addToImportantDates, importantDateCategory, ...calendarEventData } = eventData;
+      const { data } = await base44.functions.invoke('createGoogleCalendarEvent', calendarEventData);
+      if (addToImportantDates && eventData.summary && eventData.start) {
+        const startDate = eventData.isAllDay ? eventData.start : eventData.start.split('T')[0];
+        await base44.entities.ImportantDate.create({
+          title: eventData.summary,
+          date: startDate,
+          category: importantDateCategory || 'other',
+          description: eventData.description || '',
+        });
+      }
       return data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['googleCalendarEvents'] });
+      queryClient.invalidateQueries({ queryKey: ['importantDates'] });
       setShowAddDialog(false);
       setNewEvent({
         summary: '',
@@ -173,7 +184,9 @@ export default function FamilyCalendar({ activities }) {
         recurrence: 'none',
         recurrenceEnd: '',
         weeklyDays: [],
-        isAllDay: false
+        isAllDay: false,
+        addToImportantDates: false,
+        importantDateCategory: 'other'
       });
       toast.success('Event created successfully');
     },
