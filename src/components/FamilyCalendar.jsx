@@ -437,7 +437,7 @@ export default function FamilyCalendar({ activities }) {
       isAllDay: newEvent.isAllDay
     };
     
-    createEventMutation.mutate(eventData);
+    createEventMutation.mutate({ ...eventData, addToImportantDates: newEvent.addToImportantDates, importantDateCategory: newEvent.importantDateCategory });
   };
 
   const parseRecurrenceRule = (recurrenceArray) => {
