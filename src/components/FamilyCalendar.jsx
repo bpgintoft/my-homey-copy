@@ -206,18 +206,36 @@ export default function FamilyCalendar({ activities }) {
   // Update event mutation
   const updateEventMutation = useMutation({
     mutationFn: async (eventData) => {
-      const { addToImportantDates, importantDateCategory, ...calendarEventData } = eventData;
-      const { data } = await base44.functions.invoke('updateGoogleCalendarEvent', calendarEventData);
-      if (addToImportantDates && eventData.summary && eventData.start) {
-        const startDate = eventData.isAllDay ? eventData.start : eventData.start.split('T')[0];
-        await base44.entities.ImportantDate.create({
-          title: eventData.summary,
+      const { addToImportantDates, importantDateCategory, importantDateCustomCategory, ...calendarEventData } = eventData;
+
+      // Find any existing linked ImportantDate
+      const existing = await base44.entities.ImportantDate.filter({ synced_google_event_id: calendarEventData.id });
+      const existingImportantDate = existing[0];
+
+      const startDate = calendarEventData.isAllDay ? calendarEventData.start : calendarEventData.start.split('T')[0];
+      const endDate = calendarEventData.isAllDay ? calendarEventData.end : (calendarEventData.end ? calendarEventData.end.split('T')[0] : startDate);
+
+      if (addToImportantDates) {
+        const importantDateData = {
+          title: calendarEventData.summary,
           date: startDate,
+          end_date: endDate !== startDate ? endDate : undefined,
           category: importantDateCategory || 'other',
-          custom_category: eventData.importantDateCustomCategory || '',
-          description: eventData.description || '',
-        });
+          custom_category: importantDateCustomCategory || '',
+          description: calendarEventData.description || '',
+          synced_google_calendar_id: calendarEventData.calendarId,
+          synced_google_event_id: calendarEventData.id,
+        };
+        if (existingImportantDate) {
+          await base44.entities.ImportantDate.update(existingImportantDate.id, importantDateData);
+        } else {
+          await base44.entities.ImportantDate.create(importantDateData);
+        }
+      } else if (existingImportantDate) {
+        await base44.entities.ImportantDate.delete(existingImportantDate.id);
       }
+
+      const { data } = await base44.functions.invoke('updateGoogleCalendarEvent', calendarEventData);
       return data;
     },
     onSuccess: () => {
