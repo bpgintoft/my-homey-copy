@@ -1282,6 +1282,39 @@ export default function FamilyCalendar({ activities }) {
               </div>
             )}
           </div>
+          <div className="border-t pt-4 space-y-3">
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="add-to-important-dates"
+                checked={newEvent.addToImportantDates}
+                onCheckedChange={(checked) => setNewEvent({ ...newEvent, addToImportantDates: checked })}
+              />
+              <Label htmlFor="add-to-important-dates" className="cursor-pointer">Also add to Important Dates</Label>
+            </div>
+            {newEvent.addToImportantDates && (
+              <div className="space-y-2">
+                <Label htmlFor="important-date-category">Category</Label>
+                <Select
+                  value={newEvent.importantDateCategory}
+                  onValueChange={(value) => setNewEvent({ ...newEvent, importantDateCategory: value })}
+                >
+                  <SelectTrigger id="important-date-category">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="birthday">Birthday</SelectItem>
+                    <SelectItem value="anniversary">Anniversary</SelectItem>
+                    <SelectItem value="holiday">Holiday</SelectItem>
+                    <SelectItem value="appointment">Appointment</SelectItem>
+                    <SelectItem value="school">School</SelectItem>
+                    <SelectItem value="sports">Sports</SelectItem>
+                    <SelectItem value="travel">Travel</SelectItem>
+                    <SelectItem value="other">Other</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+          </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowAddDialog(false)}>
               Cancel
