@@ -144,10 +144,6 @@ export default function HealthMedicalSection({ member, color = 'blue' }) {
     });
   };
 
-  const toggleSyncMember = (id) => {
-    setSyncMemberIds(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
-  };
-
   const handleCopy = (value, key) => {
     navigator.clipboard.writeText(String(value));
     setCopiedKey(key);
@@ -381,7 +377,7 @@ export default function HealthMedicalSection({ member, color = 'blue' }) {
                   <Input placeholder="Group #" value={form.insurance_group_number} onChange={(e) => setForm({ ...form, insurance_group_number: e.target.value })} className={inputClass} />
                 </div>
               </div>
-              <SyncCheckboxes />
+              <SyncCheckboxes ids={syncHealthIds} setIds={setSyncHealthIds} />
             </div>
           </div>
 
@@ -402,7 +398,7 @@ export default function HealthMedicalSection({ member, color = 'blue' }) {
                   <Input placeholder="Group #" value={form.dental_insurance_group_number} onChange={(e) => setForm({ ...form, dental_insurance_group_number: e.target.value })} className={inputClass} />
                 </div>
               </div>
-              <SyncCheckboxes />
+              <SyncCheckboxes ids={syncDentalIds} setIds={setSyncDentalIds} />
             </div>
           </div>
 
@@ -423,7 +419,7 @@ export default function HealthMedicalSection({ member, color = 'blue' }) {
                   <Input placeholder="Group #" value={form.vision_insurance_group_number} onChange={(e) => setForm({ ...form, vision_insurance_group_number: e.target.value })} className={inputClass} />
                 </div>
               </div>
-              <SyncCheckboxes />
+              <SyncCheckboxes ids={syncVisionIds} setIds={setSyncVisionIds} />
             </div>
           </div>
         </div>
