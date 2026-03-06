@@ -36,6 +36,9 @@ export default function ImportantDatesTab() {
   const [showSyncDialog, setShowSyncDialog] = useState(false);
   const [syncTarget, setSyncTarget] = useState(null);
   const [selectedCalendarId, setSelectedCalendarId] = useState('');
+  const [showCalendarSyncPrompt, setShowCalendarSyncPrompt] = useState(false);
+  const [calendarSyncAction, setCalendarSyncAction] = useState(null); // { type: 'save'|'delete', id, data }
+  const [syncCalendarToo, setSyncCalendarToo] = useState(true);
 
   const { data: dates = [] } = useQuery({
     queryKey: ['importantDates'],
