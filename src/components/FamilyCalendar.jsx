@@ -619,6 +619,8 @@ export default function FamilyCalendar({ activities }) {
       recurringEditScope: recurringEditScope || undefined,
       recurringEventId: editingEvent.recurringEventId || undefined,
       originalStartTime: editingEvent.originalStartTime || undefined,
+      addToImportantDates: editingEvent.addToImportantDates || false,
+      importantDateCategory: editingEvent.importantDateCategory || 'other',
     };
 
     console.log('[submitUpdate] payload:', JSON.stringify(eventData));
