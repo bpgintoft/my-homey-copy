@@ -46,10 +46,8 @@ Deno.serve(async (req) => {
     const allEvents = perCalResults.flat();
     const newEventIds = new Set(allEvents.map(e => e.google_event_id));
 
-    // Get existing cache for this time window only
-    const existing = await base44.asServiceRole.entities.CachedCalendarEvent.filter({
-      start: { $gte: timeMin, $lte: timeMax }
-    }, '-start', 500);
+    // Get ALL cached events (to properly deduplicate by google_event_id)
+    const existing = await base44.asServiceRole.entities.CachedCalendarEvent.list('-start', 1000);
     const existingIds = new Set(existing.map(e => e.google_event_id));
 
     // Only create new events (skip already-cached ones to stay within rate limits)
