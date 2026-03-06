@@ -781,7 +781,7 @@ export default function FamilyCalendar({ activities }) {
                         key={`${activity.source}-${activity.id}`}
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
-                        className="relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] w-screen pl-4 pr-6 py-1 bg-white"
+                        className="pl-4 pr-6 py-1 bg-white"
                       >
                         <div className="flex items-stretch gap-2">
                           {/* Time - outside event rectangle */}
