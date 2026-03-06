@@ -168,6 +168,7 @@ export default function FamilyCalendar({ activities }) {
           title: eventData.summary,
           date: startDate,
           category: importantDateCategory || 'other',
+          custom_category: eventData.importantDateCustomCategory || '',
           description: eventData.description || '',
         });
       }
