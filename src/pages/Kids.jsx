@@ -236,13 +236,11 @@ export default function Kids() {
 
       <div className="container mx-auto px-6 pt-4 pb-8">
         <Tabs defaultValue="calendar" className="space-y-2">
-          <div className="sticky top-16 lg:top-0 bg-[#F5F5F7] z-30">
-            <TabsList className="bg-white shadow-sm border-b-2 border-gray-200 rounded-none w-full justify-start">
-              <TabsTrigger value="calendar" className="border-b-2 border-transparent data-[state=active]:border-blue-500 data-[state=active]:bg-transparent rounded-none">Calendar</TabsTrigger>
-              <TabsTrigger value="upcoming" className="border-b-2 border-transparent data-[state=active]:border-blue-500 data-[state=active]:bg-transparent rounded-none">Upcoming</TabsTrigger>
-              <TabsTrigger value="important" className="border-b-2 border-transparent data-[state=active]:border-blue-500 data-[state=active]:bg-transparent rounded-none">Important Dates</TabsTrigger>
-            </TabsList>
-          </div>
+          <TabsList className="bg-white shadow-sm border-b-2 border-gray-200 rounded-none w-full justify-start">
+            <TabsTrigger value="calendar" className="border-b-2 border-transparent data-[state=active]:border-blue-500 data-[state=active]:bg-transparent rounded-none">Calendar</TabsTrigger>
+            <TabsTrigger value="upcoming" className="border-b-2 border-transparent data-[state=active]:border-blue-500 data-[state=active]:bg-transparent rounded-none">Upcoming</TabsTrigger>
+            <TabsTrigger value="important" className="border-b-2 border-transparent data-[state=active]:border-blue-500 data-[state=active]:bg-transparent rounded-none">Important Dates</TabsTrigger>
+          </TabsList>
 
           <TabsContent value="calendar">
             <FamilyCalendar activities={activities} />
