@@ -50,15 +50,29 @@ Deno.serve(async (req) => {
       }
     }
 
-    // Clear old cache and replace with fresh data
-    const existing = await base44.asServiceRole.entities.CachedCalendarEvent.list();
-    await Promise.all(existing.map(e => base44.asServiceRole.entities.CachedCalendarEvent.delete(e.id)));
+    // Upsert: fetch existing cache, update matches, create new ones, delete stale
+    const existing = await base44.asServiceRole.entities.CachedCalendarEvent.list('-start', 2000);
+    const existingMap = new Map(existing.map(e => [e.google_event_id, e]));
+    const newEventIds = new Set(allEvents.map(e => e.google_event_id));
 
-    // Insert new events in batches
-    const batchSize = 20;
+    // Delete stale events no longer in the fetched range
+    const toDelete = existing.filter(e => !newEventIds.has(e.google_event_id));
+    if (toDelete.length > 0) {
+      await Promise.all(toDelete.map(e => base44.asServiceRole.entities.CachedCalendarEvent.delete(e.id)));
+    }
+
+    // Upsert (update existing, create new) in parallel batches
+    const batchSize = 25;
     for (let i = 0; i < allEvents.length; i += batchSize) {
       const batch = allEvents.slice(i, i + batchSize);
-      await Promise.all(batch.map(e => base44.asServiceRole.entities.CachedCalendarEvent.create(e)));
+      await Promise.all(batch.map(e => {
+        const existing = existingMap.get(e.google_event_id);
+        if (existing) {
+          return base44.asServiceRole.entities.CachedCalendarEvent.update(existing.id, e);
+        } else {
+          return base44.asServiceRole.entities.CachedCalendarEvent.create(e);
+        }
+      }));
     }
 
     return Response.json({ success: true, count: allEvents.length });
