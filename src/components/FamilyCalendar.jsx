@@ -168,7 +168,6 @@ export default function FamilyCalendar({ activities }) {
           title: eventData.summary,
           date: startDate,
           category: importantDateCategory || 'other',
-          custom_category: eventData.importantDateCustomCategory || '',
           description: eventData.description || '',
         });
       }
@@ -210,7 +209,6 @@ export default function FamilyCalendar({ activities }) {
           title: eventData.summary,
           date: startDate,
           category: importantDateCategory || 'other',
-          custom_category: eventData.importantDateCustomCategory || '',
           description: eventData.description || '',
         });
       }
@@ -980,21 +978,14 @@ export default function FamilyCalendar({ activities }) {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="deadline">Deadline</SelectItem>
                       <SelectItem value="school_holiday">School Holiday</SelectItem>
                       <SelectItem value="trip">Trip</SelectItem>
                       <SelectItem value="work_leave">Work Leave</SelectItem>
+                      <SelectItem value="deadline">Deadline</SelectItem>
                       <SelectItem value="summer_plan">Summer Plan</SelectItem>
                       <SelectItem value="other">Other</SelectItem>
                     </SelectContent>
                   </Select>
-                  {editingEvent?.importantDateCategory === 'other' && (
-                    <Input
-                      placeholder="Enter custom category name"
-                      value={editingEvent?.importantDateCustomCategory || ''}
-                      onChange={(e) => setEditingEvent({ ...editingEvent, importantDateCustomCategory: e.target.value })}
-                    />
-                  )}
                 </div>
               )}
             </div>
@@ -1242,21 +1233,14 @@ export default function FamilyCalendar({ activities }) {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="deadline">Deadline</SelectItem>
                       <SelectItem value="school_holiday">School Holiday</SelectItem>
                       <SelectItem value="trip">Trip</SelectItem>
                       <SelectItem value="work_leave">Work Leave</SelectItem>
+                      <SelectItem value="deadline">Deadline</SelectItem>
                       <SelectItem value="summer_plan">Summer Plan</SelectItem>
                       <SelectItem value="other">Other</SelectItem>
                     </SelectContent>
                   </Select>
-                  {newEvent.importantDateCategory === 'other' && (
-                    <Input
-                      placeholder="Enter custom category name"
-                      value={newEvent.importantDateCustomCategory || ''}
-                      onChange={(e) => setNewEvent({ ...newEvent, importantDateCustomCategory: e.target.value })}
-                    />
-                  )}
                 </div>
               )}
             </div>

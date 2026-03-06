@@ -8,7 +8,6 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter, AlertDialogCancel, AlertDialogAction } from "@/components/ui/alert-dialog";
 import { Plus, Calendar, Trash2, Edit2, Users, RefreshCw, CheckCircle2 } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import { motion } from 'framer-motion';
@@ -22,9 +21,9 @@ const categoryConfig = {
   other:           { label: 'Other',           color: 'bg-gray-100 text-gray-700' },
 };
 
-const categoryOrder = ['deadline', 'school_holiday', 'trip', 'summer_plan', 'work_leave', 'other'];
+const categoryOrder = ['school_holiday', 'trip', 'summer_plan', 'work_leave', 'deadline', 'other'];
 
-const EMPTY_FORM = { title: '', date: '', end_date: '', description: '', category: '', custom_category: '', applies_to: 'Everyone' };
+const EMPTY_FORM = { title: '', date: '', end_date: '', description: '', category: '', applies_to: 'Everyone' };
 
 export default function ImportantDatesTab() {
   const queryClient = useQueryClient();
@@ -36,8 +35,6 @@ export default function ImportantDatesTab() {
   const [showSyncDialog, setShowSyncDialog] = useState(false);
   const [syncTarget, setSyncTarget] = useState(null);
   const [selectedCalendarId, setSelectedCalendarId] = useState('');
-  const [deleteConfirm, setDeleteConfirm] = useState(null); // { date: d }
-  const [editCalendarConfirm, setEditCalendarConfirm] = useState(null); // { date: d, formData: form }
 
   const { data: dates = [] } = useQuery({
     queryKey: ['importantDates'],
@@ -69,59 +66,8 @@ export default function ImportantDatesTab() {
     onSuccess: () => queryClient.invalidateQueries(['importantDates']),
   });
 
-  const handleDeleteClick = (d) => {
-    setDeleteConfirm({ date: d });
-  };
-
-  const handleDeleteConfirm = async (alsoDeleteCalendar) => {
-    const d = deleteConfirm.date;
-    setDeleteConfirm(null);
-    if (alsoDeleteCalendar && d.synced_google_calendar_id && d.synced_google_event_id) {
-      await base44.functions.invoke('deleteGoogleCalendarEvent', {
-        calendarId: d.synced_google_calendar_id,
-        eventId: d.synced_google_event_id,
-      });
-    }
-    deleteMutation.mutate(d.id);
-  };
-
-  const handleSave = () => {
-    if (editing && editing.synced_google_event_id) {
-      setEditCalendarConfirm({ date: editing, formData: form });
-    } else {
-      doSave(form, false);
-    }
-  };
-
-  const doSave = async (formData, alsoUpdateCalendar) => {
-    if (editing) {
-      if (alsoUpdateCalendar && editing.synced_google_calendar_id && editing.synced_google_event_id) {
-        const endDateExclusive = (() => {
-          const endDate = formData.end_date || formData.date;
-          const d = new Date(endDate + 'T00:00:00');
-          d.setDate(d.getDate() + 1);
-          return d.toISOString().split('T')[0];
-        })();
-        await base44.functions.invoke('updateGoogleCalendarEvent', {
-          id: editing.synced_google_event_id,
-          calendarId: editing.synced_google_calendar_id,
-          originalCalendarId: editing.synced_google_calendar_id,
-          summary: formData.title,
-          description: formData.description || '',
-          start: formData.date,
-          end: endDateExclusive,
-          isAllDay: true,
-          recurrence: [],
-        });
-      }
-      updateMutation.mutate({ id: editing.id, data: formData });
-    } else {
-      createMutation.mutate(formData);
-    }
-  };
-
   const openAdd = () => { setEditing(null); setForm(EMPTY_FORM); setShowDialog(true); };
-  const openEdit = (d) => { setEditing(d); setForm({ ...EMPTY_FORM, ...d, custom_category: d.custom_category || '' }); setShowDialog(true); };
+  const openEdit = (d) => { setEditing(d); setForm({ ...EMPTY_FORM, ...d }); setShowDialog(true); };
   const closeDialog = () => { setShowDialog(false); setEditing(null); setForm(EMPTY_FORM); };
 
   const handleSave = () => {
@@ -175,11 +121,6 @@ export default function ImportantDatesTab() {
     setSyncTarget(null);
   };
 
-  const getCategoryLabel = (d) => {
-    if (d.category === 'other' && d.custom_category) return d.custom_category;
-    return categoryConfig[d.category]?.label || 'Other';
-  };
-
   // Group by category
   const grouped = categoryOrder.reduce((acc, cat) => {
     const items = dates.filter(d => d.category === cat).sort((a, b) => new Date(a.date) - new Date(b.date));
@@ -210,7 +151,7 @@ export default function ImportantDatesTab() {
       {Object.entries(grouped).map(([cat, items]) => (
         <div key={cat}>
           <h3 className="text-sm font-semibold uppercase tracking-wide text-gray-400 mb-3">
-            {cat === 'other' ? 'Other' : categoryConfig[cat]?.label}
+            {categoryConfig[cat]?.label}
           </h3>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
             {items.map(d => (
@@ -248,7 +189,7 @@ export default function ImportantDatesTab() {
                           <p className="text-sm text-gray-500">{d.description}</p>
                         )}
                         <div className="flex items-center justify-between pt-1">
-                          <Badge className={categoryConfig[cat]?.color}>{getCategoryLabel(d)}</Badge>
+                          <Badge className={categoryConfig[cat]?.color}>{categoryConfig[cat]?.label}</Badge>
                           <div className="flex items-center gap-1">
                             {d.synced_google_event_id ? (
                               <span className="flex items-center gap-1 text-xs text-green-600">
@@ -293,7 +234,7 @@ export default function ImportantDatesTab() {
             <Input placeholder="Title (e.g., Spring Break, Work trip to Chicago)"
               value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} />
 
-            <Select value={form.category} onValueChange={v => setForm({ ...form, category: v, custom_category: v !== 'other' ? '' : form.custom_category })}>
+            <Select value={form.category} onValueChange={v => setForm({ ...form, category: v })}>
               <SelectTrigger><SelectValue placeholder="Category" /></SelectTrigger>
               <SelectContent>
                 {categoryOrder.map(cat => (
@@ -301,13 +242,6 @@ export default function ImportantDatesTab() {
                 ))}
               </SelectContent>
             </Select>
-            {form.category === 'other' && (
-              <Input
-                placeholder="Enter custom category name"
-                value={form.custom_category || ''}
-                onChange={e => setForm({ ...form, custom_category: e.target.value })}
-              />
-            )}
 
             <Select value={form.applies_to} onValueChange={v => setForm({ ...form, applies_to: v })}>
               <SelectTrigger><SelectValue placeholder="Applies to" /></SelectTrigger>
