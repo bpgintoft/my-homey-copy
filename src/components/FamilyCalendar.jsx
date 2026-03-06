@@ -38,7 +38,7 @@ export default function FamilyCalendar({ activities }) {
     weeklyDays: [],
     isAllDay: false,
     addToImportantDates: false,
-    importantDateCategory: 'other'
+    importantDateCategory: 'other',
   });
   const queryClient = useQueryClient();
 
