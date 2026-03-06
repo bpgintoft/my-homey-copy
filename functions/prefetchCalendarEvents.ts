@@ -21,14 +21,15 @@ Deno.serve(async (req) => {
 
     const allEvents = [];
 
-    for (const cal of calendars) {
+    // Fetch all calendars in parallel
+    await Promise.all(calendars.map(async (cal) => {
       const eventsRes = await calendar.events.list({
         calendarId: cal.id,
         timeMin,
         timeMax,
         singleEvents: true,
         orderBy: 'startTime',
-        maxResults: 250,
+        maxResults: 100,
       });
 
       const events = eventsRes.data.items || [];
@@ -48,7 +49,7 @@ Deno.serve(async (req) => {
           is_all_day: isAllDay,
         });
       }
-    }
+    }));
 
     // Upsert: fetch existing cache, update matches, create new ones, delete stale
     const existing = await base44.asServiceRole.entities.CachedCalendarEvent.list('-start', 2000);
