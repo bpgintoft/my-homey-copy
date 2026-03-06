@@ -160,15 +160,20 @@ export default function FamilyCalendar({ activities }) {
   // Create event mutation
   const createEventMutation = useMutation({
     mutationFn: async (eventData) => {
-      const { addToImportantDates, importantDateCategory, ...calendarEventData } = eventData;
+      const { addToImportantDates, importantDateCategory, importantDateCustomCategory, ...calendarEventData } = eventData;
       const { data } = await base44.functions.invoke('createGoogleCalendarEvent', calendarEventData);
       if (addToImportantDates && eventData.summary && eventData.start) {
         const startDate = eventData.isAllDay ? eventData.start : eventData.start.split('T')[0];
+        const endDate = eventData.isAllDay ? eventData.end : (eventData.end ? eventData.end.split('T')[0] : startDate);
         await base44.entities.ImportantDate.create({
           title: eventData.summary,
           date: startDate,
+          end_date: endDate !== startDate ? endDate : undefined,
           category: importantDateCategory || 'other',
+          custom_category: importantDateCustomCategory || '',
           description: eventData.description || '',
+          synced_google_calendar_id: eventData.calendarId,
+          synced_google_event_id: data.event?.id,
         });
       }
       return data;
