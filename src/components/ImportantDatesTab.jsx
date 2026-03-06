@@ -194,7 +194,7 @@ export default function ImportantDatesTab() {
                           <p className="text-sm text-gray-500">{d.description}</p>
                         )}
                         <div className="flex items-center justify-between pt-1">
-                          <Badge className={categoryConfig[cat]?.color}>{categoryConfig[cat]?.label}</Badge>
+                          <Badge className={categoryConfig[cat]?.color}>{getCategoryLabel(d)}</Badge>
                           <div className="flex items-center gap-1">
                             {d.synced_google_event_id ? (
                               <span className="flex items-center gap-1 text-xs text-green-600">
