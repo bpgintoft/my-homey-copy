@@ -183,9 +183,17 @@ export default function ImportantDatesTab() {
     return categoryConfig[d.category]?.label || 'Other';
   };
 
+  // Only show today + future dates
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const upcomingDates = dates.filter(d => {
+    const eventDate = new Date((d.end_date || d.date) + 'T00:00:00');
+    return eventDate >= today;
+  });
+
   // Group by category
   const grouped = categoryOrder.reduce((acc, cat) => {
-    const items = dates.filter(d => d.category === cat).sort((a, b) => new Date(a.date) - new Date(b.date));
+    const items = upcomingDates.filter(d => d.category === cat).sort((a, b) => new Date(a.date) - new Date(b.date));
     if (items.length) acc[cat] = items;
     return acc;
   }, {});
