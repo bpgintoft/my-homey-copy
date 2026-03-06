@@ -562,6 +562,8 @@ export default function FamilyCalendar({ activities }) {
       isRecurringInstance,
       recurringEventId: masterEventId,
       originalStartTime: event.start || null,
+      addToImportantDates: false,
+      importantDateCategory: 'other',
     });
     setShowEditDialog(true);
   };
