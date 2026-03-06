@@ -22,7 +22,7 @@ Deno.serve(async (req) => {
     }
 
     // Call LLM to parse and categorize the input
-    const aiResponse = await base44.asServiceRole.integrations.Core.InvokeLLM({
+    const aiResponse = await base44.integrations.Core.InvokeLLM({
       prompt: `Extract insurance and contact info from this text. Return JSON with only found data.
 Text: "${input}"`,
       response_json_schema: {
