@@ -80,7 +80,7 @@ export default function ImportantDatesTab() {
 
   const openSync = (d) => {
     setSyncTarget(d);
-    setSelectedCalendarId(d.synced_google_calendar_id || (calendars[0]?.id || ''));
+    setSelectedCalendarId(d.synced_google_calendar_id || '');
     setShowSyncDialog(true);
   };
 
