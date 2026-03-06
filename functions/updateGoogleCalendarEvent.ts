@@ -21,11 +21,11 @@ Deno.serve(async (req) => {
     auth.setCredentials({ access_token: accessToken });
     const calendar = google.calendar({ version: 'v3', auth });
 
-    const toRFC3339 = (localDatetime) => {
-      // localDatetime is like "2026-03-06T17:30" or "2026-03-06T17:30:00"
-      // Convert to a proper ISO string with offset for America/Chicago
-      const date = new Date(localDatetime);
-      return date.toISOString(); // Google accepts UTC ISO strings with dateTime+timeZone
+    const toRFC3339Local = (localDatetime) => {
+      // localDatetime is "2026-03-06T17:30" or "2026-03-06T17:30:00"
+      // Append seconds if missing, then pass as-is with timeZone — Google interprets it in the given timeZone
+      if (!localDatetime) return localDatetime;
+      return localDatetime.length === 16 ? `${localDatetime}:00` : localDatetime;
     };
 
     const buildEventBody = (includeRecurrence) => {
@@ -33,8 +33,8 @@ Deno.serve(async (req) => {
         summary,
         description,
         location,
-        start: isAllDay ? { date: start } : { dateTime: toRFC3339(start), timeZone: 'America/Chicago' },
-        end: isAllDay ? { date: end } : { dateTime: toRFC3339(end), timeZone: 'America/Chicago' },
+        start: isAllDay ? { date: start } : { dateTime: toRFC3339Local(start), timeZone: 'America/Chicago' },
+        end: isAllDay ? { date: end } : { dateTime: toRFC3339Local(end), timeZone: 'America/Chicago' },
       };
       if (includeRecurrence) {
         // Only include RRULE lines — Google rejects UNTIL on EXDATE lines
