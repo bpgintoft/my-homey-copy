@@ -69,40 +69,49 @@ export default function HealthMedicalSection({ member, color = 'blue' }) {
   const updateMutation = useMutation({
     mutationFn: async (data) => {
       await base44.entities.FamilyMember.update(member.id, data);
-      // Sync all insurance types to selected other members
-      if (syncMemberIds.length > 0) {
-        const insuranceData = {
-          insurance_provider: data.insurance_provider,
-          insurance_member_id: data.insurance_member_id,
-          insurance_group_number: data.insurance_group_number,
-          dental_insurance_provider: data.dental_insurance_provider,
-          dental_insurance_member_id: data.dental_insurance_member_id,
-          dental_insurance_group_number: data.dental_insurance_group_number,
-          vision_insurance_provider: data.vision_insurance_provider,
-          vision_insurance_member_id: data.vision_insurance_member_id,
-          vision_insurance_group_number: data.vision_insurance_group_number,
-        };
-        await Promise.all(syncMemberIds.map(id => base44.entities.FamilyMember.update(id, insuranceData)));
+      const allIds = [...new Set([...syncHealthIds, ...syncDentalIds, ...syncVisionIds])];
+      if (allIds.length > 0) {
+        await Promise.all(allIds.map(id => {
+          const patch = {};
+          if (syncHealthIds.includes(id)) {
+            patch.insurance_provider = data.insurance_provider;
+            patch.insurance_member_id = data.insurance_member_id;
+            patch.insurance_group_number = data.insurance_group_number;
+          }
+          if (syncDentalIds.includes(id)) {
+            patch.dental_insurance_provider = data.dental_insurance_provider;
+            patch.dental_insurance_member_id = data.dental_insurance_member_id;
+            patch.dental_insurance_group_number = data.dental_insurance_group_number;
+          }
+          if (syncVisionIds.includes(id)) {
+            patch.vision_insurance_provider = data.vision_insurance_provider;
+            patch.vision_insurance_member_id = data.vision_insurance_member_id;
+            patch.vision_insurance_group_number = data.vision_insurance_group_number;
+          }
+          return base44.entities.FamilyMember.update(id, patch);
+        }));
       }
     },
     onSuccess: () => {
       queryClient.invalidateQueries(['familyMember', member?.id]);
-      if (syncMemberIds.length > 0) queryClient.invalidateQueries(['familyMember']);
+      queryClient.invalidateQueries(['familyMember']);
       setSaved(true);
       setEditing(false);
-      setSyncMemberIds([]);
+      setSyncHealthIds([]);
+      setSyncDentalIds([]);
+      setSyncVisionIds([]);
       setTimeout(() => setSaved(false), 2000);
     },
   });
 
-  const SyncCheckboxes = () => (
+  const SyncCheckboxes = ({ ids, setIds }) => (
     otherMembers.length > 0 && (
       <div className="pt-2 border-t">
         <Label className="text-xs text-gray-600 mb-2 block">Sync to:</Label>
         <div className="flex flex-wrap gap-3">
           {otherMembers.map(m => (
-            <div key={m.id} className="flex items-center gap-1.5 cursor-pointer" onClick={() => toggleSyncMember(m.id)}>
-              <Checkbox checked={syncMemberIds.includes(m.id)} onCheckedChange={() => toggleSyncMember(m.id)} onClick={e => e.stopPropagation()} />
+            <div key={m.id} className="flex items-center gap-1.5 cursor-pointer" onClick={() => setIds(prev => prev.includes(m.id) ? prev.filter(x => x !== m.id) : [...prev, m.id])}>
+              <Checkbox checked={ids.includes(m.id)} onCheckedChange={() => setIds(prev => prev.includes(m.id) ? prev.filter(x => x !== m.id) : [...prev, m.id])} onClick={e => e.stopPropagation()} />
               <span className="text-sm text-gray-700">{m.name}</span>
             </div>
           ))}
