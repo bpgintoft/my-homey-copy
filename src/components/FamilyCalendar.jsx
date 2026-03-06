@@ -948,14 +948,21 @@ export default function FamilyCalendar({ activities }) {
                 checked={editingEvent?.isAllDay || false}
                 onCheckedChange={(checked) => {
                   const newState = { ...editingEvent, isAllDay: checked };
-                  // Convert datetime to date or vice versa
                   if (checked) {
-                    // Convert to date-only format (YYYY-MM-DD)
+                    // Convert dateTime to date-only (YYYY-MM-DD)
                     if (editingEvent.start && editingEvent.start.includes('T')) {
                       newState.start = editingEvent.start.split('T')[0];
                     }
                     if (editingEvent.end && editingEvent.end.includes('T')) {
                       newState.end = editingEvent.end.split('T')[0];
+                    }
+                  } else {
+                    // Convert date-only to datetime-local format (YYYY-MM-DDTHH:MM)
+                    if (editingEvent.start && !editingEvent.start.includes('T')) {
+                      newState.start = editingEvent.start + 'T09:00';
+                    }
+                    if (editingEvent.end && !editingEvent.end.includes('T')) {
+                      newState.end = editingEvent.end + 'T10:00';
                     }
                   }
                   setEditingEvent(newState);
