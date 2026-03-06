@@ -239,7 +239,7 @@ export default function ImportantDatesTab() {
             <Input placeholder="Title (e.g., Spring Break, Work trip to Chicago)"
               value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} />
 
-            <Select value={form.category} onValueChange={v => setForm({ ...form, category: v })}>
+            <Select value={form.category} onValueChange={v => setForm({ ...form, category: v, custom_category: '' })}>
               <SelectTrigger><SelectValue placeholder="Category" /></SelectTrigger>
               <SelectContent>
                 {categoryOrder.map(cat => (
@@ -247,6 +247,13 @@ export default function ImportantDatesTab() {
                 ))}
               </SelectContent>
             </Select>
+            {form.category === 'other' && (
+              <Input
+                placeholder="Type your custom category..."
+                value={form.custom_category || ''}
+                onChange={e => setForm({ ...form, custom_category: e.target.value })}
+              />
+            )}
 
             <Select value={form.applies_to} onValueChange={v => setForm({ ...form, applies_to: v })}>
               <SelectTrigger><SelectValue placeholder="Applies to" /></SelectTrigger>
