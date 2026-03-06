@@ -32,7 +32,9 @@ export default function HealthMedicalSection({ member, color = 'blue' }) {
   const valueColor = valueColorMap[color] || valueColorMap.blue;
   const queryClient = useQueryClient();
   const [editing, setEditing] = useState(false);
-  const [syncMemberIds, setSyncMemberIds] = useState([]);
+  const [syncHealthIds, setSyncHealthIds] = useState([]);
+  const [syncDentalIds, setSyncDentalIds] = useState([]);
+  const [syncVisionIds, setSyncVisionIds] = useState([]);
 
   const { data: allFamilyMembers = [] } = useQuery({
     queryKey: ['familyMembers'],
