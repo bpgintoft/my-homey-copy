@@ -958,6 +958,37 @@ export default function FamilyCalendar({ activities }) {
                 placeholder="Event title"
               />
             </div>
+            <div className="space-y-2">
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="edit-add-to-important-dates"
+                  checked={editingEvent?.addToImportantDates || false}
+                  onCheckedChange={(checked) => setEditingEvent({ ...editingEvent, addToImportantDates: checked })}
+                />
+                <Label htmlFor="edit-add-to-important-dates" className="cursor-pointer">Also sync with Important Dates</Label>
+              </div>
+              {editingEvent?.addToImportantDates && (
+                <div className="space-y-2">
+                  <Label htmlFor="edit-important-date-category">Category</Label>
+                  <Select
+                    value={editingEvent?.importantDateCategory || 'other'}
+                    onValueChange={(value) => setEditingEvent({ ...editingEvent, importantDateCategory: value })}
+                  >
+                    <SelectTrigger id="edit-important-date-category">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="school_holiday">School Holiday</SelectItem>
+                      <SelectItem value="trip">Trip</SelectItem>
+                      <SelectItem value="work_leave">Work Leave</SelectItem>
+                      <SelectItem value="deadline">Deadline</SelectItem>
+                      <SelectItem value="summer_plan">Summer Plan</SelectItem>
+                      <SelectItem value="other">Other</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
+            </div>
             <div className="flex items-center space-x-2">
               <Checkbox
                 id="edit-all-day"
