@@ -629,7 +629,7 @@ export default function FamilyCalendar({ activities }) {
   return (
     <div className="-mx-6 px-6">
       {/* Sticky header section */}
-      <div className="sticky top-16 lg:top-0 bg-[#F5F5F7] z-50 pb-3 -mx-6 px-6" style={{ boxShadow: '0 12px 0 12px #F5F5F7' }}>
+      <div className="sticky top-16 lg:top-0 z-50 pb-3 -mx-6 px-6" style={{ backgroundColor: '#F5F5F7', isolation: 'isolate' }}>
       {/* Week navigation */}
       <div className="flex items-center justify-between gap-0.5 mb-3 pt-3">
         <Button
