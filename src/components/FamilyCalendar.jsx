@@ -580,6 +580,10 @@ export default function FamilyCalendar({ activities }) {
 
     const { recurrence, recurrenceEnd, weeklyDays } = parseRecurrenceRule(recurrenceArray);
 
+    // Check if this event is already linked to an ImportantDate
+    const linkedDates = await base44.entities.ImportantDate.filter({ synced_google_event_id: event.id });
+    const linkedDate = linkedDates[0];
+
     setEditingEvent({
       id: event.id,
       calendarId: event.calendarId,
@@ -596,8 +600,9 @@ export default function FamilyCalendar({ activities }) {
       isRecurringInstance,
       recurringEventId: masterEventId,
       originalStartTime: event.start || null,
-      addToImportantDates: false,
-      importantDateCategory: 'other',
+      addToImportantDates: !!linkedDate,
+      importantDateCategory: linkedDate?.category || 'other',
+      importantDateCustomCategory: linkedDate?.custom_category || '',
     });
     setShowEditDialog(true);
   };
