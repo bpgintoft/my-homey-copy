@@ -67,7 +67,7 @@ export default function ImportantDatesTab() {
   });
 
   const openAdd = () => { setEditing(null); setForm(EMPTY_FORM); setShowDialog(true); };
-  const openEdit = (d) => { setEditing(d); setForm({ ...EMPTY_FORM, ...d }); setShowDialog(true); };
+  const openEdit = (d) => { setEditing(d); setForm({ ...EMPTY_FORM, ...d, custom_category: d.custom_category || '' }); setShowDialog(true); };
   const closeDialog = () => { setShowDialog(false); setEditing(null); setForm(EMPTY_FORM); };
 
   const handleSave = () => {
