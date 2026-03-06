@@ -113,13 +113,22 @@ Deno.serve(async (req) => {
     // --- Non-recurring: update the event directly ---
     const eventBody = buildEventBody(true);
 
-    if (originalCalendarId && originalCalendarId !== calendarId) {
-      // Moving to a different calendar: delete from old, insert into new
-      await calendar.events.delete({ calendarId: originalCalendarId, eventId: id });
+    // Fetch original event to detect all-day -> timed conversion
+    let originalEvent = null;
+    try {
+      const orig = await calendar.events.get({ calendarId: originalCalendarId || calendarId, eventId: id });
+      originalEvent = orig.data;
+    } catch (_) {}
+
+    const originalWasAllDay = !!(originalEvent?.start?.date && !originalEvent?.start?.dateTime);
+    const needsRecreate = (originalCalendarId && originalCalendarId !== calendarId) || (originalWasAllDay && !isAllDay);
+
+    if (needsRecreate) {
+      // Delete from original calendar, insert into target calendar
+      await calendar.events.delete({ calendarId: originalCalendarId || calendarId, eventId: id });
       const response = await calendar.events.insert({ calendarId, requestBody: eventBody });
       return Response.json({ event: response.data });
     } else {
-      // Use patch instead of update — patch works with iCal-format IDs too
       const response = await calendar.events.patch({ calendarId, eventId: id, requestBody: eventBody });
       return Response.json({ event: response.data });
     }
