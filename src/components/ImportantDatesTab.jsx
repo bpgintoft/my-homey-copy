@@ -121,6 +121,11 @@ export default function ImportantDatesTab() {
     setSyncTarget(null);
   };
 
+  const getCategoryLabel = (d) => {
+    if (d.category === 'other' && d.custom_category) return d.custom_category;
+    return categoryConfig[d.category]?.label || 'Other';
+  };
+
   // Group by category
   const grouped = categoryOrder.reduce((acc, cat) => {
     const items = dates.filter(d => d.category === cat).sort((a, b) => new Date(a.date) - new Date(b.date));
