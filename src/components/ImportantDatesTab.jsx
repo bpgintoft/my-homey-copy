@@ -21,9 +21,9 @@ const categoryConfig = {
   other:           { label: 'Other',           color: 'bg-gray-100 text-gray-700' },
 };
 
-const categoryOrder = ['school_holiday', 'trip', 'summer_plan', 'work_leave', 'deadline', 'other'];
+const categoryOrder = ['deadline', 'school_holiday', 'trip', 'summer_plan', 'work_leave', 'other'];
 
-const EMPTY_FORM = { title: '', date: '', end_date: '', description: '', category: '', applies_to: 'Everyone' };
+const EMPTY_FORM = { title: '', date: '', end_date: '', description: '', category: '', custom_category: '', applies_to: 'Everyone' };
 
 export default function ImportantDatesTab() {
   const queryClient = useQueryClient();
