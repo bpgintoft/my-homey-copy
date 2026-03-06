@@ -15,13 +15,14 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Missing familyMemberId or input' }, { status: 400 });
     }
 
-    // Call LLM to parse and categorize the input
     const base44 = createClientFromRequest(req);
     const user = await base44.auth.me();
     if (!user) {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
-    const aiResponse = await base44.integrations.Core.InvokeLLM({
+
+    // Call LLM to parse and categorize the input
+    const aiResponse = await base44.asServiceRole.integrations.Core.InvokeLLM({
       prompt: `Extract insurance and contact info from this text. Return JSON with only found data.
 Text: "${input}"`,
       response_json_schema: {
@@ -59,7 +60,6 @@ Text: "${input}"`,
 
     const updates = {};
 
-    // Direct FamilyMember updates
     if (aiResponse.health_medical?.health_insurance_provider) {
       updates.insurance_provider = aiResponse.health_medical.health_insurance_provider;
     }
@@ -92,18 +92,6 @@ Text: "${input}"`,
     }
     if (aiResponse.health_medical?.optometrist) {
       updates.optometrist = aiResponse.health_medical.optometrist;
-    }
-
-    // Also sync vision insurance to selected other members if specified
-    if (syncMemberIds.length > 0) {
-      const visionInsuranceData = {
-        vision_insurance_provider: updates.vision_insurance_provider,
-        vision_insurance_member_id: updates.vision_insurance_member_id,
-        vision_insurance_group_number: updates.vision_insurance_group_number,
-      };
-      const updatedMembers = [
-        ...syncMemberIds.map(id => ({ id, data: { ...insuranceData, ...visionInsuranceData } }))
-      ];
     }
 
     // Update FamilyMember
