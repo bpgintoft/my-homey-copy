@@ -1236,20 +1236,27 @@ export default function FamilyCalendar({ activities }) {
                   <Label htmlFor="important-date-category">Category</Label>
                   <Select
                     value={newEvent.importantDateCategory}
-                    onValueChange={(value) => setNewEvent({ ...newEvent, importantDateCategory: value })}
+                    onValueChange={(value) => setNewEvent({ ...newEvent, importantDateCategory: value, importantDateCustomCategory: '' })}
                   >
                     <SelectTrigger id="important-date-category">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
+                      <SelectItem value="deadline">Deadline</SelectItem>
                       <SelectItem value="school_holiday">School Holiday</SelectItem>
                       <SelectItem value="trip">Trip</SelectItem>
                       <SelectItem value="work_leave">Work Leave</SelectItem>
-                      <SelectItem value="deadline">Deadline</SelectItem>
                       <SelectItem value="summer_plan">Summer Plan</SelectItem>
                       <SelectItem value="other">Other</SelectItem>
                     </SelectContent>
                   </Select>
+                  {newEvent.importantDateCategory === 'other' && (
+                    <Input
+                      placeholder="Type your custom category..."
+                      value={newEvent.importantDateCustomCategory || ''}
+                      onChange={(e) => setNewEvent({ ...newEvent, importantDateCustomCategory: e.target.value })}
+                    />
+                  )}
                 </div>
               )}
             </div>
