@@ -62,12 +62,37 @@ export default function ImportantDatesTab() {
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }) => base44.entities.ImportantDate.update(id, data),
+    mutationFn: async ({ id, data, syncCalendar }) => {
+      await base44.entities.ImportantDate.update(id, data);
+      if (syncCalendar && data.synced_google_calendar_id && data.synced_google_event_id) {
+        const endDateExclusive = (() => {
+          const end = data.end_date || data.date;
+          const d = new Date(end + 'T00:00:00');
+          d.setDate(d.getDate() + 1);
+          return d.toISOString().split('T')[0];
+        })();
+        await base44.functions.invoke('updateGoogleCalendarEvent', {
+          id: data.synced_google_event_id,
+          calendarId: data.synced_google_calendar_id,
+          originalCalendarId: data.synced_google_calendar_id,
+          summary: data.title,
+          description: data.description || '',
+          start: data.date,
+          end: endDateExclusive,
+          isAllDay: true,
+        });
+      }
+    },
     onSuccess: () => { queryClient.invalidateQueries(['importantDates']); closeDialog(); },
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id) => base44.entities.ImportantDate.delete(id),
+    mutationFn: async ({ id, calendarId, eventId, syncCalendar }) => {
+      await base44.entities.ImportantDate.delete(id);
+      if (syncCalendar && calendarId && eventId) {
+        await base44.functions.invoke('deleteGoogleCalendarEvent', { calendarId, eventId });
+      }
+    },
     onSuccess: () => queryClient.invalidateQueries(['importantDates']),
   });
 
