@@ -36,7 +36,9 @@ export default function FamilyCalendar({ activities }) {
     recurrence: 'none',
     recurrenceEnd: '',
     weeklyDays: [],
-    isAllDay: false
+    isAllDay: false,
+    addToImportantDates: false,
+    importantDateCategory: 'other'
   });
   const queryClient = useQueryClient();
 
