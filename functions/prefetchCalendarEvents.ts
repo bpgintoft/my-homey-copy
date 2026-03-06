@@ -5,7 +5,7 @@ Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
 
-    const accessToken = await base44.asServiceRole.connectors.getAccessToken('googlecalendar');
+    const { accessToken } = await base44.asServiceRole.connectors.getConnection('googlecalendar');
 
     const auth = new google.auth.OAuth2();
     auth.setCredentials({ access_token: accessToken });
