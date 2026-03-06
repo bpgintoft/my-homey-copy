@@ -1302,13 +1302,11 @@ export default function FamilyCalendar({ activities }) {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="birthday">Birthday</SelectItem>
-                    <SelectItem value="anniversary">Anniversary</SelectItem>
-                    <SelectItem value="holiday">Holiday</SelectItem>
-                    <SelectItem value="appointment">Appointment</SelectItem>
-                    <SelectItem value="school">School</SelectItem>
-                    <SelectItem value="sports">Sports</SelectItem>
-                    <SelectItem value="travel">Travel</SelectItem>
+                    <SelectItem value="school_holiday">School Holiday</SelectItem>
+                    <SelectItem value="trip">Trip</SelectItem>
+                    <SelectItem value="work_leave">Work Leave</SelectItem>
+                    <SelectItem value="deadline">Deadline</SelectItem>
+                    <SelectItem value="summer_plan">Summer Plan</SelectItem>
                     <SelectItem value="other">Other</SelectItem>
                   </SelectContent>
                 </Select>
