@@ -622,6 +622,7 @@ export default function FamilyCalendar({ activities }) {
       originalStartTime: editingEvent.originalStartTime || undefined,
       addToImportantDates: editingEvent.addToImportantDates || false,
       importantDateCategory: editingEvent.importantDateCategory || 'other',
+      importantDateCustomCategory: editingEvent.importantDateCustomCategory || '',
     };
 
     console.log('[submitUpdate] payload:', JSON.stringify(eventData));
