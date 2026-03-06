@@ -69,6 +69,57 @@ export default function ImportantDatesTab() {
     onSuccess: () => queryClient.invalidateQueries(['importantDates']),
   });
 
+  const handleDeleteClick = (d) => {
+    setDeleteConfirm({ date: d });
+  };
+
+  const handleDeleteConfirm = async (alsoDeleteCalendar) => {
+    const d = deleteConfirm.date;
+    setDeleteConfirm(null);
+    if (alsoDeleteCalendar && d.synced_google_calendar_id && d.synced_google_event_id) {
+      await base44.functions.invoke('deleteGoogleCalendarEvent', {
+        calendarId: d.synced_google_calendar_id,
+        eventId: d.synced_google_event_id,
+      });
+    }
+    deleteMutation.mutate(d.id);
+  };
+
+  const handleSave = () => {
+    if (editing && editing.synced_google_event_id) {
+      setEditCalendarConfirm({ date: editing, formData: form });
+    } else {
+      doSave(form, false);
+    }
+  };
+
+  const doSave = async (formData, alsoUpdateCalendar) => {
+    if (editing) {
+      if (alsoUpdateCalendar && editing.synced_google_calendar_id && editing.synced_google_event_id) {
+        const endDateExclusive = (() => {
+          const endDate = formData.end_date || formData.date;
+          const d = new Date(endDate + 'T00:00:00');
+          d.setDate(d.getDate() + 1);
+          return d.toISOString().split('T')[0];
+        })();
+        await base44.functions.invoke('updateGoogleCalendarEvent', {
+          id: editing.synced_google_event_id,
+          calendarId: editing.synced_google_calendar_id,
+          originalCalendarId: editing.synced_google_calendar_id,
+          summary: formData.title,
+          description: formData.description || '',
+          start: formData.date,
+          end: endDateExclusive,
+          isAllDay: true,
+          recurrence: [],
+        });
+      }
+      updateMutation.mutate({ id: editing.id, data: formData });
+    } else {
+      createMutation.mutate(formData);
+    }
+  };
+
   const openAdd = () => { setEditing(null); setForm(EMPTY_FORM); setShowDialog(true); };
   const openEdit = (d) => { setEditing(d); setForm({ ...EMPTY_FORM, ...d, custom_category: d.custom_category || '' }); setShowDialog(true); };
   const closeDialog = () => { setShowDialog(false); setEditing(null); setForm(EMPTY_FORM); };
