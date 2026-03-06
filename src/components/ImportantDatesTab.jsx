@@ -156,7 +156,7 @@ export default function ImportantDatesTab() {
       {Object.entries(grouped).map(([cat, items]) => (
         <div key={cat}>
           <h3 className="text-sm font-semibold uppercase tracking-wide text-gray-400 mb-3">
-            {categoryConfig[cat]?.label}
+            {cat === 'other' ? 'Other' : categoryConfig[cat]?.label}
           </h3>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
             {items.map(d => (
