@@ -344,6 +344,35 @@ export default function ImportantDatesTab() {
         </DialogContent>
       </Dialog>
 
+      {/* Calendar Sync Prompt Dialog */}
+      <Dialog open={showCalendarSyncPrompt} onOpenChange={setShowCalendarSyncPrompt}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle>{calendarSyncAction?.type === 'delete' ? 'Delete Event' : 'Save Changes'}</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 pt-2">
+            <p className="text-sm text-gray-600">
+              This date is synced to Google Calendar. Would you also like to {calendarSyncAction?.type === 'delete' ? 'delete' : 'update'} the event on Google Calendar?
+            </p>
+            <div className="flex items-center gap-2">
+              <Checkbox id="sync-cal-too" checked={syncCalendarToo} onCheckedChange={setSyncCalendarToo} />
+              <label htmlFor="sync-cal-too" className="text-sm cursor-pointer">
+                Yes, also {calendarSyncAction?.type === 'delete' ? 'delete' : 'update'} on Google Calendar
+              </label>
+            </div>
+            <div className="flex gap-2 pt-1">
+              <Button variant="outline" className="flex-1" onClick={() => setShowCalendarSyncPrompt(false)}>Cancel</Button>
+              <Button
+                className={`flex-1 ${calendarSyncAction?.type === 'delete' ? 'bg-red-500 hover:bg-red-600' : 'bg-gradient-to-r from-[#0AACFF] to-[#0890D9]'} text-white`}
+                onClick={confirmCalendarSyncAction}
+              >
+                {calendarSyncAction?.type === 'delete' ? 'Delete' : 'Save'}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
       {/* Sync to Calendar Dialog */}
       <Dialog open={showSyncDialog} onOpenChange={setShowSyncDialog}>
         <DialogContent className="max-w-sm">
