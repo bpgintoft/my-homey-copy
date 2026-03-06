@@ -17,7 +17,7 @@ Deno.serve(async (req) => {
 
     const now = new Date();
     const timeMin = now.toISOString();
-    const timeMax = new Date(now.getTime() + 60 * 24 * 60 * 60 * 1000).toISOString(); // 8 weeks forward
+    const timeMax = new Date(now.getTime() + 42 * 24 * 60 * 60 * 1000).toISOString(); // 6 weeks forward
 
     const allEvents = [];
 
