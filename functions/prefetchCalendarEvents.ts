@@ -15,7 +15,8 @@ Deno.serve(async (req) => {
 
     const now = new Date();
     const timeMin = now.toISOString();
-    const timeMax = new Date(now.getTime() + 42 * 24 * 60 * 60 * 1000).toISOString(); // 6 weeks
+    // Only 2 weeks — keeps function fast and within time limits
+    const timeMax = new Date(now.getTime() + 14 * 24 * 60 * 60 * 1000).toISOString();
 
     // Fetch all calendars in parallel
     const perCalResults = await Promise.all(calendars.map(async (cal) => {
@@ -25,7 +26,7 @@ Deno.serve(async (req) => {
         timeMax,
         singleEvents: true,
         orderBy: 'startTime',
-        maxResults: 100,
+        maxResults: 50,
       });
       return (eventsRes.data.items || []).map(event => ({
         google_event_id: event.id,
@@ -45,29 +46,23 @@ Deno.serve(async (req) => {
     const allEvents = perCalResults.flat();
     const newEventIds = new Set(allEvents.map(e => e.google_event_id));
 
-    // Get existing cache
-    const existing = await base44.asServiceRole.entities.CachedCalendarEvent.list('-start', 2000);
+    // Get existing cache for this time window only
+    const existing = await base44.asServiceRole.entities.CachedCalendarEvent.filter({
+      start: { $gte: timeMin, $lte: timeMax }
+    }, '-start', 500);
     const existingIds = new Set(existing.map(e => e.google_event_id));
 
-    // Only create truly new events (skip existing ones to stay within rate limits)
+    // Only create new events (skip already-cached ones to stay within rate limits)
     const toCreate = allEvents.filter(e => !existingIds.has(e.google_event_id));
-    const toDelete = existing.filter(e => !newEventIds.has(e.google_event_id));
 
-    // Delete stale in batches of 5
-    for (let i = 0; i < toDelete.length; i += 5) {
-      await Promise.all(toDelete.slice(i, i + 5).map(e =>
-        base44.asServiceRole.entities.CachedCalendarEvent.delete(e.id)
-      ));
-    }
-
-    // Create new in batches of 5
-    for (let i = 0; i < toCreate.length; i += 5) {
-      await Promise.all(toCreate.slice(i, i + 5).map(e =>
+    // Create new in batches of 10
+    for (let i = 0; i < toCreate.length; i += 10) {
+      await Promise.all(toCreate.slice(i, i + 10).map(e =>
         base44.asServiceRole.entities.CachedCalendarEvent.create(e)
       ));
     }
 
-    return Response.json({ success: true, total: allEvents.length, created: toCreate.length, deleted: toDelete.length });
+    return Response.json({ success: true, total: allEvents.length, created: toCreate.length });
   } catch (error) {
     console.error('prefetchCalendarEvents error:', error);
     return Response.json({ error: error.message }, { status: 500 });
