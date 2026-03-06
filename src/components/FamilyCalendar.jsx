@@ -201,7 +201,17 @@ export default function FamilyCalendar({ activities }) {
   // Update event mutation
   const updateEventMutation = useMutation({
     mutationFn: async (eventData) => {
-      const { data } = await base44.functions.invoke('updateGoogleCalendarEvent', eventData);
+      const { addToImportantDates, importantDateCategory, ...calendarEventData } = eventData;
+      const { data } = await base44.functions.invoke('updateGoogleCalendarEvent', calendarEventData);
+      if (addToImportantDates && eventData.summary && eventData.start) {
+        const startDate = eventData.isAllDay ? eventData.start : eventData.start.split('T')[0];
+        await base44.entities.ImportantDate.create({
+          title: eventData.summary,
+          date: startDate,
+          category: importantDateCategory || 'other',
+          description: eventData.description || '',
+        });
+      }
       return data;
     },
     onSuccess: () => {
