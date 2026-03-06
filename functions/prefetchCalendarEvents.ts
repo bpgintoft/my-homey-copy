@@ -58,22 +58,18 @@ Deno.serve(async (req) => {
 
     // Delete stale events no longer in the fetched range
     const toDelete = existing.filter(e => !newEventIds.has(e.google_event_id));
-    if (toDelete.length > 0) {
-      await Promise.all(toDelete.map(e => base44.asServiceRole.entities.CachedCalendarEvent.delete(e.id)));
+    for (const e of toDelete) {
+      await base44.asServiceRole.entities.CachedCalendarEvent.delete(e.id);
     }
 
-    // Upsert (update existing, create new) in parallel batches
-    const batchSize = 25;
-    for (let i = 0; i < allEvents.length; i += batchSize) {
-      const batch = allEvents.slice(i, i + batchSize);
-      await Promise.all(batch.map(e => {
-        const existing = existingMap.get(e.google_event_id);
-        if (existing) {
-          return base44.asServiceRole.entities.CachedCalendarEvent.update(existing.id, e);
-        } else {
-          return base44.asServiceRole.entities.CachedCalendarEvent.create(e);
-        }
-      }));
+    // Upsert sequentially to avoid rate limits
+    for (const e of allEvents) {
+      const found = existingMap.get(e.google_event_id);
+      if (found) {
+        await base44.asServiceRole.entities.CachedCalendarEvent.update(found.id, e);
+      } else {
+        await base44.asServiceRole.entities.CachedCalendarEvent.create(e);
+      }
     }
 
     return Response.json({ success: true, count: allEvents.length });
