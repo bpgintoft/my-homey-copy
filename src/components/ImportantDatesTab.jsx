@@ -207,7 +207,7 @@ export default function ImportantDatesTab() {
         </Button>
       </div>
 
-      {dates.length === 0 && (
+      {upcomingDates.length === 0 && (
         <Card className="bg-white border-0 shadow-sm p-12 text-center">
           <Calendar className="w-16 h-16 text-gray-300 mx-auto mb-4" />
           <h3 className="text-lg font-semibold text-gray-900 mb-2">No important dates yet</h3>
