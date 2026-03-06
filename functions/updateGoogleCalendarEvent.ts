@@ -21,13 +21,20 @@ Deno.serve(async (req) => {
     auth.setCredentials({ access_token: accessToken });
     const calendar = google.calendar({ version: 'v3', auth });
 
+    const toRFC3339 = (localDatetime) => {
+      // localDatetime is like "2026-03-06T17:30" or "2026-03-06T17:30:00"
+      // Convert to a proper ISO string with offset for America/Chicago
+      const date = new Date(localDatetime);
+      return date.toISOString(); // Google accepts UTC ISO strings with dateTime+timeZone
+    };
+
     const buildEventBody = (includeRecurrence) => {
       const event = {
         summary,
         description,
         location,
-        start: isAllDay ? { date: start } : { dateTime: start, timeZone: 'America/Chicago' },
-        end: isAllDay ? { date: end } : { dateTime: end, timeZone: 'America/Chicago' },
+        start: isAllDay ? { date: start } : { dateTime: toRFC3339(start), timeZone: 'America/Chicago' },
+        end: isAllDay ? { date: end } : { dateTime: toRFC3339(end), timeZone: 'America/Chicago' },
       };
       if (includeRecurrence) {
         // Only include RRULE lines — Google rejects UNTIL on EXDATE lines
