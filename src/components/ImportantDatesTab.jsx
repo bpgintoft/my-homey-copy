@@ -102,9 +102,36 @@ export default function ImportantDatesTab() {
 
   const handleSave = () => {
     if (editing) {
-      updateMutation.mutate({ id: editing.id, data: form });
+      if (editing.synced_google_event_id) {
+        // Has a linked calendar event — ask user
+        setSyncCalendarToo(true);
+        setCalendarSyncAction({ type: 'save', id: editing.id, data: { ...form, synced_google_calendar_id: editing.synced_google_calendar_id, synced_google_event_id: editing.synced_google_event_id } });
+        setShowCalendarSyncPrompt(true);
+      } else {
+        updateMutation.mutate({ id: editing.id, data: form });
+      }
     } else {
       createMutation.mutate(form);
+    }
+  };
+
+  const confirmCalendarSyncAction = () => {
+    setShowCalendarSyncPrompt(false);
+    if (calendarSyncAction.type === 'save') {
+      updateMutation.mutate({ id: calendarSyncAction.id, data: calendarSyncAction.data, syncCalendar: syncCalendarToo });
+    } else if (calendarSyncAction.type === 'delete') {
+      deleteMutation.mutate({ id: calendarSyncAction.id, calendarId: calendarSyncAction.calendarId, eventId: calendarSyncAction.eventId, syncCalendar: syncCalendarToo });
+    }
+    setCalendarSyncAction(null);
+  };
+
+  const handleDelete = (d) => {
+    if (d.synced_google_event_id) {
+      setSyncCalendarToo(true);
+      setCalendarSyncAction({ type: 'delete', id: d.id, calendarId: d.synced_google_calendar_id, eventId: d.synced_google_event_id });
+      setShowCalendarSyncPrompt(true);
+    } else {
+      deleteMutation.mutate({ id: d.id });
     }
   };
 
