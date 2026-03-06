@@ -13,15 +13,15 @@ import { format, parseISO } from 'date-fns';
 import { motion } from 'framer-motion';
 
 const categoryConfig = {
+  deadline:        { label: 'Deadline',        color: 'bg-red-100 text-red-700' },
   school_holiday:  { label: 'School Holiday', color: 'bg-blue-100 text-blue-700' },
   trip:            { label: 'Trip / Travel',   color: 'bg-emerald-100 text-emerald-700' },
   work_leave:      { label: 'Work Leave',      color: 'bg-orange-100 text-orange-700' },
-  deadline:        { label: 'Deadline',        color: 'bg-red-100 text-red-700' },
   summer_plan:     { label: 'Summer Plan',     color: 'bg-yellow-100 text-yellow-700' },
   other:           { label: 'Other',           color: 'bg-gray-100 text-gray-700' },
 };
 
-const categoryOrder = ['school_holiday', 'trip', 'summer_plan', 'work_leave', 'deadline', 'other'];
+const categoryOrder = ['deadline', 'school_holiday', 'trip', 'summer_plan', 'work_leave', 'other'];
 
 const EMPTY_FORM = { title: '', date: '', end_date: '', description: '', category: '', applies_to: 'Everyone' };
 
