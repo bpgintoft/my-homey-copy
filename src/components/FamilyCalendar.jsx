@@ -64,32 +64,16 @@ export default function FamilyCalendar({ activities }) {
   // Generate a week of dates
   const weekDays = Array.from({ length: 7 }, (_, i) => addDays(currentWeekStart, i));
 
-  // Load cached events instantly from DB
+  // Load ALL cached events instantly from DB (covers any week navigation)
   const { data: cachedEvents = [] } = useQuery({
     queryKey: ['cachedCalendarEvents'],
-    queryFn: () => base44.entities.CachedCalendarEvent.list(),
-    staleTime: 5 * 60 * 1000,
+    queryFn: () => base44.entities.CachedCalendarEvent.list('-start', 500),
+    staleTime: 30 * 60 * 1000,
+    gcTime: 60 * 60 * 1000,
   });
 
-  // Also fetch live from Google in background (refreshes cache)
-  const { data: liveGoogleEvents = [], isLoading: isLoadingGoogle, error: googleError } = useQuery({
-    queryKey: ['googleCalendarEvents', currentWeekStart.toISOString()],
-    queryFn: async () => {
-      const timeMin = currentWeekStart.toISOString();
-      const timeMax = addDays(currentWeekStart, 7).toISOString();
-      const { data } = await base44.functions.invoke('getGoogleCalendarEvents', { timeMin, timeMax });
-      return data.events || [];
-    },
-    staleTime: 5 * 60 * 1000,
-    cacheTime: 30 * 60 * 1000,
-    refetchInterval: 5 * 60 * 1000,
-    refetchOnWindowFocus: true
-  });
-
-  // Use live events if available, otherwise fall back to cached events for the current week
-  const googleEvents = React.useMemo(() => {
-    if (liveGoogleEvents.length > 0) return liveGoogleEvents;
-    // Map cached events to the same shape as live Google events
+  // Map cached events for the current week — shown immediately while live fetch is pending
+  const cachedWeekEvents = React.useMemo(() => {
     const weekStart = currentWeekStart;
     const weekEnd = addDays(currentWeekStart, 7);
     return cachedEvents
@@ -111,7 +95,26 @@ export default function FamilyCalendar({ activities }) {
         recurrence: e.recurrence,
         source: 'google',
       }));
-  }, [liveGoogleEvents, cachedEvents, currentWeekStart]);
+  }, [cachedEvents, currentWeekStart]);
+
+  // Fetch live from Google in background — once loaded, replaces cached view for this week
+  const { data: liveGoogleEvents = [], error: googleError } = useQuery({
+    queryKey: ['googleCalendarEvents', currentWeekStart.toISOString()],
+    queryFn: async () => {
+      const timeMin = currentWeekStart.toISOString();
+      const timeMax = addDays(currentWeekStart, 7).toISOString();
+      const { data } = await base44.functions.invoke('getGoogleCalendarEvents', { timeMin, timeMax });
+      return data.events || [];
+    },
+    staleTime: 10 * 60 * 1000,
+    gcTime: 30 * 60 * 1000,
+    refetchInterval: 10 * 60 * 1000,
+    refetchOnWindowFocus: false,
+    placeholderData: (prev) => prev, // keep previous week's data visible while loading new week
+  });
+
+  // Use live events when available, fall back to cached immediately
+  const googleEvents = liveGoogleEvents.length > 0 ? liveGoogleEvents : cachedWeekEvents;
 
   // Fetch existing thumbnails for Google Calendar events
   const { data: thumbnails = [] } = useQuery({
