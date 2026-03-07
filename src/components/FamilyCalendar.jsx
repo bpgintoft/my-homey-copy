@@ -288,9 +288,17 @@ export default function FamilyCalendar({ activities }) {
     }))
   ];
 
-  // Group events by day
+  // Group events by day, sorted by start time
   const getActivitiesForDay = (day) => {
-    return allEvents.filter(a => a.start && isSameDay(parseISO(a.start), day));
+    return allEvents
+      .filter(a => a.start && isSameDay(parseISO(a.start), day))
+      .sort((a, b) => {
+        const aIsAllDay = !a.start.includes('T');
+        const bIsAllDay = !b.start.includes('T');
+        if (aIsAllDay && !bIsAllDay) return -1;
+        if (!aIsAllDay && bIsAllDay) return 1;
+        return new Date(a.start) - new Date(b.start);
+      });
   };
 
   // Generate icon for activity
