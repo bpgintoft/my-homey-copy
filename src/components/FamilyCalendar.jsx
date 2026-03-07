@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, ChevronLeft, ChevronRight, Filter, ChevronDown, ChevronUp, Edit2, MapPin, FileText } from 'lucide-react';
+import { Plus, ChevronLeft, ChevronRight, Filter, ChevronDown, ChevronUp, Edit2, MapPin, FileText, Search, X } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Checkbox } from "@/components/ui/checkbox";
 import { format, addDays, startOfWeek, isSameDay, parseISO } from 'date-fns';
