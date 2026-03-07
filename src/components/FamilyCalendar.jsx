@@ -781,7 +781,7 @@ export default function FamilyCalendar({ activities }) {
               >
                 Today
               </Button>
-              <div className="flex-1" />
+              <div className="flex items-center gap-3">
               <Popover>
                 <PopoverTrigger asChild>
                   <Button
