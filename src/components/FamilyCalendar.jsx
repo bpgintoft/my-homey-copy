@@ -407,6 +407,19 @@ export default function FamilyCalendar({ activities }) {
     'Bryan': 'bg-yellow-400'
   };
 
+  // Debounce search input
+  React.useEffect(() => {
+    const timer = setTimeout(() => setSearchQuery(searchInput), 350);
+    return () => clearTimeout(timer);
+  }, [searchInput]);
+
+  // Focus input when search opens
+  React.useEffect(() => {
+    if (showSearch && searchRef.current) {
+      searchRef.current.focus();
+    }
+  }, [showSearch]);
+
   const goToPreviousWeek = () => {
     setCurrentWeekStart(addDays(currentWeekStart, -7));
     setHasNavigated(true);
