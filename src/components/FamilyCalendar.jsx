@@ -832,6 +832,7 @@ export default function FamilyCalendar({ activities }) {
               >
                 <Plus className="w-3.5 h-3.5 text-white" />
               </Button>
+              </div>
             </motion.div>
           )}
         </AnimatePresence>
