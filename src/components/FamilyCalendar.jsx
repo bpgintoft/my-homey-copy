@@ -834,7 +834,6 @@ export default function FamilyCalendar({ activities }) {
               </Button>
               </div>
             </motion.div>
-          )
           )}
         </AnimatePresence>
       </div>
