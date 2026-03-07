@@ -712,76 +712,127 @@ export default function FamilyCalendar({ activities }) {
       {/* Sticky header section */}
       <div className="sticky top-0 z-20 pb-3 -mx-6 px-6" style={{ backgroundColor: '#F5F5F7' }}>
       {/* Week navigation */}
-      <div className="flex items-center justify-between gap-0.5 mb-3 pt-3">
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={goToPreviousWeek}
-          className="h-6 w-6 rounded-lg flex-shrink-0 p-0"
-        >
-          <ChevronLeft className="w-3.5 h-3.5" />
-        </Button>
-        <div className="text-xs font-semibold text-gray-900 whitespace-nowrap mx-1">
-          {format(currentWeekStart, 'MMM d')} – {format(addDays(currentWeekStart, 6), 'MMM d')}
-        </div>
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={goToNextWeek}
-          className="h-6 w-6 rounded-lg flex-shrink-0 p-0"
-        >
-          <ChevronRight className="w-3.5 h-3.5" />
-        </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={goToToday}
-          className="rounded-lg flex-shrink-0 h-6 px-2 text-xs"
-        >
-          Today
-        </Button>
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button
-              variant="outline"
-              size="icon"
-              className="h-6 w-6 rounded-lg flex-shrink-0 p-0"
+      <div className="flex items-center justify-between gap-0.5 mb-3 pt-3 overflow-hidden">
+        <AnimatePresence initial={false}>
+          {showSearch ? (
+            <motion.div
+              key="search-bar"
+              initial={{ width: 0, opacity: 0 }}
+              animate={{ width: '100%', opacity: 1 }}
+              exit={{ width: 0, opacity: 0 }}
+              transition={{ duration: 0.25, ease: 'easeInOut' }}
+              className="flex items-center gap-1 overflow-hidden"
             >
-              <Filter className="w-3 h-3" />
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-64">
-            <div className="space-y-3">
-              <h4 className="font-semibold text-sm">Filter Calendars</h4>
-              {calendars.map((calendar) => (
-                <div key={calendar.id} className="flex items-center space-x-2">
-                  <Checkbox
-                    id={calendar.id}
-                    checked={selectedCalendarIds.has(calendar.id)}
-                    onCheckedChange={() => toggleCalendar(calendar.id)}
-                  />
-                  <label
-                    htmlFor={calendar.id}
-                    className="text-sm flex items-center gap-2 cursor-pointer flex-1"
+              <div className="relative flex-1">
+                <Search className="w-3.5 h-3.5 absolute left-2 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                <input
+                  ref={searchRef}
+                  type="text"
+                  value={searchInput}
+                  onChange={e => setSearchInput(e.target.value)}
+                  placeholder="Search events…"
+                  className="w-full h-6 pl-7 pr-2 text-xs rounded-lg border border-gray-200 bg-white focus:outline-none focus:ring-1 focus:ring-blue-400"
+                />
+              </div>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-6 w-6 flex-shrink-0 p-0"
+                onClick={() => { setShowSearch(false); setSearchInput(''); setSearchQuery(''); }}
+              >
+                <X className="w-3.5 h-3.5" />
+              </Button>
+            </motion.div>
+          ) : (
+            <motion.div
+              key="nav-bar"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="flex items-center gap-0.5 w-full"
+            >
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={goToPreviousWeek}
+                className="h-6 w-6 rounded-lg flex-shrink-0 p-0"
+              >
+                <ChevronLeft className="w-3.5 h-3.5" />
+              </Button>
+              <div className="text-xs font-semibold text-gray-900 whitespace-nowrap mx-1">
+                {format(currentWeekStart, 'MMM d')} – {format(addDays(currentWeekStart, 6), 'MMM d')}
+              </div>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={goToNextWeek}
+                className="h-6 w-6 rounded-lg flex-shrink-0 p-0"
+              >
+                <ChevronRight className="w-3.5 h-3.5" />
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={goToToday}
+                className="rounded-lg flex-shrink-0 h-6 px-2 text-xs"
+              >
+                Today
+              </Button>
+              <div className="flex-1" />
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="h-6 w-6 rounded-lg flex-shrink-0 p-0"
                   >
-                    <div 
-                      className="w-3 h-3 rounded-full" 
-                      style={{ backgroundColor: calendar.backgroundColor }}
-                    />
-                    {calendar.name}
-                  </label>
-                </div>
-              ))}
-            </div>
-          </PopoverContent>
-        </Popover>
-        <Button
-          className="h-6 w-6 rounded-full bg-gradient-to-r from-[#0AACFF] to-[#0890D9] shadow-lg flex-shrink-0 p-0"
-          size="icon"
-          onClick={() => setShowAddDialog(true)}
-        >
-          <Plus className="w-3.5 h-3.5 text-white" />
-        </Button>
+                    <Filter className="w-3 h-3" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-64">
+                  <div className="space-y-3">
+                    <h4 className="font-semibold text-sm">Filter Calendars</h4>
+                    {calendars.map((calendar) => (
+                      <div key={calendar.id} className="flex items-center space-x-2">
+                        <Checkbox
+                          id={calendar.id}
+                          checked={selectedCalendarIds.has(calendar.id)}
+                          onCheckedChange={() => toggleCalendar(calendar.id)}
+                        />
+                        <label
+                          htmlFor={calendar.id}
+                          className="text-sm flex items-center gap-2 cursor-pointer flex-1"
+                        >
+                          <div 
+                            className="w-3 h-3 rounded-full" 
+                            style={{ backgroundColor: calendar.backgroundColor }}
+                          />
+                          {calendar.name}
+                        </label>
+                      </div>
+                    ))}
+                  </div>
+                </PopoverContent>
+              </Popover>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-6 w-6 rounded-lg flex-shrink-0 p-0"
+                onClick={() => setShowSearch(true)}
+              >
+                <Search className="w-3.5 h-3.5" />
+              </Button>
+              <Button
+                className="h-6 w-6 rounded-full bg-gradient-to-r from-[#0AACFF] to-[#0890D9] shadow-lg flex-shrink-0 p-0"
+                size="icon"
+                onClick={() => setShowAddDialog(true)}
+              >
+                <Plus className="w-3.5 h-3.5 text-white" />
+              </Button>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
 
