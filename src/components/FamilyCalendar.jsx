@@ -294,8 +294,18 @@ export default function FamilyCalendar({ activities }) {
 
   // Group events by day, sorted by start time
   const getActivitiesForDay = (day) => {
+    const q = searchQuery.toLowerCase().trim();
     return allEvents
-      .filter(a => a.start && isSameDay(parseISO(a.start), day))
+      .filter(a => {
+        if (!a.start || !isSameDay(parseISO(a.start), day)) return false;
+        if (!q) return true;
+        return (
+          (a.title || '').toLowerCase().includes(q) ||
+          (a.summary || '').toLowerCase().includes(q) ||
+          (a.description || '').toLowerCase().includes(q) ||
+          (a.location || '').toLowerCase().includes(q)
+        );
+      })
       .sort((a, b) => {
         const aIsAllDay = !a.start.includes('T');
         const bIsAllDay = !b.start.includes('T');
