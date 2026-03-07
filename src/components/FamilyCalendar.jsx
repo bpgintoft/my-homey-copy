@@ -21,6 +21,10 @@ export default function FamilyCalendar({ activities }) {
   const [hasScrolledUp, setHasScrolledUp] = useState(false);
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [showEditDialog, setShowEditDialog] = useState(false);
+  const [showSearch, setShowSearch] = useState(false);
+  const [searchInput, setSearchInput] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
+  const searchRef = React.useRef(null);
   const [showCalendarFilter, setShowCalendarFilter] = useState(false);
   const [selectedCalendarIds, setSelectedCalendarIds] = useState(new Set());
   const [editingEvent, setEditingEvent] = useState(null);
