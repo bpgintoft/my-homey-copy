@@ -28,7 +28,13 @@ export default function SyncChoreToCalendarDialog({ open, onOpenChange, chore })
 
   const { data: calendarsData, isLoading: loadingCalendars } = useQuery({
     queryKey: ['googleCalendars'],
-    queryFn: () => base44.functions.invoke('getGoogleCalendars').then(r => r.data.calendars || []),
+    queryFn: async () => {
+      const res = await base44.functions.invoke('getGoogleCalendars');
+      const payload = res?.data ?? res;
+      if (Array.isArray(payload?.calendars)) return payload.calendars;
+      if (Array.isArray(payload)) return payload;
+      return [];
+    },
     enabled: open,
   });
 
