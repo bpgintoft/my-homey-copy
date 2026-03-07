@@ -752,30 +752,32 @@ export default function FamilyCalendar({ activities }) {
               transition={{ duration: 0.2 }}
               className="flex items-center gap-0.5 w-full"
             >
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={goToPreviousWeek}
-                className="h-6 w-6 rounded-lg flex-shrink-0 p-0"
-              >
-                <ChevronLeft className="w-3.5 h-3.5" />
-              </Button>
-              <div className="text-xs font-semibold text-gray-900 whitespace-nowrap mx-1">
-                {format(currentWeekStart, 'MMM d')} – {format(addDays(currentWeekStart, 6), 'MMM d')}
+              <div className="flex items-center gap-0.5 flex-1">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={goToPreviousWeek}
+                  className="h-6 w-6 rounded-lg flex-shrink-0 p-0"
+                >
+                  <ChevronLeft className="w-3.5 h-3.5" />
+                </Button>
+                <div className="text-xs font-semibold text-gray-900 whitespace-nowrap mx-1">
+                  {format(currentWeekStart, 'MMM d')} – {format(addDays(currentWeekStart, 6), 'MMM d')}
+                </div>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={goToNextWeek}
+                  className="h-6 w-6 rounded-lg flex-shrink-0 p-0"
+                >
+                  <ChevronRight className="w-3.5 h-3.5" />
+                </Button>
               </div>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={goToNextWeek}
-                className="h-6 w-6 rounded-lg flex-shrink-0 p-0"
-              >
-                <ChevronRight className="w-3.5 h-3.5" />
-              </Button>
               <Button
                 variant="outline"
                 size="sm"
                 onClick={goToToday}
-                className="rounded-lg flex-shrink-0 h-6 px-2 text-xs"
+                className="rounded-lg flex-shrink-0 h-6 px-3 text-xs"
               >
                 Today
               </Button>
