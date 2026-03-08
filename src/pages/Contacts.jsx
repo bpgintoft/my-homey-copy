@@ -200,21 +200,41 @@ export default function Contacts() {
           <div>
             <Label>Linked Appliances</Label>
             <p className="text-xs text-slate-500 mb-2">This contact will appear on selected appliance records</p>
-            <div className="max-h-36 overflow-y-auto border rounded-md p-2 space-y-1">
-              {allAppliances.map(item => (
-                <label key={item.id} className="flex items-center gap-2 cursor-pointer hover:bg-slate-50 rounded p-1">
-                  <input
-                    type="checkbox"
-                    checked={(formData.linked_to_appliance_ids || []).includes(item.id)}
-                    onChange={() => toggleAppliance(item.id)}
-                    className="rounded"
-                  />
-                  <Package className="w-3 h-3 text-slate-400" />
-                  <span className="text-sm text-slate-700">{item.name}</span>
-                  {item.brand && <span className="text-xs text-slate-400">{item.brand}</span>}
-                </label>
-              ))}
-            </div>
+            <Select
+              value=""
+              onValueChange={(id) => toggleAppliance(id)}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder={
+                  (formData.linked_to_appliance_ids || []).length > 0
+                    ? `${(formData.linked_to_appliance_ids || []).length} appliance(s) selected`
+                    : "Select appliances..."
+                } />
+              </SelectTrigger>
+              <SelectContent>
+                {allAppliances.map(item => (
+                  <SelectItem key={item.id} value={item.id}>
+                    <span className="flex items-center gap-2">
+                      {(formData.linked_to_appliance_ids || []).includes(item.id) ? '✓ ' : ''}
+                      {item.name}{item.brand ? ` (${item.brand})` : ''}
+                    </span>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            {(formData.linked_to_appliance_ids || []).length > 0 && (
+              <div className="flex flex-wrap gap-1 mt-2">
+                {(formData.linked_to_appliance_ids || []).map(id => {
+                  const appliance = allAppliances.find(a => a.id === id);
+                  return appliance ? (
+                    <span key={id} className="inline-flex items-center gap-1 bg-slate-100 text-slate-700 text-xs rounded px-2 py-1">
+                      {appliance.name}
+                      <button type="button" onClick={() => toggleAppliance(id)} className="text-slate-400 hover:text-slate-600">×</button>
+                    </span>
+                  ) : null;
+                })}
+              </div>
+            )}
           </div>
         )}
         <div className="flex gap-3 pt-4">
