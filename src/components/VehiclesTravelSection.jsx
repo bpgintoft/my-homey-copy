@@ -101,6 +101,7 @@ export default function VehiclesTravelSection({ member, color = 'blue' }) {
   const hasRoadsideMemberNum = !!form.roadside_assistance_member_number;
   const hasLicenseNumber = !!form.license_number;
   const hasLicenseIssueDate = !!form.license_issue_date;
+  const hasLicenseExpDate = !!form.license_expiration_date;
   const hasFrequentFlyer = form.frequent_flyer_programs.filter(p => p.airline || p.number).length > 0;
   const hasPassport = !!form.passport_expiration_date;
 
