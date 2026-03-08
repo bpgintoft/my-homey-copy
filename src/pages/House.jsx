@@ -84,6 +84,11 @@ export default function House() {
     queryFn: () => base44.entities.FamilyMember.list(),
   });
 
+  const { data: importantContacts = [] } = useQuery({
+    queryKey: ['importantContacts'],
+    queryFn: () => base44.entities.ImportantContact.list(),
+  });
+
   // Handle URL params for direct editing
   React.useEffect(() => {
     const params = new URLSearchParams(window.location.search);
