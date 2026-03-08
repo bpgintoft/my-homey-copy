@@ -9,52 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
-// Mobile-friendly modal rendered via portal directly on document.body
-const MobileModal = ({ open, onClose, title, children }) => {
-  React.useEffect(() => {
-    if (open) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
-    return () => { document.body.style.overflow = ''; };
-  }, [open]);
 
-  if (!open) return null;
-
-  return ReactDOM.createPortal(
-    <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 9999, display: 'flex', alignItems: 'flex-end' }}>
-      <div
-        style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.5)' }}
-        onClick={onClose}
-      />
-      <div
-        style={{ position: 'relative', width: '100%', height: '85vh', background: 'white', borderRadius: '16px 16px 0 0', display: 'flex', flexDirection: 'column', zIndex: 1 }}
-        onClick={e => e.stopPropagation()}
-      >
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 20px', borderBottom: '1px solid #e5e7eb', flexShrink: 0 }}>
-          <h2 style={{ fontWeight: 600, fontSize: '1.125rem', margin: 0 }}>{title}</h2>
-          <button onClick={onClose} style={{ padding: 4, borderRadius: '50%', cursor: 'pointer', border: 'none', background: 'none' }}>
-            <X style={{ width: 20, height: 20, color: '#64748b' }} />
-          </button>
-        </div>
-        <div
-          style={{
-            flex: 1,
-            overflowY: 'scroll',
-            WebkitOverflowScrolling: 'touch',
-            touchAction: 'pan-y',
-            padding: '0 20px 32px',
-            minHeight: 0,
-          }}
-        >
-          {children}
-        </div>
-      </div>
-    </div>,
-    document.body
-  );
-};
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
