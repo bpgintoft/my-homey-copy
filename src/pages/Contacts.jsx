@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import ReactDOM from 'react-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { 
@@ -8,7 +7,7 @@ import {
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { X } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 // Mobile-friendly modal rendered via portal directly on document.body
 const MobileModal = ({ open, onClose, title, children }) => {
