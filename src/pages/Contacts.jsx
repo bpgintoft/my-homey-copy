@@ -16,7 +16,7 @@ const MobileModal = ({ open, onClose, title, children }) => {
     <div className="fixed inset-0 z-50">
       <div className="absolute inset-0 bg-black/50" onClick={onClose} />
       <div className="absolute bottom-0 left-0 right-0 sm:relative sm:flex sm:items-center sm:justify-center sm:h-full">
-        <div className="relative bg-white w-full sm:max-w-lg sm:rounded-xl rounded-t-2xl flex flex-col" style={{maxHeight: '85vh', height: '85vh'}}>
+        <div className="relative bg-white w-full sm:max-w-lg sm:rounded-xl rounded-t-2xl flex flex-col" style={{maxHeight: '85vh'}}>
           <div className="flex items-center justify-between px-5 py-4 border-b flex-shrink-0">
             <h2 className="text-lg font-semibold">{title}</h2>
             <button onClick={onClose} className="p-1 rounded-full hover:bg-slate-100">
