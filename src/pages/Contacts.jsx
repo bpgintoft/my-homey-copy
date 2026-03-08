@@ -10,46 +10,35 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { X } from 'lucide-react';
 
-// Mobile-friendly modal that allows native touch scrolling
+// Mobile-friendly modal rendered via portal directly on document.body
 const MobileModal = ({ open, onClose, title, children }) => {
   React.useEffect(() => {
     if (open) {
       document.body.style.overflow = 'hidden';
-      const main = document.querySelector('main');
-      if (main) main.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = '';
-      const main = document.querySelector('main');
-      if (main) main.style.overflow = '';
     }
-    return () => {
-      document.body.style.overflow = '';
-      const main = document.querySelector('main');
-      if (main) main.style.overflow = '';
-    };
+    return () => { document.body.style.overflow = ''; };
   }, [open]);
 
   if (!open) return null;
-  return (
-    <div className="fixed inset-0 z-50">
-      <div className="absolute inset-0 bg-black/50" onClick={onClose} />
-      <div className="absolute bottom-0 left-0 right-0 sm:relative sm:flex sm:items-center sm:justify-center sm:h-full">
-        <div className="relative bg-white w-full sm:max-w-lg sm:rounded-xl rounded-t-2xl" style={{height: '85vh'}}>
-          <div className="flex items-center justify-between px-5 py-4 border-b">
-            <h2 className="text-lg font-semibold">{title}</h2>
-            <button onClick={onClose} className="p-1 rounded-full hover:bg-slate-100">
-              <X className="w-5 h-5 text-slate-500" />
-            </button>
-          </div>
-          <div
-            className="overflow-y-auto px-5 pb-8"
-            style={{height: 'calc(85vh - 65px)', WebkitOverflowScrolling: 'touch', overscrollBehavior: 'contain'}}
-          >
-            {children}
-          </div>
+
+  return ReactDOM.createPortal(
+    <div style={{ position: 'fixed', inset: 0, zIndex: 9999 }}>
+      <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.5)' }} onClick={onClose} />
+      <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '85vh', background: 'white', borderRadius: '16px 16px 0 0', display: 'flex', flexDirection: 'column' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 20px', borderBottom: '1px solid #e5e7eb', flexShrink: 0 }}>
+          <h2 style={{ fontWeight: 600, fontSize: '1.125rem' }}>{title}</h2>
+          <button onClick={onClose} style={{ padding: 4, borderRadius: '50%', cursor: 'pointer', border: 'none', background: 'none' }}>
+            <X style={{ width: 20, height: 20, color: '#64748b' }} />
+          </button>
+        </div>
+        <div style={{ overflowY: 'auto', flex: 1, padding: '0 20px 32px', WebkitOverflowScrolling: 'touch' }}>
+          {children}
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };
 import { Input } from "@/components/ui/input";
