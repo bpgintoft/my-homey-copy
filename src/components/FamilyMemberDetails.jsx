@@ -1024,7 +1024,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                       })}
                     </div>
                   </div>
-                ))}
+                ); })}
               </div>
             )}
 
