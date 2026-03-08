@@ -650,6 +650,26 @@ export default function House() {
                                         </div>
                                       )}
 
+                                      {(() => {
+                                        const linked = importantContacts.filter(c => (c.linked_to_appliance_ids || []).includes(appliance.id));
+                                        if (!linked.length) return null;
+                                        return (
+                                          <div className="pt-3 border-t">
+                                            <Label className="text-xs text-gray-500 mb-2 block">Service Contacts</Label>
+                                            <div className="space-y-2">
+                                              {linked.map(c => (
+                                                <div key={c.id} className="bg-blue-50 rounded-lg p-2 text-sm space-y-0.5">
+                                                  <p className="font-medium text-gray-800">{c.name}</p>
+                                                  {c.phone && <a href={`tel:${c.phone}`} className="block text-blue-600 hover:underline">📞 {c.phone}</a>}
+                                                  {c.email && <a href={`mailto:${c.email}`} className="block text-blue-600 hover:underline">✉️ {c.email}</a>}
+                                                  {c.website && <a href={c.website.startsWith('http') ? c.website : `https://${c.website}`} target="_blank" rel="noopener noreferrer" className="block text-blue-600 hover:underline">🌐 {c.website}</a>}
+                                                </div>
+                                              ))}
+                                            </div>
+                                          </div>
+                                        );
+                                      })()}
+
                                       <div className="flex gap-2">
                                         <Button
                                           size="sm"
