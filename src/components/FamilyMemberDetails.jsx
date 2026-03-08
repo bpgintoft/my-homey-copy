@@ -990,41 +990,38 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
               <p className="text-sm text-gray-500">No contacts yet</p>
             ) : (
               <div className="space-y-4">
-                {sortedContactTypes.map((type) => { const typeContacts = contactsByType[type]; return (
+                {sortedContactTypes.map((type) => (
                   <div key={type}>
                     <h4 className="font-medium text-sm text-gray-700 mb-2">{type}</h4>
                     <div className="space-y-2">
-                      {typeContacts.map((contact) => {
-                        const isExpanded = expandedContactId === contact.id;
-                        return (
-                          <div key={contact.id} className={`rounded-lg overflow-hidden ${itemBg}`}>
-                            <div className={`flex items-center gap-2 p-3 cursor-pointer hover:opacity-80 transition-opacity`} onClick={() => setExpandedContactId(isExpanded ? null : contact.id)}>
-                              <div className="flex-1 min-w-0">
-                                <div className="font-medium">{contact.name}</div>
-                              </div>
-                              <div className="flex gap-0.5 flex-shrink-0">
-                                <Button variant="ghost" size="icon" className="h-7 w-7" onClick={(e) => { e.stopPropagation(); setEditingContact(contact); }}>
-                                  <Edit2 className="w-3 h-3 text-gray-500" />
-                                </Button>
-                                <Button variant="ghost" size="icon" className="h-7 w-7" onClick={(e) => { e.stopPropagation(); deleteContactMutation.mutate(contact.id); }}>
-                                  <Trash2 className="w-3 h-3 text-red-500" />
-                                </Button>
-                              </div>
+                      {contactsByType[type].map((contact) => (
+                        <div key={contact.id} className={`rounded-lg overflow-hidden ${itemBg}`}>
+                          <div className="flex items-center gap-2 p-3 cursor-pointer hover:opacity-80 transition-opacity" onClick={() => setExpandedContactId(expandedContactId === contact.id ? null : contact.id)}>
+                            <div className="flex-1 min-w-0">
+                              <div className="font-medium">{contact.name}</div>
                             </div>
-                            {isExpanded && (
-                              <div className="px-3 pb-3 space-y-2 border-t border-gray-200 pt-2">
-                                {contact.phone && <a href={`tel:${contact.phone}`} className="block text-sm text-blue-600 hover:underline">📞 {contact.phone}</a>}
-                                {contact.email && <a href={`mailto:${contact.email}`} className="block text-sm text-blue-600 hover:underline">✉️ {contact.email}</a>}
-                                {contact.address && <a href={`https://maps.google.com/?q=${encodeURIComponent(contact.address)}`} target="_blank" rel="noopener noreferrer" className="block text-sm text-blue-600 hover:underline">📍 {contact.address}</a>}
-                                {contact.website && <a href={contact.website.startsWith('http') ? contact.website : `https://${contact.website}`} target="_blank" rel="noopener noreferrer" className="block text-sm text-blue-600 hover:underline">🌐 {contact.website}</a>}
-                              </div>
-                            )}
+                            <div className="flex gap-0.5 flex-shrink-0">
+                              <Button variant="ghost" size="icon" className="h-7 w-7" onClick={(e) => { e.stopPropagation(); setEditingContact(contact); }}>
+                                <Edit2 className="w-3 h-3 text-gray-500" />
+                              </Button>
+                              <Button variant="ghost" size="icon" className="h-7 w-7" onClick={(e) => { e.stopPropagation(); deleteContactMutation.mutate(contact.id); }}>
+                                <Trash2 className="w-3 h-3 text-red-500" />
+                              </Button>
+                            </div>
                           </div>
-                        );
-                      })}
+                          {expandedContactId === contact.id && (
+                            <div className="px-3 pb-3 space-y-2 border-t border-gray-200 pt-2">
+                              {contact.phone && <a href={`tel:${contact.phone}`} className="block text-sm text-blue-600 hover:underline">📞 {contact.phone}</a>}
+                              {contact.email && <a href={`mailto:${contact.email}`} className="block text-sm text-blue-600 hover:underline">✉️ {contact.email}</a>}
+                              {contact.address && <a href={`https://maps.google.com/?q=${encodeURIComponent(contact.address)}`} target="_blank" rel="noopener noreferrer" className="block text-sm text-blue-600 hover:underline">📍 {contact.address}</a>}
+                              {contact.website && <a href={contact.website.startsWith('http') ? contact.website : `https://${contact.website}`} target="_blank" rel="noopener noreferrer" className="block text-sm text-blue-600 hover:underline">🌐 {contact.website}</a>}
+                            </div>
+                          )}
+                        </div>
+                      ))}
                     </div>
                   </div>
-                ); })}
+                ))}
               </div>
             )}
 
