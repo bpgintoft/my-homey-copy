@@ -194,6 +194,27 @@ export default function Contacts() {
             placeholder="Account numbers, hours, special instructions, etc."
           />
         </div>
+        {allAppliances?.length > 0 && (
+          <div>
+            <Label>Linked Appliances</Label>
+            <p className="text-xs text-slate-500 mb-2">This contact will appear on selected appliance records</p>
+            <div className="max-h-36 overflow-y-auto border rounded-md p-2 space-y-1">
+              {allAppliances.map(item => (
+                <label key={item.id} className="flex items-center gap-2 cursor-pointer hover:bg-slate-50 rounded p-1">
+                  <input
+                    type="checkbox"
+                    checked={(formData.linked_to_appliance_ids || []).includes(item.id)}
+                    onChange={() => toggleAppliance(item.id)}
+                    className="rounded"
+                  />
+                  <Package className="w-3 h-3 text-slate-400" />
+                  <span className="text-sm text-slate-700">{item.name}</span>
+                  {item.brand && <span className="text-xs text-slate-400">{item.brand}</span>}
+                </label>
+              ))}
+            </div>
+          </div>
+        )}
         <div className="flex gap-3 pt-4">
           <Button variant="outline" onClick={onCancel} className="flex-1">Cancel</Button>
           <Button 
