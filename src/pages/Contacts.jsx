@@ -255,29 +255,6 @@ export default function Contacts() {
     );
   };
 
-  // If adding, show full-page inline form (avoids all iOS modal scroll issues)
-  if (isAddOpen) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-rose-50 via-white to-pink-50">
-        <div className="container mx-auto px-6 py-6 max-w-lg">
-          <div className="flex items-center gap-3 mb-6">
-            <button onClick={() => { setIsAddOpen(false); resetForm(); }} className="p-2 rounded-full hover:bg-slate-100">
-              <X className="w-5 h-5 text-slate-600" />
-            </button>
-            <h1 className="text-xl font-bold text-slate-800">Add New Contact</h1>
-          </div>
-          <div className="bg-white rounded-2xl shadow-md p-5">
-            <ContactForm
-              contact={newContact}
-              onSave={handleSave}
-              onCancel={() => { setIsAddOpen(false); resetForm(); }}
-            />
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-rose-50 via-white to-pink-50">
       {/* Hero */}
