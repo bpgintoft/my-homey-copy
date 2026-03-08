@@ -35,6 +35,11 @@ export default function Contacts() {
     queryFn: () => base44.entities.ImportantContact.list(),
   });
 
+  const { data: allAppliances } = useQuery({
+    queryKey: ['allRoomItems'],
+    queryFn: () => base44.entities.RoomItem.list(),
+  });
+
   const createContactMutation = useMutation({
     mutationFn: (data) => base44.entities.ImportantContact.create(data),
     onSuccess: () => {
