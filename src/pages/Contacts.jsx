@@ -310,15 +310,15 @@ export default function Contacts() {
             </DialogTrigger>
             <DialogContent className="flex flex-col p-0" style={{maxHeight: '90dvh', overflow: 'hidden'}}>
               <div className="overflow-y-auto overscroll-contain flex-1 p-6" style={{WebkitOverflowScrolling: 'touch'}}>
-              <DialogHeader>
-                <DialogTitle>Add Important Contact</DialogTitle>
-              </DialogHeader>
-              <ContactForm 
-                contact={newContact}
-                onSave={handleSave}
-                onCancel={() => { setIsAddOpen(false); resetForm(); }}
-              />
-            </div>
+                <DialogHeader>
+                  <DialogTitle>Add Important Contact</DialogTitle>
+                </DialogHeader>
+                <ContactForm
+                  contact={newContact}
+                  onSave={handleSave}
+                  onCancel={() => { setIsAddOpen(false); resetForm(); }}
+                />
+              </div>
             </DialogContent>
           </Dialog>
         </div>
