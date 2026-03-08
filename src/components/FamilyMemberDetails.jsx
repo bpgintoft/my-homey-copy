@@ -141,6 +141,11 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
     queryFn: () => base44.entities.ImportantContact.list(),
   });
 
+  const { data: allAppliances = [] } = useQuery({
+    queryKey: ['allRoomItems'],
+    queryFn: () => base44.entities.RoomItem.list(),
+  });
+
   const { data: links = [] } = useQuery({
     queryKey: ['links', memberId],
     queryFn: () => base44.entities.FamilyMemberLink.filter({ assigned_to_member_id: memberId }),
