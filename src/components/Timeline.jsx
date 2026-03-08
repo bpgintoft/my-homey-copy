@@ -9,7 +9,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, Upload, Loader2, Trash2, X, Search } from 'lucide-react';
+import { Label } from "@/components/ui/label";
+import { Plus, Upload, Loader2, Trash2, X, Search, Phone } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { getThumbnailUrl } from './imageHelpers';
 
@@ -36,6 +37,11 @@ export default function Timeline() {
   const { data: appliances = [] } = useQuery({
     queryKey: ['appliances'],
     queryFn: () => base44.entities.RoomItem.filter({ type: 'appliance', show_on_history_timeline: true }),
+  });
+
+  const { data: contacts = [] } = useQuery({
+    queryKey: ['importantContacts'],
+    queryFn: () => base44.entities.ImportantContact.list(),
   });
 
   const categoryColors = {
@@ -282,15 +288,37 @@ export default function Timeline() {
                   </Select>
                 </div>
                 <div>
-                  <label className="text-sm font-medium mb-1 block">Description</label>
-                  <Textarea
-                    placeholder="Event description..."
-                    value={newEvent.description}
-                    onChange={(e) => setNewEvent({ ...newEvent, description: e.target.value })}
-                    rows={4}
-                  />
-                </div>
-                <div>
+                   <label className="text-sm font-medium mb-1 block">Description</label>
+                   <Textarea
+                     placeholder="Event description..."
+                     value={newEvent.description}
+                     onChange={(e) => setNewEvent({ ...newEvent, description: e.target.value })}
+                     rows={4}
+                   />
+                 </div>
+                 <div>
+                   <label className="text-sm font-medium mb-1 block">Service Contact</label>
+                   <Select value={newEvent.service_contact_id || ''} onValueChange={(value) => {
+                     const contact = contacts.find(c => c.id === value);
+                     setNewEvent({ 
+                       ...newEvent, 
+                       service_contact_id: value,
+                       service_contact_name: contact?.name || ''
+                     });
+                   }}>
+                     <SelectTrigger>
+                       <SelectValue placeholder="Select a service contact (optional)" />
+                     </SelectTrigger>
+                     <SelectContent>
+                       {contacts.map(contact => (
+                         <SelectItem key={contact.id} value={contact.id}>
+                           {contact.name}
+                         </SelectItem>
+                       ))}
+                     </SelectContent>
+                   </Select>
+                 </div>
+                 <div>
                   <label className="text-sm font-medium mb-2 block">Photos</label>
                   <div className="space-y-3">
                     <div className="flex gap-2">
@@ -452,6 +480,30 @@ export default function Timeline() {
                     <p className="text-gray-700 whitespace-pre-wrap">{selectedEvent.description}</p>
                   </div>
                 )}
+                {selectedEvent.service_contact_id && (() => {
+                  const contact = contacts.find(c => c.id === selectedEvent.service_contact_id);
+                  return contact ? (
+                    <div className="bg-blue-50 rounded-lg p-3 border border-blue-200">
+                      <div className="flex items-start gap-2">
+                        <Phone className="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0" />
+                        <div className="min-w-0 flex-1">
+                          <h4 className="text-sm font-medium text-gray-700 mb-1">Service Contact</h4>
+                          <p className="text-sm font-medium text-gray-900">{contact.name}</p>
+                          {contact.phone && (
+                            <a href={`tel:${contact.phone}`} className="text-xs text-blue-600 hover:underline block">
+                              {contact.phone}
+                            </a>
+                          )}
+                          {contact.email && (
+                            <a href={`mailto:${contact.email}`} className="text-xs text-blue-600 hover:underline block">
+                              {contact.email}
+                            </a>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  ) : null;
+                })()}
                 {selectedEvent.photos && selectedEvent.photos.length > 0 && (
                   <div>
                     <h4 className="text-sm font-medium text-gray-700 mb-2">Photos</h4>
@@ -542,15 +594,37 @@ export default function Timeline() {
                   </Select>
                 </div>
                 <div>
-                  <label className="text-sm font-medium mb-1 block">Description</label>
-                  <Textarea
-                    value={editingEvent.description || ''}
-                    onChange={(e) => setEditingEvent({ ...editingEvent, description: e.target.value })}
-                    rows={4}
-                  />
-                </div>
-                <div>
-                  <label className="text-sm font-medium mb-2 block">Photos</label>
+                   <label className="text-sm font-medium mb-1 block">Description</label>
+                   <Textarea
+                     value={editingEvent.description || ''}
+                     onChange={(e) => setEditingEvent({ ...editingEvent, description: e.target.value })}
+                     rows={4}
+                   />
+                 </div>
+                 <div>
+                   <label className="text-sm font-medium mb-1 block">Service Contact</label>
+                   <Select value={editingEvent.service_contact_id || ''} onValueChange={(value) => {
+                     const contact = contacts.find(c => c.id === value);
+                     setEditingEvent({ 
+                       ...editingEvent, 
+                       service_contact_id: value,
+                       service_contact_name: contact?.name || ''
+                     });
+                   }}>
+                     <SelectTrigger>
+                       <SelectValue placeholder="Select a service contact (optional)" />
+                     </SelectTrigger>
+                     <SelectContent>
+                       {contacts.map(contact => (
+                         <SelectItem key={contact.id} value={contact.id}>
+                           {contact.name}
+                         </SelectItem>
+                       ))}
+                     </SelectContent>
+                   </Select>
+                 </div>
+                 <div>
+                   <label className="text-sm font-medium mb-2 block">Photos</label>
                   <div className="space-y-3">
                     <div className="flex gap-2">
                       <Button
