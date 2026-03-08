@@ -17,7 +17,9 @@ import {
   Upload,
   Loader2,
   Sparkles,
-  Camera
+  Camera,
+  Phone,
+  Mail
 } from 'lucide-react';
 import { getThumbnailUrl } from '../components/imageHelpers';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
