@@ -21,14 +21,17 @@ export default function Layout({ children, currentPageName }) {
   const touchStartY = useRef(0);
   const mainRef = useRef(null);
 
+  const isCalendarPage = ['MaintenanceCalendar', 'FamilyCalendar', 'Kids'].includes(currentPageName);
+
   const handleTouchStart = useCallback((e) => {
+    if (isCalendarPage) return;
     const el = mainRef.current;
     if (el && el.scrollTop === 0) {
       touchStartY.current = e.touches[0].clientY;
     } else {
       touchStartY.current = 0;
     }
-  }, []);
+  }, [isCalendarPage]);
 
   const handleTouchMove = useCallback((e) => {
     if (!touchStartY.current) return;
