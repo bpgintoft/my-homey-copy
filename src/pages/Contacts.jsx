@@ -430,7 +430,7 @@ export default function Contacts() {
 
       {/* Edit Dialog */}
       <Dialog open={!!editingContact} onOpenChange={() => setEditingContact(null)}>
-        <DialogContent>
+        <DialogContent className="max-h-[90vh] overflow-y-auto">
           {editingContact && (
             <>
               <DialogHeader>
