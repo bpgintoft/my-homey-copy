@@ -1019,7 +1019,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
             )}
 
             <Dialog open={!!editingContact} onOpenChange={(open) => !open && setEditingContact(null)}>
-              <DialogContent>
+              <DialogContent className="max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
                   <DialogTitle>Edit Contact</DialogTitle>
                 </DialogHeader>
