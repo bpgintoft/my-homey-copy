@@ -312,18 +312,20 @@ export default function VehiclesTravelSection({ member, color = 'blue' }) {
       {isAdult && (
         <div>
           <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">Driver's License</h3>
-          <div className="flex gap-3 items-start">
-            <div className="flex-1 min-w-0">
+          <div className="space-y-3">
+            <div>
               <Label className="text-xs text-gray-600 mb-1 block">License Number</Label>
               <Input placeholder="License #" value={form.license_number} onChange={(e) => setForm({ ...form, license_number: e.target.value })} className={`h-9 text-sm font-normal ${inputClass}`} />
             </div>
-            <div className="w-28 flex-shrink-0">
-              <Label className="text-xs text-gray-600 mb-1 block">Issue Date</Label>
-              <Input type="date" value={form.license_issue_date} onChange={(e) => setForm({ ...form, license_issue_date: e.target.value })} className={`text-sm px-2 h-9 ${inputClass}`} />
-            </div>
-            <div className="w-28 flex-shrink-0">
-              <Label className="text-xs text-gray-600 mb-1 block">Expiration Date</Label>
-              <Input type="date" value={form.license_expiration_date} onChange={(e) => setForm({ ...form, license_expiration_date: e.target.value })} className={`text-sm px-2 h-9 ${inputClass}`} />
+            <div className="flex gap-3">
+              <div className="flex-1">
+                <Label className="text-xs text-gray-600 mb-1 block">Issue Date</Label>
+                <Input type="date" value={form.license_issue_date} onChange={(e) => setForm({ ...form, license_issue_date: e.target.value })} className={`text-sm px-2 h-9 ${inputClass}`} />
+              </div>
+              <div className="flex-1">
+                <Label className="text-xs text-gray-600 mb-1 block">Expiration Date</Label>
+                <Input type="date" value={form.license_expiration_date} onChange={(e) => setForm({ ...form, license_expiration_date: e.target.value })} className={`text-sm px-2 h-9 ${inputClass}`} />
+              </div>
             </div>
           </div>
         </div>
