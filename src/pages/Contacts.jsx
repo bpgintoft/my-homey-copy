@@ -22,7 +22,7 @@ const MobileModal = ({ open, onClose, title, children }) => {
             <X className="w-5 h-5 text-slate-500" />
           </button>
         </div>
-        <div className="overflow-y-auto flex-1 px-5 pb-5">
+        <div className="overflow-y-auto flex-1 px-5 pb-8" style={{WebkitOverflowScrolling: 'touch', touchAction: 'pan-y'}}>
           {children}
         </div>
       </div>
