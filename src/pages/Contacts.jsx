@@ -440,6 +440,14 @@ export default function Contacts() {
         )}
       </div>
 
+      <MobileModal open={isAddOpen} onClose={() => { setIsAddOpen(false); resetForm(); }} title="Add New Contact">
+        <ContactForm
+          contact={newContact}
+          onSave={handleSave}
+          onCancel={() => { setIsAddOpen(false); resetForm(); }}
+        />
+      </MobileModal>
+
       <MobileModal open={!!editingContact} onClose={() => setEditingContact(null)} title="Edit Contact">
         {editingContact && (
           <ContactForm
