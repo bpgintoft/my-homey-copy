@@ -200,6 +200,7 @@ export default function VehiclesTravelSection({ member, color = 'blue' }) {
             <div className="space-y-1.5">
               {hasLicenseNumber && <ViewRow label="License Number" copyKey="lic_number" value={form.license_number} />}
               {hasLicenseIssueDate && <ViewRow label="Issue Date" copyKey="lic_issue" value={form.license_issue_date} />}
+              {hasLicenseExpDate && <ViewRow label="Expiration Date" copyKey="lic_exp" value={new Date(form.license_expiration_date + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} />}
             </div>
           </div>
         )}
