@@ -432,18 +432,20 @@ export default function Contacts() {
 
       {/* Edit Dialog */}
       <Dialog open={!!editingContact} onOpenChange={() => setEditingContact(null)}>
-        <DialogContent className="max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-h-[85dvh] flex flex-col overflow-hidden">
           {editingContact && (
             <>
-              <DialogHeader>
+              <DialogHeader className="flex-shrink-0">
                 <DialogTitle>Edit Contact</DialogTitle>
               </DialogHeader>
-              <ContactForm 
-                contact={editingContact}
-                onSave={handleSave}
-                onCancel={() => setEditingContact(null)}
-                isEdit
-              />
+              <div className="overflow-y-auto flex-1 pr-1">
+                <ContactForm 
+                  contact={editingContact}
+                  onSave={handleSave}
+                  onCancel={() => setEditingContact(null)}
+                  isEdit
+                />
+              </div>
             </>
           )}
         </DialogContent>
