@@ -118,6 +118,12 @@ export default function Contacts() {
   const ContactForm = ({ contact, onSave, onCancel, isEdit = false }) => {
     const [formData, setFormData] = useState(contact);
 
+    const toggleAppliance = (id) => {
+      const current = formData.linked_to_appliance_ids || [];
+      const updated = current.includes(id) ? current.filter(a => a !== id) : [...current, id];
+      setFormData({ ...formData, linked_to_appliance_ids: updated });
+    };
+
     return (
       <div className="space-y-4 mt-4">
         <div>
