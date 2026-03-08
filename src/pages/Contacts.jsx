@@ -333,14 +333,6 @@ export default function Contacts() {
           </Button>
         </div>
 
-        <MobileModal open={isAddOpen} onClose={() => { setIsAddOpen(false); resetForm(); }} title="Add New Contact">
-          <ContactForm
-            contact={newContact}
-            onSave={handleSave}
-            onCancel={() => { setIsAddOpen(false); resetForm(); }}
-          />
-        </MobileModal>
-
         {/* Contacts Grid */}
         {isLoading ? (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
