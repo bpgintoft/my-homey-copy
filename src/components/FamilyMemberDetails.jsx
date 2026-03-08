@@ -954,21 +954,20 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                       <div className="space-y-2">
                         <Label>Link to appliances:</Label>
                         <p className="text-xs text-gray-500">This contact will show up on those appliance records</p>
-                        <Select value="" onValueChange={(id) => {
-                          const current = newContact.linked_to_appliance_ids || [];
-                          setNewContact({ ...newContact, linked_to_appliance_ids: current.includes(id) ? current.filter(i => i !== id) : [...current, id] });
-                        }}>
-                          <SelectTrigger>
-                            <SelectValue placeholder={(newContact.linked_to_appliance_ids || []).length > 0 ? `${(newContact.linked_to_appliance_ids || []).length} selected` : "Select appliances..."} />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {allAppliances.map((item) => (
-                              <SelectItem key={item.id} value={item.id}>
-                                {(newContact.linked_to_appliance_ids || []).includes(item.id) ? '✓ ' : ''}{item.name}{item.brand ? ` — ${item.brand}` : ''}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
+                        <div className="border rounded-md p-2 space-y-1 max-h-40 overflow-y-auto">
+                          {allAppliances.map((item) => {
+                            const selected = (newContact.linked_to_appliance_ids || []).includes(item.id);
+                            return (
+                              <div key={item.id} className="flex items-center gap-2 cursor-pointer p-1 rounded hover:bg-gray-50" onClick={() => {
+                                const current = newContact.linked_to_appliance_ids || [];
+                                setNewContact({ ...newContact, linked_to_appliance_ids: selected ? current.filter(i => i !== item.id) : [...current, item.id] });
+                              }}>
+                                <Checkbox checked={selected} onCheckedChange={() => {}} onClick={(e) => e.stopPropagation()} />
+                                <span className="text-sm">{item.name}{item.brand ? ` — ${item.brand}` : ''}</span>
+                              </div>
+                            );
+                          })}
+                        </div>
                         {(newContact.linked_to_appliance_ids || []).length > 0 && (
                           <div className="flex flex-wrap gap-1">
                             {(newContact.linked_to_appliance_ids || []).map(id => {
