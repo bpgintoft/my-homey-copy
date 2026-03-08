@@ -308,17 +308,15 @@ export default function Contacts() {
                 Add Contact
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-h-[85dvh] flex flex-col overflow-hidden">
-              <DialogHeader className="flex-shrink-0">
+            <DialogContent className="max-h-[85dvh] overflow-y-auto">
+              <DialogHeader>
                 <DialogTitle>Add Important Contact</DialogTitle>
               </DialogHeader>
-              <div className="overflow-y-auto flex-1 pr-1">
               <ContactForm 
                 contact={newContact}
                 onSave={handleSave}
                 onCancel={() => { setIsAddOpen(false); resetForm(); }}
               />
-              </div>
             </DialogContent>
           </Dialog>
         </div>
