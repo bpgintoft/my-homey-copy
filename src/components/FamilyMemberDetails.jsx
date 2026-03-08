@@ -948,6 +948,27 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                         </div>
                       ))}
                     </div>
+                    {allAppliances.length > 0 && (
+                      <div className="space-y-2">
+                        <Label>Link to appliances:</Label>
+                        <p className="text-xs text-gray-500">This contact will show up on those appliance records</p>
+                        <div className="max-h-32 overflow-y-auto border rounded-md p-2 space-y-1">
+                          {allAppliances.map((item) => (
+                            <div key={item.id} className="flex items-center space-x-2">
+                              <Checkbox
+                                id={`new-appliance-${item.id}`}
+                                checked={(newContact.linked_to_appliance_ids || []).includes(item.id)}
+                                onCheckedChange={(checked) => {
+                                  const current = newContact.linked_to_appliance_ids || [];
+                                  setNewContact({ ...newContact, linked_to_appliance_ids: checked ? [...current, item.id] : current.filter(id => id !== item.id) });
+                                }}
+                              />
+                              <label htmlFor={`new-appliance-${item.id}`} className="text-sm cursor-pointer">{item.name}{item.brand ? ` — ${item.brand}` : ''}</label>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                     <Button onClick={() => createContactMutation.mutate(newContact)} disabled={!newContact.name}>Add Contact</Button>
                   </div>
                 </DialogContent>
