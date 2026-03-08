@@ -417,31 +417,35 @@ export default function Contacts() {
       </div>
 
       <Dialog open={isAddOpen} onOpenChange={(o) => { if (!o) { setIsAddOpen(false); resetForm(); } }}>
-        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
+        <DialogContent className="max-w-lg flex flex-col" style={{ maxHeight: '90dvh', overflow: 'hidden' }}>
+          <DialogHeader className="flex-shrink-0">
             <DialogTitle>Add New Contact</DialogTitle>
           </DialogHeader>
-          <ContactForm
-            contact={newContact}
-            onSave={handleSave}
-            onCancel={() => { setIsAddOpen(false); resetForm(); }}
-          />
+          <div style={{ overflowY: 'auto', WebkitOverflowScrolling: 'touch', flex: 1 }}>
+            <ContactForm
+              contact={newContact}
+              onSave={handleSave}
+              onCancel={() => { setIsAddOpen(false); resetForm(); }}
+            />
+          </div>
         </DialogContent>
       </Dialog>
 
       <Dialog open={!!editingContact} onOpenChange={(o) => { if (!o) setEditingContact(null); }}>
-        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
+        <DialogContent className="max-w-lg flex flex-col" style={{ maxHeight: '90dvh', overflow: 'hidden' }}>
+          <DialogHeader className="flex-shrink-0">
             <DialogTitle>Edit Contact</DialogTitle>
           </DialogHeader>
-          {editingContact && (
-            <ContactForm
-              contact={editingContact}
-              onSave={handleSave}
-              onCancel={() => setEditingContact(null)}
-              isEdit
-            />
-          )}
+          <div style={{ overflowY: 'auto', WebkitOverflowScrolling: 'touch', flex: 1 }}>
+            {editingContact && (
+              <ContactForm
+                contact={editingContact}
+                onSave={handleSave}
+                onCancel={() => setEditingContact(null)}
+                isEdit
+              />
+            )}
+          </div>
         </DialogContent>
       </Dialog>
     </div>
