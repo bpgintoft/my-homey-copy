@@ -137,9 +137,6 @@ export default function Layout({ children, currentPageName }) {
       <main
         ref={mainRef}
         className="lg:ml-64 pt-16 lg:pt-0 overflow-y-auto h-screen"
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
       >
         {/* Pull to refresh indicator */}
         <div
