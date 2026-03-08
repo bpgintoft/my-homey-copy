@@ -442,26 +442,16 @@ export default function Contacts() {
         )}
       </div>
 
-      {/* Edit Dialog */}
-      <Dialog open={!!editingContact} onOpenChange={() => setEditingContact(null)}>
-        <DialogContent className="flex flex-col p-0" style={{maxHeight: '90dvh', overflow: 'hidden'}}>
-          <div className="overflow-y-auto overscroll-contain flex-1 p-6" style={{WebkitOverflowScrolling: 'touch'}}>
-            {editingContact && (
-              <>
-                <DialogHeader>
-                  <DialogTitle>Edit Contact</DialogTitle>
-                </DialogHeader>
-                <ContactForm
-                  contact={editingContact}
-                  onSave={handleSave}
-                  onCancel={() => setEditingContact(null)}
-                  isEdit
-                />
-              </>
-            )}
-          </div>
-        </DialogContent>
-      </Dialog>
+      <MobileModal open={!!editingContact} onClose={() => setEditingContact(null)} title="Edit Contact">
+        {editingContact && (
+          <ContactForm
+            contact={editingContact}
+            onSave={handleSave}
+            onCancel={() => setEditingContact(null)}
+            isEdit
+          />
+        )}
+      </MobileModal>
     </div>
   );
 }
