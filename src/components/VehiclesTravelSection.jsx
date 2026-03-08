@@ -321,6 +321,10 @@ export default function VehiclesTravelSection({ member, color = 'blue' }) {
               <Label className="text-xs text-gray-600 mb-1 block">Issue Date</Label>
               <Input type="date" value={form.license_issue_date} onChange={(e) => setForm({ ...form, license_issue_date: e.target.value })} className={`text-sm px-2 h-9 ${inputClass}`} />
             </div>
+            <div className="w-28 flex-shrink-0">
+              <Label className="text-xs text-gray-600 mb-1 block">Expiration Date</Label>
+              <Input type="date" value={form.license_expiration_date} onChange={(e) => setForm({ ...form, license_expiration_date: e.target.value })} className={`text-sm px-2 h-9 ${inputClass}`} />
+            </div>
           </div>
         </div>
       )}
