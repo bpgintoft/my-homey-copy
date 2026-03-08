@@ -83,6 +83,11 @@ export default function RoomDetail() {
     enabled: !!roomId,
   });
 
+  const { data: allContacts } = useQuery({
+    queryKey: ['importantContacts'],
+    queryFn: () => base44.entities.ImportantContact.list(),
+  });
+
   const createItemMutation = useMutation({
     mutationFn: (data) => base44.entities.RoomItem.create({ ...data, room_id: roomId }),
     onSuccess: () => {
