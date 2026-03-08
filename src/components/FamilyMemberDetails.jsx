@@ -575,6 +575,16 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
     return acc;
   }, {});
 
+  const sortedContactTypes = Object.keys(contactsByType).sort((a, b) => {
+    const priority = (key) => {
+      const lower = key.toLowerCase();
+      if (lower.includes('emergency')) return 0;
+      if (lower.includes('health') || lower.includes('medical') || lower.includes('doctor') || lower.includes('healthcare')) return 1;
+      return 2;
+    };
+    return priority(a) - priority(b);
+  });
+
   return (
     <div className="space-y-4">
       {/* Passport & License/Student # */}
