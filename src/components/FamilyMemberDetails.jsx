@@ -1062,7 +1062,28 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                         </div>
                       ))}
                     </div>
-                    <Button onClick={() => updateContactMutation.mutate({ id: editingContact.id, data: { name: editingContact.name, type: editingContact.type, phone: editingContact.phone, email: editingContact.email, address: editingContact.address, website: editingContact.website, linked_to_member_ids: editingContact.linked_to_member_ids } })} disabled={!editingContact.name}>Save Changes</Button>
+                    {allAppliances.length > 0 && (
+                      <div className="space-y-2">
+                        <Label>Link to appliances:</Label>
+                        <p className="text-xs text-gray-500">This contact will show up on those appliance records</p>
+                        <div className="max-h-32 overflow-y-auto border rounded-md p-2 space-y-1">
+                          {allAppliances.map((item) => (
+                            <div key={item.id} className="flex items-center space-x-2">
+                              <Checkbox
+                                id={`edit-appliance-${item.id}`}
+                                checked={(editingContact.linked_to_appliance_ids || []).includes(item.id)}
+                                onCheckedChange={(checked) => {
+                                  const current = editingContact.linked_to_appliance_ids || [];
+                                  setEditingContact({ ...editingContact, linked_to_appliance_ids: checked ? [...current, item.id] : current.filter(id => id !== item.id) });
+                                }}
+                              />
+                              <label htmlFor={`edit-appliance-${item.id}`} className="text-sm cursor-pointer">{item.name}{item.brand ? ` — ${item.brand}` : ''}</label>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    <Button onClick={() => updateContactMutation.mutate({ id: editingContact.id, data: { name: editingContact.name, type: editingContact.type, phone: editingContact.phone, email: editingContact.email, address: editingContact.address, website: editingContact.website, linked_to_member_ids: editingContact.linked_to_member_ids, linked_to_appliance_ids: editingContact.linked_to_appliance_ids } })} disabled={!editingContact.name}>Save Changes</Button>
                   </div>
                 )}
               </DialogContent>
