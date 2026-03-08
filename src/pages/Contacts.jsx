@@ -11,6 +11,23 @@ import { X } from 'lucide-react';
 
 // Mobile-friendly modal that allows native touch scrolling
 const MobileModal = ({ open, onClose, title, children }) => {
+  React.useEffect(() => {
+    if (open) {
+      document.body.style.overflow = 'hidden';
+      const main = document.querySelector('main');
+      if (main) main.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+      const main = document.querySelector('main');
+      if (main) main.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+      const main = document.querySelector('main');
+      if (main) main.style.overflow = '';
+    };
+  }, [open]);
+
   if (!open) return null;
   return (
     <div className="fixed inset-0 z-50">
@@ -25,7 +42,7 @@ const MobileModal = ({ open, onClose, title, children }) => {
           </div>
           <div
             className="overflow-y-auto px-5 pb-8"
-            style={{height: 'calc(85vh - 65px)', WebkitOverflowScrolling: 'touch'}}
+            style={{height: 'calc(85vh - 65px)', WebkitOverflowScrolling: 'touch', overscrollBehavior: 'contain'}}
           >
             {children}
           </div>
