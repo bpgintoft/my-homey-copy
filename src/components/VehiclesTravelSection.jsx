@@ -108,7 +108,7 @@ export default function VehiclesTravelSection({ member, color = 'blue' }) {
   const hasAnyVehicleInsurance = hasInsuranceProvider || hasInsurancePolicyNum;
 
   const hasAnyRoadside = hasRoadsideProvider || hasRoadsideMemberNum;
-  const hasAnyLicense = isAdult && (hasLicenseNumber || hasLicenseIssueDate);
+  const hasAnyLicense = isAdult && (hasLicenseNumber || hasLicenseIssueDate || hasLicenseExpDate);
 
   const hasAnything = hasVehicle || hasLicensePlate || hasVin || hasRegExpiry || hasAnyVehicleInsurance || hasAnyRoadside || hasAnyLicense || hasFrequentFlyer || hasPassport;
 
