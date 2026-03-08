@@ -322,26 +322,17 @@ export default function Contacts() {
             </Select>
           </div>
 
-          <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
-            <DialogTrigger asChild>
-              <Button className="bg-rose-600 hover:bg-rose-700">
-                <Plus className="w-4 h-4 mr-2" />
-                Add Contact
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="flex flex-col p-0" style={{maxHeight: '90dvh', overflow: 'hidden'}}>
-              <div className="overflow-y-auto overscroll-contain flex-1 p-6" style={{WebkitOverflowScrolling: 'touch'}}>
-                <DialogHeader>
-                  <DialogTitle>Add Important Contact</DialogTitle>
-                </DialogHeader>
-                <ContactForm
-                  contact={newContact}
-                  onSave={handleSave}
-                  onCancel={() => { setIsAddOpen(false); resetForm(); }}
-                />
-              </div>
-            </DialogContent>
-          </Dialog>
+          <Button className="bg-rose-600 hover:bg-rose-700" onClick={() => setIsAddOpen(true)}>
+            <Plus className="w-4 h-4 mr-2" />
+            Add Contact
+          </Button>
+          <MobileModal open={isAddOpen} onClose={() => { setIsAddOpen(false); resetForm(); }} title="Add New Contact">
+            <ContactForm
+              contact={newContact}
+              onSave={handleSave}
+              onCancel={() => { setIsAddOpen(false); resetForm(); }}
+            />
+          </MobileModal>
         </div>
 
         {/* Contacts Grid */}
