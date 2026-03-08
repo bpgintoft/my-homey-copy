@@ -16,16 +16,16 @@ const MobileModal = ({ open, onClose, title, children }) => {
     <div className="fixed inset-0 z-50">
       <div className="absolute inset-0 bg-black/50" onClick={onClose} />
       <div className="absolute bottom-0 left-0 right-0 sm:relative sm:flex sm:items-center sm:justify-center sm:h-full">
-        <div className="relative bg-white w-full sm:max-w-lg sm:rounded-xl rounded-t-2xl flex flex-col" style={{maxHeight: '85vh'}}>
-          <div className="flex items-center justify-between px-5 py-4 border-b flex-shrink-0">
+        <div className="relative bg-white w-full sm:max-w-lg sm:rounded-xl rounded-t-2xl" style={{height: '85vh'}}>
+          <div className="flex items-center justify-between px-5 py-4 border-b">
             <h2 className="text-lg font-semibold">{title}</h2>
             <button onClick={onClose} className="p-1 rounded-full hover:bg-slate-100">
               <X className="w-5 h-5 text-slate-500" />
             </button>
           </div>
           <div
-            className="overflow-y-auto flex-1 min-h-0 px-5 pb-8"
-            style={{WebkitOverflowScrolling: 'touch', overscrollBehavior: 'contain'}}
+            className="overflow-y-auto px-5 pb-8"
+            style={{height: 'calc(85vh - 65px)', WebkitOverflowScrolling: 'touch'}}
           >
             {children}
           </div>
