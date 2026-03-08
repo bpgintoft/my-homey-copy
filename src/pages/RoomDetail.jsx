@@ -716,38 +716,6 @@ export default function RoomDetail() {
                                       </div>
                                     )}
 
-                                    {/* Linked Contacts */}
-                                    {(() => {
-                                      const linkedContacts = allContacts?.filter(c => c.linked_to_appliance_ids?.includes(item.id)) || [];
-                                      if (!linkedContacts.length) return null;
-                                      return (
-                                        <div className="pt-3 border-t">
-                                          <Label className="text-xs text-slate-500 mb-2 block">Service Contacts</Label>
-                                          <div className="space-y-2">
-                                            {linkedContacts.map(contact => (
-                                              <div key={contact.id} className="flex items-start gap-2 bg-slate-50 rounded-lg p-2">
-                                                <Phone className="w-3.5 h-3.5 text-slate-400 mt-0.5 flex-shrink-0" />
-                                                <div className="min-w-0 flex-1">
-                                                  <p className="text-sm font-medium text-slate-700">{contact.name}</p>
-                                                  {contact.phone && (
-                                                    <a href={`tel:${contact.phone}`} className="text-xs text-blue-600 hover:underline block" onClick={e => e.stopPropagation()}>
-                                                      {contact.phone}
-                                                    </a>
-                                                  )}
-                                                  {contact.email && (
-                                                    <a href={`mailto:${contact.email}`} className="text-xs text-blue-600 hover:underline block" onClick={e => e.stopPropagation()}>
-                                                      {contact.email}
-                                                    </a>
-                                                  )}
-                                                  {contact.notes && <p className="text-xs text-slate-400 mt-0.5">{contact.notes}</p>}
-                                                </div>
-                                              </div>
-                                            ))}
-                                          </div>
-                                        </div>
-                                      );
-                                    })()}
-
                                     <div className="flex gap-2 pt-2">
                                       <Button 
                                         variant="outline" 
