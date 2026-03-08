@@ -327,11 +327,19 @@ export default function Contacts() {
             </Select>
           </div>
 
-          <Button className="bg-rose-600 hover:bg-rose-700" onClick={() => setIsAddOpen(true)}>
+          <Button className="bg-rose-600 hover:bg-rose-700" onClick={() => { resetForm(); setIsAddOpen(true); }}>
             <Plus className="w-4 h-4 mr-2" />
             Add Contact
           </Button>
         </div>
+
+        <MobileModal open={isAddOpen} onClose={() => { setIsAddOpen(false); resetForm(); }} title="Add New Contact">
+          <ContactForm
+            contact={newContact}
+            onSave={handleSave}
+            onCancel={() => { setIsAddOpen(false); resetForm(); }}
+          />
+        </MobileModal>
 
         {/* Contacts Grid */}
         {isLoading ? (
