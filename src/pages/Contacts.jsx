@@ -318,6 +318,7 @@ export default function Contacts() {
                 onSave={handleSave}
                 onCancel={() => { setIsAddOpen(false); resetForm(); }}
               />
+            </div>
             </DialogContent>
           </Dialog>
         </div>
