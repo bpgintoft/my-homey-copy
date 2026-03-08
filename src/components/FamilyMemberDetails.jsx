@@ -910,17 +910,15 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
           <DialogHeader>
             <DialogTitle className="flex items-center justify-between">
               <span>Important Contacts</span>
-              <Dialog open={dialogOpen.contact} onOpenChange={(open) => setDialogOpen({ ...dialogOpen, contact: open })}>
-                <DialogTrigger asChild>
-                  <Button size="sm" className="mr-10">
-                    <Plus className="w-4 h-4 mr-2" />Add
-                  </Button>
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>Add New Contact</DialogTitle>
-                  </DialogHeader>
-                  <div className="space-y-4">
+              <Button size="sm" className="mr-10" onClick={() => setDialogOpen({ ...dialogOpen, contact: true })}>
+                <Plus className="w-4 h-4 mr-2" />Add
+              </Button>
+              <Sheet open={dialogOpen.contact} onOpenChange={(open) => setDialogOpen({ ...dialogOpen, contact: open })}>
+                <SheetContent side="bottom" className="h-[90vh] overflow-y-auto rounded-t-2xl">
+                  <SheetHeader>
+                    <SheetTitle>Add New Contact</SheetTitle>
+                  </SheetHeader>
+                  <div className="space-y-4 mt-4 pb-8">
                     <Input placeholder="Name" value={newContact.name} onChange={(e) => setNewContact({ ...newContact, name: e.target.value })} />
                     <Input placeholder="Type (e.g., Emergency, Neighbor, Family...)" value={newContact.type} onChange={(e) => setNewContact({ ...newContact, type: e.target.value })} />
                     <Input placeholder="Phone" value={newContact.phone} onChange={(e) => setNewContact({ ...newContact, phone: e.target.value })} />
@@ -943,15 +941,9 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                         <div key={fm.id} className="flex items-center space-x-2">
                           <Checkbox id={fm.id} checked={newContact.linked_to_member_ids.includes(fm.id)} disabled={newContact.linked_to_member_ids.includes('Everyone')} onCheckedChange={(checked) => {
                             if (checked) {
-                              setNewContact({ 
-                                ...newContact, 
-                                linked_to_member_ids: [...newContact.linked_to_member_ids.filter(id => id !== 'Everyone'), fm.id] 
-                              });
+                              setNewContact({ ...newContact, linked_to_member_ids: [...newContact.linked_to_member_ids.filter(id => id !== 'Everyone'), fm.id] });
                             } else {
-                              setNewContact({ 
-                                ...newContact, 
-                                linked_to_member_ids: newContact.linked_to_member_ids.filter(id => id !== fm.id) 
-                              });
+                              setNewContact({ ...newContact, linked_to_member_ids: newContact.linked_to_member_ids.filter(id => id !== fm.id) });
                             }
                           }} />
                           <label htmlFor={fm.id} className="text-sm cursor-pointer">{fm.name}</label>
@@ -962,27 +954,35 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                       <div className="space-y-2">
                         <Label>Link to appliances:</Label>
                         <p className="text-xs text-gray-500">This contact will show up on those appliance records</p>
-                        <div className="max-h-32 overflow-y-auto border rounded-md p-2 space-y-1">
-                          {allAppliances.map((item) => (
-                            <div key={item.id} className="flex items-center space-x-2">
-                              <Checkbox
-                                id={`new-appliance-${item.id}`}
-                                checked={(newContact.linked_to_appliance_ids || []).includes(item.id)}
-                                onCheckedChange={(checked) => {
-                                  const current = newContact.linked_to_appliance_ids || [];
-                                  setNewContact({ ...newContact, linked_to_appliance_ids: checked ? [...current, item.id] : current.filter(id => id !== item.id) });
-                                }}
-                              />
-                              <label htmlFor={`new-appliance-${item.id}`} className="text-sm cursor-pointer">{item.name}{item.brand ? ` — ${item.brand}` : ''}</label>
-                            </div>
-                          ))}
-                        </div>
+                        <Select value="" onValueChange={(id) => {
+                          const current = newContact.linked_to_appliance_ids || [];
+                          setNewContact({ ...newContact, linked_to_appliance_ids: current.includes(id) ? current.filter(i => i !== id) : [...current, id] });
+                        }}>
+                          <SelectTrigger>
+                            <SelectValue placeholder={(newContact.linked_to_appliance_ids || []).length > 0 ? `${(newContact.linked_to_appliance_ids || []).length} selected` : "Select appliances..."} />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {allAppliances.map((item) => (
+                              <SelectItem key={item.id} value={item.id}>
+                                {(newContact.linked_to_appliance_ids || []).includes(item.id) ? '✓ ' : ''}{item.name}{item.brand ? ` — ${item.brand}` : ''}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        {(newContact.linked_to_appliance_ids || []).length > 0 && (
+                          <div className="flex flex-wrap gap-1">
+                            {(newContact.linked_to_appliance_ids || []).map(id => {
+                              const a = allAppliances.find(x => x.id === id);
+                              return a ? <span key={id} className="inline-flex items-center gap-1 bg-gray-100 text-gray-700 text-xs rounded px-2 py-1">{a.name}<button onClick={() => setNewContact({ ...newContact, linked_to_appliance_ids: (newContact.linked_to_appliance_ids || []).filter(i => i !== id) })}>×</button></span> : null;
+                            })}
+                          </div>
+                        )}
                       </div>
                     )}
                     <Button onClick={() => createContactMutation.mutate(newContact)} disabled={!newContact.name}>Add Contact</Button>
                   </div>
-                </DialogContent>
-              </Dialog>
+                </SheetContent>
+              </Sheet>
             </DialogTitle>
           </DialogHeader>
           <div>
