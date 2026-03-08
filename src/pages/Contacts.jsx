@@ -432,7 +432,8 @@ export default function Contacts() {
 
       {/* Edit Dialog */}
       <Dialog open={!!editingContact} onOpenChange={() => setEditingContact(null)}>
-        <DialogContent className="max-h-[85dvh] overflow-y-auto">
+        <DialogContent className="flex flex-col p-0" style={{maxHeight: '90dvh', overflow: 'hidden'}}>
+          <div className="overflow-y-auto overscroll-contain flex-1 p-6" style={{WebkitOverflowScrolling: 'touch'}}>
           {editingContact && (
             <>
               <DialogHeader>
@@ -446,6 +447,7 @@ export default function Contacts() {
               />
             </>
           )}
+          </div>
         </DialogContent>
       </Dialog>
     </div>
