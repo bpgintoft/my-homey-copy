@@ -416,24 +416,34 @@ export default function Contacts() {
         )}
       </div>
 
-      <MobileModal open={isAddOpen} onClose={() => { setIsAddOpen(false); resetForm(); }} title="Add New Contact">
-        <ContactForm
-          contact={newContact}
-          onSave={handleSave}
-          onCancel={() => { setIsAddOpen(false); resetForm(); }}
-        />
-      </MobileModal>
-
-      <MobileModal open={!!editingContact} onClose={() => setEditingContact(null)} title="Edit Contact">
-        {editingContact && (
+      <Dialog open={isAddOpen} onOpenChange={(o) => { if (!o) { setIsAddOpen(false); resetForm(); } }}>
+        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Add New Contact</DialogTitle>
+          </DialogHeader>
           <ContactForm
-            contact={editingContact}
+            contact={newContact}
             onSave={handleSave}
-            onCancel={() => setEditingContact(null)}
-            isEdit
+            onCancel={() => { setIsAddOpen(false); resetForm(); }}
           />
-        )}
-      </MobileModal>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={!!editingContact} onOpenChange={(o) => { if (!o) setEditingContact(null); }}>
+        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Edit Contact</DialogTitle>
+          </DialogHeader>
+          {editingContact && (
+            <ContactForm
+              contact={editingContact}
+              onSave={handleSave}
+              onCancel={() => setEditingContact(null)}
+              isEdit
+            />
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
