@@ -308,7 +308,8 @@ export default function Contacts() {
                 Add Contact
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-h-[85dvh] overflow-y-auto">
+            <DialogContent className="flex flex-col p-0" style={{maxHeight: '90dvh', overflow: 'hidden'}}>
+              <div className="overflow-y-auto overscroll-contain flex-1 p-6" style={{WebkitOverflowScrolling: 'touch'}}>
               <DialogHeader>
                 <DialogTitle>Add Important Contact</DialogTitle>
               </DialogHeader>
