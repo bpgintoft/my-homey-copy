@@ -990,7 +990,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
               <p className="text-sm text-gray-500">No contacts yet</p>
             ) : (
               <div className="space-y-4">
-                {Object.entries(contactsByType).map(([type, typeContacts]) => (
+                {sortedContactTypes.map((type) => { const typeContacts = contactsByType[type]; return (
                   <div key={type}>
                     <h4 className="font-medium text-sm text-gray-700 mb-2">{type}</h4>
                     <div className="space-y-2">
