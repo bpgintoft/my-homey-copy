@@ -70,6 +70,7 @@ export default function VehiclesTravelSection({ member, color = 'blue' }) {
       roadside_assistance_member_number: form.roadside_assistance_member_number || null,
       license_number: form.license_number || null,
       license_issue_date: form.license_issue_date || null,
+      license_expiration_date: form.license_expiration_date || null,
       passport_expiration_date: form.passport_expiration_date || null,
       frequent_flyer_programs: form.frequent_flyer_programs.filter(p => p.airline || p.number),
     });
