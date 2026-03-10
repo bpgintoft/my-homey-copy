@@ -29,6 +29,30 @@ export default function PersonalInfoSection({ member, color = 'blue' }) {
   const [editing, setEditing] = useState(false);
   const [saved, setSaved] = useState(false);
   const [copiedKey, setCopiedKey] = useState(null);
+  const [newGiftIdea, setNewGiftIdea] = useState('');
+  const [giftIdeas, setGiftIdeas] = useState(member?.gift_ideas || []);
+
+  React.useEffect(() => {
+    setGiftIdeas(member?.gift_ideas || []);
+  }, [member?.gift_ideas]);
+
+  const saveGiftIdeas = (ideas) => {
+    updateMutation.mutate({ gift_ideas: ideas });
+  };
+
+  const addGiftIdea = () => {
+    if (!newGiftIdea.trim()) return;
+    const updated = [...giftIdeas, newGiftIdea.trim()];
+    setGiftIdeas(updated);
+    setNewGiftIdea('');
+    saveGiftIdeas(updated);
+  };
+
+  const removeGiftIdea = (index) => {
+    const updated = giftIdeas.filter((_, i) => i !== index);
+    setGiftIdeas(updated);
+    saveGiftIdeas(updated);
+  };
 
   const [form, setForm] = useState({
     phone: member?.phone ?? '',
