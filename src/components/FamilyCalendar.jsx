@@ -449,7 +449,7 @@ export default function FamilyCalendar({ activities }) {
     today.setHours(0, 0, 0, 0);
     setCurrentWeekStart(today);
     setHasNavigated(false);
-    setHasScrolledUp(false);
+    setHasScrolledUp(true); // show all events including past ones so today is visible
     setShowMonthlyView(false);
     setTimeout(() => {
       const todayId = `day-${format(today, 'yyyy-MM-dd')}`;
