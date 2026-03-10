@@ -12,26 +12,11 @@ export default function MonthlyCalendar({ activities }) {
   const [expandedEventId, setExpandedEventId] = useState(null);
   const eventsRef = React.useRef(null);
 
-  const stickyRef = React.useRef(null);
-
   const handleDaySelect = (day) => {
     setSelectedDay(day);
     setExpandedEventId(null);
-    // Scroll so the events list top sits just below the sticky calendar header
     setTimeout(() => {
-      if (eventsRef.current && stickyRef.current) {
-        const container = document.querySelector('main');
-        if (container) {
-          const stickyHeight = stickyRef.current.getBoundingClientRect().height;
-          const containerRect = container.getBoundingClientRect();
-          // Scroll so sticky header + events top aligns correctly
-          // We want: containerRect.top + stickyHeight = eventsRect.top after scroll
-          // So: scrollTop = container.scrollTop + eventsRect.top - containerRect.top - stickyHeight
-          const eventsRect = eventsRef.current.getBoundingClientRect();
-          const scrollTarget = container.scrollTop + (eventsRect.top - containerRect.top) - stickyHeight;
-          container.scrollTo({ top: scrollTarget, behavior: 'smooth' });
-        }
-      }
+      eventsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }, 50);
   };
 
