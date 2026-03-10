@@ -381,6 +381,34 @@ export default function PersonalInfoSection({ member, color = 'blue' }) {
         </div>
       </div>
 
+      {isKid && (
+        <div>
+          <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">🎁 Gift Ideas</h3>
+          <div className="space-y-2 mb-3">
+            {giftIdeas.map((idea, i) => (
+              <div key={i} className="flex items-center gap-2">
+                <span className="text-sm flex-1">• {idea}</span>
+                <button onClick={() => removeGiftIdea(i)} className="p-1 rounded text-gray-400 hover:text-red-500 transition-colors">
+                  <Trash2 className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            ))}
+          </div>
+          <div className="flex gap-2">
+            <input
+              className={`flex-1 text-sm border rounded-md px-3 py-1.5 outline-none focus:ring-1 ${inputClass}`}
+              placeholder="Add a gift idea..."
+              value={newGiftIdea}
+              onChange={(e) => setNewGiftIdea(e.target.value)}
+              onKeyDown={(e) => { if (e.key === 'Enter') addGiftIdea(); }}
+            />
+            <button onClick={addGiftIdea} className="p-1.5 rounded-md bg-gray-100 hover:bg-gray-200 transition-colors">
+              <Plus className="w-4 h-4 text-gray-600" />
+            </button>
+          </div>
+        </div>
+      )}
+
       <Button onClick={handleSave} disabled={updateMutation.isPending} className="w-full">
         {updateMutation.isPending ? 'Saving...' : saved ? '✓ Saved!' : 'Save'}
       </Button>
