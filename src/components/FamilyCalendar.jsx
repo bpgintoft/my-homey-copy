@@ -449,18 +449,17 @@ export default function FamilyCalendar({ activities }) {
     today.setHours(0, 0, 0, 0);
     setCurrentWeekStart(today);
     setHasNavigated(false);
-    setHasScrolledUp(true); // show all events including past ones so today is visible
+    setHasScrolledUp(true);
     setShowMonthlyView(false);
     setTimeout(() => {
-      const todayId = `day-${format(today, 'yyyy-MM-dd')}`;
-      const el = document.getElementById(todayId);
-      if (el) {
-        const container = document.querySelector('main');
-        if (container) {
+      const container = document.querySelector('main');
+      if (container) {
+        // Scroll to the top of the FamilyCalendar so tabs are anchored at top
+        const calendarEl = container.querySelector('[data-calendar-root]');
+        if (calendarEl) {
           const containerRect = container.getBoundingClientRect();
-          const elRect = el.getBoundingClientRect();
-          // Calculate where el is relative to container's scroll position
-          const scrollTarget = container.scrollTop + (elRect.top - containerRect.top) - 10;
+          const calendarRect = calendarEl.getBoundingClientRect();
+          const scrollTarget = container.scrollTop + (calendarRect.top - containerRect.top);
           container.scrollTo({ top: scrollTarget, behavior: 'smooth' });
         }
       }
