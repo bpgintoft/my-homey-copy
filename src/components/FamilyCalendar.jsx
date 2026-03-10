@@ -727,11 +727,16 @@ export default function FamilyCalendar({ activities }) {
     }
   };
 
-  // Scroll to top when monthly view is activated so the fixed bar anchors correctly
+  // When monthly view is activated, scroll past the banner+tabs so the sticky nav anchors at top
   React.useEffect(() => {
-    if (showMonthlyView) {
-      const container = document.querySelector('main');
-      if (container) container.scrollTo({ top: 0, behavior: 'smooth' });
+    if (!showMonthlyView) return;
+    const container = document.querySelector('main');
+    if (!container) return;
+    // Find the FamilyCalendar's own wrapper and scroll to just above it
+    const calendarEl = container.querySelector('[data-calendar-root]');
+    if (calendarEl) {
+      const offset = calendarEl.getBoundingClientRect().top - container.getBoundingClientRect().top + container.scrollTop;
+      container.scrollTo({ top: offset, behavior: 'smooth' });
     }
   }, [showMonthlyView]);
 
