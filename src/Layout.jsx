@@ -79,8 +79,6 @@ export default function Layout({ children, currentPageName }) {
 
   return (
     <div className="min-h-screen bg-[#F5F5F7]">
-      <VoiceAssistant currentPageName={currentPageName} />
-      
       {/* Desktop Sidebar */}
       <aside className="hidden lg:flex fixed left-0 top-0 bottom-0 w-64 bg-white border-r border-gray-200 flex-col z-40">
         <div className="p-6 border-b border-gray-100">
