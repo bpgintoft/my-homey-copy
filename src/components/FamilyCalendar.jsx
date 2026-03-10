@@ -727,10 +727,21 @@ export default function FamilyCalendar({ activities }) {
     }
   };
 
+  // Scroll to top when monthly view is activated so the fixed bar anchors correctly
+  React.useEffect(() => {
+    if (showMonthlyView) {
+      const container = document.querySelector('main');
+      if (container) container.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [showMonthlyView]);
+
   return (
     <div className="-mx-6 px-6">
-      {/* Sticky header section */}
-      <div className="sticky top-0 z-20 pb-2 -mx-6 px-6 pt-1" style={{ backgroundColor: '#F5F5F7' }}>
+      {/* Nav bar — fixed to viewport top in monthly view, sticky otherwise */}
+      <div className={showMonthlyView
+        ? "fixed top-16 left-0 right-0 z-30 pb-2 px-6 pt-1 lg:left-64"
+        : "sticky top-0 z-20 pb-2 -mx-6 px-6 pt-1"
+      } style={{ backgroundColor: '#F5F5F7' }}>
       {/* Week navigation */}
       <div className="flex items-center justify-between gap-0.5 mb-3 pt-3 overflow-hidden px-1">
         <AnimatePresence initial={false}>
