@@ -784,7 +784,7 @@ export default function FamilyCalendar({ activities }) {
               >
                 Today
               </Button>
-              <div className="flex items-center gap-1.5">
+              <div className="flex items-center gap-1">
               <Button
                 variant="ghost"
                 size="icon"
