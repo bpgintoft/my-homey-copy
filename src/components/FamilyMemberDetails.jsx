@@ -722,12 +722,12 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                 </button>
               </div>
               <DragDropContext onDragEnd={handleCustomizeDragEnd}>
-                <Droppable droppableId="section-grid" direction="horizontal">
+                <Droppable droppableId="section-list" direction="vertical">
                   {(provided) => (
                     <div
                       ref={provided.innerRef}
                       {...provided.droppableProps}
-                      className="grid grid-cols-2 gap-2"
+                      className="flex flex-col gap-2"
                     >
                       {orderedSections.map(({ key, icon, label }, index) => (
                         <Draggable key={key} draggableId={key} index={index}>
@@ -736,9 +736,9 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                               ref={provided.innerRef}
                               {...provided.draggableProps}
                               {...provided.dragHandleProps}
-                              className={`flex items-center gap-2 p-3 rounded-lg border bg-white text-left w-full cursor-grab active:cursor-grabbing select-none ${snapshot.isDragging ? 'shadow-lg ring-2 ring-blue-300 opacity-90' : 'shadow-sm'}`}
+                              className={`flex items-center gap-3 p-3 rounded-lg border bg-white text-left w-full cursor-grab active:cursor-grabbing select-none ${snapshot.isDragging ? 'shadow-lg ring-2 ring-blue-300 opacity-90' : 'shadow-sm'}`}
                             >
-                              <GripVertical className="w-4 h-4 text-gray-300 flex-shrink-0" />
+                              <GripVertical className="w-4 h-4 text-gray-400 flex-shrink-0" />
                               {icon}
                               <span className="font-semibold text-sm text-gray-800 leading-tight">{label}</span>
                             </div>
