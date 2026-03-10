@@ -245,22 +245,7 @@ export default function Kids() {
           </TabsList>
 
           <TabsContent value="calendar">
-            <div className="flex justify-end mb-2">
-              <Button
-                variant="ghost"
-                size="icon"
-                className={`h-8 w-8 rounded-lg ${showMonthlyView ? 'bg-gray-900 text-white' : 'text-gray-500'}`}
-                onClick={() => setShowMonthlyView(!showMonthlyView)}
-                title={showMonthlyView ? 'Switch to weekly view' : 'Switch to monthly view'}
-              >
-                <CalendarDays className="w-4 h-4" />
-              </Button>
-            </div>
-            {showMonthlyView ? (
-              <MonthlyCalendar activities={activities} />
-            ) : (
-              <FamilyCalendar activities={activities} />
-            )}
+            <FamilyCalendar activities={activities} />
           </TabsContent>
 
           <TabsContent value="upcoming" className="space-y-6">
