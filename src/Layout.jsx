@@ -53,7 +53,7 @@ export default function Layout({ children, currentPageName }) {
   const navItems = [
     { name: 'Home', icon: Home, href: 'Home' },
     { name: 'Meals', icon: UtensilsCrossed, href: 'Meals' },
-    { name: 'Kids', icon: Calendar, href: 'Kids' },
+    { name: 'Calendar', icon: Calendar, href: 'Kids' },
     { name: 'House', icon: Home, href: 'House' },
     { name: 'History', icon: History, href: 'History' },
   ];
