@@ -764,7 +764,7 @@ export default function FamilyCalendar({ activities }) {
                 >
                   <ChevronLeft className="w-3.5 h-3.5" />
                 </Button>
-                <div className="text-xs font-semibold text-gray-900 whitespace-nowrap mx-1">
+                <div className="text-xs font-semibold text-gray-900 whitespace-nowrap mx-0.5">
                   {format(currentWeekStart, 'MMM d')} – {format(addDays(currentWeekStart, 6), 'MMM d')}
                 </div>
                 <Button
