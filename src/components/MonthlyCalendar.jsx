@@ -15,14 +15,14 @@ export default function MonthlyCalendar({ activities }) {
   const handleDaySelect = (day) => {
     setSelectedDay(day);
     setExpandedEventId(null);
-    // Scroll the main container to the events section
+    // Scroll so the events list starts just below the sticky calendar header
     setTimeout(() => {
       if (eventsRef.current) {
         const container = document.querySelector('main');
         if (container) {
-          const rect = eventsRef.current.getBoundingClientRect();
-          const containerRect = container.getBoundingClientRect();
-          container.scrollTo({ top: container.scrollTop + rect.top - containerRect.top - 8, behavior: 'smooth' });
+          // Get the absolute top of the events div relative to the scrollable container
+          const eventsOffsetTop = eventsRef.current.offsetTop;
+          container.scrollTo({ top: eventsOffsetTop - 8, behavior: 'smooth' });
         }
       }
     }, 50);
