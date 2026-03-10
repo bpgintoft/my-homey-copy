@@ -204,7 +204,8 @@ export default function MonthlyCalendar({ activities }) {
             return (
               <button
                 key={idx}
-                onClick={() => handleDaySelect(day)}
+                onClick={(e) => { e.preventDefault(); handleDaySelect(day); }}
+                onMouseDown={(e) => e.preventDefault()}
                 className={`flex flex-col items-center py-0.5 rounded-lg transition-colors ${isSelected ? 'bg-gray-900' : 'hover:bg-gray-100'}`}
               >
                 <span className={`text-sm w-7 h-7 flex items-center justify-center rounded-full font-medium
