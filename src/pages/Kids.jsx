@@ -35,6 +35,7 @@ export default function Kids() {
   }, bannerRef);
 
   const [showDialog, setShowDialog] = useState(false);
+  const [showMonthlyView, setShowMonthlyView] = useState(false);
   const [newActivity, setNewActivity] = useState({});
   const [editingActivity, setEditingActivity] = useState(null);
   const [currentDate, setCurrentDate] = useState(new Date());
