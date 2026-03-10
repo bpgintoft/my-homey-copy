@@ -29,6 +29,7 @@ export default function FamilyCalendar({ activities }) {
   const [searchQuery, setSearchQuery] = useState('');
   const searchRef = React.useRef(null);
   const [showCalendarFilter, setShowCalendarFilter] = useState(false);
+  const [showOnlyToday, setShowOnlyToday] = useState(false);
   const [selectedCalendarIds, setSelectedCalendarIds] = useState(new Set());
   const [editingEvent, setEditingEvent] = useState(null);
   const [expandedEventId, setExpandedEventId] = useState(null);
