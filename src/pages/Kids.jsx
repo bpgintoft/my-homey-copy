@@ -37,46 +37,7 @@ export default function Kids() {
   const [currentDate, setCurrentDate] = useState(new Date());
   const queryClient = useQueryClient();
 
-  // Pull-to-refresh logic
-  React.useEffect(() => {
-    const handleTouchStart = (e) => {
-      if (window.scrollY === 0) {
-        touchStartY.current = e.touches[0].clientY;
-      }
-    };
 
-    const handleTouchMove = (e) => {
-      if (window.scrollY === 0 && touchStartY.current > 0) {
-        const currentY = e.touches[0].clientY;
-        const distance = currentY - touchStartY.current;
-        
-        if (distance > 0) {
-          setIsPulling(true);
-          setPullDistance(Math.min(distance, 100));
-        }
-      }
-    };
-
-    const handleTouchEnd = () => {
-      if (isPulling && pullDistance > 60) {
-        window.location.reload();
-      }
-      
-      setIsPulling(false);
-      setPullDistance(0);
-      touchStartY.current = 0;
-    };
-
-    document.addEventListener('touchstart', handleTouchStart, { passive: true });
-    document.addEventListener('touchmove', handleTouchMove, { passive: true });
-    document.addEventListener('touchend', handleTouchEnd);
-
-    return () => {
-      document.removeEventListener('touchstart', handleTouchStart);
-      document.removeEventListener('touchmove', handleTouchMove);
-      document.removeEventListener('touchend', handleTouchEnd);
-    };
-  }, [isPulling, pullDistance]);
 
   const { data: activities = [] } = useQuery({
     queryKey: ['kidsActivities'],
