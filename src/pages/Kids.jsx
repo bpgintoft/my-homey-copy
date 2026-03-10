@@ -130,17 +130,6 @@ export default function Kids() {
 
   return (
     <div className="min-h-screen bg-[#F5F5F7]">
-      {/* Pull-to-refresh indicator */}
-      {isPulling && (
-        <div 
-          className="fixed top-0 left-0 right-0 flex items-center justify-center z-50 bg-white/90 backdrop-blur-sm shadow-sm transition-all"
-          style={{ height: `${pullDistance}px` }}
-        >
-          <div className={`text-gray-600 transition-transform ${pullDistance > 60 ? 'scale-110' : ''}`}>
-            {pullDistance > 60 ? '↻ Release to refresh' : '↓ Pull down to refresh'}
-          </div>
-        </div>
-      )}
       
       <div className="relative overflow-hidden">
         <style>{`
