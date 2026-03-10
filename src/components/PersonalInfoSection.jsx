@@ -397,7 +397,8 @@ export default function PersonalInfoSection({ member, color = 'blue' }) {
           </div>
           <div className="flex gap-2">
             <input
-              className={`flex-1 text-sm border rounded-md px-3 py-1.5 outline-none focus:ring-1 ${inputClass}`}
+              className={`flex-1 border rounded-md px-3 py-1.5 outline-none focus:ring-1 ${inputClass}`}
+              style={{ fontSize: '16px' }}
               placeholder="Add a gift idea..."
               value={newGiftIdea}
               onChange={(e) => setNewGiftIdea(e.target.value)}
