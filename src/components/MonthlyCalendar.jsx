@@ -129,9 +129,16 @@ export default function MonthlyCalendar({ activities }) {
     });
   };
 
-  // Build calendar grid (always 6 rows x 7 cols starting Sunday)
+  // Build calendar grid — only include rows that contain at least one current-month day
   const gridStart = startOfWeek(monthStart, { weekStartsOn: 0 });
-  const gridDays = Array.from({ length: 42 }, (_, i) => addDays(gridStart, i));
+  const allGridDays = Array.from({ length: 42 }, (_, i) => addDays(gridStart, i));
+  // Group into rows of 7, keep only rows with at least one current-month day
+  const gridRows = [];
+  for (let i = 0; i < 42; i += 7) {
+    const row = allGridDays.slice(i, i + 7);
+    if (row.some(d => isSameMonth(d, currentMonth))) gridRows.push(row);
+  }
+  const gridDays = gridRows.flat();
 
   const calendarAvatars = {
     'Bryan': 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/b093cc037_Bryan.png',
