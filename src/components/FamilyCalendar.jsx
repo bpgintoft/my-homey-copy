@@ -780,11 +780,11 @@ export default function FamilyCalendar({ activities }) {
                 variant="outline"
                 size="sm"
                 onClick={goToToday}
-                className="rounded-lg flex-shrink-0 h-6 px-3 text-xs"
+                className="rounded-lg flex-shrink-0 h-6 px-2 text-xs"
               >
                 Today
               </Button>
-              <div className="flex items-center gap-1 flex-shrink-0">
+              <div className="flex items-center gap-0.5 flex-shrink-0">
               <Button
                 variant="ghost"
                 size="icon"
