@@ -21,8 +21,6 @@ import ImportantDatesTab from '../components/ImportantDatesTab';
 export default function Kids() {
   const navigate = useNavigate();
   const bannerRef = useRef(null);
-  const [isPulling, setIsPulling] = useState(false);
-  const [pullDistance, setPullDistance] = useState(0);
   const touchStartY = useRef(0);
   
   useSwipe((direction) => {
