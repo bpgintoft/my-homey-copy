@@ -227,7 +227,7 @@ export default function MonthlyCalendar({ activities }) {
       </div>
 
       {/* Selected day events */}
-      <div className="mt-4">
+      <div className="mt-4" ref={eventsRef}>
         <div className="text-sm font-semibold text-gray-800 mb-2 px-4">
           {isSameDay(selectedDay, today) ? 'Today' : format(selectedDay, 'EEEE, MMM d')}
         </div>
