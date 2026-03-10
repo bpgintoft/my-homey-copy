@@ -917,7 +917,7 @@ export default function FamilyCalendar({ activities }) {
       )}
 
       {/* Events list grouped by day */}
-      <div className={`space-y-3 ${showMonthlyView ? 'hidden' : ''} pt-20`}>
+      <div className={`space-y-3 ${showMonthlyView ? 'hidden' : ''} pt-3`}>
         <AnimatePresence>
           {weekDays.map((day) => {
             const allDayActivities = getActivitiesForDay(day);
