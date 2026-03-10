@@ -453,7 +453,7 @@ export default function FamilyCalendar({ activities }) {
       const todayId = `day-${format(new Date(), 'yyyy-MM-dd')}`;
       const el = document.getElementById(todayId);
       if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 100);
+    }, 300);
   };
 
   // Detect scroll direction
