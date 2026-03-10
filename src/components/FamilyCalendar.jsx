@@ -893,6 +893,7 @@ export default function FamilyCalendar({ activities }) {
             <button
               key={day.toISOString()}
               onClick={() => {
+                setShowOnlyToday(false);
                 const dayId = `day-${format(day, 'yyyy-MM-dd')}`;
                 const element = document.getElementById(dayId);
                 if (element) {
