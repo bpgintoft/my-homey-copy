@@ -455,7 +455,7 @@ export default function FamilyCalendar({ activities }) {
       const todayId = `day-${format(today, 'yyyy-MM-dd')}`;
       const el = document.getElementById(todayId);
       if (el) {
-        const stickyHeaderHeight = 120; // approx height of sticky nav + day labels
+        const stickyHeaderHeight = 90; // approx height of sticky nav + day labels
         const container = el.closest('.overflow-y-auto') || document.querySelector('main');
         if (container) {
           const elTop = el.getBoundingClientRect().top + container.scrollTop - container.getBoundingClientRect().top;
