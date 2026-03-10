@@ -457,13 +457,15 @@ export default function FamilyCalendar({ activities }) {
     setTimeout(() => {
       const container = document.querySelector('main');
       if (container) {
-        // Scroll to show calendar root (nav bar) at top
-        const calendarEl = container.querySelector('[data-calendar-root]');
-        if (calendarEl) {
+        // Scroll to show today's day section (with header visible)
+        const dayId = `day-${format(today, 'yyyy-MM-dd')}`;
+        const dayEl = container.querySelector(`#${dayId}`);
+        if (dayEl) {
           const containerRect = container.getBoundingClientRect();
-          const calendarRect = calendarEl.getBoundingClientRect();
-          const scrollTarget = container.scrollTop + (calendarRect.top - containerRect.top);
-          container.scrollTo({ top: scrollTarget, behavior: 'smooth' });
+          const dayRect = dayEl.getBoundingClientRect();
+          // Scroll so day header is visible below nav bar
+          const scrollTarget = container.scrollTop + (dayRect.top - containerRect.top) - 60;
+          container.scrollTo({ top: Math.max(0, scrollTarget), behavior: 'smooth' });
         }
       }
     }, 0);
