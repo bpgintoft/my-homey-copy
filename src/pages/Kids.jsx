@@ -182,7 +182,7 @@ export default function Kids() {
         </div>
       </div>
 
-      <div className="container mx-auto px-6 pt-4 pb-8">
+      <div className="container mx-auto px-6 pb-8">
         <Tabs defaultValue="calendar" className="space-y-2">
           <TabsList className="bg-white shadow-sm border-b-2 border-gray-200 rounded-none w-full justify-start">
             <TabsTrigger value="calendar" className="border-b-2 border-transparent data-[state=active]:border-blue-500 data-[state=active]:bg-transparent rounded-none">Calendar</TabsTrigger>
