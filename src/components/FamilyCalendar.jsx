@@ -455,14 +455,13 @@ export default function FamilyCalendar({ activities }) {
       const todayId = `day-${format(today, 'yyyy-MM-dd')}`;
       const el = document.getElementById(todayId);
       if (el) {
-        const stickyHeaderHeight = 90; // approx height of sticky nav + day labels
-        const container = el.closest('.overflow-y-auto') || document.querySelector('main');
+        const container = document.querySelector('main');
         if (container) {
-          const elTop = el.getBoundingClientRect().top + container.scrollTop - container.getBoundingClientRect().top;
-          container.scrollTo({ top: elTop - stickyHeaderHeight, behavior: 'smooth' });
-        } else {
-          const elTop = el.getBoundingClientRect().top + window.scrollY;
-          window.scrollTo({ top: elTop - stickyHeaderHeight, behavior: 'smooth' });
+          const containerRect = container.getBoundingClientRect();
+          const elRect = el.getBoundingClientRect();
+          // Calculate where el is relative to container's scroll position
+          const scrollTarget = container.scrollTop + (elRect.top - containerRect.top) - 10;
+          container.scrollTo({ top: scrollTarget, behavior: 'smooth' });
         }
       }
     }, 300);
