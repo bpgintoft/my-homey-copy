@@ -449,6 +449,11 @@ export default function FamilyCalendar({ activities }) {
     setHasNavigated(false);
     setHasScrolledUp(false);
     setShowMonthlyView(false);
+    setTimeout(() => {
+      const todayId = `day-${format(new Date(), 'yyyy-MM-dd')}`;
+      const el = document.getElementById(todayId);
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
   };
 
   // Detect scroll direction
