@@ -445,12 +445,14 @@ export default function FamilyCalendar({ activities }) {
   };
 
   const goToToday = () => {
-    setCurrentWeekStart(new Date(new Date().setHours(0,0,0,0)));
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    setCurrentWeekStart(today);
     setHasNavigated(false);
     setHasScrolledUp(false);
     setShowMonthlyView(false);
     setTimeout(() => {
-      const todayId = `day-${format(new Date(), 'yyyy-MM-dd')}`;
+      const todayId = `day-${format(today, 'yyyy-MM-dd')}`;
       const el = document.getElementById(todayId);
       if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }, 300);
