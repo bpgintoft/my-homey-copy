@@ -452,6 +452,7 @@ export default function FamilyCalendar({ activities }) {
     setHasNavigated(false);
     setHasScrolledUp(false);
     setShowMonthlyView(false);
+    setShowOnlyToday(true);
     
     setTimeout(() => {
       const container = document.querySelector('main');
