@@ -919,7 +919,7 @@ export default function FamilyCalendar({ activities }) {
       {/* Events list grouped by day */}
       <div className={`space-y-3 ${showMonthlyView ? 'hidden' : ''}`}>
         <AnimatePresence>
-          {(showOnlyToday ? [weekDays[0]] : weekDays).map((day) => {
+          {weekDays.map((day) => {
             const allDayActivities = getActivitiesForDay(day);
             const now = new Date();
             const today = new Date();
