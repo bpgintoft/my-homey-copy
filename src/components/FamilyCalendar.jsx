@@ -715,7 +715,7 @@ export default function FamilyCalendar({ activities }) {
       {/* Sticky header section */}
       <div className="sticky top-0 z-20 pb-3 -mx-6 px-6" style={{ backgroundColor: '#F5F5F7' }}>
       {/* Week navigation */}
-      <div className="flex items-center justify-between gap-0.5 mb-3 pt-3 overflow-hidden pr-2">
+      <div className="flex items-center justify-between gap-0.5 mb-3 pt-3 overflow-hidden px-1">
         <AnimatePresence initial={false}>
           {showSearch ? (
             <motion.div
