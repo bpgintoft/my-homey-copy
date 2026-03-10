@@ -17,6 +17,8 @@ import { toast } from 'sonner';
 import LocationAutocomplete from './LocationAutocomplete';
 
 export default function FamilyCalendar({ activities }) {
+  const [showMonthlyView, setShowMonthlyView] = useState(false);
+  const monthlyRef = React.useRef(null);
   const [currentWeekStart, setCurrentWeekStart] = useState(new Date(new Date().setHours(0,0,0,0)));
   const [hasNavigated, setHasNavigated] = useState(false);
   const [hasScrolledUp, setHasScrolledUp] = useState(false);
