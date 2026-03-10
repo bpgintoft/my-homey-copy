@@ -11,12 +11,19 @@ export default function MonthlyCalendar({ activities }) {
   const [selectedDay, setSelectedDay] = useState(new Date());
   const [expandedEventId, setExpandedEventId] = useState(null);
   const eventsRef = React.useRef(null);
+  const stickyHeaderRef = React.useRef(null);
 
   const handleDaySelect = (day) => {
     setSelectedDay(day);
     setExpandedEventId(null);
     setTimeout(() => {
-      eventsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      const container = document.querySelector('main');
+      if (!container || !eventsRef.current || !stickyHeaderRef.current) return;
+      const stickyHeight = stickyHeaderRef.current.getBoundingClientRect().height;
+      const containerRect = container.getBoundingClientRect();
+      const eventsRect = eventsRef.current.getBoundingClientRect();
+      const scrollTarget = container.scrollTop + (eventsRect.top - containerRect.top) - stickyHeight - 8;
+      container.scrollTo({ top: scrollTarget, behavior: 'smooth' });
     }, 50);
   };
 
