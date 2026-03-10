@@ -911,7 +911,7 @@ export default function FamilyCalendar({ activities }) {
 
       {/* Monthly calendar view */}
       {showMonthlyView && (
-        <div ref={monthlyRef}>
+        <div ref={monthlyRef} className="pt-12">
           <MonthlyCalendar activities={activities} />
         </div>
       )}
