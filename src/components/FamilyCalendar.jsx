@@ -876,24 +876,26 @@ export default function FamilyCalendar({ activities }) {
 
 
 
-      {/* Day labels */}
-      <div className="flex gap-2 mb-3 px-2">
-        {weekDays.map((day) => (
-          <button
-            key={day.toISOString()}
-            onClick={() => {
-              const dayId = `day-${format(day, 'yyyy-MM-dd')}`;
-              const element = document.getElementById(dayId);
-              if (element) {
-                element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-              }
-            }}
-            className="flex-1 text-center text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg py-1 transition-colors cursor-pointer"
-          >
-            {format(day, 'EEE')}
-          </button>
-        ))}
-      </div>
+      {/* Day labels - weekly view only */}
+      {!showMonthlyView && (
+        <div className="flex gap-2 mb-3 px-2">
+          {weekDays.map((day) => (
+            <button
+              key={day.toISOString()}
+              onClick={() => {
+                const dayId = `day-${format(day, 'yyyy-MM-dd')}`;
+                const element = document.getElementById(dayId);
+                if (element) {
+                  element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+              }}
+              className="flex-1 text-center text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg py-1 transition-colors cursor-pointer"
+            >
+              {format(day, 'EEE')}
+            </button>
+          ))}
+        </div>
+      )}
       </div>
 
       {/* Monthly calendar view */}
