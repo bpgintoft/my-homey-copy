@@ -445,18 +445,26 @@ export default function FamilyCalendar({ activities }) {
   };
 
   const goToToday = () => {
-    // Stay in monthly view and scroll to show calendar
-    if (!showMonthlyView) setShowMonthlyView(true);
-    const container = document.querySelector('main');
-    if (container) {
-      const calendarEl = container.querySelector('[data-calendar-root]');
-      if (calendarEl) {
-        const containerRect = container.getBoundingClientRect();
-        const calendarRect = calendarEl.getBoundingClientRect();
-        const scrollTarget = container.scrollTop + (calendarRect.top - containerRect.top);
-        container.scrollTo({ top: scrollTarget, behavior: 'smooth' });
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    setCurrentWeekStart(today);
+    setHasNavigated(false);
+    setHasScrolledUp(false);
+    setShowMonthlyView(false);
+    
+    setTimeout(() => {
+      const container = document.querySelector('main');
+      if (container) {
+        // Scroll to show calendar root (nav bar) at top
+        const calendarEl = container.querySelector('[data-calendar-root]');
+        if (calendarEl) {
+          const containerRect = container.getBoundingClientRect();
+          const calendarRect = calendarEl.getBoundingClientRect();
+          const scrollTarget = container.scrollTop + (calendarRect.top - containerRect.top);
+          container.scrollTo({ top: scrollTarget, behavior: 'smooth' });
+        }
       }
-    }
+    }, 0);
   };
 
   // Detect scroll direction
