@@ -784,7 +784,23 @@ export default function FamilyCalendar({ activities }) {
               >
                 Today
               </Button>
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-1.5">
+              <Button
+                variant="ghost"
+                size="icon"
+                className={`h-6 w-6 rounded-lg flex-shrink-0 p-0 ${showMonthlyView ? 'bg-gray-900 text-white' : ''}`}
+                onClick={() => {
+                  const next = !showMonthlyView;
+                  setShowMonthlyView(next);
+                  if (next) {
+                    setTimeout(() => {
+                      monthlyRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }, 50);
+                  }
+                }}
+              >
+                <CalendarDays className="w-3 h-3" />
+              </Button>
               <Popover>
                 <PopoverTrigger asChild>
                   <Button
