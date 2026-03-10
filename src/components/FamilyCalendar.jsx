@@ -448,6 +448,7 @@ export default function FamilyCalendar({ activities }) {
     setCurrentWeekStart(new Date(new Date().setHours(0,0,0,0)));
     setHasNavigated(false);
     setHasScrolledUp(false);
+    setShowMonthlyView(false);
   };
 
   // Detect scroll direction
