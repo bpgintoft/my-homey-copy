@@ -75,10 +75,10 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
     { key: 'contacts', label: 'Important Contacts' },
     { key: 'milestones', label: 'Goals & Milestones' },
     { key: 'health', label: 'Health & Medical' },
-    { key: 'documents', label: 'Documents & IDs' },
+    { key: 'personalInfo', label: 'Personal Info Hub' },
     { key: 'vehicles', label: 'Vehicles & Travel' },
     { key: 'notes', label: 'Personal Notes' },
-    { key: 'personalInfo', label: 'Personal Info Hub' },
+    { key: 'documents', label: 'Documents & IDs' },
   ];
 
   React.useEffect(() => {
