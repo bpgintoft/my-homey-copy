@@ -445,25 +445,17 @@ export default function FamilyCalendar({ activities }) {
   };
 
   const goToToday = () => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    setCurrentWeekStart(today);
-    setHasNavigated(false);
-    setHasScrolledUp(true);
-    setShowMonthlyView(false);
-    setTimeout(() => {
-      const container = document.querySelector('main');
-      if (container) {
-        // Scroll to the top of the FamilyCalendar so tabs are anchored at top
-        const calendarEl = container.querySelector('[data-calendar-root]');
-        if (calendarEl) {
-          const containerRect = container.getBoundingClientRect();
-          const calendarRect = calendarEl.getBoundingClientRect();
-          const scrollTarget = container.scrollTop + (calendarRect.top - containerRect.top);
-          container.scrollTo({ top: scrollTarget, behavior: 'smooth' });
-        }
+    setSelectedDay(new Date());
+    const container = document.querySelector('main');
+    if (container) {
+      const calendarEl = container.querySelector('[data-calendar-root]');
+      if (calendarEl) {
+        const containerRect = container.getBoundingClientRect();
+        const calendarRect = calendarEl.getBoundingClientRect();
+        const scrollTarget = container.scrollTop + (calendarRect.top - containerRect.top);
+        container.scrollTo({ top: scrollTarget, behavior: 'smooth' });
       }
-    }, 300);
+    }
   };
 
   // Detect scroll direction
