@@ -445,7 +445,8 @@ export default function FamilyCalendar({ activities }) {
   };
 
   const goToToday = () => {
-    setSelectedDay(new Date());
+    // Stay in monthly view and scroll to show calendar
+    if (!showMonthlyView) setShowMonthlyView(true);
     const container = document.querySelector('main');
     if (container) {
       const calendarEl = container.querySelector('[data-calendar-root]');
