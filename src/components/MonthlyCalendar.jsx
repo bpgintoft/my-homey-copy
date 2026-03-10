@@ -10,6 +10,23 @@ export default function MonthlyCalendar({ activities }) {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedDay, setSelectedDay] = useState(new Date());
   const [expandedEventId, setExpandedEventId] = useState(null);
+  const eventsRef = React.useRef(null);
+
+  const handleDaySelect = (day) => {
+    setSelectedDay(day);
+    setExpandedEventId(null);
+    // Scroll the main container to the events section
+    setTimeout(() => {
+      if (eventsRef.current) {
+        const container = document.querySelector('main');
+        if (container) {
+          const rect = eventsRef.current.getBoundingClientRect();
+          const containerRect = container.getBoundingClientRect();
+          container.scrollTo({ top: container.scrollTop + rect.top - containerRect.top - 8, behavior: 'smooth' });
+        }
+      }
+    }, 50);
+  };
 
   // Same data fetching as FamilyCalendar
   const { data: cachedEvents = [] } = useQuery({
