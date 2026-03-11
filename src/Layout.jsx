@@ -57,6 +57,7 @@ export default function Layout({ children, currentPageName }) {
     { name: 'Calendar', icon: Calendar, href: 'Kids' },
     { name: 'House', icon: Home, href: 'House' },
     { name: 'History', icon: History, href: 'History' },
+    { name: 'Decisions', icon: CheckSquare, href: 'Decisions' },
   ];
 
   const NavLink = ({ item, mobile = false }) => {
