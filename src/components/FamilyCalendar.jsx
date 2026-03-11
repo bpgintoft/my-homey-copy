@@ -463,8 +463,8 @@ export default function FamilyCalendar({ activities }) {
         if (dayEl) {
           const containerRect = container.getBoundingClientRect();
           const dayRect = dayEl.getBoundingClientRect();
-          // Scroll so day header is visible below nav bar
-          const scrollTarget = container.scrollTop + (dayRect.top - containerRect.top) - 60;
+          // Scroll so day header is visible below nav bar (nav bar ~110px tall)
+          const scrollTarget = container.scrollTop + (dayRect.top - containerRect.top) - 120;
           container.scrollTo({ top: Math.max(0, scrollTarget), behavior: 'smooth' });
         }
       }
