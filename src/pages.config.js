@@ -50,6 +50,7 @@
 import Bryan from './pages/Bryan';
 import Contacts from './pages/Contacts';
 import Dashboard from './pages/Dashboard';
+import Decisions from './pages/Decisions';
 import Documents from './pages/Documents';
 import Family from './pages/Family';
 import History from './pages/History';
@@ -65,7 +66,6 @@ import Meals from './pages/Meals';
 import Phoenix from './pages/Phoenix';
 import RoomDetail from './pages/RoomDetail';
 import Vendors from './pages/Vendors';
-import Decisions from './pages/Decisions';
 import __Layout from './Layout.jsx';
 
 
@@ -73,6 +73,7 @@ export const PAGES = {
     "Bryan": Bryan,
     "Contacts": Contacts,
     "Dashboard": Dashboard,
+    "Decisions": Decisions,
     "Documents": Documents,
     "Family": Family,
     "History": History,
@@ -88,7 +89,6 @@ export const PAGES = {
     "Phoenix": Phoenix,
     "RoomDetail": RoomDetail,
     "Vendors": Vendors,
-    "Decisions": Decisions,
 }
 
 export const pagesConfig = {

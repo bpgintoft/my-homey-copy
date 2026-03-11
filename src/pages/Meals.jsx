@@ -1413,18 +1413,28 @@ export default function Meals() {
                                 className="w-5 h-5 rounded border-gray-300 text-pink-600 focus:ring-pink-500 cursor-pointer"
                               />
                               <div className="flex-1 min-w-0">
-                                <input
-                                  type="text"
+                                <textarea
                                   value={editingGroceryNames[item.id] !== undefined ? editingGroceryNames[item.id] : item.name}
-                                  onChange={(e) => setEditingGroceryNames(prev => ({ ...prev, [item.id]: e.target.value }))}
+                                  onChange={(e) => {
+                                    setEditingGroceryNames(prev => ({ ...prev, [item.id]: e.target.value }));
+                                    e.target.style.height = 'auto';
+                                    e.target.style.height = e.target.scrollHeight + 'px';
+                                  }}
+                                  onFocus={(e) => {
+                                    e.target.style.height = 'auto';
+                                    e.target.style.height = e.target.scrollHeight + 'px';
+                                  }}
                                   onBlur={(e) => {
                                     const newName = e.target.value.trim();
                                     if (newName && newName !== item.name) {
                                       updateGroceryNameMutation.mutate({ id: item.id, name: newName });
                                     }
                                     setEditingGroceryNames(prev => { const n = { ...prev }; delete n[item.id]; return n; });
+                                    e.target.style.height = 'auto';
                                   }}
-                                  className={`text-sm font-medium bg-transparent border-none outline-none w-full focus:bg-white focus:px-2 focus:py-1 focus:rounded transition-all ${item.purchased ? 'line-through text-gray-400' : 'text-gray-900'}`}
+                                  rows={1}
+                                  style={{ fontSize: '16px', resize: 'none', overflow: 'hidden' }}
+                                  className={`font-medium bg-transparent border-none outline-none w-full focus:bg-white focus:px-2 focus:py-1 focus:rounded transition-all leading-snug ${item.purchased ? 'line-through text-gray-400' : 'text-gray-900'}`}
                                 />
                               </div>
                               <div className="flex items-center gap-1 bg-white border border-gray-200 rounded-lg">
