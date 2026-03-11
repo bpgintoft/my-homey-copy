@@ -31,6 +31,17 @@ export default function Decisions() {
     queryFn: () => base44.entities.FamilyDecision.list('-created_date', 100),
   });
 
+  // Auto-open a specific decision if linked from a notification
+  useEffect(() => {
+    if (decisions.length === 0) return;
+    const params = new URLSearchParams(window.location.search);
+    const decisionId = params.get('decision');
+    if (decisionId && !selectedDecision) {
+      const found = decisions.find(d => d.id === decisionId);
+      if (found) setSelectedDecision(found);
+    }
+  }, [decisions]);
+
   const createMutation = useMutation({
     mutationFn: (data) => base44.entities.FamilyDecision.create(data),
     onSuccess: () => {
