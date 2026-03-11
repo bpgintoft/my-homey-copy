@@ -99,7 +99,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-[#F5F5F7]">
-      {currentUser && <ChoreNotificationsDialog memberId={currentUser.email} />
+      {currentUser && <ChoreNotificationsDialog memberId={currentUser.email} />}
       {/* Header */}
       <div className="relative overflow-hidden">
         <style>{`
