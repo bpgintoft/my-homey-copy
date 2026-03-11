@@ -1465,15 +1465,16 @@ export default function Meals() {
                                   +
                                 </button>
                               </div>
-                              {editingGroceryNames[item.id] !== undefined ? (
+                              {focusedGroceryId === item.id ? (
                                 <button
                                   onMouseDown={(e) => {
                                     e.preventDefault();
-                                    const newName = editingGroceryNames[item.id].trim();
+                                    const newName = (editingGroceryNames[item.id] ?? item.name).trim();
                                     if (newName && newName !== item.name) {
                                       updateGroceryNameMutation.mutate({ id: item.id, name: newName });
                                     }
                                     setEditingGroceryNames(prev => { const n = { ...prev }; delete n[item.id]; return n; });
+                                    setFocusedGroceryId(null);
                                   }}
                                   className="text-green-500 hover:text-green-700 transition-colors p-1 flex-shrink-0"
                                 >
