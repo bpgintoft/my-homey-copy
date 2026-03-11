@@ -1462,13 +1462,29 @@ export default function Meals() {
                                   +
                                 </button>
                               </div>
-                              <button
-                                onClick={() => deleteGroceryItemMutation.mutate(item.id)}
-                                disabled={deleteGroceryItemMutation.isPending}
-                                className="text-gray-400 hover:text-red-500 transition-colors p-1"
-                              >
-                                <Trash2 className="w-4 h-4" />
-                              </button>
+                              {editingGroceryNames[item.id] !== undefined ? (
+                                <button
+                                  onMouseDown={(e) => {
+                                    e.preventDefault();
+                                    const newName = editingGroceryNames[item.id].trim();
+                                    if (newName && newName !== item.name) {
+                                      updateGroceryNameMutation.mutate({ id: item.id, name: newName });
+                                    }
+                                    setEditingGroceryNames(prev => { const n = { ...prev }; delete n[item.id]; return n; });
+                                  }}
+                                  className="text-green-500 hover:text-green-700 transition-colors p-1 flex-shrink-0"
+                                >
+                                  <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                                </button>
+                              ) : (
+                                <button
+                                  onClick={() => deleteGroceryItemMutation.mutate(item.id)}
+                                  disabled={deleteGroceryItemMutation.isPending}
+                                  className="text-gray-400 hover:text-red-500 transition-colors p-1"
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </button>
+                              )}
                             </div>
                           ))}
                         </div>
