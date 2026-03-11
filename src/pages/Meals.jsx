@@ -1440,7 +1440,7 @@ export default function Meals() {
                                   className={`font-medium bg-transparent border-none outline-none w-full focus:bg-white focus:px-2 focus:py-1 focus:rounded transition-all leading-snug ${item.purchased ? 'line-through text-gray-400' : 'text-gray-900'}`}
                                 />
                               </div>
-                              <div className={`flex items-center gap-1 bg-white border border-gray-200 rounded-lg transition-all ${editingGroceryNames[item.id] !== undefined ? 'hidden' : ''}`}>
+                              <div className={`flex items-center gap-1 bg-white border border-gray-200 rounded-lg transition-all ${focusedGroceryId === item.id ? 'hidden' : ''}`}>
                                 <button
                                   onClick={() => {
                                     const qty = parseInt(item.quantity) || 1;
