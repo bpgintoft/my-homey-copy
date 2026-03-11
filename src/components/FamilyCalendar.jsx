@@ -804,6 +804,14 @@ export default function FamilyCalendar({ activities }) {
                 </Button>
               </div>
               <Button
+                variant="ghost"
+                size="icon"
+                className={`h-6 w-6 rounded-lg flex-shrink-0 p-0 ${showMonthlyView ? 'bg-gray-900 text-white' : ''}`}
+                onClick={() => setShowMonthlyView(prev => !prev)}
+              >
+                <CalendarDays className="w-3 h-3" />
+              </Button>
+              <Button
                 variant="outline"
                 size="sm"
                 onClick={goToToday}
