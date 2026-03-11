@@ -936,9 +936,9 @@ export default function FamilyCalendar({ activities }) {
             // Only filter future events if: current week AND haven't navigated to previous weeks AND haven't scrolled up
             const dayActivities = (isCurrentWeek && !hasNavigated && !hasScrolledUp)
               ? allDayActivities.filter(activity => {
-                  if (!activity.start) return true;
-                  const eventEnd = activity.end ? parseISO(activity.end) : parseISO(activity.start);
-                  return eventEnd >= now;
+                  // Hide entire days that are in the past
+                  if (isSameDay(day, today) || day > today) return true;
+                  return false;
                 })
               : allDayActivities;
             
