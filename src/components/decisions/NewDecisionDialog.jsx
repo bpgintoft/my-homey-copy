@@ -26,7 +26,7 @@ export default function NewDecisionDialog({ proposerEmail, proposerName, onSave,
 
   return (
     <Dialog open onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md top-4 translate-y-0">
         <DialogHeader>
           <DialogTitle>Propose a Decision</DialogTitle>
         </DialogHeader>
