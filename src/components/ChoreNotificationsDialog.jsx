@@ -5,6 +5,11 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Button } from "@/components/ui/button";
 import { CheckCircle2, X } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
+import { useNavigate } from 'react-router-dom';
+import { createPageUrl } from '@/utils';
+
+const isDecisionNotification = (n) =>
+  n.chore_title?.toLowerCase().includes('decision') || n.chore_title?.toLowerCase().includes('proposed');
 
 export default function ChoreNotificationsDialog({ memberId }) {
   const queryClient = useQueryClient();
