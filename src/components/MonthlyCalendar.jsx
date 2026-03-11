@@ -223,8 +223,13 @@ export default function MonthlyCalendar({ activities }) {
         </div>
       </div>
 
-      {/* Selected day events */}
-      <div className="mt-4" ref={eventsRef}>
+      {/* Selected day events — isolated scroll container so touch events never propagate up to the page */}
+      <div
+        ref={eventsRef}
+        className="mt-4 overflow-y-auto"
+        style={{ height: 'calc(100vh - 380px)', overscrollBehavior: 'contain' }}
+        onTouchStart={e => e.stopPropagation()}
+      >
         <div className="text-sm font-semibold text-gray-800 mb-2 px-4">
           {isSameDay(selectedDay, today) ? 'Today' : format(selectedDay, 'EEEE, MMM d')}
         </div>
