@@ -54,6 +54,11 @@ export default function Home() {
     queryFn: () => base44.entities.Appliance.list(),
   });
 
+  const { data: currentUser } = useQuery({
+    queryKey: ['currentUser'],
+    queryFn: () => base44.auth.me(),
+  });
+
   const bryanMember = familyMembers.find(m => m.name === 'Bryan') || { name: 'Bryan' };
   const kateMember = familyMembers.find(m => m.name === 'Kate') || { name: 'Kate' };
   const phoenixMember = familyMembers.find(m => m.name === 'Phoenix') || { name: 'Phoenix' };
