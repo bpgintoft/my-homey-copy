@@ -56,6 +56,7 @@ export default function Meals() {
             const [showAddGrocery, setShowAddGrocery] = useState(false);
             const [editingGroceryNames, setEditingGroceryNames] = useState({});
             const [focusedGroceryId, setFocusedGroceryId] = useState(null);
+            const [expandedQtyId, setExpandedQtyId] = useState(null);
             const queryClient = useQueryClient();
 
   const { data: meals = [] } = useQuery({
