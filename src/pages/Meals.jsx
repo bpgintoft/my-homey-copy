@@ -1422,10 +1422,12 @@ export default function Meals() {
                                     e.target.style.height = e.target.scrollHeight + 'px';
                                   }}
                                   onFocus={(e) => {
+                                    setFocusedGroceryId(item.id);
                                     e.target.style.height = 'auto';
                                     e.target.style.height = e.target.scrollHeight + 'px';
                                   }}
                                   onBlur={(e) => {
+                                    setFocusedGroceryId(null);
                                     const newName = e.target.value.trim();
                                     if (newName && newName !== item.name) {
                                       updateGroceryNameMutation.mutate({ id: item.id, name: newName });
