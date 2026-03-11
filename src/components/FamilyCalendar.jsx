@@ -454,23 +454,13 @@ export default function FamilyCalendar({ activities }) {
     setShowMonthlyView(false);
     setShowOnlyToday(true);
     
-    // Wait for React to re-render with today's week, then scroll
+    // Scroll to top so today's day header is the very first thing visible below the sticky nav
     setTimeout(() => {
       const container = document.querySelector('main');
       if (container) {
-        // Measure sticky nav height
-        const stickyNav = container.querySelector('[data-sticky-nav]');
-        const navHeight = stickyNav ? stickyNav.getBoundingClientRect().height : 100;
-        // Find the events list container
-        const eventsListEl = container.querySelector('[data-events-list]');
-        if (eventsListEl) {
-          const containerRect = container.getBoundingClientRect();
-          const listRect = eventsListEl.getBoundingClientRect();
-          const scrollTarget = container.scrollTop + (listRect.top - containerRect.top) - navHeight;
-          container.scrollTo({ top: Math.max(0, scrollTarget), behavior: 'smooth' });
-        }
+        container.scrollTo({ top: 0, behavior: 'smooth' });
       }
-    }, 100);
+    }, 50);
   };
 
   // Detect scroll direction
