@@ -924,11 +924,11 @@ export default function FamilyCalendar({ activities }) {
             // Only show today and future days (hide past days entirely)
             const isPastDay = day < today && !isSameDay(day, today);
             if (isPastDay && isCurrentWeek && !hasNavigated && !hasScrolledUp) return null;
-            // For today, always hide timed events that have already passed
+            // For today, always hide timed events that have already started
             const dayActivities = isSameDay(day, today)
               ? allDayActivities.filter(activity => {
                   if (!activity.start.includes('T')) return true; // keep all-day events
-                  return new Date(activity.end || activity.start) >= now;
+                  return new Date(activity.start) >= now;
                 })
               : allDayActivities;
             
