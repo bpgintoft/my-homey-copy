@@ -1440,31 +1440,39 @@ export default function Meals() {
                                   className={`font-medium bg-transparent border-none outline-none w-full focus:bg-white focus:px-2 focus:py-1 focus:rounded transition-all leading-snug ${item.purchased ? 'line-through text-gray-400' : 'text-gray-900'}`}
                                 />
                               </div>
-                              <div className={`flex items-center gap-1 bg-white border border-gray-200 rounded-lg transition-all ${focusedGroceryId === item.id ? 'hidden' : ''}`}>
-                                <button
-                                  onClick={() => {
-                                    const qty = parseInt(item.quantity) || 1;
-                                    if (qty > 1) {
-                                      updateGroceryQuantityMutation.mutate({ id: item.id, quantity: qty - 1 });
-                                    }
-                                  }}
-                                  disabled={updateGroceryQuantityMutation.isPending}
-                                  className="px-2 py-1 text-gray-500 hover:text-gray-900"
-                                >
-                                  −
-                                </button>
-                                <span className="w-8 text-center font-medium text-sm">{item.quantity || 1}</span>
-                                <button
-                                  onClick={() => {
-                                    const qty = parseInt(item.quantity) || 1;
-                                    updateGroceryQuantityMutation.mutate({ id: item.id, quantity: qty + 1 });
-                                  }}
-                                  disabled={updateGroceryQuantityMutation.isPending}
-                                  className="px-2 py-1 text-gray-500 hover:text-gray-900"
-                                >
-                                  +
-                                </button>
-                              </div>
+                              {focusedGroceryId !== item.id && (
+                                <div className="flex items-center gap-1">
+                                  {expandedQtyId === item.id ? (
+                                    <div className="flex items-center gap-1 bg-white border border-gray-200 rounded-lg">
+                                      <button
+                                        onClick={() => {
+                                          const qty = parseInt(item.quantity) || 1;
+                                          if (qty > 1) updateGroceryQuantityMutation.mutate({ id: item.id, quantity: qty - 1 });
+                                        }}
+                                        disabled={updateGroceryQuantityMutation.isPending}
+                                        className="px-2 py-1 text-gray-500 hover:text-gray-900"
+                                      >−</button>
+                                      <button
+                                        onClick={() => setExpandedQtyId(null)}
+                                        className="w-8 text-center font-medium text-sm py-1"
+                                      >{item.quantity || 1}</button>
+                                      <button
+                                        onClick={() => {
+                                          const qty = parseInt(item.quantity) || 1;
+                                          updateGroceryQuantityMutation.mutate({ id: item.id, quantity: qty + 1 });
+                                        }}
+                                        disabled={updateGroceryQuantityMutation.isPending}
+                                        className="px-2 py-1 text-gray-500 hover:text-gray-900"
+                                      >+</button>
+                                    </div>
+                                  ) : (
+                                    <button
+                                      onClick={() => setExpandedQtyId(item.id)}
+                                      className="w-8 text-center font-medium text-sm py-1 px-1 rounded bg-white border border-gray-200"
+                                    >{item.quantity || 1}</button>
+                                  )}
+                                </div>
+                              )}
                               {focusedGroceryId === item.id ? (
                                 <button
                                   onMouseDown={(e) => {
