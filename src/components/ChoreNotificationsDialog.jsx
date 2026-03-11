@@ -13,6 +13,7 @@ const isDecisionNotification = (n) =>
 
 export default function ChoreNotificationsDialog({ memberId }) {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   const { data: notifications = [] } = useQuery({
     queryKey: ['notifications', memberId],
