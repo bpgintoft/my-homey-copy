@@ -32,7 +32,7 @@ export default function Decisions() {
   });
 
   // Auto-open a specific decision if linked from a notification (run once)
-  const autoOpenedRef = React.useRef(false);
+  const autoOpenedRef = useRef(false);
   useEffect(() => {
     if (autoOpenedRef.current || decisions.length === 0) return;
     const params = new URLSearchParams(window.location.search);
