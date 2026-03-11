@@ -31,14 +31,18 @@ export default function Decisions() {
     queryFn: () => base44.entities.FamilyDecision.list('-created_date', 100),
   });
 
-  // Auto-open a specific decision if linked from a notification
+  // Auto-open a specific decision if linked from a notification (run once)
+  const autoOpenedRef = React.useRef(false);
   useEffect(() => {
-    if (decisions.length === 0) return;
+    if (autoOpenedRef.current || decisions.length === 0) return;
     const params = new URLSearchParams(window.location.search);
     const decisionId = params.get('decision');
-    if (decisionId && !selectedDecision) {
+    if (decisionId) {
       const found = decisions.find(d => d.id === decisionId);
-      if (found) setSelectedDecision(found);
+      if (found) {
+        autoOpenedRef.current = true;
+        setSelectedDecision(found);
+      }
     }
   }, [decisions]);
 
