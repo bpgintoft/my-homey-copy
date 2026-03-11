@@ -62,24 +62,35 @@ export default function ChoreNotificationsDialog({ memberId }) {
                 Completed by {name}
               </p>
               <div className="space-y-2">
-                {items.map((n) => (
-                  <div key={n.id} className="flex items-center justify-between bg-green-50 border border-green-100 rounded-lg px-4 py-3">
-                    <div className="flex-1 min-w-0">
-                      <p className="font-medium text-gray-900 text-sm">{n.chore_title}</p>
-                      {n.completed_date && (
-                        <p className="text-xs text-gray-400 mt-0.5">
-                          {formatDistanceToNow(new Date(n.completed_date), { addSuffix: true })}
-                        </p>
-                      )}
-                    </div>
-                    <button
-                      className="ml-2 text-gray-400 hover:text-gray-600 flex-shrink-0"
-                      onClick={() => dismissOneMutation.mutate(n.id)}
+                {items.map((n) => {
+                  const isDecision = isDecisionNotification(n);
+                  return (
+                    <div
+                      key={n.id}
+                      className={`flex items-center justify-between border rounded-lg px-4 py-3 ${isDecision ? 'bg-blue-50 border-blue-100 cursor-pointer hover:bg-blue-100 transition-colors' : 'bg-green-50 border-green-100'}`}
+                      onClick={isDecision ? () => {
+                        dismissOneMutation.mutate(n.id);
+                        navigate(createPageUrl('Decisions') + (n.chore_id ? `?decision=${n.chore_id}` : ''));
+                      } : undefined}
                     >
-                      <X className="w-4 h-4" />
-                    </button>
-                  </div>
-                ))}
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium text-gray-900 text-sm">{n.chore_title}</p>
+                        {isDecision && <p className="text-xs text-blue-500 mt-0.5">Tap to view →</p>}
+                        {n.completed_date && !isDecision && (
+                          <p className="text-xs text-gray-400 mt-0.5">
+                            {formatDistanceToNow(new Date(n.completed_date), { addSuffix: true })}
+                          </p>
+                        )}
+                      </div>
+                      <button
+                        className="ml-2 text-gray-400 hover:text-gray-600 flex-shrink-0"
+                        onClick={(e) => { e.stopPropagation(); dismissOneMutation.mutate(n.id); }}
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           ))}
