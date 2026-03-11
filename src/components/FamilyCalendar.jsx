@@ -782,6 +782,16 @@ export default function FamilyCalendar({ activities }) {
               transition={{ duration: 0.2 }}
               className="flex items-center gap-0.5 w-full"
             >
+              <Button
+                variant="ghost"
+                size="icon"
+                className={`h-6 w-6 rounded-lg flex-shrink-0 p-0 ${showMonthlyView ? 'bg-gray-900 text-white' : ''}`}
+                onClick={() => {
+                  setShowMonthlyView(prev => !prev);
+                }}
+              >
+                <CalendarDays className="w-3 h-3" />
+              </Button>
               <div className="flex items-center gap-0.5 flex-1">
                 <Button
                   variant="ghost"
