@@ -65,6 +65,7 @@ import Meals from './pages/Meals';
 import Phoenix from './pages/Phoenix';
 import RoomDetail from './pages/RoomDetail';
 import Vendors from './pages/Vendors';
+import Decisions from './pages/Decisions';
 import __Layout from './Layout.jsx';
 
 
@@ -87,6 +88,7 @@ export const PAGES = {
     "Phoenix": Phoenix,
     "RoomDetail": RoomDetail,
     "Vendors": Vendors,
+    "Decisions": Decisions,
 }
 
 export const pagesConfig = {

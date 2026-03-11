@@ -7,7 +7,8 @@ import {
   Calendar,
   History,
   Menu, 
-  X
+  X,
+  CheckSquare
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
