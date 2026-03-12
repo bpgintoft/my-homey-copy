@@ -76,24 +76,13 @@ export default function Decisions() {
   return (
     <div className="min-h-screen bg-[#5B4FCF]">
       {/* Header */}
-      <div className="px-6 pt-8 pb-6 relative overflow-hidden" style={{background: '#3d35a8'}}>
-        {/* Radiating rays */}
-        <div className="absolute inset-0" style={{
-          background: 'conic-gradient(from 200deg at 110% 120%, transparent 0deg, rgba(120,100,255,0.18) 2deg, transparent 4deg, rgba(100,80,240,0.12) 6deg, transparent 8deg, rgba(130,110,255,0.15) 10deg, transparent 12deg, rgba(110,90,245,0.1) 14deg, transparent 16deg, rgba(120,100,255,0.18) 18deg, transparent 20deg, rgba(100,80,240,0.12) 22deg, transparent 24deg, rgba(130,110,255,0.15) 26deg, transparent 28deg, rgba(110,90,245,0.1) 30deg, transparent 32deg, rgba(120,100,255,0.18) 34deg, transparent 36deg, rgba(100,80,240,0.12) 38deg, transparent 40deg, rgba(130,110,255,0.15) 42deg, transparent 44deg, rgba(110,90,245,0.1) 46deg, transparent 48deg, rgba(120,100,255,0.18) 50deg, transparent 52deg, rgba(100,80,240,0.12) 54deg, transparent 56deg, rgba(130,110,255,0.15) 58deg, transparent 60deg, rgba(110,90,245,0.1) 62deg, transparent 64deg, rgba(120,100,255,0.18) 66deg, transparent 68deg, rgba(100,80,240,0.12) 70deg, transparent 72deg, transparent 360deg)',
-        }} />
-        {/* Glow orb */}
-        <div className="absolute" style={{
-          top: '-40%', right: '-10%',
-          width: '60%', height: '200%',
-          background: 'radial-gradient(ellipse, rgba(160,80,255,0.35) 0%, rgba(100,60,220,0.15) 40%, transparent 70%)',
-          filter: 'blur(20px)',
-        }} />
-        {/* Subtle grid texture overlay */}
-        <div className="absolute inset-0" style={{
-          backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(255,255,255,0.025) 3px, rgba(255,255,255,0.025) 4px), repeating-linear-gradient(90deg, transparent, transparent 3px, rgba(255,255,255,0.025) 3px, rgba(255,255,255,0.025) 4px)',
-        }} />
+      <div className="px-6 pt-8 pb-6 relative overflow-hidden" style={{
+          backgroundImage: 'url(https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/e16863392_generated_image.png)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+        }}>
         {/* Bottom fade to page bg */}
-        <div className="absolute bottom-0 left-0 right-0 h-8" style={{background: 'linear-gradient(to bottom, transparent, #5B4FCF)'}} />
+        <div className="absolute bottom-0 left-0 right-0 h-12" style={{background: 'linear-gradient(to bottom, transparent, #5B4FCF)'}} />
         <div className="relative z-10 max-w-2xl mx-auto flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold text-white">Family Decisions</h1>
