@@ -77,13 +77,12 @@ export default function Decisions() {
     <div className="min-h-screen bg-[#5B4FCF]">
       {/* Header */}
       <div className="px-6 pt-8 pb-6 relative overflow-hidden">
-        {/* Etched texture layers */}
+        {/* Crosshatch texture */}
         <div className="absolute inset-0" style={{
-          backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.18) 1px, transparent 1px)',
-          backgroundSize: '18px 18px',
-        }} />
-        <div className="absolute inset-0" style={{
-          backgroundImage: 'repeating-linear-gradient(45deg, rgba(255,255,255,0.04) 0px, rgba(255,255,255,0.04) 1px, transparent 1px, transparent 12px)',
+          backgroundImage: `
+            repeating-linear-gradient(0deg, rgba(255,255,255,0.07) 0px, rgba(255,255,255,0.07) 1px, transparent 1px, transparent 16px),
+            repeating-linear-gradient(90deg, rgba(255,255,255,0.07) 0px, rgba(255,255,255,0.07) 1px, transparent 1px, transparent 16px)
+          `,
         }} />
         <div className="max-w-2xl mx-auto flex items-center justify-between">
           <div>
