@@ -94,7 +94,7 @@ export default function Decisions() {
         }} />
         {/* Bottom fade to page bg */}
         <div className="absolute bottom-0 left-0 right-0 h-8" style={{background: 'linear-gradient(to bottom, transparent, #5B4FCF)'}} />
-        <div className="max-w-2xl mx-auto flex items-center justify-between">
+        <div className="relative z-10 max-w-2xl mx-auto flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold text-white">Family Decisions</h1>
             <p className="text-sm text-indigo-200 mt-0.5">Proposals, votes, and follow-ups</p>
