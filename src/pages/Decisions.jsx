@@ -77,16 +77,16 @@ export default function Decisions() {
     <div className="min-h-screen bg-[#5B4FCF]">
       {/* Header */}
       <div className="px-6 pt-8 pb-6 relative overflow-hidden">
-        {/* Flowing wavy shapes */}
-        <svg className="absolute inset-0 w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 200" preserveAspectRatio="xMidYMid slice">
-          {/* Wave 1 - lightest, back */}
-          <path d="M-50 80 C 30 20, 100 160, 200 80 S 350 0, 450 80 L 450 200 L -50 200 Z" fill="rgba(255,255,255,0.07)" />
-          {/* Wave 2 */}
-          <path d="M-50 120 C 50 60, 120 180, 220 110 S 370 30, 450 120 L 450 200 L -50 200 Z" fill="rgba(255,255,255,0.08)" />
-          {/* Wave 3 - top flowing stripe */}
-          <path d="M-50 -10 C 60 50, 150 -30, 260 40 S 370 100, 450 30 L 450 -10 Z" fill="rgba(255,255,255,0.07)" />
-          {/* Wave 4 - bold mid sweep */}
-          <path d="M-50 60 C 80 130, 180 10, 300 90 S 400 150, 450 60 L 450 100 L -50 100 Z" fill="rgba(255,255,255,0.06)" />
+        {/* Topographic contour lines */}
+        <svg className="absolute inset-0 w-full h-full" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+          <defs>
+            <filter id="topo-blur">
+              <feTurbulence type="turbulence" baseFrequency="0.012 0.008" numOctaves="4" seed="3" result="noise" />
+              <feColorMatrix type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 18 -7" in="noise" result="contour" />
+              <feComposite in="SourceGraphic" in2="contour" operator="in" />
+            </filter>
+          </defs>
+          <rect width="100%" height="100%" fill="rgba(255,255,255,0.13)" filter="url(#topo-blur)" />
         </svg>
         <div className="max-w-2xl mx-auto flex items-center justify-between">
           <div>
