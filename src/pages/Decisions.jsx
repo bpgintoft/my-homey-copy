@@ -92,7 +92,7 @@ export default function Decisions() {
         </div>
       </div>
 
-      <div className="max-w-2xl mx-auto px-4 pb-8 bg-[#F5F5F7] rounded-t-3xl pt-6 min-h-screen">
+      <div className="max-w-2xl mx-auto px-4 pb-8 border-t border-white/20 pt-6">
         {decisions.length === 0 && (
           <div className="text-center py-20 text-indigo-200">
             <div className="text-4xl mb-3">🤝</div>
