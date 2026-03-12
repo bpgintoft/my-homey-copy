@@ -15,22 +15,23 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'No decision data' }, { status: 400 });
     }
 
-    const proposerEmail = decision.proposer_email;
     const isCreate = event?.type === 'create';
 
-    // Only notify on new proposals, not on updates (updates are made by the other person)
-    if (!isCreate) {
-      return Response.json({ ok: true, skipped: 'update events not notified' });
+    // For creates, the actor is the proposer. For updates, use last_updated_by_email.
+    const actorEmail = isCreate ? decision.proposer_email : decision.last_updated_by_email;
+
+    if (!actorEmail) {
+      return Response.json({ ok: true, skipped: 'no actor email' });
     }
 
-    // Determine who to notify (always the non-proposer)
+    // Notify the other person
     let notifyEmail = null;
-    if (proposerEmail === BRYAN_EMAIL) {
+    if (actorEmail === BRYAN_EMAIL) {
       notifyEmail = KATE_EMAIL;
-    } else if (proposerEmail === KATE_EMAIL) {
+    } else if (actorEmail === KATE_EMAIL) {
       notifyEmail = BRYAN_EMAIL;
     } else {
-      return Response.json({ ok: true, skipped: 'unknown proposer' });
+      return Response.json({ ok: true, skipped: 'unknown actor' });
     }
 
     const decisionId = decision.id || event?.entity_id || '';
