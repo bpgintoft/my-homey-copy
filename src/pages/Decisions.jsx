@@ -77,20 +77,16 @@ export default function Decisions() {
     <div className="min-h-screen bg-[#5B4FCF]">
       {/* Header */}
       <div className="px-6 pt-8 pb-6 relative overflow-hidden">
-        {/* Low-poly geometric facets */}
-        <svg className="absolute inset-0 w-full h-full" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" viewBox="0 0 800 160">
-          {/* Dark facets */}
-          <polygon points="0,0 320,0 180,160 0,160"        fill="rgba(0,0,0,0.18)" />
-          <polygon points="320,0 800,0 800,60 500,160 180,160" fill="rgba(0,0,0,0.08)" />
-          <polygon points="500,0 800,0 800,60"              fill="rgba(0,0,0,0.22)" />
-          <polygon points="0,0 160,0 80,160 0,80"           fill="rgba(255,255,255,0.04)" />
-          <polygon points="600,160 800,60 800,160"          fill="rgba(0,0,0,0.15)" />
-          <polygon points="200,0 500,0 350,160 100,160"     fill="rgba(255,255,255,0.03)" />
-          {/* Glowing edge lines */}
-          <line x1="320" y1="0" x2="180" y2="160" stroke="rgba(220,180,255,0.55)" strokeWidth="1.2" />
-          <line x1="500" y1="0" x2="800" y2="60"  stroke="rgba(220,180,255,0.4)"  strokeWidth="0.8" />
-          <line x1="500" y1="160" x2="800" y2="60" stroke="rgba(200,160,255,0.35)" strokeWidth="0.8" />
-          <line x1="0"   y1="80"  x2="180" y2="160" stroke="rgba(220,180,255,0.25)" strokeWidth="0.7" />
+        {/* Topographic contour lines */}
+        <svg className="absolute inset-0 w-full h-full" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+          <defs>
+            <filter id="topo-blur">
+              <feTurbulence type="turbulence" baseFrequency="0.012 0.008" numOctaves="4" seed="3" result="noise" />
+              <feColorMatrix type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 18 -7" in="noise" result="contour" />
+              <feComposite in="SourceGraphic" in2="contour" operator="in" />
+            </filter>
+          </defs>
+          <rect width="100%" height="100%" fill="rgba(255,255,255,0.13)" filter="url(#topo-blur)" />
         </svg>
         <div className="max-w-2xl mx-auto flex items-center justify-between">
           <div>
