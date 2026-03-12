@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
-import { Plus, ChevronDown, ChevronUp } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { Plus } from 'lucide-react';
 import DecisionCard from '../components/decisions/DecisionCard';
 import DecisionDialog from '../components/decisions/DecisionDialog';
 import NewDecisionDialog from '../components/decisions/NewDecisionDialog';
@@ -19,7 +20,6 @@ export default function Decisions() {
   const [currentUser, setCurrentUser] = useState(null);
   const [showNew, setShowNew] = useState(false);
   const [selectedDecision, setSelectedDecision] = useState(null);
-  const [resolvedOpen, setResolvedOpen] = useState(false);
   const queryClient = useQueryClient();
 
   useEffect(() => {
@@ -31,6 +31,7 @@ export default function Decisions() {
     queryFn: () => base44.entities.FamilyDecision.list('-created_date', 100),
   });
 
+  // Auto-open a specific decision if linked from a notification (run once)
   const autoOpenedRef = useRef(false);
   useEffect(() => {
     if (autoOpenedRef.current || decisions.length === 0) return;
@@ -73,33 +74,37 @@ export default function Decisions() {
   const resolved = decisions.filter(d => d.status === 'approved' || d.status === 'rejected');
 
   return (
-    <div className="min-h-screen bg-[#F0F2F8]">
-
-      {/* Hero Banner */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-[#b8f0d8] via-[#d4edff] to-[#e8d5ff] px-6 pt-8 pb-10">
-        <div className="max-w-2xl mx-auto flex items-end justify-between">
-          <div className="z-10">
-            <h1 className="text-3xl font-extrabold text-gray-800 leading-tight">Family<br/>Decisions</h1>
-            <p className="text-sm text-gray-600 mt-1">Proposals, votes<br/>&amp; follow-ups</p>
+    <div className="min-h-screen bg-[#4a3fb5]">
+      {/* Header */}
+      <div className="px-6 pt-8 pb-6" style={{backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.07) 1px, transparent 1px)', backgroundSize: '20px 20px'}}>
+        <div className="max-w-2xl mx-auto flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-white">Family Decisions</h1>
+            <p className="text-xs text-indigo-200 mt-0.5">Proposals, votes &amp; follow-ups</p>
           </div>
-          {/* Decorative cartoon family illustration placeholder */}
-          <div className="text-6xl select-none mr-2">👨‍👩‍👧‍👦</div>
+          <button
+            onClick={() => setShowNew(true)}
+            className="flex items-center gap-1.5 bg-white text-[#5B4FCF] font-semibold text-sm px-4 py-2 rounded-full shadow hover:bg-indigo-50 transition-colors"
+          >
+            <Plus className="w-4 h-4" />
+            Propose
+          </button>
         </div>
-        {/* Decorative bubbles */}
-        <div className="absolute top-4 right-20 text-2xl opacity-60">💬</div>
-        <div className="absolute top-10 right-10 text-xl opacity-40">💬</div>
       </div>
 
-      {/* Content */}
-      <div className="max-w-2xl mx-auto px-4 -mt-4 pb-24">
+      <div className="max-w-2xl mx-auto px-4 pb-8 pt-2 bg-[#5B4FCF] rounded-t-3xl shadow-inner">
 
-        {/* Pending Section */}
+        {decisions.length === 0 && (
+          <div className="text-center py-20 text-indigo-200">
+            <div className="text-4xl mb-3">🤝</div>
+            <p className="font-medium text-white">No decisions yet</p>
+            <p className="text-sm mt-1">Tap "Propose" to get started</p>
+          </div>
+        )}
+
         {pending.length > 0 && (
-          <div className="mb-4">
-            <div className="flex items-center justify-between mb-3 px-1">
-              <span className="text-xs font-bold text-[#6B7EC8] uppercase tracking-widest">Needs a Decision</span>
-              <ChevronDown className="w-4 h-4 text-[#6B7EC8]" />
-            </div>
+          <div className="mb-6">
+            <h2 className="text-xs font-semibold text-indigo-200 uppercase tracking-wider mb-3 px-1">Needs a Decision</h2>
             <div className="space-y-3">
               {pending.map(d => (
                 <DecisionCard key={d.id} decision={d} onClick={setSelectedDecision} />
@@ -108,44 +113,16 @@ export default function Decisions() {
           </div>
         )}
 
-        {/* Resolved Section */}
         {resolved.length > 0 && (
-          <div className="mb-4">
-            <button
-              className="flex items-center justify-between w-full mb-3 px-1"
-              onClick={() => setResolvedOpen(o => !o)}
-            >
-              <span className="text-xs font-bold text-[#6B7EC8] uppercase tracking-widest">Resolved</span>
-              {resolvedOpen ? <ChevronUp className="w-4 h-4 text-[#6B7EC8]" /> : <ChevronDown className="w-4 h-4 text-[#6B7EC8]" />}
-            </button>
-            {resolvedOpen && (
-              <div className="space-y-3">
-                {resolved.map(d => (
-                  <DecisionCard key={d.id} decision={d} onClick={setSelectedDecision} />
-                ))}
-              </div>
-            )}
+          <div>
+            <h2 className="text-xs font-semibold text-indigo-200 uppercase tracking-wider mb-3 px-1">Resolved</h2>
+            <div className="space-y-3">
+              {resolved.map(d => (
+                <DecisionCard key={d.id} decision={d} onClick={setSelectedDecision} />
+              ))}
+            </div>
           </div>
         )}
-
-        {decisions.length === 0 && (
-          <div className="text-center py-20 text-gray-400">
-            <div className="text-4xl mb-3">🤝</div>
-            <p className="font-medium text-gray-600">No decisions yet</p>
-            <p className="text-sm mt-1">Tap "Propose" to get started</p>
-          </div>
-        )}
-      </div>
-
-      {/* Floating Propose Button */}
-      <div className="fixed bottom-6 right-6 z-50">
-        <button
-          onClick={() => setShowNew(true)}
-          className="flex items-center gap-2 bg-[#5B4FCF] text-white font-semibold text-sm px-5 py-3 rounded-full shadow-lg hover:bg-[#4a3fb5] transition-colors"
-        >
-          <Plus className="w-4 h-4" />
-          Propose
-        </button>
       </div>
 
       {showNew && currentUser && (
