@@ -76,14 +76,7 @@ export default function Decisions() {
   return (
     <div className="min-h-screen bg-[#5B4FCF]">
       {/* Header */}
-      <div className="px-6 pt-8 pb-6 relative overflow-hidden">
-        {/* Crosshatch texture */}
-        <div className="absolute inset-0" style={{
-          backgroundImage: `
-            repeating-linear-gradient(0deg, rgba(255,255,255,0.07) 0px, rgba(255,255,255,0.07) 1px, transparent 1px, transparent 16px),
-            repeating-linear-gradient(90deg, rgba(255,255,255,0.07) 0px, rgba(255,255,255,0.07) 1px, transparent 1px, transparent 16px)
-          `,
-        }} />
+      <div className="px-6 pt-8 pb-6 bg-gradient-to-b from-[#4a3fb5] to-[#5B4FCF]">
         <div className="max-w-2xl mx-auto flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold text-white">Family Decisions</h1>
