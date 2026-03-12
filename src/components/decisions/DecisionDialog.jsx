@@ -98,10 +98,10 @@ export default function DecisionDialog({ decision, currentUserEmail, onSave, onD
                 <button
                   key={v}
                   onClick={() => setMyVote(v)}
-                  className={`flex-1 py-2 rounded-full text-sm font-medium transition-colors ${
+                  className={`flex-1 py-2 rounded-full text-sm font-medium transition-colors border-2 ${
                     myVote === v
-                      ? 'bg-white text-[#5B4FCF]'
-                      : 'bg-white/15 text-white hover:bg-white/25'
+                      ? 'bg-white text-[#5B4FCF] border-white shadow-lg scale-105'
+                      : 'bg-transparent text-white/60 border-white/20 hover:border-white/50 hover:text-white'
                   }`}
                 >
                   {voteEmoji[v]}
