@@ -25,44 +25,36 @@ export default function DecisionCard({ decision, onClick }) {
   const bothVoted = bryanVote && kateVote;
 
   return (
-    <Card
-      className="cursor-pointer hover:shadow-md transition-all duration-200 border border-gray-100 bg-white rounded-2xl shadow-sm"
+    <div
+      className="cursor-pointer bg-[#6E63D8] hover:bg-[#7a6fe0] transition-all duration-200 rounded-3xl px-5 py-4 shadow-sm"
       onClick={() => onClick(decision)}
     >
-      <CardContent className="p-4">
-        <div className="flex items-start justify-between gap-2 mb-2">
-          <h3 className="font-semibold text-gray-900 text-sm leading-snug flex-1">{decision.title}</h3>
-          <span className={`text-xs px-2.5 py-0.5 rounded-full font-medium flex-shrink-0 ${statusColors[decision.status] || statusColors.pending}`}>
-            {statusLabels[decision.status] || 'Pending'}
+      <div className="flex items-start justify-between gap-2 mb-1">
+        <h3 className="font-semibold text-white text-sm leading-snug flex-1">{decision.title}</h3>
+        <span className={`text-xs px-2.5 py-0.5 rounded-full font-medium flex-shrink-0 ${statusColors[decision.status] || statusColors.pending}`}>
+          {statusLabels[decision.status] || 'Pending'}
+        </span>
+      </div>
+      {decision.description && (
+        <p className="text-xs text-indigo-200 mb-3 line-clamp-2">{decision.description}</p>
+      )}
+      <div className="flex items-center justify-between mt-2">
+        <div className="flex items-center gap-2">
+          <span className="inline-flex items-center gap-1 bg-white/15 rounded-full px-2.5 py-1 text-xs text-white">
+            Bryan {voteEmoji[bryanVote] || '—'}
+          </span>
+          <span className="inline-flex items-center gap-1 bg-white/15 rounded-full px-2.5 py-1 text-xs text-white">
+            Kate {voteEmoji[kateVote] || '—'}
           </span>
         </div>
-        {decision.description && (
-          <p className="text-xs text-gray-500 mb-3 line-clamp-2">{decision.description}</p>
-        )}
-        <div className="flex items-center justify-between mt-2">
-          <div className="flex items-center gap-2">
-            <span className="inline-flex items-center gap-1 bg-gray-50 rounded-lg px-2 py-1 text-xs text-gray-600">
-              Bryan <span className="font-medium">{voteEmoji[bryanVote] || '—'}</span>
-            </span>
-            <span className="inline-flex items-center gap-1 bg-gray-50 rounded-lg px-2 py-1 text-xs text-gray-600">
-              Kate <span className="font-medium">{voteEmoji[kateVote] || '—'}</span>
-            </span>
-          </div>
-          <span className="text-xs text-gray-400">
-            {decision.created_date ? format(new Date(decision.created_date), 'MMM d') : ''}
-          </span>
+        <div className="flex items-center gap-2 text-indigo-200 text-xs">
+          {decision.comments?.length > 0 && <span>💬 {decision.comments.length}</span>}
+          <span>{decision.created_date ? format(new Date(decision.created_date), 'MMM d') : ''}</span>
         </div>
-        {(decision.proposer_name || decision.comments?.length > 0) && (
-          <div className="flex items-center justify-between mt-2 pt-2 border-t border-gray-50">
-            {decision.proposer_name && (
-              <p className="text-xs text-gray-400">by {decision.proposer_name}</p>
-            )}
-            {decision.comments?.length > 0 && (
-              <p className="text-xs text-gray-400">💬 {decision.comments.length}</p>
-            )}
-          </div>
-        )}
-      </CardContent>
-    </Card>
+      </div>
+      {decision.proposer_name && (
+        <p className="text-xs text-indigo-300 mt-1.5">by {decision.proposer_name}</p>
+      )}
+    </div>
   );
 }
