@@ -73,7 +73,7 @@ export default function Decisions() {
 
   const filterDecisions = () => {
     if (filter === 'undecided') return decisions.filter(d => !d.is_archived && (d.status === 'pending' || d.status === 'needs_discussion'));
-    if (filter === 'needs_action') return decisions.filter(d => !d.is_archived && (d.status === 'approved' || d.status === 'rejected'));
+    if (filter === 'needs_action') return decisions.filter(d => !d.is_archived && (d.status === 'needs_action'));
     if (filter === 'archived') return decisions.filter(d => d.is_archived);
     return decisions;
   };
@@ -139,8 +139,8 @@ export default function Decisions() {
               onClick={() => setFilter(f.key)}
               className={`px-4 py-3 rounded-3xl transition-all shadow-lg font-bold text-sm ${
                 filter === f.key
-                  ? 'bg-white text-[#5B4FCF] scale-105'
-                  : 'bg-white text-[#5B4FCF] hover:shadow-xl'
+                  ? 'bg-white/90 text-[#5B4FCF] scale-105'
+                  : 'bg-white/70 text-[#5B4FCF] hover:bg-white/80 hover:shadow-xl'
               }`}
             >
               {f.label}
