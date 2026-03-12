@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Trash2, Send } from 'lucide-react';
+import { Trash2, Send, Pencil, X, Check } from 'lucide-react';
 import { format } from 'date-fns';
 
 const BRYAN_EMAIL = 'bpgintoft@gmail.com';
