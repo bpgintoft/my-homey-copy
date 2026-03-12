@@ -125,8 +125,8 @@ export default function Decisions() {
 
       <div className="max-w-2xl mx-auto px-4 pb-8 pt-2">
         <div className="mb-6 mx-2">
-          <div className="border-t border-black/20" />
-          <div className="border-t border-white/10" />
+          <div className="border-t border-black/40" />
+          <div className="border-t border-white/5" />
         </div>
         {decisions.length === 0 && (
           <div className="text-center py-20 text-indigo-200">
