@@ -88,7 +88,7 @@ export default function Decisions() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#4a3fb5] flex flex-col pb-44 lg:pb-8">
+    <div className="min-h-screen bg-[#4a3fb5] flex flex-col pb-32 lg:pb-8">
       {/* Header */}
       <div className="px-6 pt-8 pb-6" style={{backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.07) 1px, transparent 1px)', backgroundSize: '20px 20px'}}>
         <div className="max-w-2xl mx-auto flex items-center justify-between">
@@ -132,20 +132,20 @@ export default function Decisions() {
       </div>
 
       {/* Bottom filter dashboard */}
-      <div className="fixed lg:relative bottom-0 left-0 right-0 bg-gradient-to-t from-[#5B4FCF] to-[#5B4FCF]/95 px-4 py-6">
-        <div className="max-w-2xl mx-auto grid grid-cols-3 gap-3">
+      <div className="fixed lg:relative bottom-0 left-0 right-0 px-4 pt-8 pb-6">
+        <div className="max-w-2xl mx-auto grid grid-cols-3 gap-3 -mt-16">
           {filters.map(f => (
             <button
               key={f.key}
               onClick={() => setFilter(f.key)}
-              className={`flex flex-col items-center gap-2 p-4 rounded-2xl transition-all ${
+              className={`flex flex-col items-center gap-2 p-4 rounded-3xl transition-all shadow-lg ${
                 filter === f.key
-                  ? 'bg-white text-[#5B4FCF] shadow-lg scale-105'
-                  : 'bg-white/15 text-white hover:bg-white/25'
+                  ? 'bg-white text-[#5B4FCF] scale-105'
+                  : 'bg-white text-[#5B4FCF] hover:shadow-xl'
               }`}
             >
               <span className="text-2xl">{f.icon}</span>
-              <span className="text-xs font-medium text-center leading-tight">{f.label}</span>
+              <span className="text-xs font-bold text-center leading-tight">{f.label}</span>
             </button>
           ))}
         </div>
