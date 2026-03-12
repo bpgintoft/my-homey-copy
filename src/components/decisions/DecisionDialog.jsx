@@ -22,9 +22,10 @@ export default function DecisionDialog({ decision, currentUserEmail, onSave, onD
   );
   const [status, setStatus] = useState(decision.status || 'pending');
   const [newComment, setNewComment] = useState('');
+  const [editingIndex, setEditingIndex] = useState(null);
+  const [editingText, setEditingText] = useState('');
+  const [localComments, setLocalComments] = useState(decision.comments || []);
   const commentsEndRef = useRef(null);
-
-  const comments = decision.comments || [];
 
   useEffect(() => {
     commentsEndRef.current?.scrollIntoView({ behavior: 'smooth' });
