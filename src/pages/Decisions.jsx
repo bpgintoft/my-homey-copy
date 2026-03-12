@@ -77,14 +77,17 @@ export default function Decisions() {
     <div className="min-h-screen bg-[#5B4FCF]">
       {/* Header */}
       <div className="px-6 pt-8 pb-6 relative overflow-hidden">
-        {/* Etched texture layers */}
-        <div className="absolute inset-0" style={{
-          backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.18) 1px, transparent 1px)',
-          backgroundSize: '18px 18px',
-        }} />
-        <div className="absolute inset-0" style={{
-          backgroundImage: 'repeating-linear-gradient(45deg, rgba(255,255,255,0.04) 0px, rgba(255,255,255,0.04) 1px, transparent 1px, transparent 12px)',
-        }} />
+        {/* Topographic contour lines */}
+        <svg className="absolute inset-0 w-full h-full" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+          <defs>
+            <filter id="topo-blur">
+              <feTurbulence type="turbulence" baseFrequency="0.012 0.008" numOctaves="4" seed="3" result="noise" />
+              <feColorMatrix type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 18 -7" in="noise" result="contour" />
+              <feComposite in="SourceGraphic" in2="contour" operator="in" />
+            </filter>
+          </defs>
+          <rect width="100%" height="100%" fill="rgba(255,255,255,0.13)" filter="url(#topo-blur)" />
+        </svg>
         <div className="max-w-2xl mx-auto flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold text-white">Family Decisions</h1>
