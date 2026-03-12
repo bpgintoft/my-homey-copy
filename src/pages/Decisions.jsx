@@ -74,35 +74,25 @@ export default function Decisions() {
   const resolved = decisions.filter(d => d.status === 'approved' || d.status === 'rejected');
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#5B4FCF] to-[#4a3fb5]">
-      {/* Header with decorative dots */}
-      <div className="px-6 pt-6 pb-8 relative overflow-hidden" style={{backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.08) 1px, transparent 1px)', backgroundSize: '30px 30px'}}>
-        <div className="max-w-2xl mx-auto">
-          <div className="flex items-center justify-between mb-8">
-            <div>
-              <h1 className="text-4xl font-bold text-white">Family Decisions</h1>
-              <p className="text-sm text-indigo-200 mt-1">Proposals, votes &amp; follow-ups</p>
-            </div>
-            <button
-              onClick={() => setShowNew(true)}
-              className="flex items-center gap-2 bg-white text-[#5B4FCF] font-semibold text-base px-6 py-3 rounded-full shadow-lg hover:shadow-xl hover:scale-105 transition-all"
-            >
-              <Plus className="w-5 h-5" />
-              Propose
-            </button>
+    <div className="min-h-screen bg-[#4a3fb5]">
+      {/* Header */}
+      <div className="px-6 pt-8 pb-6" style={{backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.07) 1px, transparent 1px)', backgroundSize: '20px 20px'}}>
+        <div className="max-w-2xl mx-auto flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-white">Family Decisions</h1>
+            <p className="text-xs text-indigo-200 mt-0.5">Proposals, votes &amp; follow-ups</p>
           </div>
-
-          {/* Needs a Decision label */}
-          {pending.length > 0 && (
-            <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full border border-white/20 mb-6">
-              <span className="text-indigo-300">🔹</span>
-              <span className="text-sm font-semibold text-white uppercase tracking-wide">Needs a Decision</span>
-            </div>
-          )}
+          <button
+            onClick={() => setShowNew(true)}
+            className="flex items-center gap-1.5 bg-white text-[#5B4FCF] font-semibold text-sm px-4 py-2 rounded-full shadow hover:bg-indigo-50 transition-colors"
+          >
+            <Plus className="w-4 h-4" />
+            Propose
+          </button>
         </div>
       </div>
 
-      <div className="max-w-2xl mx-auto px-4 pb-8 pt-4">
+      <div className="max-w-2xl mx-auto px-4 pb-8 pt-2 bg-[#5B4FCF] rounded-t-3xl shadow-inner">
 
         {decisions.length === 0 && (
           <div className="text-center py-20 text-indigo-200">
@@ -113,7 +103,8 @@ export default function Decisions() {
         )}
 
         {pending.length > 0 && (
-          <div className="mb-8">
+          <div className="mb-6">
+            <h2 className="text-xs font-semibold text-indigo-200 uppercase tracking-wider mb-3 px-1">Needs a Decision</h2>
             <div className="space-y-3">
               {pending.map(d => (
                 <DecisionCard key={d.id} decision={d} onClick={setSelectedDecision} />
@@ -124,8 +115,8 @@ export default function Decisions() {
 
         {resolved.length > 0 && (
           <div>
-            <h2 className="text-xs font-semibold text-indigo-300 uppercase tracking-wider mb-4 px-1">Resolved</h2>
-            <div className="space-y-3 opacity-75">
+            <h2 className="text-xs font-semibold text-indigo-200 uppercase tracking-wider mb-3 px-1">Resolved</h2>
+            <div className="space-y-3">
               {resolved.map(d => (
                 <DecisionCard key={d.id} decision={d} onClick={setSelectedDecision} />
               ))}
