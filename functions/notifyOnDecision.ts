@@ -18,6 +18,11 @@ Deno.serve(async (req) => {
     const proposerEmail = decision.proposer_email;
     const isCreate = event?.type === 'create';
 
+    // Only notify on new proposals, not on updates (updates are made by the other person)
+    if (!isCreate) {
+      return Response.json({ ok: true, skipped: 'update events not notified' });
+    }
+
     // Determine who to notify (always the non-proposer)
     let notifyEmail = null;
     if (proposerEmail === BRYAN_EMAIL) {
