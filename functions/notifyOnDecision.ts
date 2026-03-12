@@ -17,56 +17,42 @@ Deno.serve(async (req) => {
 
     const proposerEmail = decision.proposer_email;
     const isCreate = event?.type === 'create';
-    const isUpdate = event?.type === 'update';
 
-    // Determine who to notify (the other person)
-    let recipientEmail = null;
-    let recipientName = null;
-
+    // Determine who to notify (always the non-proposer)
+    let notifyEmail = null;
     if (proposerEmail === BRYAN_EMAIL) {
-      recipientEmail = KATE_EMAIL;
-      recipientName = 'Kate';
+      notifyEmail = KATE_EMAIL;
     } else if (proposerEmail === KATE_EMAIL) {
-      recipientEmail = BRYAN_EMAIL;
-      recipientName = 'Bryan';
+      notifyEmail = BRYAN_EMAIL;
     } else {
-      // Unknown proposer - notify both
-      recipientEmail = null;
-    }
-
-    // For updates (votes/comments), notify the proposer if someone else responded
-    // We check who the current user is via the request
-    let notifyEmail = recipientEmail;
-    let notifyName = recipientName;
-
-    if (!notifyEmail) {
       return Response.json({ ok: true, skipped: 'unknown proposer' });
     }
 
-    // Find the recipient user by email
-    const users = await base44.asServiceRole.entities.User.list();
-    const recipientUser = users.find(u => u.email === notifyEmail);
+    const decisionId = decision.id || event?.entity_id || '';
 
-    if (!recipientUser) {
-      return Response.json({ ok: true, skipped: 'recipient user not found' });
+    // Check if an unread notification already exists for this decision + recipient
+    // to avoid spamming multiple notifications for the same proposal
+    const existingNotifs = await base44.asServiceRole.entities.Notification.filter({
+      recipient_member_id: notifyEmail,
+      chore_id: decisionId,
+      is_read: false,
+    });
+
+    if (existingNotifs.length > 0) {
+      // Already have an unread notification for this decision — don't create another
+      return Response.json({ ok: true, skipped: 'notification already exists' });
     }
 
-    // Create a notification for the recipient
-    let notifTitle = '';
-    if (isCreate) {
-      notifTitle = `New decision proposed: "${decision.title}"`;
-    } else if (isUpdate) {
-      notifTitle = `Update on decision: "${decision.title}"`;
-    } else {
-      notifTitle = `Decision update: "${decision.title}"`;
-    }
+    const notifTitle = isCreate
+      ? `New decision proposed: "${decision.title}"`
+      : `Update on decision: "${decision.title}"`;
 
     await base44.asServiceRole.entities.Notification.create({
       recipient_member_id: notifyEmail,
       triggering_member_name: decision.proposer_name || proposerEmail,
       triggering_member_id: proposerEmail,
       chore_title: notifTitle,
-      chore_id: decision.id || '',
+      chore_id: decisionId,
       completed_date: new Date().toISOString(),
       is_read: false,
     });

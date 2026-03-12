@@ -48,9 +48,14 @@ export default function DecisionCard({ decision, onClick }) {
             {decision.created_date ? format(new Date(decision.created_date), 'MMM d') : ''}
           </span>
         </div>
-        {decision.proposer_name && (
-          <p className="text-xs text-gray-400 mt-1">Proposed by {decision.proposer_name}</p>
-        )}
+        <div className="flex items-center justify-between mt-1">
+          {decision.proposer_name && (
+            <p className="text-xs text-gray-400">Proposed by {decision.proposer_name}</p>
+          )}
+          {decision.comments?.length > 0 && (
+            <p className="text-xs text-gray-400">💬 {decision.comments.length} comment{decision.comments.length !== 1 ? 's' : ''}</p>
+          )}
+        </div>
       </CardContent>
     </Card>
   );

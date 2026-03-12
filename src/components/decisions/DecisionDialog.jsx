@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Trash2 } from 'lucide-react';
+import { Trash2, Send } from 'lucide-react';
+import { format } from 'date-fns';
 
 const BRYAN_EMAIL = 'bpgintoft@gmail.com';
 const KATE_EMAIL = 'kateeliz11@gmail.com';
@@ -14,55 +15,68 @@ const voteEmoji = { yes: '✅ Yes', no: '❌ No', maybe: '🤔 Maybe' };
 export default function DecisionDialog({ decision, currentUserEmail, onSave, onDelete, onClose }) {
   const isBryan = currentUserEmail === BRYAN_EMAIL;
   const isKate = currentUserEmail === KATE_EMAIL;
+  const myName = isBryan ? 'Bryan' : 'Kate';
 
   const [myVote, setMyVote] = useState(
     isBryan ? (decision.bryan_vote || '') : (decision.kate_vote || '')
   );
-  const [myComment, setMyComment] = useState(
-    isBryan ? (decision.bryan_comment || '') : (decision.kate_comment || '')
-  );
   const [status, setStatus] = useState(decision.status || 'pending');
+  const [newComment, setNewComment] = useState('');
+  const commentsEndRef = useRef(null);
+
+  const comments = decision.comments || [];
+
+  useEffect(() => {
+    commentsEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [comments.length]);
 
   const handleSave = () => {
     const updates = { status };
-    if (isBryan) {
-      updates.bryan_vote = myVote;
-      updates.bryan_comment = myComment;
-    } else if (isKate) {
-      updates.kate_vote = myVote;
-      updates.kate_comment = myComment;
+    if (isBryan) updates.bryan_vote = myVote;
+    else if (isKate) updates.kate_vote = myVote;
+
+    // Append new comment if typed
+    if (newComment.trim()) {
+      updates.comments = [
+        ...comments,
+        {
+          commenter_email: currentUserEmail,
+          commenter_name: myName,
+          text: newComment.trim(),
+          timestamp: new Date().toISOString(),
+        }
+      ];
     }
+
     onSave(decision.id, updates);
   };
 
   const otherName = isBryan ? 'Kate' : 'Bryan';
   const otherVote = isBryan ? decision.kate_vote : decision.bryan_vote;
-  const otherComment = isBryan ? decision.kate_comment : decision.bryan_comment;
 
   return (
     <Dialog open onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-md max-h-[90vh] flex flex-col overflow-hidden">
         <DialogHeader>
-          <DialogTitle className="text-base leading-snug">{decision.title}</DialogTitle>
+          <DialogTitle className="text-base leading-snug pr-6">{decision.title}</DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-4 py-2">
+        <div className="flex-1 overflow-y-auto space-y-4 py-2">
           {decision.description && (
             <p className="text-sm text-gray-600">{decision.description}</p>
           )}
 
-          {/* Other person's response */}
-          {(otherVote || otherComment) && (
-            <div className="bg-gray-50 rounded-lg p-3">
-              <p className="text-xs font-semibold text-gray-500 mb-1">{otherName}'s Response</p>
-              {otherVote && (
-                <p className="text-sm font-medium">{voteEmoji[otherVote] || otherVote}</p>
-              )}
-              {otherComment && (
-                <p className="text-sm text-gray-700 mt-1">{otherComment}</p>
-              )}
+          {/* Votes row */}
+          <div className="flex gap-3">
+            <div className="flex-1 bg-gray-50 rounded-lg p-3 text-center">
+              <p className="text-xs text-gray-500 mb-1">Bryan</p>
+              <p className="text-sm font-medium">{decision.bryan_vote ? voteEmoji[decision.bryan_vote] : '—'}</p>
             </div>
-          )}
+            <div className="flex-1 bg-gray-50 rounded-lg p-3 text-center">
+              <p className="text-xs text-gray-500 mb-1">Kate</p>
+              <p className="text-sm font-medium">{decision.kate_vote ? voteEmoji[decision.kate_vote] : '—'}</p>
+            </div>
+          </div>
 
           {/* My vote */}
           <div className="space-y-2">
@@ -82,18 +96,42 @@ export default function DecisionDialog({ decision, currentUserEmail, onSave, onD
             </div>
           </div>
 
-          {/* My comment */}
+          {/* Comments chat log */}
+          {comments.length > 0 && (
+            <div className="space-y-2">
+              <Label>Discussion</Label>
+              <div className="space-y-2 max-h-48 overflow-y-auto bg-gray-50 rounded-lg p-3">
+                {comments.map((c, i) => {
+                  const isMe = c.commenter_email === currentUserEmail;
+                  return (
+                    <div key={i} className={`flex flex-col ${isMe ? 'items-end' : 'items-start'}`}>
+                      <div className={`rounded-xl px-3 py-2 max-w-[85%] ${isMe ? 'bg-gray-900 text-white' : 'bg-white border border-gray-200 text-gray-800'}`}>
+                        <p className="text-xs font-semibold mb-0.5 opacity-70">{c.commenter_name}</p>
+                        <p className="text-sm leading-snug">{c.text}</p>
+                      </div>
+                      <p className="text-xs text-gray-400 mt-0.5 px-1">
+                        {c.timestamp ? format(new Date(c.timestamp), 'MMM d, h:mm a') : ''}
+                      </p>
+                    </div>
+                  );
+                })}
+                <div ref={commentsEndRef} />
+              </div>
+            </div>
+          )}
+
+          {/* New comment input */}
           <div className="space-y-2">
-            <Label>Your Comment (optional)</Label>
+            <Label>{comments.length > 0 ? 'Add a comment' : 'Comment (optional)'}</Label>
             <Textarea
-              value={myComment}
-              onChange={e => setMyComment(e.target.value)}
+              value={newComment}
+              onChange={e => setNewComment(e.target.value)}
               placeholder="Add context, conditions, thoughts..."
-              rows={3}
+              rows={2}
             />
           </div>
 
-          {/* Status — only proposer or Bryan (admin) can set */}
+          {/* Status */}
           <div className="space-y-2">
             <Label>Status</Label>
             <Select value={status} onValueChange={setStatus}>
@@ -110,7 +148,10 @@ export default function DecisionDialog({ decision, currentUserEmail, onSave, onD
           </div>
 
           <div className="flex gap-2 pt-2">
-            <Button onClick={handleSave} className="flex-1">Save Response</Button>
+            <Button onClick={handleSave} className="flex-1 gap-1">
+              <Send className="w-4 h-4" />
+              Save
+            </Button>
             <Button variant="outline" onClick={onClose}>Cancel</Button>
             {decision.proposer_email === currentUserEmail && (
               <Button
