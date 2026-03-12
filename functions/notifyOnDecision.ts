@@ -49,7 +49,10 @@ Deno.serve(async (req) => {
       return Response.json({ ok: true, skipped: 'notification already exists' });
     }
 
-    const notifTitle = `New decision proposed: "${decision.title}"`;
+    const actorName = actorEmail === BRYAN_EMAIL ? 'Bryan' : 'Kate';
+    const notifTitle = isCreate
+      ? `New decision proposed: "${decision.title}"`
+      : `${actorName} updated: "${decision.title}"`;
 
     await base44.asServiceRole.entities.Notification.create({
       recipient_member_id: notifyEmail,
