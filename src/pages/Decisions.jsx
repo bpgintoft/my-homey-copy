@@ -20,7 +20,7 @@ export default function Decisions() {
   const [currentUser, setCurrentUser] = useState(null);
   const [showNew, setShowNew] = useState(false);
   const [selectedDecision, setSelectedDecision] = useState(null);
-  const [filter, setFilter] = useState('pending');
+  const [filter, setFilter] = useState('undecided');
   const queryClient = useQueryClient();
 
   useEffect(() => {
@@ -72,9 +72,8 @@ export default function Decisions() {
   });
 
   const filterDecisions = () => {
-    if (filter === 'pending') return decisions.filter(d => d.status === 'pending' || d.status === 'needs_discussion');
-    if (filter === 'approved') return decisions.filter(d => d.status === 'approved');
-    if (filter === 'rejected') return decisions.filter(d => d.status === 'rejected');
+    if (filter === 'undecided') return decisions.filter(d => !d.is_archived && (d.status === 'pending' || d.status === 'needs_discussion'));
+    if (filter === 'needs_action') return decisions.filter(d => !d.is_archived && (d.status === 'approved' || d.status === 'rejected'));
     if (filter === 'archived') return decisions.filter(d => d.is_archived);
     return decisions;
   };
@@ -82,9 +81,9 @@ export default function Decisions() {
   const filtered = filterDecisions();
 
   const filters = [
-    { key: 'pending', label: 'Needs Decision', icon: '⏳' },
-    { key: 'approved', label: 'Approved', icon: '✅' },
-    { key: 'rejected', label: 'Rejected', icon: '❌' },
+    { key: 'undecided', label: 'Undecided', icon: '⏳' },
+    { key: 'needs_action', label: 'Needs Action', icon: '⚡' },
+    { key: 'archived', label: 'Archived', icon: '📦' },
   ];
 
   return (
