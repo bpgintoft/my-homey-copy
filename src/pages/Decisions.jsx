@@ -74,47 +74,52 @@ export default function Decisions() {
   const resolved = decisions.filter(d => d.status === 'approved' || d.status === 'rejected');
 
   return (
-    <div className="p-6 max-w-2xl mx-auto">
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Family Decisions</h1>
-          <p className="text-sm text-gray-500 mt-0.5">Proposals, votes, and follow-ups</p>
+    <div className="min-h-screen bg-[#F5F5F7]">
+      {/* Header */}
+      <div className="bg-white border-b border-gray-200 px-6 py-5">
+        <div className="max-w-2xl mx-auto flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">Family Decisions</h1>
+            <p className="text-sm text-gray-500 mt-0.5">Proposals, votes, and follow-ups</p>
+          </div>
+          <Button onClick={() => setShowNew(true)} className="gap-1.5 bg-gray-900 hover:bg-gray-700">
+            <Plus className="w-4 h-4" />
+            Propose
+          </Button>
         </div>
-        <Button onClick={() => setShowNew(true)} className="gap-1">
-          <Plus className="w-4 h-4" />
-          Propose
-        </Button>
       </div>
 
-      {decisions.length === 0 && (
-        <div className="text-center py-16 text-gray-400">
-          <div className="text-4xl mb-3">🤝</div>
-          <p className="font-medium">No decisions yet</p>
-          <p className="text-sm mt-1">Tap "Propose" to get started</p>
-        </div>
-      )}
-
-      {pending.length > 0 && (
-        <div className="mb-6">
-          <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">Needs a Decision</h2>
-          <div className="space-y-3">
-            {pending.map(d => (
-              <DecisionCard key={d.id} decision={d} onClick={setSelectedDecision} />
-            ))}
+      <div className="max-w-2xl mx-auto px-6 py-6">
+        {decisions.length === 0 && (
+          <div className="text-center py-20 text-gray-400 bg-white rounded-2xl border border-gray-100 shadow-sm">
+            <div className="text-4xl mb-3">🤝</div>
+            <p className="font-medium text-gray-600">No decisions yet</p>
+            <p className="text-sm mt-1">Tap "Propose" to get started</p>
           </div>
-        </div>
-      )}
+        )}
 
-      {resolved.length > 0 && (
-        <div>
-          <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">Resolved</h2>
-          <div className="space-y-3">
-            {resolved.map(d => (
-              <DecisionCard key={d.id} decision={d} onClick={setSelectedDecision} />
-            ))}
+        {pending.length > 0 && (
+          <div className="mb-6">
+            <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Needs a Decision</h2>
+            <div className="space-y-3">
+              {pending.map(d => (
+                <DecisionCard key={d.id} decision={d} onClick={setSelectedDecision} />
+              ))}
+            </div>
           </div>
-        </div>
-      )}
+        )}
+
+        {resolved.length > 0 && (
+          <div>
+            <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Resolved</h2>
+            <div className="space-y-3">
+              {resolved.map(d => (
+                <DecisionCard key={d.id} decision={d} onClick={setSelectedDecision} />
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
 
       {showNew && currentUser && (
         <NewDecisionDialog
