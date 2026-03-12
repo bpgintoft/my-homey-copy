@@ -165,7 +165,7 @@ export default function DecisionDialog({ decision, currentUserEmail, onSave, onD
 
           {/* New comment input */}
           <div className="space-y-2">
-            <Label>{comments.length > 0 ? 'Add a comment' : 'Comment (optional)'}</Label>
+            <Label>{localComments.length > 0 ? 'Add a comment' : 'Comment (optional)'}</Label>
             <Textarea
               value={newComment}
               onChange={e => setNewComment(e.target.value)}
