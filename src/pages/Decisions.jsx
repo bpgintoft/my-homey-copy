@@ -86,7 +86,6 @@ export default function Decisions() {
     { key: 'approved', label: 'Approved', icon: '✅' },
     { key: 'rejected', label: 'Rejected', icon: '❌' },
     { key: 'archived', label: 'Archived', icon: '📦' },
-    { key: 'all', label: 'All', icon: '📋' },
   ];
 
   return (
@@ -135,7 +134,7 @@ export default function Decisions() {
 
       {/* Bottom filter dashboard */}
       <div className="fixed lg:relative bottom-0 left-0 right-0 bg-gradient-to-t from-[#5B4FCF] to-[#5B4FCF]/95 px-4 py-6">
-        <div className="max-w-2xl mx-auto grid grid-cols-5 gap-3">
+        <div className="max-w-2xl mx-auto grid grid-cols-4 gap-3">
           {filters.map(f => (
             <button
               key={f.key}
