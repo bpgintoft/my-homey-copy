@@ -77,14 +77,18 @@ export default function Decisions() {
     <div className="min-h-screen bg-[#5B4FCF]">
       {/* Header */}
       <div className="px-6 pt-8 pb-6 relative overflow-hidden">
-        {/* Etched texture layers */}
-        <div className="absolute inset-0" style={{
-          backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.18) 1px, transparent 1px)',
-          backgroundSize: '18px 18px',
-        }} />
-        <div className="absolute inset-0" style={{
-          backgroundImage: 'repeating-linear-gradient(45deg, rgba(255,255,255,0.04) 0px, rgba(255,255,255,0.04) 1px, transparent 1px, transparent 12px)',
-        }} />
+        {/* Hexagonal grid texture */}
+        <svg className="absolute inset-0 w-full h-full" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <pattern id="hex" x="0" y="0" width="28" height="48.5" patternUnits="userSpaceOnUse">
+              <polygon points="14,1 27,8 27,22 14,29 1,22 1,8" fill="none" stroke="rgba(255,255,255,0.15)" strokeWidth="1"/>
+              <polygon points="14,25 27,32 27,46 14,53 1,46 1,32" fill="none" stroke="rgba(255,255,255,0.15)" strokeWidth="1"/>
+              <polygon points="0,16.5 13,9.5 13,23.5 0,30.5" fill="none" stroke="rgba(255,255,255,0.15)" strokeWidth="1"/>
+              <polygon points="28,16.5 41,9.5 41,23.5 28,30.5" fill="none" stroke="rgba(255,255,255,0.15)" strokeWidth="1"/>
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#hex)" />
+        </svg>
         <div className="max-w-2xl mx-auto flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold text-white">Family Decisions</h1>
