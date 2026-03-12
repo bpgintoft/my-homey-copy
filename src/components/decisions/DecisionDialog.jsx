@@ -31,7 +31,23 @@ export default function DecisionDialog({ decision, currentUserEmail, onSave, onD
   }, [localComments.length]);
 
   const handleSave = () => {
-    const updates = { status, last_updated_by_email: currentUserEmail };
+    const bryantVote = isBryan ? myVote : decision.bryan_vote;
+    const kateVote = isKate ? myVote : decision.kate_vote;
+    
+    // Auto-update status: if both voted yes, move to needs_action
+    let finalStatus = status;
+    if (bryantVote === 'yes' && kateVote === 'yes' && status === 'pending') {
+      finalStatus = 'needs_action';
+    }
+    
+    // Auto-archive: if status is completed, archive it
+    let isArchived = decision.is_archived;
+    if (finalStatus === 'completed') {
+      isArchived = true;
+      finalStatus = 'completed';
+    }
+
+    const updates = { status: finalStatus, is_archived: isArchived, last_updated_by_email: currentUserEmail };
     if (isBryan) updates.bryan_vote = myVote;
     else if (isKate) updates.kate_vote = myVote;
 
@@ -185,9 +201,8 @@ export default function DecisionDialog({ decision, currentUserEmail, onSave, onD
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="pending">Pending</SelectItem>
-                <SelectItem value="approved">Approved ✓</SelectItem>
-                <SelectItem value="rejected">Rejected</SelectItem>
-                <SelectItem value="needs_discussion">Needs Discussion</SelectItem>
+                <SelectItem value="needs_action">Needs Action</SelectItem>
+                <SelectItem value="completed">Completed</SelectItem>
               </SelectContent>
             </Select>
           </div>
