@@ -76,19 +76,39 @@ export default function Decisions() {
   return (
     <div className="min-h-screen bg-[#5B4FCF]">
       {/* Header */}
-      <div className="px-6 pt-8 pb-6">
-        <div className="max-w-2xl mx-auto flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-white">Family Decisions</h1>
-            <p className="text-sm text-indigo-200 mt-0.5">Proposals, votes, and follow-ups</p>
+      <div className="px-6 pt-10 pb-8">
+        <div className="max-w-2xl mx-auto">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-2xl bg-white/15 flex items-center justify-center text-xl">🤝</div>
+              <div>
+                <h1 className="text-2xl font-bold text-white">Family Decisions</h1>
+                <p className="text-xs text-indigo-200 mt-0.5">Proposals, votes, and follow-ups</p>
+              </div>
+            </div>
+            <button
+              onClick={() => setShowNew(true)}
+              className="flex items-center gap-1.5 bg-white text-[#5B4FCF] font-semibold text-sm px-4 py-2 rounded-full shadow hover:bg-indigo-50 transition-colors"
+            >
+              <Plus className="w-4 h-4" />
+              Propose
+            </button>
           </div>
-          <button
-            onClick={() => setShowNew(true)}
-            className="flex items-center gap-1.5 bg-white text-[#5B4FCF] font-semibold text-sm px-4 py-2 rounded-full shadow hover:bg-indigo-50 transition-colors"
-          >
-            <Plus className="w-4 h-4" />
-            Propose
-          </button>
+          {/* Stats row */}
+          <div className="flex gap-3">
+            <div className="flex-1 bg-white/10 rounded-2xl px-4 py-3 text-center">
+              <p className="text-xl font-bold text-white">{decisions.filter(d => d.status === 'pending' || d.status === 'needs_discussion').length}</p>
+              <p className="text-xs text-indigo-200 mt-0.5">Pending</p>
+            </div>
+            <div className="flex-1 bg-white/10 rounded-2xl px-4 py-3 text-center">
+              <p className="text-xl font-bold text-white">{decisions.filter(d => d.status === 'approved').length}</p>
+              <p className="text-xs text-indigo-200 mt-0.5">Approved</p>
+            </div>
+            <div className="flex-1 bg-white/10 rounded-2xl px-4 py-3 text-center">
+              <p className="text-xl font-bold text-white">{decisions.length}</p>
+              <p className="text-xs text-indigo-200 mt-0.5">Total</p>
+            </div>
+          </div>
         </div>
       </div>
 
