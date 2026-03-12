@@ -93,7 +93,7 @@ export default function Decisions() {
           </div>
           <button
             onClick={() => setShowNew(true)}
-            className="flex items-center gap-1.5 bg-white text-[#5B4FCF] font-semibold text-sm px-4 py-2 rounded-full shadow hover:bg-indigo-50 transition-colors"
+            className="flex items-center gap-1.5 bg-amber-900 text-amber-100 font-semibold text-sm px-4 py-2 rounded-full shadow hover:bg-amber-800 transition-colors"
           >
             <Plus className="w-4 h-4" />
             Propose
