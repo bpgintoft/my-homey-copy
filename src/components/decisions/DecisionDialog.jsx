@@ -31,7 +31,7 @@ export default function DecisionDialog({ decision, currentUserEmail, onSave, onD
   }, [localComments.length]);
 
   const handleSave = () => {
-    const updates = { status };
+    const updates = { status, last_updated_by_email: currentUserEmail };
     if (isBryan) updates.bryan_vote = myVote;
     else if (isKate) updates.kate_vote = myVote;
 
