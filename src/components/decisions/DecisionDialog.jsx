@@ -128,8 +128,8 @@ export default function DecisionDialog({ decision, currentUserEmail, onSave, onD
                               value={editingText}
                               onChange={e => setEditingText(e.target.value)}
                               rows={2}
-                              className="text-sm text-gray-900"
-                              autoFocus
+                              className="text-sm text-gray-900 bg-white"
+                              style={{ fontSize: '16px' }}
                             />
                             <div className="flex gap-1 justify-end">
                               <Button size="sm" variant="ghost" className="h-6 px-2 text-xs" onClick={() => { setEditingIndex(null); setEditingText(''); }}>
