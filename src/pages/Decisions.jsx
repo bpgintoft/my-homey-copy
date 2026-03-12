@@ -124,8 +124,8 @@ export default function Decisions() {
 
         {resolved.length > 0 && (
           <div>
-            <h2 className="text-xs font-semibold text-indigo-200 uppercase tracking-wider mb-3 px-1">Resolved</h2>
-            <div className="space-y-3">
+            <h2 className="text-xs font-semibold text-indigo-300 uppercase tracking-wider mb-4 px-1">Resolved</h2>
+            <div className="space-y-3 opacity-75">
               {resolved.map(d => (
                 <DecisionCard key={d.id} decision={d} onClick={setSelectedDecision} />
               ))}
