@@ -56,8 +56,8 @@ Deno.serve(async (req) => {
 
     await base44.asServiceRole.entities.Notification.create({
       recipient_member_id: notifyEmail,
-      triggering_member_name: decision.proposer_name || proposerEmail,
-      triggering_member_id: proposerEmail,
+      triggering_member_name: actorEmail === BRYAN_EMAIL ? 'Bryan' : 'Kate',
+      triggering_member_id: actorEmail,
       chore_title: notifTitle,
       chore_id: decisionId,
       completed_date: new Date().toISOString(),
