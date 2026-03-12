@@ -171,6 +171,7 @@ export default function DecisionDialog({ decision, currentUserEmail, onSave, onD
               onChange={e => setNewComment(e.target.value)}
               placeholder="Add context, conditions, thoughts..."
               rows={2}
+              style={{ fontSize: '16px' }}
             />
           </div>
 
