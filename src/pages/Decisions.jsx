@@ -107,7 +107,7 @@ export default function Decisions() {
             Propose
           </button>
         </div>
-      </div>
+        </div>{/* /relative header */}
 
       <div className="max-w-2xl mx-auto px-4 pb-8 pt-2">
         <div className="mb-6 mx-2">
