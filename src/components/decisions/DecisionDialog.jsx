@@ -29,17 +29,17 @@ export default function DecisionDialog({ decision, currentUserEmail, onSave, onD
 
   useEffect(() => {
     commentsEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [comments.length]);
+  }, [localComments.length]);
 
   const handleSave = () => {
     const updates = { status };
     if (isBryan) updates.bryan_vote = myVote;
     else if (isKate) updates.kate_vote = myVote;
 
-    // Append new comment if typed
+    let updatedComments = [...localComments];
     if (newComment.trim()) {
-      updates.comments = [
-        ...comments,
+      updatedComments = [
+        ...updatedComments,
         {
           commenter_email: currentUserEmail,
           commenter_name: myName,
@@ -48,11 +48,24 @@ export default function DecisionDialog({ decision, currentUserEmail, onSave, onD
         }
       ];
     }
-
+    updates.comments = updatedComments;
     onSave(decision.id, updates);
   };
 
-  const otherName = isBryan ? 'Kate' : 'Bryan';
+  const handleEditSave = (i) => {
+    if (!editingText.trim()) return;
+    const updated = localComments.map((c, idx) =>
+      idx === i ? { ...c, text: editingText.trim() } : c
+    );
+    setLocalComments(updated);
+    setEditingIndex(null);
+    setEditingText('');
+  };
+
+  const handleDeleteComment = (i) => {
+    setLocalComments(localComments.filter((_, idx) => idx !== i));
+  };
+
   const otherVote = isBryan ? decision.kate_vote : decision.bryan_vote;
 
   return (
