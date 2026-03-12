@@ -52,9 +52,7 @@ export default function DecisionCard({ decision, onClick }) {
           <span>{decision.created_date ? format(new Date(decision.created_date), 'MMM d') : ''}</span>
         </div>
       </div>
-      {decision.proposer_name && (
-        <p className="text-xs text-indigo-300 mt-1.5">by {decision.proposer_name}</p>
-      )}
+
     </div>
   );
 }
