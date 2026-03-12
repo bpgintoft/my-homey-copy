@@ -77,21 +77,13 @@ export default function Decisions() {
     <div className="min-h-screen bg-[#5B4FCF]">
       {/* Header */}
       <div className="px-6 pt-8 pb-6 relative overflow-hidden">
-        {/* Glossy diagonal light streaks */}
+        {/* Etched texture layers */}
         <div className="absolute inset-0" style={{
-          background: 'linear-gradient(135deg, #7B2FBE 0%, #5B0FAF 40%, #3B0080 100%)',
+          backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.18) 1px, transparent 1px)',
+          backgroundSize: '18px 18px',
         }} />
-        {/* Streak 1 - wide soft */}
         <div className="absolute inset-0" style={{
-          background: 'repeating-linear-gradient(135deg, transparent 0px, transparent 60px, rgba(180,100,255,0.18) 60px, rgba(180,100,255,0.18) 80px, transparent 80px, transparent 160px)',
-        }} />
-        {/* Streak 2 - bright highlight lines */}
-        <div className="absolute inset-0" style={{
-          background: 'repeating-linear-gradient(135deg, transparent 0px, transparent 100px, rgba(220,160,255,0.35) 100px, rgba(255,220,255,0.55) 104px, rgba(220,160,255,0.25) 108px, transparent 108px, transparent 200px)',
-        }} />
-        {/* Streak 3 - deep shadow bands */}
-        <div className="absolute inset-0" style={{
-          background: 'repeating-linear-gradient(135deg, rgba(30,0,80,0.35) 0px, rgba(30,0,80,0.35) 55px, transparent 55px, transparent 160px)',
+          backgroundImage: 'repeating-linear-gradient(45deg, rgba(255,255,255,0.04) 0px, rgba(255,255,255,0.04) 1px, transparent 1px, transparent 12px)',
         }} />
         <div className="max-w-2xl mx-auto flex items-center justify-between">
           <div>
