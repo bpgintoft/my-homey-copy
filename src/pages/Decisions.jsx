@@ -80,7 +80,7 @@ export default function Decisions() {
         <div className="max-w-2xl mx-auto flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold text-white">Family Decisions</h1>
-            <p className="text-sm text-indigo-200 mt-0.5">Proposals, votes, and follow-ups</p>
+            <p className="text-xs text-indigo-200 mt-0.5">Proposals, votes &amp; follow-ups</p>
           </div>
           <button
             onClick={() => setShowNew(true)}
@@ -93,10 +93,7 @@ export default function Decisions() {
       </div>
 
       <div className="max-w-2xl mx-auto px-4 pb-8 pt-2 bg-[#5B4FCF] rounded-t-3xl shadow-inner">
-        <div className="mb-6 mx-2">
-          <div className="border-t border-black/20" />
-          <div className="border-t border-white/10" />
-        </div>
+
         {decisions.length === 0 && (
           <div className="text-center py-20 text-indigo-200">
             <div className="text-4xl mb-3">🤝</div>
