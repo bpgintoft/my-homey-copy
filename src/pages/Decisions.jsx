@@ -74,9 +74,9 @@ export default function Decisions() {
   const resolved = decisions.filter(d => d.status === 'approved' || d.status === 'rejected');
 
   return (
-    <div className="min-h-screen bg-[#5B4FCF]">
+    <div className="min-h-screen bg-[#4a3fb5]">
       {/* Header */}
-      <div className="px-6 pt-8 pb-6">
+      <div className="px-6 pt-8 pb-6" style={{backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.07) 1px, transparent 1px)', backgroundSize: '20px 20px'}}>
         <div className="max-w-2xl mx-auto flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold text-white">Family Decisions</h1>
