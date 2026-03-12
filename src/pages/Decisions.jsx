@@ -74,19 +74,39 @@ export default function Decisions() {
   const resolved = decisions.filter(d => d.status === 'approved' || d.status === 'rejected');
 
   return (
-    <div className="min-h-screen bg-[#5B4FCF]">
+    <div className="min-h-screen bg-[#1a1035]">
       {/* Header */}
-      <div className="px-6 pt-8 pb-6 relative overflow-hidden">
-        {/* Topographic contour lines */}
-        <svg className="absolute inset-0 w-full h-full" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+      <div className="px-6 pt-8 pb-6 relative overflow-hidden bg-[#0d0820]">
+        {/* Flowing wave layers */}
+        <svg className="absolute inset-0 w-full h-full" viewBox="0 0 800 160" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
           <defs>
-            <filter id="topo-blur">
-              <feTurbulence type="turbulence" baseFrequency="0.012 0.008" numOctaves="4" seed="3" result="noise" />
-              <feColorMatrix type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 18 -7" in="noise" result="contour" />
-              <feComposite in="SourceGraphic" in2="contour" operator="in" />
+            <radialGradient id="glow1" cx="40%" cy="60%" r="60%">
+              <stop offset="0%" stopColor="#9b4dff" stopOpacity="0.6" />
+              <stop offset="100%" stopColor="#0d0820" stopOpacity="0" />
+            </radialGradient>
+            <radialGradient id="glow2" cx="75%" cy="40%" r="50%">
+              <stop offset="0%" stopColor="#c77dff" stopOpacity="0.35" />
+              <stop offset="100%" stopColor="#0d0820" stopOpacity="0" />
+            </radialGradient>
+            <filter id="wave-blur">
+              <feGaussianBlur stdDeviation="6" />
             </filter>
           </defs>
-          <rect width="100%" height="100%" fill="rgba(255,255,255,0.13)" filter="url(#topo-blur)" />
+          <rect width="100%" height="100%" fill="#0d0820" />
+          <rect width="100%" height="100%" fill="url(#glow1)" />
+          <rect width="100%" height="100%" fill="url(#glow2)" />
+          {/* Wave 1 - wide luminous sweep */}
+          <path d="M-50,110 C100,40 250,130 400,70 C550,10 700,90 850,50 L850,180 L-50,180 Z"
+            fill="none" stroke="#8b5cf6" strokeWidth="1.5" strokeOpacity="0.5" filter="url(#wave-blur)" />
+          {/* Wave 2 */}
+          <path d="M-50,130 C120,70 280,150 430,90 C580,30 720,110 850,80 L850,180 L-50,180 Z"
+            fill="none" stroke="#c084fc" strokeWidth="1" strokeOpacity="0.35" filter="url(#wave-blur)" />
+          {/* Wave 3 - bright inner glow streak */}
+          <path d="M-50,90 C80,20 200,110 380,55 C520,5 680,85 850,30"
+            fill="none" stroke="#e0aaff" strokeWidth="2" strokeOpacity="0.4" filter="url(#wave-blur)" />
+          {/* Soft shimmer fill under wave 1 */}
+          <path d="M-50,110 C100,40 250,130 400,70 C550,10 700,90 850,50 L850,180 L-50,180 Z"
+            fill="url(#glow1)" opacity="0.3" />
         </svg>
         <div className="max-w-2xl mx-auto flex items-center justify-between">
           <div>
