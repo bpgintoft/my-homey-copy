@@ -92,7 +92,7 @@ export default function Decisions() {
         </div>
       </div>
 
-      <div className="max-w-2xl mx-auto px-4 pb-8 pt-2">
+      <div className="max-w-2xl mx-auto px-4 pb-8 pt-2 bg-[#5B4FCF] rounded-t-3xl shadow-inner">
         <div className="mb-6 mx-2">
           <div className="border-t border-black/20" />
           <div className="border-t border-white/10" />
