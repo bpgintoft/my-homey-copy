@@ -113,8 +113,7 @@ export default function Decisions() {
         )}
 
         {pending.length > 0 && (
-          <div className="mb-6">
-            <h2 className="text-xs font-semibold text-indigo-200 uppercase tracking-wider mb-3 px-1">Needs a Decision</h2>
+          <div className="mb-8">
             <div className="space-y-3">
               {pending.map(d => (
                 <DecisionCard key={d.id} decision={d} onClick={setSelectedDecision} />
