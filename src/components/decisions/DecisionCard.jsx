@@ -26,7 +26,7 @@ export default function DecisionCard({ decision, onClick }) {
 
   return (
     <div
-      className="cursor-pointer bg-[#2a1f5e]/80 hover:bg-[#3a2c78]/90 border border-purple-500/20 transition-all duration-200 rounded-3xl px-5 py-4 shadow-lg backdrop-blur-sm"
+      className="cursor-pointer bg-[#6E63D8] hover:bg-[#7a6fe0] transition-all duration-200 rounded-3xl px-5 py-4 shadow-sm"
       onClick={() => onClick(decision)}
     >
       <div className="flex items-start justify-between gap-2 mb-1">
