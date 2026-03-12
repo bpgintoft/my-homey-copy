@@ -90,7 +90,7 @@ export default function Decisions() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#4a3fb5]">
+    <div className="min-h-screen bg-[#4a3fb5] flex flex-col pb-44 lg:pb-8">
       {/* Header */}
       <div className="px-6 pt-8 pb-6" style={{backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.07) 1px, transparent 1px)', backgroundSize: '20px 20px'}}>
         <div className="max-w-2xl mx-auto flex items-center justify-between">
@@ -108,23 +108,7 @@ export default function Decisions() {
         </div>
       </div>
 
-      <div className="max-w-2xl mx-auto px-4 pb-8 pt-4 bg-[#5B4FCF] rounded-t-3xl shadow-inner">
-        {/* Filter buttons */}
-        <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
-          {filters.map(f => (
-            <button
-              key={f.key}
-              onClick={() => setFilter(f.key)}
-              className={`px-3 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-all ${
-                filter === f.key
-                  ? 'bg-white text-[#5B4FCF] shadow-lg'
-                  : 'bg-white/20 text-white hover:bg-white/30'
-              }`}
-            >
-              {f.icon} {f.label}
-            </button>
-          ))}
-        </div>
+      <div className="max-w-2xl mx-auto w-full px-4 pt-4 bg-[#5B4FCF] rounded-t-3xl shadow-inner flex-1">
 
         {decisions.length === 0 && (
           <div className="text-center py-20 text-indigo-200">
@@ -141,12 +125,32 @@ export default function Decisions() {
         )}
 
         {filtered.length > 0 && (
-          <div className="space-y-3">
+          <div className="space-y-3 pb-4">
             {filtered.map(d => (
               <DecisionCard key={d.id} decision={d} onClick={setSelectedDecision} />
             ))}
           </div>
         )}
+      </div>
+
+      {/* Bottom filter dashboard */}
+      <div className="fixed lg:relative bottom-0 left-0 right-0 bg-gradient-to-t from-[#5B4FCF] to-[#5B4FCF]/95 px-4 py-6">
+        <div className="max-w-2xl mx-auto grid grid-cols-5 gap-3">
+          {filters.map(f => (
+            <button
+              key={f.key}
+              onClick={() => setFilter(f.key)}
+              className={`flex flex-col items-center gap-2 p-4 rounded-2xl transition-all ${
+                filter === f.key
+                  ? 'bg-white text-[#5B4FCF] shadow-lg scale-105'
+                  : 'bg-white/15 text-white hover:bg-white/25'
+              }`}
+            >
+              <span className="text-2xl">{f.icon}</span>
+              <span className="text-xs font-medium text-center leading-tight">{f.label}</span>
+            </button>
+          ))}
+        </div>
       </div>
 
       {showNew && currentUser && (
