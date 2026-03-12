@@ -137,14 +137,13 @@ export default function Decisions() {
             <button
               key={f.key}
               onClick={() => setFilter(f.key)}
-              className={`flex flex-col items-center gap-2 p-4 rounded-3xl transition-all shadow-lg ${
+              className={`px-4 py-3 rounded-3xl transition-all shadow-lg font-bold text-sm ${
                 filter === f.key
                   ? 'bg-white text-[#5B4FCF] scale-105'
                   : 'bg-white text-[#5B4FCF] hover:shadow-xl'
               }`}
             >
-              <span className="text-2xl">{f.icon}</span>
-              <span className="text-xs font-bold text-center leading-tight">{f.label}</span>
+              {f.label}
             </button>
           ))}
         </div>
