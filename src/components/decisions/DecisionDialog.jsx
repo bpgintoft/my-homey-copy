@@ -111,21 +111,50 @@ export default function DecisionDialog({ decision, currentUserEmail, onSave, onD
           </div>
 
           {/* Comments chat log */}
-          {comments.length > 0 && (
+          {localComments.length > 0 && (
             <div className="space-y-2">
               <Label>Discussion</Label>
               <div className="space-y-2 max-h-48 overflow-y-auto bg-gray-50 rounded-lg p-3">
-                {comments.map((c, i) => {
+                {localComments.map((c, i) => {
                   const isMe = c.commenter_email === currentUserEmail;
+                  const isEditing = editingIndex === i;
                   return (
                     <div key={i} className={`flex flex-col ${isMe ? 'items-end' : 'items-start'}`}>
-                      <div className={`rounded-xl px-3 py-2 max-w-[85%] ${isMe ? 'bg-gray-900 text-white' : 'bg-white border border-gray-200 text-gray-800'}`}>
+                      <div className={`rounded-xl px-3 py-2 max-w-[85%] w-full ${isMe ? 'bg-gray-900 text-white' : 'bg-white border border-gray-200 text-gray-800'}`}>
                         <p className="text-xs font-semibold mb-0.5 opacity-70">{c.commenter_name}</p>
-                        <p className="text-sm leading-snug">{c.text}</p>
+                        {isEditing ? (
+                          <div className="space-y-1">
+                            <Textarea
+                              value={editingText}
+                              onChange={e => setEditingText(e.target.value)}
+                              rows={2}
+                              className="text-sm text-gray-900"
+                              autoFocus
+                            />
+                            <div className="flex gap-1 justify-end">
+                              <Button size="sm" variant="ghost" className="h-6 px-2 text-xs" onClick={() => { setEditingIndex(null); setEditingText(''); }}>
+                                <X className="w-3 h-3" />
+                              </Button>
+                              <Button size="sm" className="h-6 px-2 text-xs" onClick={() => handleEditSave(i)}>
+                                <Check className="w-3 h-3" />
+                              </Button>
+                            </div>
+                          </div>
+                        ) : (
+                          <p className="text-sm leading-snug">{c.text}</p>
+                        )}
                       </div>
-                      <p className="text-xs text-gray-400 mt-0.5 px-1">
-                        {c.timestamp ? format(new Date(c.timestamp), 'MMM d, h:mm a') : ''}
-                      </p>
+                      <div className="flex items-center gap-2 mt-0.5 px-1">
+                        <p className="text-xs text-gray-400">
+                          {c.timestamp ? format(new Date(c.timestamp), 'MMM d, h:mm a') : ''}
+                        </p>
+                        {isMe && !isEditing && (
+                          <>
+                            <button onClick={() => { setEditingIndex(i); setEditingText(c.text); }} className="text-xs text-gray-400 hover:text-gray-600">Edit</button>
+                            <button onClick={() => handleDeleteComment(i)} className="text-xs text-gray-400 hover:text-red-500">Delete</button>
+                          </>
+                        )}
+                      </div>
                     </div>
                   );
                 })}
