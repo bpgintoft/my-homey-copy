@@ -20,6 +20,7 @@ export default function Decisions() {
   const [currentUser, setCurrentUser] = useState(null);
   const [showNew, setShowNew] = useState(false);
   const [selectedDecision, setSelectedDecision] = useState(null);
+  const [filter, setFilter] = useState('pending');
   const queryClient = useQueryClient();
 
   useEffect(() => {
@@ -70,8 +71,23 @@ export default function Decisions() {
     },
   });
 
-  const pending = decisions.filter(d => d.status === 'pending' || d.status === 'needs_discussion');
-  const resolved = decisions.filter(d => d.status === 'approved' || d.status === 'rejected');
+  const filterDecisions = () => {
+    if (filter === 'pending') return decisions.filter(d => d.status === 'pending' || d.status === 'needs_discussion');
+    if (filter === 'approved') return decisions.filter(d => d.status === 'approved');
+    if (filter === 'rejected') return decisions.filter(d => d.status === 'rejected');
+    if (filter === 'archived') return decisions.filter(d => d.is_archived);
+    return decisions;
+  };
+
+  const filtered = filterDecisions();
+
+  const filters = [
+    { key: 'pending', label: 'Needs Decision', icon: '⏳' },
+    { key: 'approved', label: 'Approved', icon: '✅' },
+    { key: 'rejected', label: 'Rejected', icon: '❌' },
+    { key: 'archived', label: 'Archived', icon: '📦' },
+    { key: 'all', label: 'All', icon: '📋' },
+  ];
 
   return (
     <div className="min-h-screen bg-[#4a3fb5]">
@@ -92,7 +108,23 @@ export default function Decisions() {
         </div>
       </div>
 
-      <div className="max-w-2xl mx-auto px-4 pb-8 pt-2 bg-[#5B4FCF] rounded-t-3xl shadow-inner">
+      <div className="max-w-2xl mx-auto px-4 pb-8 pt-4 bg-[#5B4FCF] rounded-t-3xl shadow-inner">
+        {/* Filter buttons */}
+        <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
+          {filters.map(f => (
+            <button
+              key={f.key}
+              onClick={() => setFilter(f.key)}
+              className={`px-3 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-all ${
+                filter === f.key
+                  ? 'bg-white text-[#5B4FCF] shadow-lg'
+                  : 'bg-white/20 text-white hover:bg-white/30'
+              }`}
+            >
+              {f.icon} {f.label}
+            </button>
+          ))}
+        </div>
 
         {decisions.length === 0 && (
           <div className="text-center py-20 text-indigo-200">
@@ -102,25 +134,17 @@ export default function Decisions() {
           </div>
         )}
 
-        {pending.length > 0 && (
-          <div className="mb-6">
-            <h2 className="text-xs font-semibold text-indigo-200 uppercase tracking-wider mb-3 px-1">Needs a Decision</h2>
-            <div className="space-y-3">
-              {pending.map(d => (
-                <DecisionCard key={d.id} decision={d} onClick={setSelectedDecision} />
-              ))}
-            </div>
+        {filtered.length === 0 && decisions.length > 0 && (
+          <div className="text-center py-12 text-indigo-200">
+            <p className="font-medium text-white">No {filter === 'all' ? 'decisions' : filter} decisions</p>
           </div>
         )}
 
-        {resolved.length > 0 && (
-          <div>
-            <h2 className="text-xs font-semibold text-indigo-200 uppercase tracking-wider mb-3 px-1">Resolved</h2>
-            <div className="space-y-3">
-              {resolved.map(d => (
-                <DecisionCard key={d.id} decision={d} onClick={setSelectedDecision} />
-              ))}
-            </div>
+        {filtered.length > 0 && (
+          <div className="space-y-3">
+            {filtered.map(d => (
+              <DecisionCard key={d.id} decision={d} onClick={setSelectedDecision} />
+            ))}
           </div>
         )}
       </div>
