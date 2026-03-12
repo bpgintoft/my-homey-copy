@@ -76,30 +76,21 @@ export default function Decisions() {
   return (
     <div className="min-h-screen bg-[#5B4FCF]">
       {/* Header */}
-      <div className="px-6 pt-8 pb-6 relative overflow-hidden" style={{background: '#f59e0b'}}>
-        {/* Noise texture overlay */}
-        <div className="absolute inset-0 opacity-20" style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`,
-          backgroundSize: '200px 200px',
-        }} />
-        {/* Subtle darker vignette on edges */}
-        <div className="absolute inset-0" style={{background: 'radial-gradient(ellipse at 60% 50%, transparent 40%, rgba(180,100,0,0.25) 100%)'}} />
-        {/* Bottom fade to page bg */}
-        <div className="absolute bottom-0 left-0 right-0 h-10" style={{background: 'linear-gradient(to bottom, transparent, #5B4FCF)'}} />
-        <div className="relative z-10 max-w-2xl mx-auto flex items-center justify-between">
+      <div className="px-6 pt-8 pb-6">
+        <div className="max-w-2xl mx-auto flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-amber-900">Family Decisions</h1>
-            <p className="text-sm text-amber-800 mt-0.5">Proposals, votes, and follow-ups</p>
+            <h1 className="text-2xl font-bold text-white">Family Decisions</h1>
+            <p className="text-sm text-indigo-200 mt-0.5">Proposals, votes, and follow-ups</p>
           </div>
           <button
             onClick={() => setShowNew(true)}
-            className="flex items-center gap-1.5 bg-amber-900 text-amber-100 font-semibold text-sm px-4 py-2 rounded-full shadow hover:bg-amber-800 transition-colors"
+            className="flex items-center gap-1.5 bg-white text-[#5B4FCF] font-semibold text-sm px-4 py-2 rounded-full shadow hover:bg-indigo-50 transition-colors"
           >
             <Plus className="w-4 h-4" />
             Propose
           </button>
         </div>
-        </div>{/* /relative header */}
+      </div>
 
       <div className="max-w-2xl mx-auto px-4 pb-8 pt-2">
         <div className="mb-6 mx-2">
