@@ -76,13 +76,16 @@ export default function Decisions() {
   return (
     <div className="min-h-screen bg-[#5B4FCF]">
       {/* Header */}
-      <div className="px-6 pt-8 pb-6 relative overflow-hidden" style={{
-          backgroundImage: 'url(https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/e16863392_generated_image.png)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-        }}>
+      <div className="px-6 pt-8 pb-6 relative overflow-hidden" style={{background: '#f59e0b'}}>
+        {/* Noise texture overlay */}
+        <div className="absolute inset-0 opacity-20" style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`,
+          backgroundSize: '200px 200px',
+        }} />
+        {/* Subtle darker vignette on edges */}
+        <div className="absolute inset-0" style={{background: 'radial-gradient(ellipse at 60% 50%, transparent 40%, rgba(180,100,0,0.25) 100%)'}} />
         {/* Bottom fade to page bg */}
-        <div className="absolute bottom-0 left-0 right-0 h-12" style={{background: 'linear-gradient(to bottom, transparent, #5B4FCF)'}} />
+        <div className="absolute bottom-0 left-0 right-0 h-10" style={{background: 'linear-gradient(to bottom, transparent, #5B4FCF)'}} />
         <div className="relative z-10 max-w-2xl mx-auto flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold text-white">Family Decisions</h1>
