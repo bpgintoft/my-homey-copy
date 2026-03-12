@@ -88,8 +88,8 @@ export default function Decisions() {
         <div className="absolute bottom-0 left-0 right-0 h-10" style={{background: 'linear-gradient(to bottom, transparent, #5B4FCF)'}} />
         <div className="relative z-10 max-w-2xl mx-auto flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-white">Family Decisions</h1>
-            <p className="text-sm text-indigo-200 mt-0.5">Proposals, votes, and follow-ups</p>
+            <h1 className="text-2xl font-bold text-amber-900">Family Decisions</h1>
+            <p className="text-sm text-amber-800 mt-0.5">Proposals, votes, and follow-ups</p>
           </div>
           <button
             onClick={() => setShowNew(true)}
