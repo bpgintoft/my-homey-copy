@@ -74,33 +74,36 @@ export default function Decisions() {
   const resolved = decisions.filter(d => d.status === 'approved' || d.status === 'rejected');
 
   return (
-    <div className="min-h-screen bg-[#F5F5F7]">
+    <div className="min-h-screen bg-[#5B4FCF]">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-6 py-5">
+      <div className="px-6 pt-8 pb-6">
         <div className="max-w-2xl mx-auto flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Family Decisions</h1>
-            <p className="text-sm text-gray-500 mt-0.5">Proposals, votes, and follow-ups</p>
+            <h1 className="text-2xl font-bold text-white">Family Decisions</h1>
+            <p className="text-sm text-indigo-200 mt-0.5">Proposals, votes, and follow-ups</p>
           </div>
-          <Button onClick={() => setShowNew(true)} className="gap-1.5 bg-gray-900 hover:bg-gray-700">
+          <button
+            onClick={() => setShowNew(true)}
+            className="flex items-center gap-1.5 bg-white text-[#5B4FCF] font-semibold text-sm px-4 py-2 rounded-full shadow hover:bg-indigo-50 transition-colors"
+          >
             <Plus className="w-4 h-4" />
             Propose
-          </Button>
+          </button>
         </div>
       </div>
 
-      <div className="max-w-2xl mx-auto px-6 py-6">
+      <div className="max-w-2xl mx-auto px-4 pb-8">
         {decisions.length === 0 && (
-          <div className="text-center py-20 text-gray-400 bg-white rounded-2xl border border-gray-100 shadow-sm">
+          <div className="text-center py-20 text-indigo-200">
             <div className="text-4xl mb-3">🤝</div>
-            <p className="font-medium text-gray-600">No decisions yet</p>
+            <p className="font-medium text-white">No decisions yet</p>
             <p className="text-sm mt-1">Tap "Propose" to get started</p>
           </div>
         )}
 
         {pending.length > 0 && (
           <div className="mb-6">
-            <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Needs a Decision</h2>
+            <h2 className="text-xs font-semibold text-indigo-200 uppercase tracking-wider mb-3 px-1">Needs a Decision</h2>
             <div className="space-y-3">
               {pending.map(d => (
                 <DecisionCard key={d.id} decision={d} onClick={setSelectedDecision} />
@@ -111,7 +114,7 @@ export default function Decisions() {
 
         {resolved.length > 0 && (
           <div>
-            <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Resolved</h2>
+            <h2 className="text-xs font-semibold text-indigo-200 uppercase tracking-wider mb-3 px-1">Resolved</h2>
             <div className="space-y-3">
               {resolved.map(d => (
                 <DecisionCard key={d.id} decision={d} onClick={setSelectedDecision} />
