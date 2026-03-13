@@ -26,7 +26,10 @@ export default function DecisionCard({ decision, onClick }) {
 
   return (
     <div
-      className="cursor-pointer bg-[#6E63D8] hover:bg-[#7a6fe0] transition-all duration-200 rounded-3xl px-5 py-4 shadow-sm"
+      className="cursor-pointer transition-all duration-200 rounded-3xl px-5 py-4"
+      style={{background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.12)', backdropFilter: 'blur(10px)'}}
+      onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.13)'}
+      onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,255,255,0.08)'}
       onClick={() => onClick(decision)}
     >
       <div className="flex items-start justify-between gap-2 mb-1">
