@@ -182,6 +182,7 @@ export default function DecisionDialog({ decision, currentUserEmail, onSave, onD
                           </>
                         )}
                       </div>
+                      </div>
                     </div>
                   );
                 })}
