@@ -105,24 +105,38 @@ export default function Home() {
       <div className="relative overflow-hidden">
         <style>{`
           .banner-bg {
-            background: linear-gradient(135deg, #6E63D8 0%, #5B52C8 50%, #4A42B8 100%);
+            background: linear-gradient(135deg, #C8F0E0 0%, #A8E6D3 50%, #88DCC8 100%);
+            background-size: 400% 400%;
             position: relative;
           }
           .banner-bg::before {
             content: '';
             position: absolute;
             inset: 0;
-            background: radial-gradient(circle, rgba(255,255,255,0.08) 1px, transparent 1px);
-            background-size: 18px 18px;
+            background: 
+              repeating-linear-gradient(
+                45deg,
+                rgba(168, 230, 211, 0.6) 0px,
+                rgba(168, 230, 211, 0.6) 10px,
+                rgba(120, 200, 180, 0.4) 10px,
+                rgba(120, 200, 180, 0.4) 20px,
+                rgba(168, 230, 211, 0.6) 20px,
+                rgba(168, 230, 211, 0.6) 25px,
+                rgba(200, 240, 224, 0.3) 25px,
+                rgba(200, 240, 224, 0.3) 30px
+              ),
+              radial-gradient(circle, rgba(120, 200, 180, 0.4) 2px, transparent 2px);
+            background-size: 100% 100%, 15px 15px;
+            background-position: 0 0, 7px 7px;
           }
         `}</style>
         <div className="relative h-40 md:h-48 banner-bg">
           <div className="relative z-10 flex items-center justify-between px-4 md:px-12 gap-0 h-full">
             <div className="flex-1">
-              <h1 className="text-2xl md:text-4xl font-bold text-white mb-1 md:mb-2">
+              <h1 className="text-2xl md:text-4xl font-bold text-gray-800 mb-1 md:mb-2">
                 Welcome Home
               </h1>
-              <p className="text-sm md:text-lg text-indigo-200">
+              <p className="text-sm md:text-lg text-gray-700">
                 1934 Church St
               </p>
             </div>
@@ -146,9 +160,9 @@ export default function Home() {
             transition={{ delay: 0.2 }}
           >
             <Link to={createPageUrl('Bryan')}>
-              <Card className="border-0 shadow-lg bg-white hover:shadow-xl transition-shadow cursor-pointer border-t-2 border-t-[#6E63D8]">
+              <Card className="border-0 shadow-lg bg-white hover:shadow-xl transition-shadow cursor-pointer">
                 <CardContent className="py-2 px-2 text-center">
-                  <div className="text-sm font-bold text-[#5B52C8]">{bryanMember.name}</div>
+                  <div className="text-sm font-bold text-gray-900">{bryanMember.name}</div>
                 </CardContent>
               </Card>
             </Link>
@@ -159,9 +173,9 @@ export default function Home() {
             transition={{ delay: 0.3 }}
           >
             <Link to={createPageUrl('Kate')}>
-              <Card className="border-0 shadow-lg bg-white hover:shadow-xl transition-shadow cursor-pointer border-t-2 border-t-[#6E63D8]">
+              <Card className="border-0 shadow-lg bg-white hover:shadow-xl transition-shadow cursor-pointer">
                 <CardContent className="py-2 px-2 text-center">
-                  <div className="text-sm font-bold text-[#5B52C8]">{kateMember.name}</div>
+                  <div className="text-sm font-bold text-gray-900">{kateMember.name}</div>
                 </CardContent>
               </Card>
             </Link>
@@ -172,9 +186,9 @@ export default function Home() {
             transition={{ delay: 0.4 }}
           >
             <Link to={createPageUrl('Phoenix')}>
-              <Card className="border-0 shadow-lg bg-white hover:shadow-xl transition-shadow cursor-pointer border-t-2 border-t-[#6E63D8]">
+              <Card className="border-0 shadow-lg bg-white hover:shadow-xl transition-shadow cursor-pointer">
                 <CardContent className="py-2 px-2 text-center">
-                  <div className="text-sm font-bold text-[#5B52C8]">{phoenixMember.name}</div>
+                  <div className="text-sm font-bold text-gray-900">{phoenixMember.name}</div>
                 </CardContent>
               </Card>
             </Link>
@@ -185,9 +199,9 @@ export default function Home() {
             transition={{ delay: 0.5 }}
           >
             <Link to={createPageUrl('Mara')}>
-              <Card className="border-0 shadow-lg bg-white hover:shadow-xl transition-shadow cursor-pointer border-t-2 border-t-[#6E63D8]">
+              <Card className="border-0 shadow-lg bg-white hover:shadow-xl transition-shadow cursor-pointer">
                 <CardContent className="py-2 px-2 text-center">
-                  <div className="text-sm font-bold text-[#5B52C8]">{maraMember.name}</div>
+                  <div className="text-sm font-bold text-gray-900">{maraMember.name}</div>
                 </CardContent>
               </Card>
             </Link>
