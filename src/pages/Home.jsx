@@ -185,9 +185,9 @@ export default function Home() {
             transition={{ delay: 0.5 }}
           >
             <Link to={createPageUrl('Mara')}>
-              <Card className="border-0 shadow-lg bg-white hover:shadow-xl transition-shadow cursor-pointer">
+              <Card className="border-0 shadow-lg bg-white hover:shadow-xl transition-shadow cursor-pointer border-t-2 border-t-[#6E63D8]">
                 <CardContent className="py-2 px-2 text-center">
-                  <div className="text-sm font-bold text-gray-900">{maraMember.name}</div>
+                  <div className="text-sm font-bold text-[#5B52C8]">{maraMember.name}</div>
                 </CardContent>
               </Card>
             </Link>
