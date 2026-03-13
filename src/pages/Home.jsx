@@ -129,24 +129,6 @@ export default function Home() {
             background-size: 100% 100%, 15px 15px;
             background-position: 0 0, 7px 7px;
           }
-          .section-btn {
-            position: relative;
-            overflow: hidden;
-          }
-          .section-btn::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.18'%3E%3Ccircle cx='3' cy='3' r='1.5'/%3E%3Ccircle cx='13' cy='13' r='1.5'/%3E%3C/g%3E%3C/svg%3E");
-            background-size: 20px 20px;
-            pointer-events: none;
-            z-index: 1;
-            border-radius: inherit;
-          }
-          .section-btn > * {
-            position: relative;
-            z-index: 2;
-          }
         `}</style>
         <div className="relative h-40 md:h-48 banner-bg">
           <div className="relative z-10 flex items-center justify-between px-4 md:px-12 gap-0 h-full">
@@ -242,7 +224,7 @@ export default function Home() {
                       {section.count}
                     </div>
                   )}
-                  <div className={`section-btn rounded-3xl shadow-lg hover:shadow-2xl transition-all ${section.bgColor} p-6 flex flex-col items-center justify-center h-36`}>
+                  <div className={`rounded-3xl shadow-lg hover:shadow-2xl transition-all ${section.bgColor} p-6 flex flex-col items-center justify-center h-36`}>
                     {imageUrls[section.imageKey] && (
                       <img 
                         src={imageUrls[section.imageKey]} 
