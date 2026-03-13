@@ -89,60 +89,38 @@ export default function Decisions() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#4a3fb5] flex flex-col pb-32 lg:pb-8">
-      {/* Header */}
-      <div className="px-6 pt-8 pb-6" style={{backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.07) 1px, transparent 1px)', backgroundSize: '20px 20px'}}>
-        <div className="max-w-2xl mx-auto flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-white">Family Decisions</h1>
-            <p className="text-xs text-indigo-200 mt-0.5">Proposals, votes &amp; follow-ups</p>
-          </div>
-          <button
-            onClick={() => setShowNew(true)}
-            className="flex items-center gap-1.5 bg-white text-[#5B4FCF] font-semibold text-sm px-4 py-2 rounded-full shadow hover:bg-indigo-50 transition-colors"
-          >
-            <Plus className="w-4 h-4" />
-            Propose
-          </button>
-        </div>
+    <div className="min-h-screen flex flex-col pb-32 lg:pb-8" style={{background: 'linear-gradient(160deg, #1a1040 0%, #2d1b69 40%, #3d2a8a 70%, #4a3fb5 100%)'}}>
+
+      {/* Hero Header */}
+      <div className="px-6 pt-12 pb-8 text-center">
+        <h1 className="text-4xl font-extrabold text-white leading-tight mb-1">
+          Family
+        </h1>
+        <h1 className="text-4xl font-extrabold leading-tight mb-4" style={{color: '#c4b5fd'}}>
+          Decisions
+        </h1>
+        <p className="text-indigo-300 text-sm mb-8">Proposals, votes &amp; follow-ups</p>
+        <button
+          onClick={() => setShowNew(true)}
+          className="inline-flex items-center gap-2 px-8 py-3 rounded-full font-semibold text-white transition-all hover:scale-105 hover:brightness-110"
+          style={{background: 'rgba(139, 92, 246, 0.5)', border: '1px solid rgba(167, 139, 250, 0.4)', backdropFilter: 'blur(10px)'}}
+        >
+          <Plus className="w-4 h-4" />
+          Propose Decision
+        </button>
       </div>
 
-      <div className="max-w-2xl mx-auto w-full px-4 pt-4 bg-[#5B4FCF] rounded-t-3xl shadow-inner flex-1">
-
-        {decisions.length === 0 && (
-          <div className="text-center py-20 text-indigo-200">
-            <div className="text-4xl mb-3">🤝</div>
-            <p className="font-medium text-white">No decisions yet</p>
-            <p className="text-sm mt-1">Tap "Propose" to get started</p>
-          </div>
-        )}
-
-        {filtered.length === 0 && decisions.length > 0 && (
-          <div className="text-center py-12 text-indigo-200">
-            <p className="font-medium text-white">No {filter === 'all' ? 'decisions' : filter} decisions</p>
-          </div>
-        )}
-
-        {filtered.length > 0 && (
-          <div className="space-y-3 pb-4">
-            {filtered.map(d => (
-              <DecisionCard key={d.id} decision={d} onClick={setSelectedDecision} />
-            ))}
-          </div>
-        )}
-      </div>
-
-      {/* Bottom filter dashboard */}
-      <div className="fixed lg:relative bottom-0 left-0 right-0 px-4 pt-8 pb-6">
-        <div className="max-w-2xl mx-auto grid grid-cols-3 gap-3 -mt-16">
+      {/* Filter tabs */}
+      <div className="max-w-2xl mx-auto w-full px-4 mb-4">
+        <div className="grid grid-cols-3 gap-2">
           {filters.map(f => (
             <button
               key={f.key}
               onClick={() => setFilter(f.key)}
-              className={`relative px-4 py-3 rounded-3xl transition-all shadow-lg font-bold text-sm ${
+              className={`relative px-4 py-2.5 rounded-full transition-all font-semibold text-sm ${
                 filter === f.key
-                  ? 'bg-white/90 text-[#5B4FCF] scale-105'
-                  : 'bg-white/70 text-[#5B4FCF] hover:bg-white/80 hover:shadow-xl'
+                  ? 'bg-white/20 text-white border border-white/30'
+                  : 'text-indigo-300 hover:text-white hover:bg-white/10 border border-transparent'
               }`}
             >
               {f.label}
@@ -154,6 +132,31 @@ export default function Decisions() {
             </button>
           ))}
         </div>
+      </div>
+
+      {/* Cards */}
+      <div className="max-w-2xl mx-auto w-full px-4 flex-1">
+        {decisions.length === 0 && (
+          <div className="text-center py-20 text-indigo-300">
+            <div className="text-4xl mb-3">🤝</div>
+            <p className="font-medium text-white">No decisions yet</p>
+            <p className="text-sm mt-1">Tap "Propose Decision" to get started</p>
+          </div>
+        )}
+
+        {filtered.length === 0 && decisions.length > 0 && (
+          <div className="text-center py-12 text-indigo-300">
+            <p className="font-medium text-white">No {filter} decisions</p>
+          </div>
+        )}
+
+        {filtered.length > 0 && (
+          <div className="space-y-3 pb-4">
+            {filtered.map(d => (
+              <DecisionCard key={d.id} decision={d} onClick={setSelectedDecision} />
+            ))}
+          </div>
+        )}
       </div>
 
       {showNew && currentUser && (
