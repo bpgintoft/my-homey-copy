@@ -103,7 +103,7 @@ export default function Decisions() {
         <button
           onClick={() => setShowNew(true)}
           className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full font-semibold text-white text-sm transition-all hover:scale-105 hover:brightness-110 flex-shrink-0"
-          style={{background: 'rgba(139, 92, 246, 0.5)', border: '1px solid rgba(167, 139, 250, 0.4)', backdropFilter: 'blur(10px)'}}
+          style={{background: 'rgba(180, 140, 255, 0.55)', border: '1px solid rgba(200, 170, 255, 0.5)', backdropFilter: 'blur(10px)'}}
         >
           <Plus className="w-4 h-4" />
           Propose
