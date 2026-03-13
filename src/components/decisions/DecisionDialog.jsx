@@ -9,6 +9,11 @@ import { format } from 'date-fns';
 const BRYAN_EMAIL = 'bpgintoft@gmail.com';
 const KATE_EMAIL = 'kateeliz11@gmail.com';
 
+const AVATARS = {
+  [BRYAN_EMAIL]: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/b093cc037_Bryan.png',
+  [KATE_EMAIL]: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/d14194fd4_Kate.png',
+};
+
 const voteEmoji = { yes: '✅ Yes', no: '❌ No', maybe: '🤔 Maybe' };
 
 export default function DecisionDialog({ decision, currentUserEmail, onSave, onDelete, onClose }) {
@@ -96,12 +101,12 @@ export default function DecisionDialog({ decision, currentUserEmail, onSave, onD
         <div className="flex-1 overflow-y-auto space-y-4 px-5 pb-2">
           {/* Votes row */}
           <div className="flex gap-3">
-            <div className="flex-1 bg-white/15 rounded-2xl p-3 text-center">
-              <p className="text-xs text-indigo-200 mb-1">Bryan</p>
+            <div className="flex-1 bg-white/15 rounded-2xl p-3 flex flex-col items-center gap-1.5">
+              <img src={AVATARS[BRYAN_EMAIL]} alt="Bryan" className="w-9 h-9 rounded-full object-cover" />
               <p className="text-sm font-medium text-white">{decision.bryan_vote ? voteEmoji[decision.bryan_vote] : '—'}</p>
             </div>
-            <div className="flex-1 bg-white/15 rounded-2xl p-3 text-center">
-              <p className="text-xs text-indigo-200 mb-1">Kate</p>
+            <div className="flex-1 bg-white/15 rounded-2xl p-3 flex flex-col items-center gap-1.5">
+              <img src={AVATARS[KATE_EMAIL]} alt="Kate" className="w-9 h-9 rounded-full object-cover" />
               <p className="text-sm font-medium text-white">{decision.kate_vote ? voteEmoji[decision.kate_vote] : '—'}</p>
             </div>
           </div>
@@ -135,8 +140,14 @@ export default function DecisionDialog({ decision, currentUserEmail, onSave, onD
                   const isMe = c.commenter_email === currentUserEmail;
                   const isEditing = editingIndex === i;
                   return (
-                    <div key={i} className={`flex flex-col ${isMe ? 'items-end' : 'items-start'}`}>
-                      <div className={`rounded-2xl px-3 py-2 max-w-[85%] ${isMe ? 'bg-white text-[#5B4FCF]' : 'bg-white/20 text-white'}`}>
+                    <div key={i} className={`flex items-end gap-1.5 ${isMe ? 'flex-row-reverse' : 'flex-row'}`}>
+                      <img
+                        src={AVATARS[c.commenter_email] || ''}
+                        alt={c.commenter_name}
+                        className="w-6 h-6 rounded-full object-cover flex-shrink-0 mb-5"
+                      />
+                      <div className={`flex flex-col ${isMe ? 'items-end' : 'items-start'} max-w-[80%]`}>
+                      <div className={`rounded-2xl px-3 py-2 ${isMe ? 'bg-white text-[#5B4FCF]' : 'bg-white/20 text-white'}`}>
                         <p className={`text-xs font-semibold mb-0.5 ${isMe ? 'text-indigo-400' : 'text-indigo-200'}`}>{c.commenter_name}</p>
                         {isEditing ? (
                           <div className="space-y-1">
