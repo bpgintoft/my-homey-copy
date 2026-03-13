@@ -129,6 +129,31 @@ export default function Home() {
             background-size: 100% 100%, 15px 15px;
             background-position: 0 0, 7px 7px;
           }
+          .section-btn {
+            position: relative;
+            overflow: hidden;
+          }
+          .section-btn::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: 
+              repeating-linear-gradient(
+                90deg,
+                rgba(255, 255, 255, 0.1) 0px,
+                rgba(255, 255, 255, 0.1) 1px,
+                transparent 1px,
+                transparent 2px
+              ),
+              repeating-linear-gradient(
+                0deg,
+                rgba(255, 255, 255, 0.1) 0px,
+                rgba(255, 255, 255, 0.1) 1px,
+                transparent 1px,
+                transparent 2px
+              );
+            pointer-events: none;
+          }
         `}</style>
         <div className="relative h-40 md:h-48 banner-bg">
           <div className="relative z-10 flex items-center justify-between px-4 md:px-12 gap-0 h-full">
@@ -224,7 +249,7 @@ export default function Home() {
                       {section.count}
                     </div>
                   )}
-                  <div className={`rounded-3xl shadow-lg hover:shadow-2xl transition-all ${section.bgColor} p-6 flex flex-col items-center justify-center h-36`}>
+                  <div className={`section-btn rounded-3xl shadow-lg hover:shadow-2xl transition-all ${section.bgColor} p-6 flex flex-col items-center justify-center h-36`}>
                     {imageUrls[section.imageKey] && (
                       <img 
                         src={imageUrls[section.imageKey]} 
