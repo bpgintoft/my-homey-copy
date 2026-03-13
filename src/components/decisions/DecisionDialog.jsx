@@ -146,42 +146,42 @@ export default function DecisionDialog({ decision, currentUserEmail, onSave, onD
                         alt={c.commenter_name}
                         className="w-6 h-6 rounded-full object-cover flex-shrink-0 mb-5"
                       />
-                      <div className={`flex flex-col ${isMe ? 'items-end' : 'items-start'} max-w-[80%]`}>
-                      <div className={`rounded-2xl px-3 py-2 ${isMe ? 'bg-white text-[#5B4FCF]' : 'bg-white/20 text-white'}`}>
-                        <p className={`text-xs font-semibold mb-0.5 ${isMe ? 'text-indigo-400' : 'text-indigo-200'}`}>{c.commenter_name}</p>
-                        {isEditing ? (
-                          <div className="space-y-1">
-                            <Textarea
-                              value={editingText}
-                              onChange={e => setEditingText(e.target.value)}
-                              rows={2}
-                              className="text-sm text-gray-900 bg-white border-0"
-                              style={{ fontSize: '16px' }}
-                            />
-                            <div className="flex gap-1 justify-end">
-                              <Button size="sm" variant="ghost" className="h-6 px-2 text-xs text-gray-500" onClick={() => { setEditingIndex(null); setEditingText(''); }}>
-                                <X className="w-3 h-3" />
-                              </Button>
-                              <Button size="sm" className="h-6 px-2 text-xs bg-[#5B4FCF] text-white" onClick={() => handleEditSave(i)}>
-                                <Check className="w-3 h-3" />
-                              </Button>
+                      <div className={`flex flex-col max-w-[80%] ${isMe ? 'items-end' : 'items-start'}`}>
+                        <div className={`rounded-2xl px-3 py-2 ${isMe ? 'bg-white text-[#5B4FCF]' : 'bg-white/20 text-white'}`}>
+                          <p className={`text-xs font-semibold mb-0.5 ${isMe ? 'text-indigo-400' : 'text-indigo-200'}`}>{c.commenter_name}</p>
+                          {isEditing ? (
+                            <div className="space-y-1">
+                              <Textarea
+                                value={editingText}
+                                onChange={e => setEditingText(e.target.value)}
+                                rows={2}
+                                className="text-sm text-gray-900 bg-white border-0"
+                                style={{ fontSize: '16px' }}
+                              />
+                              <div className="flex gap-1 justify-end">
+                                <Button size="sm" variant="ghost" className="h-6 px-2 text-xs text-gray-500" onClick={() => { setEditingIndex(null); setEditingText(''); }}>
+                                  <X className="w-3 h-3" />
+                                </Button>
+                                <Button size="sm" className="h-6 px-2 text-xs bg-[#5B4FCF] text-white" onClick={() => handleEditSave(i)}>
+                                  <Check className="w-3 h-3" />
+                                </Button>
+                              </div>
                             </div>
-                          </div>
-                        ) : (
-                          <p className="text-sm leading-snug">{c.text}</p>
-                        )}
-                      </div>
-                      <div className="flex items-center gap-2 mt-0.5 px-1">
-                        <p className="text-xs text-indigo-300">
-                          {c.timestamp ? format(new Date(c.timestamp), 'MMM d, h:mm a') : ''}
-                        </p>
-                        {isMe && !isEditing && (
-                          <>
-                            <button onClick={() => { setEditingIndex(i); setEditingText(c.text); }} className="text-xs text-indigo-300 hover:text-white">Edit</button>
-                            <button onClick={() => handleDeleteComment(i)} className="text-xs text-indigo-300 hover:text-red-300">Delete</button>
-                          </>
-                        )}
-                      </div>
+                          ) : (
+                            <p className="text-sm leading-snug">{c.text}</p>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-2 mt-0.5 px-1">
+                          <p className="text-xs text-indigo-300">
+                            {c.timestamp ? format(new Date(c.timestamp), 'MMM d, h:mm a') : ''}
+                          </p>
+                          {isMe && !isEditing && (
+                            <>
+                              <button onClick={() => { setEditingIndex(i); setEditingText(c.text); }} className="text-xs text-indigo-300 hover:text-white">Edit</button>
+                              <button onClick={() => handleDeleteComment(i)} className="text-xs text-indigo-300 hover:text-red-300">Delete</button>
+                            </>
+                          )}
+                        </div>
                       </div>
                     </div>
                   );
