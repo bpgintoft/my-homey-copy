@@ -105,38 +105,24 @@ export default function Home() {
       <div className="relative overflow-hidden">
         <style>{`
           .banner-bg {
-            background: linear-gradient(135deg, #C8F0E0 0%, #A8E6D3 50%, #88DCC8 100%);
-            background-size: 400% 400%;
+            background: linear-gradient(135deg, #6E63D8 0%, #5B52C8 50%, #4A42B8 100%);
             position: relative;
           }
           .banner-bg::before {
             content: '';
             position: absolute;
             inset: 0;
-            background: 
-              repeating-linear-gradient(
-                45deg,
-                rgba(168, 230, 211, 0.6) 0px,
-                rgba(168, 230, 211, 0.6) 10px,
-                rgba(120, 200, 180, 0.4) 10px,
-                rgba(120, 200, 180, 0.4) 20px,
-                rgba(168, 230, 211, 0.6) 20px,
-                rgba(168, 230, 211, 0.6) 25px,
-                rgba(200, 240, 224, 0.3) 25px,
-                rgba(200, 240, 224, 0.3) 30px
-              ),
-              radial-gradient(circle, rgba(120, 200, 180, 0.4) 2px, transparent 2px);
-            background-size: 100% 100%, 15px 15px;
-            background-position: 0 0, 7px 7px;
+            background: radial-gradient(circle, rgba(255,255,255,0.08) 1px, transparent 1px);
+            background-size: 18px 18px;
           }
         `}</style>
         <div className="relative h-40 md:h-48 banner-bg">
           <div className="relative z-10 flex items-center justify-between px-4 md:px-12 gap-0 h-full">
             <div className="flex-1">
-              <h1 className="text-2xl md:text-4xl font-bold text-gray-800 mb-1 md:mb-2">
+              <h1 className="text-2xl md:text-4xl font-bold text-white mb-1 md:mb-2">
                 Welcome Home
               </h1>
-              <p className="text-sm md:text-lg text-gray-700">
+              <p className="text-sm md:text-lg text-indigo-200">
                 1934 Church St
               </p>
             </div>
