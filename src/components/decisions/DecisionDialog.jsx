@@ -148,7 +148,7 @@ export default function DecisionDialog({ decision, currentUserEmail, onSave, onD
                         className="w-6 h-6 rounded-full object-cover flex-shrink-0 mb-5"
                       />
                       <div className={`flex flex-col max-w-[80%] ${isMe ? 'items-end' : 'items-start'}`}>
-                        <div className={`rounded-2xl px-3 py-2 ${isMe ? 'bg-white text-[#5B4FCF]' : 'bg-white/20 text-white'}`}>
+                        <div className={`rounded-2xl px-3 py-2`} style={isMe ? {background: 'rgba(220,200,255,0.9)', color: '#3d2a8a'} : {background: 'rgba(180,140,255,0.3)', color: 'white', border: '1px solid rgba(200,170,255,0.3)'}}>
                           <p className={`text-xs font-semibold mb-0.5 ${isMe ? 'text-indigo-400' : 'text-indigo-200'}`}>{c.commenter_name}</p>
                           {isEditing ? (
                             <div className="space-y-1">
