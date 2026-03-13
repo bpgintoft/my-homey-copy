@@ -226,7 +226,7 @@ export default function DecisionDialog({ decision, currentUserEmail, onSave, onD
               <Send className="w-4 h-4" />
               Save
             </button>
-            <button onClick={onClose} className="px-4 py-2.5 rounded-full bg-white/15 text-white font-medium hover:bg-white/25 transition-colors text-sm">Cancel</button>
+            <button onClick={onClose} className="px-4 py-2.5 rounded-full text-white font-medium transition-colors text-sm" style={{background: 'rgba(180,140,255,0.25)', border: '1px solid rgba(200,170,255,0.3)'}}>Cancel</button>
             {decision.proposer_email === currentUserEmail && (
               <button onClick={() => onDelete(decision.id)} className="p-2.5 rounded-full bg-red-400/30 text-red-200 hover:bg-red-400/50 transition-colors">
                 <Trash2 className="w-4 h-4" />
