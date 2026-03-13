@@ -98,45 +98,32 @@ export default function Home() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#F5F5F7]">
+    <div className="min-h-screen" style={{background: 'linear-gradient(135deg, #1a0533 0%, #2d1060 40%, #3b1a7a 70%, #1e0a45 100%)'}}>
       {currentUser && <ChoreNotificationsDialog memberId={currentUser.email} />}
 
       {/* Header */}
       <div className="relative overflow-hidden">
         <style>{`
-          .banner-bg {
-            background: linear-gradient(135deg, #C8F0E0 0%, #A8E6D3 50%, #88DCC8 100%);
-            background-size: 400% 400%;
+          .home-banner-bg {
             position: relative;
+            background: linear-gradient(135deg, #2a0a5e 0%, #4a1a9a 50%, #3a0f7a 100%);
           }
-          .banner-bg::before {
+          .home-banner-bg::before {
             content: '';
             position: absolute;
             inset: 0;
-            background: 
-              repeating-linear-gradient(
-                45deg,
-                rgba(168, 230, 211, 0.6) 0px,
-                rgba(168, 230, 211, 0.6) 10px,
-                rgba(120, 200, 180, 0.4) 10px,
-                rgba(120, 200, 180, 0.4) 20px,
-                rgba(168, 230, 211, 0.6) 20px,
-                rgba(168, 230, 211, 0.6) 25px,
-                rgba(200, 240, 224, 0.3) 25px,
-                rgba(200, 240, 224, 0.3) 30px
-              ),
-              radial-gradient(circle, rgba(120, 200, 180, 0.4) 2px, transparent 2px);
-            background-size: 100% 100%, 15px 15px;
-            background-position: 0 0, 7px 7px;
+            background:
+              radial-gradient(circle at 20% 50%, rgba(180,140,255,0.25) 0%, transparent 50%),
+              radial-gradient(circle at 80% 20%, rgba(130,80,220,0.3) 0%, transparent 40%);
           }
         `}</style>
-        <div className="relative h-40 md:h-48 banner-bg">
+        <div className="relative h-40 md:h-48 home-banner-bg">
           <div className="relative z-10 flex items-center justify-between px-4 md:px-12 gap-0 h-full">
             <div className="flex-1">
-              <h1 className="text-2xl md:text-4xl font-bold text-gray-800 mb-1 md:mb-2">
+              <h1 className="text-2xl md:text-4xl font-bold text-white mb-1 md:mb-2 drop-shadow-lg">
                 Welcome Home
               </h1>
-              <p className="text-sm md:text-lg text-gray-700">
+              <p className="text-sm md:text-lg" style={{color: 'rgba(210,180,255,0.85)'}}>
                 1934 Church St
               </p>
             </div>
@@ -154,58 +141,21 @@ export default function Home() {
       {/* Family Member Cards */}
       <div className="container mx-auto px-6 -mt-6 relative z-10">
         <div className="grid grid-cols-4 gap-2 mb-6">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-          >
-            <Link to={createPageUrl('Bryan')}>
-              <Card className="border-0 shadow-lg bg-white hover:shadow-xl transition-shadow cursor-pointer">
-                <CardContent className="py-2 px-2 text-center">
-                  <div className="text-sm font-bold text-gray-900">{bryanMember.name}</div>
-                </CardContent>
-              </Card>
-            </Link>
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-          >
-            <Link to={createPageUrl('Kate')}>
-              <Card className="border-0 shadow-lg bg-white hover:shadow-xl transition-shadow cursor-pointer">
-                <CardContent className="py-2 px-2 text-center">
-                  <div className="text-sm font-bold text-gray-900">{kateMember.name}</div>
-                </CardContent>
-              </Card>
-            </Link>
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-          >
-            <Link to={createPageUrl('Phoenix')}>
-              <Card className="border-0 shadow-lg bg-white hover:shadow-xl transition-shadow cursor-pointer">
-                <CardContent className="py-2 px-2 text-center">
-                  <div className="text-sm font-bold text-gray-900">{phoenixMember.name}</div>
-                </CardContent>
-              </Card>
-            </Link>
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5 }}
-          >
-            <Link to={createPageUrl('Mara')}>
-              <Card className="border-0 shadow-lg bg-white hover:shadow-xl transition-shadow cursor-pointer">
-                <CardContent className="py-2 px-2 text-center">
-                  <div className="text-sm font-bold text-gray-900">{maraMember.name}</div>
-                </CardContent>
-              </Card>
-            </Link>
-          </motion.div>
+          {[
+            { member: bryanMember, href: 'Bryan', delay: 0.2 },
+            { member: kateMember, href: 'Kate', delay: 0.3 },
+            { member: phoenixMember, href: 'Phoenix', delay: 0.4 },
+            { member: maraMember, href: 'Mara', delay: 0.5 },
+          ].map(({ member, href, delay }) => (
+            <motion.div key={href} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay }}>
+              <Link to={createPageUrl(href)}>
+                <div className="rounded-2xl py-2 px-2 text-center shadow-lg hover:scale-105 transition-all cursor-pointer"
+                  style={{background: 'rgba(180,140,255,0.2)', border: '1px solid rgba(200,170,255,0.3)', backdropFilter: 'blur(10px)'}}>
+                  <div className="text-sm font-bold text-white">{member.name}</div>
+                </div>
+              </Link>
+            </motion.div>
+          ))}
         </div>
 
         {/* Main Sections */}
@@ -220,11 +170,12 @@ export default function Home() {
               <Link to={createPageUrl(section.href)}>
                 <div className="group cursor-pointer hover:scale-105 transition-all duration-300 relative">
                   {section.count > 0 && (
-                    <div className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-7 h-7 flex items-center justify-center shadow-lg z-10">
+                    <div className="absolute -top-2 -right-2 bg-pink-500 text-white text-xs font-bold rounded-full w-7 h-7 flex items-center justify-center shadow-lg z-10">
                       {section.count}
                     </div>
                   )}
-                  <div className={`rounded-3xl shadow-lg hover:shadow-2xl transition-all ${section.bgColor} p-6 flex flex-col items-center justify-center h-36`}>
+                  <div className="rounded-3xl shadow-lg hover:shadow-2xl transition-all p-6 flex flex-col items-center justify-center h-36"
+                    style={{background: 'rgba(180,140,255,0.18)', border: '1px solid rgba(200,170,255,0.3)', backdropFilter: 'blur(12px)'}}>
                     {imageUrls[section.imageKey] && (
                       <img 
                         src={imageUrls[section.imageKey]} 
