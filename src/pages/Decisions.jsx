@@ -92,21 +92,21 @@ export default function Decisions() {
     <div className="min-h-screen flex flex-col pb-32 lg:pb-8" style={{background: 'linear-gradient(160deg, #1a1040 0%, #2d1b69 40%, #3d2a8a 70%, #4a3fb5 100%)'}}>
 
       {/* Hero Header */}
-      <div className="px-6 pt-12 pb-8 text-center">
-        <h1 className="text-4xl font-extrabold text-white leading-tight mb-1">
-          Family
-        </h1>
-        <h1 className="text-4xl font-extrabold leading-tight mb-4" style={{color: '#c4b5fd'}}>
-          Decisions
-        </h1>
-        <p className="text-indigo-300 text-sm mb-8">Proposals, votes &amp; follow-ups</p>
+      <div className="px-6 pt-8 pb-4 flex items-center justify-between max-w-2xl mx-auto w-full">
+        <div>
+          <h1 className="text-3xl font-extrabold leading-tight">
+            <span className="text-white">Family </span>
+            <span style={{color: '#c4b5fd'}}>Decisions</span>
+          </h1>
+          <p className="text-indigo-300 text-xs mt-0.5">Proposals, votes &amp; follow-ups</p>
+        </div>
         <button
           onClick={() => setShowNew(true)}
-          className="inline-flex items-center gap-2 px-8 py-3 rounded-full font-semibold text-white transition-all hover:scale-105 hover:brightness-110"
+          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full font-semibold text-white text-sm transition-all hover:scale-105 hover:brightness-110 flex-shrink-0"
           style={{background: 'rgba(139, 92, 246, 0.5)', border: '1px solid rgba(167, 139, 250, 0.4)', backdropFilter: 'blur(10px)'}}
         >
           <Plus className="w-4 h-4" />
-          Propose Decision
+          Propose
         </button>
       </div>
 
