@@ -210,7 +210,7 @@ export default function DecisionDialog({ decision, currentUserEmail, onSave, onD
           <div className="space-y-2">
             <p className="text-xs font-semibold text-indigo-200 uppercase tracking-wide">Status</p>
             <Select value={status} onValueChange={setStatus}>
-              <SelectTrigger className="bg-white/15 border-0 text-white rounded-2xl">
+              <SelectTrigger className="border-0 text-white rounded-2xl" style={{background: 'rgba(180,140,255,0.2)', border: '1px solid rgba(200,170,255,0.25)'}}>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
