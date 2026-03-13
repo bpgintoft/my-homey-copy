@@ -80,10 +80,12 @@ export default function Decisions() {
 
   const filtered = filterDecisions();
 
+  const needsActionCount = decisions.filter(d => !d.is_archived && d.status === 'needs_action').length;
+
   const filters = [
-    { key: 'undecided', label: 'Undecided', icon: '⏳' },
-    { key: 'needs_action', label: 'Needs Action', icon: '⚡' },
-    { key: 'archived', label: 'Archived', icon: '📦' },
+    { key: 'undecided', label: 'Undecided' },
+    { key: 'needs_action', label: 'Needs Action', count: needsActionCount },
+    { key: 'archived', label: 'Archived' },
   ];
 
   return (
@@ -137,13 +139,18 @@ export default function Decisions() {
             <button
               key={f.key}
               onClick={() => setFilter(f.key)}
-              className={`px-4 py-3 rounded-3xl transition-all shadow-lg font-bold text-sm ${
+              className={`relative px-4 py-3 rounded-3xl transition-all shadow-lg font-bold text-sm ${
                 filter === f.key
                   ? 'bg-white/90 text-[#5B4FCF] scale-105'
                   : 'bg-white/70 text-[#5B4FCF] hover:bg-white/80 hover:shadow-xl'
               }`}
             >
               {f.label}
+              {f.count > 0 && (
+                <span className="absolute -top-1.5 -right-1.5 bg-red-500 text-white text-xs font-bold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1 shadow">
+                  {f.count}
+                </span>
+              )}
             </button>
           ))}
         </div>
