@@ -133,26 +133,19 @@ export default function Home() {
             position: relative;
             overflow: hidden;
           }
-          .section-btn::after {
+          .section-btn::before {
             content: '';
             position: absolute;
             inset: 0;
-            background-image: 
-              repeating-linear-gradient(
-                90deg,
-                rgba(255, 255, 255, 0.1) 0px,
-                rgba(255, 255, 255, 0.1) 1px,
-                transparent 1px,
-                transparent 2px
-              ),
-              repeating-linear-gradient(
-                0deg,
-                rgba(255, 255, 255, 0.1) 0px,
-                rgba(255, 255, 255, 0.1) 1px,
-                transparent 1px,
-                transparent 2px
-              );
+            background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.18'%3E%3Ccircle cx='3' cy='3' r='1.5'/%3E%3Ccircle cx='13' cy='13' r='1.5'/%3E%3C/g%3E%3C/svg%3E");
+            background-size: 20px 20px;
             pointer-events: none;
+            z-index: 1;
+            border-radius: inherit;
+          }
+          .section-btn > * {
+            position: relative;
+            z-index: 2;
           }
         `}</style>
         <div className="relative h-40 md:h-48 banner-bg">
