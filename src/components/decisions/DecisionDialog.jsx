@@ -101,12 +101,12 @@ export default function DecisionDialog({ decision, currentUserEmail, onSave, onD
         <div className="flex-1 overflow-y-auto space-y-4 px-5 pb-2">
           {/* Votes row */}
           <div className="flex gap-3">
-            <div className="flex-1 bg-white/15 rounded-2xl p-3 flex flex-col items-center gap-1.5">
-              <img src={AVATARS[BRYAN_EMAIL]} alt="Bryan" className="w-9 h-9 rounded-full object-cover" />
+            <div className="flex-1 bg-white/15 rounded-2xl p-3 flex flex-row items-center gap-3">
+              <img src={AVATARS[BRYAN_EMAIL]} alt="Bryan" className="w-9 h-9 rounded-full object-cover flex-shrink-0" />
               <p className="text-sm font-medium text-white">{decision.bryan_vote ? voteEmoji[decision.bryan_vote] : '—'}</p>
             </div>
-            <div className="flex-1 bg-white/15 rounded-2xl p-3 flex flex-col items-center gap-1.5">
-              <img src={AVATARS[KATE_EMAIL]} alt="Kate" className="w-9 h-9 rounded-full object-cover" />
+            <div className="flex-1 bg-white/15 rounded-2xl p-3 flex flex-row items-center gap-3">
+              <img src={AVATARS[KATE_EMAIL]} alt="Kate" className="w-9 h-9 rounded-full object-cover flex-shrink-0" />
               <p className="text-sm font-medium text-white">{decision.kate_vote ? voteEmoji[decision.kate_vote] : '—'}</p>
             </div>
           </div>
