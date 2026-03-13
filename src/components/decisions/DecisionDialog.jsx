@@ -200,7 +200,8 @@ export default function DecisionDialog({ decision, currentUserEmail, onSave, onD
               onChange={e => setNewComment(e.target.value)}
               placeholder="Add context, conditions, thoughts..."
               rows={2}
-              className="bg-white/15 border-0 text-white placeholder:text-indigo-300 rounded-2xl"
+              className="border-0 text-white placeholder:text-indigo-300 rounded-2xl"
+              style={{background: 'rgba(180,140,255,0.2)', border: '1px solid rgba(200,170,255,0.25)'}}
               style={{ fontSize: '16px' }}
             />
           </div>
