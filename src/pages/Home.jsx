@@ -136,8 +136,8 @@ export default function Home() {
               <h1 className="text-2xl md:text-4xl font-bold text-gray-800 mb-1 md:mb-2">
                 Welcome Home
               </h1>
-              <Link to={createPageUrl('Decisions')} className="mt-1 inline-flex items-center gap-1.5 bg-white/60 hover:bg-white/80 text-gray-700 text-xs font-medium px-3 py-1.5 rounded-full transition-colors backdrop-blur-sm border border-white/40">
-                <span>⚖️</span> Family Decisions
+              <Link to={createPageUrl('Decisions')} className="mt-2 inline-flex items-center gap-1 bg-white/50 hover:bg-white/70 text-gray-600 text-[10px] font-medium px-2 py-0.5 rounded-full transition-colors backdrop-blur-sm border border-white/30">
+                <span>⚖️</span> Decisions
               </Link>
             </div>
             <Link to={createPageUrl('Family')}>
