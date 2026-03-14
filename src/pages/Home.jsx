@@ -139,6 +139,9 @@ export default function Home() {
               <p className="text-sm md:text-lg text-gray-700">
                 1934 Church St
               </p>
+              <Link to={createPageUrl('Decisions')} className="mt-2 inline-flex items-center gap-1.5 bg-white/60 hover:bg-white/80 text-gray-700 text-xs font-medium px-3 py-1.5 rounded-full transition-colors backdrop-blur-sm border border-white/40">
+                <span>⚖️</span> Family Decisions
+              </Link>
             </div>
             <Link to={createPageUrl('Family')}>
               <img 
