@@ -222,8 +222,8 @@ export default function Home() {
         </div>
 
         {/* Main Sections — 2-col grid */}
-        <div className="grid grid-cols-2 gap-3 pb-3">
-          {sections.filter(s => s.href !== 'Decisions').map((section, i) => (
+        <div className="grid grid-cols-2 gap-3 pb-8">
+          {sections.map((section, i) => (
             <motion.div
               key={section.title}
               initial={{ opacity: 0, y: 20 }}
@@ -237,12 +237,12 @@ export default function Home() {
                       {section.count}
                     </div>
                   )}
-                  <div className={`rounded-2xl shadow-md hover:shadow-xl transition-all ${section.bgColor} flex items-center gap-3 px-4 h-20`}>
+                  <div className={`rounded-2xl shadow-md hover:shadow-xl transition-all ${section.bgColor} flex items-center gap-3 px-4 h-24`}>
                     {imageUrls[section.imageKey] && (
                       <img 
                         src={imageUrls[section.imageKey]} 
                         alt={section.title}
-                        className="w-14 h-14 object-contain flex-shrink-0"
+                        className="w-16 h-16 object-contain flex-shrink-0"
                       />
                     )}
                     <h3 className="text-base font-bold text-white drop-shadow-lg">{section.title}</h3>
@@ -252,31 +252,6 @@ export default function Home() {
             </motion.div>
           ))}
         </div>
-
-        {/* Decisions — full-width banner */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.4 }}
-          className="pb-4"
-        >
-          <Link to={createPageUrl('Decisions')}>
-            <div className="relative cursor-pointer hover:scale-[1.02] transition-all duration-300">
-              {pendingDecisions.length > 0 && (
-                <div className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center shadow-lg z-10">
-                  {pendingDecisions.length}
-                </div>
-              )}
-              <div className="rounded-2xl shadow-md bg-gradient-to-r from-violet-400 to-purple-600 flex items-center gap-4 px-5 h-14">
-                <span className="text-2xl">🗳️</span>
-                <h3 className="text-base font-bold text-white drop-shadow-lg">Family Decisions</h3>
-                {pendingDecisions.length > 0 && (
-                  <span className="ml-auto text-xs text-white/80 font-medium">{pendingDecisions.length} pending</span>
-                )}
-              </div>
-            </div>
-          </Link>
-        </motion.div>
       </div>
     </div>
   );
