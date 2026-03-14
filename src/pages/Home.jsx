@@ -233,12 +233,14 @@ export default function Home() {
                     </div>
                   )}
                   <div className={`rounded-3xl shadow-lg hover:shadow-2xl transition-all ${section.bgColor} p-6 flex flex-col items-center justify-center h-36`}>
-                    {imageUrls[section.imageKey] && (
+                    {imageUrls[section.imageKey] ? (
                       <img 
                         src={imageUrls[section.imageKey]} 
                         alt={section.title}
                         className="w-32 h-32 object-contain mb-3"
                       />
+                    ) : (
+                      <div className="text-5xl mb-3">🗳️</div>
                     )}
                     <h3 className="text-lg font-bold text-white drop-shadow-lg whitespace-nowrap">{section.title}</h3>
                   </div>
