@@ -49,9 +49,9 @@ export default function Home() {
     }
   });
 
-  const { data: appliances } = useQuery({
-    queryKey: ['appliances'],
-    queryFn: () => base44.entities.Appliance.list(),
+  const { data: pendingDecisions = [] } = useQuery({
+    queryKey: ['pendingDecisions'],
+    queryFn: () => base44.entities.FamilyDecision.filter({ status: 'pending' }),
   });
 
   const { data: currentUser } = useQuery({
