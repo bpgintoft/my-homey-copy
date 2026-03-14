@@ -13,8 +13,7 @@ export default function Home() {
     meals: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/294a7181f_mealplanning.png',
     kids: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/64d88eba1_kidsactivities.png',
     house: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/04b7513e6_house.png',
-    history: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/2d4840f69_history.png',
-    decisions: null
+    history: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/2d4840f69_history.png'
   });
   const [familyImage] = useState('https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/7afddfe7e_family.png');
 
@@ -50,9 +49,9 @@ export default function Home() {
     }
   });
 
-  const { data: pendingDecisions = [] } = useQuery({
-    queryKey: ['pendingDecisions'],
-    queryFn: () => base44.entities.FamilyDecision.filter({ status: 'pending' }),
+  const { data: appliances } = useQuery({
+    queryKey: ['appliances'],
+    queryFn: () => base44.entities.Appliance.list(),
   });
 
   const { data: currentUser } = useQuery({
@@ -96,13 +95,6 @@ export default function Home() {
       imageKey: 'history',
       bgColor: 'bg-gradient-to-br from-amber-200 to-amber-300'
     },
-    { 
-      title: 'Decisions', 
-      href: 'Decisions', 
-      count: pendingDecisions.length,
-      imageKey: 'decisions',
-      bgColor: 'bg-gradient-to-br from-violet-400 to-purple-600'
-    },
   ];
 
   return (
@@ -144,14 +136,9 @@ export default function Home() {
               <h1 className="text-2xl md:text-4xl font-bold text-gray-800 mb-1 md:mb-2">
                 Welcome Home
               </h1>
-              <Link to={createPageUrl('Decisions')}>
-                <div className="inline-flex items-center gap-1.5 bg-white/60 backdrop-blur-sm border border-white/80 rounded-full px-3 py-1 text-xs font-semibold text-gray-700 hover:bg-white/80 transition-colors shadow-sm">
-                  🗳️ Decisions
-                  {pendingDecisions.length > 0 && (
-                    <span className="bg-red-500 text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center">{pendingDecisions.length}</span>
-                  )}
-                </div>
-              </Link>
+              <p className="text-sm md:text-lg text-gray-700">
+                1934 Church St
+              </p>
             </div>
             <Link to={createPageUrl('Family')}>
               <img 
@@ -221,8 +208,8 @@ export default function Home() {
           </motion.div>
         </div>
 
-        {/* Main Sections — 2-col grid */}
-        <div className="grid grid-cols-2 gap-3 pb-8">
+        {/* Main Sections */}
+        <div className="grid grid-cols-2 gap-4 pb-8">
           {sections.map((section, i) => (
             <motion.div
               key={section.title}
@@ -233,25 +220,36 @@ export default function Home() {
               <Link to={createPageUrl(section.href)}>
                 <div className="group cursor-pointer hover:scale-105 transition-all duration-300 relative">
                   {section.count > 0 && (
-                    <div className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center shadow-lg z-10">
+                    <div className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-7 h-7 flex items-center justify-center shadow-lg z-10">
                       {section.count}
                     </div>
                   )}
-                  <div className={`rounded-2xl shadow-md hover:shadow-xl transition-all ${section.bgColor} flex items-center gap-3 px-4 h-24`}>
+                  <div className={`rounded-3xl shadow-lg hover:shadow-2xl transition-all ${section.bgColor} p-6 flex flex-col items-center justify-center h-36`}>
                     {imageUrls[section.imageKey] && (
                       <img 
                         src={imageUrls[section.imageKey]} 
                         alt={section.title}
-                        className="w-16 h-16 object-contain flex-shrink-0"
+                        className="w-32 h-32 object-contain mb-3"
                       />
                     )}
-                    <h3 className="text-base font-bold text-white drop-shadow-lg">{section.title}</h3>
+                    <h3 className="text-lg font-bold text-white drop-shadow-lg whitespace-nowrap">{section.title}</h3>
                   </div>
                 </div>
               </Link>
             </motion.div>
           ))}
         </div>
+
+        {/* Footer Image */}
+        <Link to={createPageUrl('Family')}>
+          <div className="w-full flex justify-center pb-6 cursor-pointer">
+            <img 
+              src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/8e2cf008e_Gintoftsback.png"
+              alt="Gintoft Family"
+              className="w-full max-w-lg h-auto object-contain"
+            />
+          </div>
+        </Link>
       </div>
     </div>
   );
