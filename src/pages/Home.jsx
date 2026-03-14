@@ -136,10 +136,7 @@ export default function Home() {
               <h1 className="text-2xl md:text-4xl font-bold text-gray-800 mb-1 md:mb-2">
                 Welcome Home
               </h1>
-              <p className="text-sm md:text-lg text-gray-700">
-                1934 Church St
-              </p>
-              <Link to={createPageUrl('Decisions')} className="mt-2 inline-flex items-center gap-1.5 bg-white/60 hover:bg-white/80 text-gray-700 text-xs font-medium px-3 py-1.5 rounded-full transition-colors backdrop-blur-sm border border-white/40">
+              <Link to={createPageUrl('Decisions')} className="mt-1 inline-flex items-center gap-1.5 bg-white/60 hover:bg-white/80 text-gray-700 text-xs font-medium px-3 py-1.5 rounded-full transition-colors backdrop-blur-sm border border-white/40">
                 <span>⚖️</span> Family Decisions
               </Link>
             </div>
