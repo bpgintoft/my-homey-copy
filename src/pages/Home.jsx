@@ -95,6 +95,13 @@ export default function Home() {
       imageKey: 'history',
       bgColor: 'bg-gradient-to-br from-amber-200 to-amber-300'
     },
+    { 
+      title: 'Decisions', 
+      href: 'Decisions', 
+      count: pendingDecisions.length,
+      imageKey: 'decisions',
+      bgColor: 'bg-gradient-to-br from-violet-400 to-purple-600'
+    },
   ];
 
   return (
