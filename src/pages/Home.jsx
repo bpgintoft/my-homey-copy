@@ -98,14 +98,14 @@ export default function Home() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#F3F0FF]">
+    <div className="min-h-screen bg-[#F5F5F7]">
       {currentUser && <ChoreNotificationsDialog memberId={currentUser.email} />}
 
       {/* Header */}
       <div className="relative overflow-hidden">
         <style>{`
           .banner-bg {
-            background: linear-gradient(135deg, #D8C8FF 0%, #C4A8F0 50%, #A888DC 100%);
+            background: linear-gradient(135deg, #C8F0E0 0%, #A8E6D3 50%, #88DCC8 100%);
             background-size: 400% 400%;
             position: relative;
           }
@@ -116,16 +116,16 @@ export default function Home() {
             background: 
               repeating-linear-gradient(
                 45deg,
-                rgba(196, 168, 240, 0.6) 0px,
-                rgba(196, 168, 240, 0.6) 10px,
-                rgba(160, 120, 220, 0.4) 10px,
-                rgba(160, 120, 220, 0.4) 20px,
-                rgba(196, 168, 240, 0.6) 20px,
-                rgba(196, 168, 240, 0.6) 25px,
-                rgba(216, 200, 255, 0.3) 25px,
-                rgba(216, 200, 255, 0.3) 30px
+                rgba(168, 230, 211, 0.6) 0px,
+                rgba(168, 230, 211, 0.6) 10px,
+                rgba(120, 200, 180, 0.4) 10px,
+                rgba(120, 200, 180, 0.4) 20px,
+                rgba(168, 230, 211, 0.6) 20px,
+                rgba(168, 230, 211, 0.6) 25px,
+                rgba(200, 240, 224, 0.3) 25px,
+                rgba(200, 240, 224, 0.3) 30px
               ),
-              radial-gradient(circle, rgba(160, 120, 220, 0.4) 2px, transparent 2px);
+              radial-gradient(circle, rgba(120, 200, 180, 0.4) 2px, transparent 2px);
             background-size: 100% 100%, 15px 15px;
             background-position: 0 0, 7px 7px;
           }
