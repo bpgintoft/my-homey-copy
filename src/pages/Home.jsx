@@ -7,6 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { motion } from 'framer-motion';
 import { Loader2 } from 'lucide-react';
 import ChoreNotificationsDialog from '../components/ChoreNotificationsDialog';
+import RoundaboutGrid from '../components/RoundaboutGrid';
 
 export default function Home() {
   const [imageUrls] = useState({
