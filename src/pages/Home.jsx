@@ -69,7 +69,7 @@ export default function Home() {
 
   const sections = [
     { 
-      title: 'Meal Planning', 
+      title: 'Meals', 
       href: 'Meals', 
       count: 0,
       imageKey: 'meals',
