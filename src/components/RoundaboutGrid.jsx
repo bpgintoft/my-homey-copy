@@ -282,7 +282,7 @@ export default function RoundaboutGrid({ sections, imageUrls }) {
             <span style={{
               color: 'white',
               fontWeight: 'bold',
-              fontSize: circleR * 0.22,
+              fontSize: circleR * 0.30,
               textAlign: 'center',
               lineHeight: 1.3,
               padding: '0 6px',
