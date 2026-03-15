@@ -234,7 +234,7 @@ export default function RoundaboutGrid({ sections, imageUrls }) {
                     <img
                       src={imageUrls[section.imageKey]}
                       alt={section.title}
-                      style={{ width: BW * 0.52, height: BW * 0.52, objectFit: 'contain', marginBottom: 6 }}
+                      style={{ width: BW * 0.65, height: BW * 0.65, objectFit: 'contain', marginBottom: 6 }}
                     />
                   )}
                   <h3 className="font-bold text-white drop-shadow-lg whitespace-nowrap" style={{ fontSize: BW * 0.11 }}>
