@@ -207,7 +207,13 @@ export default function RoundaboutGrid({ sections, imageUrls }) {
           const q = quadrants[i];
           const pos = buttonPos[q];
           const clipPath = buildPath(q);
-          const isTop = q === 'tl' || q === 'tr';
+          // Badge position: outer corner of each quadrant
+          const badgeStyle = {
+            tl: { top: 8, left: 8 },
+            tr: { top: 8, right: 8 },
+            bl: { bottom: 8, left: 8 },
+            br: { bottom: 8, right: 8 },
+          }[q];
           return (
             <React.Fragment key={section.title}>
               <motion.div
@@ -226,33 +232,16 @@ export default function RoundaboutGrid({ sections, imageUrls }) {
               >
                 <Link to={createPageUrl(section.href)} style={{ display: 'block', width: '100%', height: '100%' }}>
                   <div className={`w-full h-full flex flex-col items-center justify-center ${section.bgColor} cursor-pointer hover:brightness-110 transition-all duration-300`}>
-                    {isTop ? (
-                      <>
-                        <h3 className="font-bold text-white drop-shadow-lg whitespace-nowrap" style={{ fontSize: BW * 0.11, marginBottom: 6 }}>
-                          {section.title}
-                        </h3>
-                        {imageUrls[section.imageKey] && (
-                          <img
-                            src={imageUrls[section.imageKey]}
-                            alt={section.title}
-                            style={{ width: BW * 0.65, height: BW * 0.65, objectFit: 'contain' }}
-                          />
-                        )}
-                      </>
-                    ) : (
-                      <>
-                        {imageUrls[section.imageKey] && (
-                          <img
-                            src={imageUrls[section.imageKey]}
-                            alt={section.title}
-                            style={{ width: BW * 0.65, height: BW * 0.65, objectFit: 'contain', marginBottom: 6 }}
-                          />
-                        )}
-                        <h3 className="font-bold text-white drop-shadow-lg whitespace-nowrap" style={{ fontSize: BW * 0.11 }}>
-                          {section.title}
-                        </h3>
-                      </>
+                    {imageUrls[section.imageKey] && (
+                      <img
+                        src={imageUrls[section.imageKey]}
+                        alt={section.title}
+                        style={{ width: BW * 0.65, height: BW * 0.65, objectFit: 'contain', marginBottom: 6 }}
+                      />
                     )}
+                    <h3 className="font-bold text-white drop-shadow-lg whitespace-nowrap" style={{ fontSize: BW * 0.11 }}>
+                      {section.title}
+                    </h3>
                   </div>
                 </Link>
               </motion.div>
