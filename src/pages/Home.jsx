@@ -98,7 +98,7 @@ export default function Home() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#F5F5F7]">
+    <div className="min-h-screen bg-[#F3F0FF]">
       {currentUser && <ChoreNotificationsDialog memberId={currentUser.email} />}
 
       {/* Header */}
