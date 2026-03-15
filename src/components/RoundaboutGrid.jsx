@@ -248,7 +248,7 @@ export default function RoundaboutGrid({ sections, imageUrls }) {
               {section.count > 0 && (
                 <div
                   className="absolute bg-red-500 text-white text-xs font-bold rounded-full w-7 h-7 flex items-center justify-center shadow-lg"
-                  style={{ ...{ position: 'absolute', ...{ left: pos.left, top: pos.top } }, ...badgeStyle, zIndex: 20 }}
+                  style={{ top: pos.top - 10, left: pos.left + BW - 18, zIndex: 20 }}
                 >
                   {section.count}
                 </div>
