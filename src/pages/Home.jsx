@@ -209,35 +209,57 @@ export default function Home() {
         </div>
 
         {/* Main Sections */}
-        <div className="grid grid-cols-2 gap-4 pb-8">
-          {sections.map((section, i) => (
-            <motion.div
-              key={section.title}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: i * 0.1 }}
-            >
-              <Link to={createPageUrl(section.href)}>
-                <div className="group cursor-pointer hover:scale-105 transition-all duration-300 relative">
-                  {section.count > 0 && (
-                    <div className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-7 h-7 flex items-center justify-center shadow-lg z-10">
-                      {section.count}
-                    </div>
-                  )}
-                  <div className={`rounded-3xl shadow-lg hover:shadow-2xl transition-all ${section.bgColor} p-6 flex flex-col items-center justify-center h-36`}>
-                    {imageUrls[section.imageKey] && (
-                      <img 
-                        src={imageUrls[section.imageKey]} 
-                        alt={section.title}
-                        className="w-32 h-32 object-contain mb-3"
-                      />
+        <div className="relative pb-8">
+          <div className="grid grid-cols-2 pb-8" style={{ gap: '80px' }}>
+            {sections.map((section, i) => (
+              <motion.div
+                key={section.title}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: i * 0.1 }}
+              >
+                <Link to={createPageUrl(section.href)}>
+                  <div className="group cursor-pointer hover:scale-105 transition-all duration-300 relative">
+                    {section.count > 0 && (
+                      <div className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-7 h-7 flex items-center justify-center shadow-lg z-10">
+                        {section.count}
+                      </div>
                     )}
-                    <h3 className="text-lg font-bold text-white drop-shadow-lg whitespace-nowrap">{section.title}</h3>
+                    <div className={`rounded-3xl shadow-lg hover:shadow-2xl transition-all ${section.bgColor} p-6 flex flex-col items-center justify-center h-36`}>
+                      {imageUrls[section.imageKey] && (
+                        <img
+                          src={imageUrls[section.imageKey]}
+                          alt={section.title}
+                          className="w-32 h-32 object-contain mb-3"
+                        />
+                      )}
+                      <h3 className="text-lg font-bold text-white drop-shadow-lg whitespace-nowrap">{section.title}</h3>
+                    </div>
                   </div>
-                </div>
-              </Link>
-            </motion.div>
-          ))}
+                </Link>
+              </motion.div>
+            ))}
+          </div>
+
+          {/* Family Decisions circle in the center */}
+          <Link to={createPageUrl('Decisions')}>
+            <div
+              className="absolute z-10 flex items-center justify-center cursor-pointer hover:scale-105 transition-all duration-300"
+              style={{
+                width: '72px',
+                height: '72px',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -58%)',
+                backgroundColor: '#C4B5FD',
+                borderRadius: '50%',
+              }}
+            >
+              <span className="text-white font-bold text-center leading-tight" style={{ fontSize: '10px' }}>
+                Family<br />Decisions
+              </span>
+            </div>
+          </Link>
         </div>
 
         {/* Footer Image */}
