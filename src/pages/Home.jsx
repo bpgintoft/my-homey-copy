@@ -209,54 +209,35 @@ export default function Home() {
         </div>
 
         {/* Main Sections */}
-        <div className="relative pb-8">
-          {/* Roundabout circle in the center */}
-          <Link to={createPageUrl('Decisions')} className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-20">
-            <div className="w-20 h-20 rounded-full bg-purple-400 hover:bg-purple-500 transition-colors flex items-center justify-center shadow-lg cursor-pointer">
-              <span className="text-white text-[10px] font-bold text-center leading-tight px-1">Family<br/>Decisions</span>
-            </div>
-          </Link>
-
-          <div className="grid grid-cols-2 gap-6">
-            {sections.map((section, i) => {
-              // Corner cutout: top-left=br, top-right=bl, bottom-left=tr, bottom-right=tl
-              const cutoutCorner = [
-                'rounded-tl-3xl rounded-tr-3xl rounded-bl-3xl rounded-br-[40px]',
-                'rounded-tl-3xl rounded-tr-3xl rounded-br-3xl rounded-bl-[40px]',
-                'rounded-tl-3xl rounded-bl-3xl rounded-br-3xl rounded-tr-[40px]',
-                'rounded-tr-3xl rounded-bl-3xl rounded-br-3xl rounded-tl-[40px]',
-              ][i];
-
-              return (
-                <motion.div
-                  key={section.title}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.4, delay: i * 0.1 }}
-                >
-                  <Link to={createPageUrl(section.href)}>
-                    <div className="group cursor-pointer hover:scale-105 transition-all duration-300 relative">
-                      {section.count > 0 && (
-                        <div className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-7 h-7 flex items-center justify-center shadow-lg z-10">
-                          {section.count}
-                        </div>
-                      )}
-                      <div className={`${cutoutCorner} shadow-lg hover:shadow-2xl transition-all ${section.bgColor} p-6 flex flex-col items-center justify-center h-36`}>
-                        {imageUrls[section.imageKey] && (
-                          <img
-                            src={imageUrls[section.imageKey]}
-                            alt={section.title}
-                            className="w-32 h-32 object-contain mb-3"
-                          />
-                        )}
-                        <h3 className="text-lg font-bold text-white drop-shadow-lg whitespace-nowrap">{section.title}</h3>
-                      </div>
+        <div className="grid grid-cols-2 gap-4 pb-8">
+          {sections.map((section, i) => (
+            <motion.div
+              key={section.title}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: i * 0.1 }}
+            >
+              <Link to={createPageUrl(section.href)}>
+                <div className="group cursor-pointer hover:scale-105 transition-all duration-300 relative">
+                  {section.count > 0 && (
+                    <div className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-7 h-7 flex items-center justify-center shadow-lg z-10">
+                      {section.count}
                     </div>
-                  </Link>
-                </motion.div>
-              );
-            })}
-          </div>
+                  )}
+                  <div className={`rounded-3xl shadow-lg hover:shadow-2xl transition-all ${section.bgColor} p-6 flex flex-col items-center justify-center h-36`}>
+                    {imageUrls[section.imageKey] && (
+                      <img 
+                        src={imageUrls[section.imageKey]} 
+                        alt={section.title}
+                        className="w-32 h-32 object-contain mb-3"
+                      />
+                    )}
+                    <h3 className="text-lg font-bold text-white drop-shadow-lg whitespace-nowrap">{section.title}</h3>
+                  </div>
+                </div>
+              </Link>
+            </motion.div>
+          ))}
         </div>
 
         {/* Footer Image */}
