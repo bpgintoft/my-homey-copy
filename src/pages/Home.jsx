@@ -208,37 +208,8 @@ export default function Home() {
           </motion.div>
         </div>
 
-        {/* Main Sections */}
-        <div className="grid grid-cols-2 gap-4 pb-8">
-          {sections.map((section, i) => (
-            <motion.div
-              key={section.title}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: i * 0.1 }}
-            >
-              <Link to={createPageUrl(section.href)}>
-                <div className="group cursor-pointer hover:scale-105 transition-all duration-300 relative">
-                  {section.count > 0 && (
-                    <div className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-7 h-7 flex items-center justify-center shadow-lg z-10">
-                      {section.count}
-                    </div>
-                  )}
-                  <div className={`rounded-3xl shadow-lg hover:shadow-2xl transition-all ${section.bgColor} p-6 flex flex-col items-center justify-center h-36`}>
-                    {imageUrls[section.imageKey] && (
-                      <img 
-                        src={imageUrls[section.imageKey]} 
-                        alt={section.title}
-                        className="w-32 h-32 object-contain mb-3"
-                      />
-                    )}
-                    <h3 className="text-lg font-bold text-white drop-shadow-lg whitespace-nowrap">{section.title}</h3>
-                  </div>
-                </div>
-              </Link>
-            </motion.div>
-          ))}
-        </div>
+        {/* Main Sections - Roundabout Layout */}
+        <RoundaboutGrid sections={sections} imageUrls={imageUrls} />
 
         {/* Footer Image */}
         <Link to={createPageUrl('Family')}>
