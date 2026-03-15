@@ -207,42 +207,53 @@ export default function RoundaboutGrid({ sections, imageUrls }) {
           const q = quadrants[i];
           const pos = buttonPos[q];
           const clipPath = buildPath(q);
+          // Badge position: outer corner of each quadrant
+          const badgeStyle = {
+            tl: { top: 8, left: 8 },
+            tr: { top: 8, right: 8 },
+            bl: { bottom: 8, left: 8 },
+            br: { bottom: 8, right: 8 },
+          }[q];
           return (
-            <motion.div
-              key={section.title}
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.4, delay: i * 0.1 }}
-              style={{
-                position: 'absolute',
-                left: pos.left,
-                top: pos.top,
-                width: BW,
-                height: BH,
-                clipPath,
-                WebkitClipPath: clipPath,
-              }}
-            >
-              <Link to={createPageUrl(section.href)} style={{ display: 'block', width: '100%', height: '100%' }}>
-                <div className={`w-full h-full flex flex-col items-center justify-center ${section.bgColor} cursor-pointer hover:brightness-110 transition-all duration-300 relative`}>
-                  {section.count > 0 && (
-                    <div className="absolute top-3 right-3 bg-red-500 text-white text-xs font-bold rounded-full w-7 h-7 flex items-center justify-center shadow-lg z-10">
-                      {section.count}
-                    </div>
-                  )}
-                  {imageUrls[section.imageKey] && (
-                    <img
-                      src={imageUrls[section.imageKey]}
-                      alt={section.title}
-                      style={{ width: BW * 0.65, height: BW * 0.65, objectFit: 'contain', marginBottom: 6 }}
-                    />
-                  )}
-                  <h3 className="font-bold text-white drop-shadow-lg whitespace-nowrap" style={{ fontSize: BW * 0.11 }}>
-                    {section.title}
-                  </h3>
+            <React.Fragment key={section.title}>
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.4, delay: i * 0.1 }}
+                style={{
+                  position: 'absolute',
+                  left: pos.left,
+                  top: pos.top,
+                  width: BW,
+                  height: BH,
+                  clipPath,
+                  WebkitClipPath: clipPath,
+                }}
+              >
+                <Link to={createPageUrl(section.href)} style={{ display: 'block', width: '100%', height: '100%' }}>
+                  <div className={`w-full h-full flex flex-col items-center justify-center ${section.bgColor} cursor-pointer hover:brightness-110 transition-all duration-300`}>
+                    {imageUrls[section.imageKey] && (
+                      <img
+                        src={imageUrls[section.imageKey]}
+                        alt={section.title}
+                        style={{ width: BW * 0.65, height: BW * 0.65, objectFit: 'contain', marginBottom: 6 }}
+                      />
+                    )}
+                    <h3 className="font-bold text-white drop-shadow-lg whitespace-nowrap" style={{ fontSize: BW * 0.11 }}>
+                      {section.title}
+                    </h3>
+                  </div>
+                </Link>
+              </motion.div>
+              {section.count > 0 && (
+                <div
+                  className="absolute bg-red-500 text-white text-xs font-bold rounded-full w-7 h-7 flex items-center justify-center shadow-lg"
+                  style={{ ...{ position: 'absolute', ...{ left: pos.left, top: pos.top } }, ...badgeStyle, zIndex: 20 }}
+                >
+                  {section.count}
                 </div>
-              </Link>
-            </motion.div>
+              )}
+            </React.Fragment>
           );
         })}
 
