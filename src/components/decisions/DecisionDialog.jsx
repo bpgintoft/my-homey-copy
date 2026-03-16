@@ -322,5 +322,6 @@ export default function DecisionDialog({ decision, currentUserEmail, onSave, onD
         </button>
       </div>
     )}
+    </>
   );
 }
