@@ -105,12 +105,12 @@ export default function RoundaboutGrid({ sections, imageUrls }) {
     br: { left: G - BW, top: G - BH },
   };
 
-  // Content offset: push content away from the diagonal cut
+  // Content offset: keep centered
   const contentOffset = {
-    tl: { x: -BW * 0.06, y: -BW * 0.06 },
-    tr: { x:  BW * 0.06, y: -BW * 0.06 },
-    bl: { x: -BW * 0.06, y:  BW * 0.06 },
-    br: { x:  BW * 0.06, y:  BW * 0.06 },
+    tl: { x: 0, y: 0 },
+    tr: { x: 0, y: 0 },
+    bl: { x: 0, y: 0 },
+    br: { x: 0, y: 0 },
   };
 
   return (
