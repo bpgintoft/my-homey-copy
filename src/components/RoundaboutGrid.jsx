@@ -273,24 +273,20 @@ export default function RoundaboutGrid({ sections, imageUrls }) {
               width: circleR * 2,
               height: circleR * 2,
               borderRadius: '50%',
-              backgroundColor: '#a78bfa',
+              background: 'transparent',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               cursor: 'pointer',
               zIndex: 10,
+              overflow: 'hidden',
             }}
           >
-            <span style={{
-              color: 'white',
-              fontWeight: 'bold',
-              fontSize: circleR * 0.30,
-              textAlign: 'center',
-              lineHeight: 1.3,
-              padding: '0 6px',
-            }}>
-              Family<br />Decisions
-            </span>
+            <img
+              src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/2105216e3_8181C62D-0250-452F-8B0C-D68964D40A49.png"
+              alt="Family Decisions"
+              style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }}
+            />
           </motion.div>
         </Link>
       </div>
