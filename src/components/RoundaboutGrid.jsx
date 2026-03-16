@@ -19,39 +19,20 @@ export default function RoundaboutGrid({ sections, imageUrls }) {
 
   if (G === 0) return <div ref={containerRef} className="pb-8 w-full" style={{ minHeight: 200 }} />;
 
-  // Layout constants
-  const gap = G * 0.07;          // gap between buttons and circle
-  const BW = (G - gap) / 2;      // button width
-  const BH = BW;                  // square buttons
-  const outerR = BW * 0.20;      // outer corner radius (large, like reference)
-  const innerR = gap * 0.7;      // inner corner radius (small concave transition)
-  const circleR = (gap / 2) + BW * 0.18; // radius of the center circle
-  // The concave cutout on each inner edge is a quarter-circle arc of radius = circleR + gap/2
-  // But in the reference, the concave on each inner edge is a simple rounded notch into the corner
-  // Looking at reference: inner corners have a convex-outward arc (the button "hugs" the circle)
-  const concaveR = circleR + gap * 0.5;
+  const gap = G * 0.06;
+  const BW = (G - gap) / 2;
+  const BH = BW;
+  const outerR = BW * 0.18;
+  const cutSize = BW * 0.30; // diagonal cut size on inner corner
 
+  // Center diamond: fits in the gap area diagonally
+  // The diamond is a square rotated 45deg. Its "radius" (half-diagonal) = gap * 0.85
+  const diamondHalf = (gap / 2) + BW * 0.13;
   const CX = G / 2;
   const CY = G / 2;
 
-  // Each button occupies one quadrant. The inner corner (closest to center) has TWO concave arcs —
-  // one on each inner edge — that follow the circle outline.
-  // The path traces: outer 3 corners with outerR rounding, then two concave arcs at the inner edges.
-
-  // Intersection of circle (CX,CY,concaveR) with a horizontal line at y=edgeY
-  function circleX(edgeY, sign) {
-    const d2 = concaveR * concaveR - (edgeY - CY) ** 2;
-    if (d2 < 0) return CX;
-    return CX + sign * Math.sqrt(d2);
-  }
-  // Intersection of circle (CX,CY,concaveR) with a vertical line at x=edgeX
-  function circleY(edgeX, sign) {
-    const d2 = concaveR * concaveR - (edgeX - CX) ** 2;
-    if (d2 < 0) return CY;
-    return CY + sign * Math.sqrt(d2);
-  }
-
-  // Build path in LOCAL coordinates of each button
+  // Build clip-path for each corner button with a diagonal cut on the inner corner
+  // tl: cut bottom-right corner, tr: cut bottom-left, bl: cut top-right, br: cut top-left
   function buildPath(q) {
     let ox, oy;
     if (q === 'tl') { ox = 0;      oy = 0; }
@@ -60,134 +41,62 @@ export default function RoundaboutGrid({ sections, imageUrls }) {
     if (q === 'br') { ox = G - BW; oy = G - BH; }
 
     const x1 = ox, y1 = oy, x2 = ox + BW, y2 = oy + BH;
-    // local conversion
-    const lx = v => +(v - ox).toFixed(2);
-    const ly = v => +(v - oy).toFixed(2);
+    const r = outerR;
+    const c = cutSize;
+
+    // Helper to round a corner: Q control point at the corner vertex
+    const arc = (cx, cy, ex, ey) => `Q ${(cx - ox).toFixed(2)} ${(cy - oy).toFixed(2)} ${(ex - ox).toFixed(2)} ${(ey - oy).toFixed(2)}`;
+    const line = (px, py) => `L ${(px - ox).toFixed(2)} ${(py - oy).toFixed(2)}`;
+    const move = (px, py) => `M ${(px - ox).toFixed(2)} ${(py - oy).toFixed(2)}`;
 
     if (q === 'tl') {
-      // Outer corners: top-left, top-right, bottom-left (all rounded with outerR)
-      // Inner edges: right edge (x=x2) and bottom edge (y=y2) both curve inward toward circle
-      // On right edge (x=x2): concave arc from (x2, y1+outerR) ... down to intersection with concaveCircle
-      // But actually: the right inner edge is straight from top-right corner down to where the concave notch starts,
-      // then a concave arc, then straight along bottom to where bottom concave notch starts, then concave arc, then to bottom-left corner.
-      // 
-      // The concave arc on the right edge goes from point A (on right edge, above center) to point B (on bottom edge, left of center)
-      // sweeping AROUND the center circle (large arc going outward from center = sweep-flag 0)
-
-      // Point where concave arc meets the right inner edge (x=x2)
-      const Ay = circleY(x2, -1); // above CY
-      // Point where concave arc meets the bottom inner edge (y=y2)  
-      const Bx = circleX(y2, -1); // left of CX
-
-      const pts = [
-        `M ${lx(x1+outerR)} ${ly(y1)}`,
-        // top edge →
-        `L ${lx(x2-innerR)} ${ly(y1)}`,
-        // top-right inner corner (small convex rounding)
-        `Q ${lx(x2)} ${ly(y1)} ${lx(x2)} ${ly(y1+innerR)}`,
-        // right inner edge down to where concave begins
-        `L ${lx(x2)} ${ly(Ay)}`,
-        // concave arc around the circle (sweep=0 goes around the outside)
-        `A ${concaveR} ${concaveR} 0 0 0 ${lx(Bx)} ${ly(y2)}`,
-        // bottom inner edge left to bottom-left inner corner
-        `L ${lx(x1+innerR)} ${ly(y2)}`,
-        // bottom-left outer corner
-        `Q ${lx(x1)} ${ly(y2)} ${lx(x1)} ${ly(y2-outerR)}`,
-        // left edge up
-        `L ${lx(x1)} ${ly(y1+outerR)}`,
-        // top-left outer corner
-        `Q ${lx(x1)} ${ly(y1)} ${lx(x1+outerR)} ${ly(y1)} Z`,
-      ];
-      return `path('${pts.join(' ')}')`;
+      // outer corners: tl, tr(inner→diagonal), bl(outer)
+      // inner corner (br) = diagonal cut
+      return `path('${[
+        move(x1 + r, y1),
+        line(x2 - r, y1), arc(x2, y1, x2, y1 + r),   // top-right: small round
+        line(x2, y2 - c),                              // right edge down to cut start
+        line(x2 - c, y2),                              // diagonal cut to bottom edge
+        line(x1 + r, y2), arc(x1, y2, x1, y2 - r),   // bottom-left: rounded
+        line(x1, y1 + r), arc(x1, y1, x1 + r, y1),   // top-left: rounded
+        'Z'
+      ].join(' ')}')`;
     }
 
     if (q === 'tr') {
-      const Ay = circleY(x1, -1); // above CY on left edge (x=x1)
-      const Bx = circleX(y2, 1);  // right of CX on bottom edge (y=y2)
-
-      const pts = [
-        `M ${lx(x1+innerR)} ${ly(y1)}`,
-        // top edge →
-        `L ${lx(x2-outerR)} ${ly(y1)}`,
-        // top-right outer corner
-        `Q ${lx(x2)} ${ly(y1)} ${lx(x2)} ${ly(y1+outerR)}`,
-        // right edge down
-        `L ${lx(x2)} ${ly(y2-outerR)}`,
-        // bottom-right outer corner
-        `Q ${lx(x2)} ${ly(y2)} ${lx(x2-outerR)} ${ly(y2)}`,
-        // bottom edge left to where concave begins
-        `L ${lx(Bx)} ${ly(y2)}`,
-        // concave arc around center
-        `A ${concaveR} ${concaveR} 0 0 0 ${lx(x1)} ${ly(Ay)}`,
-        // left inner edge up to top-left inner corner
-        `L ${lx(x1)} ${ly(y1+innerR)}`,
-        // top-left inner corner small rounding
-        `Q ${lx(x1)} ${ly(y1)} ${lx(x1+innerR)} ${ly(y1)} Z`,
-      ];
-      return `path('${pts.join(' ')}')`;
+      return `path('${[
+        move(x1 + r, y1),
+        line(x2 - r, y1), arc(x2, y1, x2, y1 + r),   // top-right: rounded
+        line(x2, y2 - r), arc(x2, y2, x2 - r, y2),   // bottom-right: rounded
+        line(x1 + c, y2),                              // bottom edge to cut start
+        line(x1, y2 - c),                              // diagonal cut to left edge
+        line(x1, y1 + r), arc(x1, y1, x1 + r, y1),   // top-left: small round
+        'Z'
+      ].join(' ')}')`;
     }
 
     if (q === 'bl') {
-      const Ax = circleX(y1, -1); // left of CX on top edge (y=y1)
-      const By = circleY(x2, 1);  // below CY on right edge (x=x2)
-
-      const pts = [
-        `M ${lx(x1+outerR)} ${ly(y1)}`,
-        // top edge right to where concave begins
-        `L ${lx(Ax)} ${ly(y1)}`,
-        // concave arc around center
-        `A ${concaveR} ${concaveR} 0 0 0 ${lx(x2)} ${ly(By)}`,
-        // right inner edge down to bottom-right inner corner
-        `L ${lx(x2)} ${ly(y2-innerR)}`,
-        // bottom-right inner corner small rounding
-        `Q ${lx(x2)} ${ly(y2)} ${lx(x2-innerR)} ${ly(y2)}`,
-        // bottom edge left
-        `L ${lx(x1+outerR)} ${ly(y2)}`,
-        // bottom-left outer corner
-        `Q ${lx(x1)} ${ly(y2)} ${lx(x1)} ${ly(y2-outerR)}`,
-        // left edge up
-        `L ${lx(x1)} ${ly(y1+outerR)}`,
-        // top-left outer corner
-        `Q ${lx(x1)} ${ly(y1)} ${lx(x1+outerR)} ${ly(y1)} Z`,
-      ];
-      return `path('${pts.join(' ')}')`;
+      return `path('${[
+        move(x1 + r, y1),
+        line(x2 - c, y1),                             // top edge to cut start
+        line(x2, y1 + c),                             // diagonal cut to right edge
+        line(x2, y2 - r), arc(x2, y2, x2 - r, y2),  // bottom-right: rounded
+        line(x1 + r, y2), arc(x1, y2, x1, y2 - r),  // bottom-left: rounded
+        line(x1, y1 + r), arc(x1, y1, x1 + r, y1),  // top-left: rounded
+        'Z'
+      ].join(' ')}')`;
     }
 
     if (q === 'br') {
-      const Ax = circleX(y1, 1);  // right of CX on top edge (y=y1)
-      const By = circleY(x1, 1);  // below CY on left edge (x=x1)
-
-      const pts = [
-        `M ${lx(x1+innerR)} ${ly(y1)}`,
-        // top edge right to where concave begins — NOTE: inner corner top-left
-        // Actually top-left of br is the inner corner
-        // top-left inner corner
-        `Q ${lx(x1)} ${ly(y1)} ${lx(x1)} ${ly(y1+innerR)}`,
-
-        // Hmm, let me retrace. br button: outer corners = top-right, bottom-right, bottom-left. inner = top-left
-        // Start at top edge, left side (inner)
-        // go right along top to top-right outer corner
-      ];
-
-      // Redo br cleanly:
-      const pts2 = [
-        // Start at top edge just right of where concave ends
-        `M ${lx(Ax)} ${ly(y1)}`,
-        // top edge to top-right outer corner
-        `L ${lx(x2-outerR)} ${ly(y1)}`,
-        `Q ${lx(x2)} ${ly(y1)} ${lx(x2)} ${ly(y1+outerR)}`,
-        // right edge down
-        `L ${lx(x2)} ${ly(y2-outerR)}`,
-        `Q ${lx(x2)} ${ly(y2)} ${lx(x2-outerR)} ${ly(y2)}`,
-        // bottom edge left
-        `L ${lx(x1+outerR)} ${ly(y2)}`,
-        `Q ${lx(x1)} ${ly(y2)} ${lx(x1)} ${ly(y2-outerR)}`,
-        // left edge up to where concave begins
-        `L ${lx(x1)} ${ly(By)}`,
-        // concave arc around center back to start
-        `A ${concaveR} ${concaveR} 0 0 0 ${lx(Ax)} ${ly(y1)} Z`,
-      ];
-      return `path('${pts2.join(' ')}')`;
+      return `path('${[
+        move(x1, y1 + c),
+        line(x1 + c, y1),                             // diagonal cut
+        line(x2 - r, y1), arc(x2, y1, x2, y1 + r),  // top-right: rounded
+        line(x2, y2 - r), arc(x2, y2, x2 - r, y2),  // bottom-right: rounded
+        line(x1 + r, y2), arc(x1, y2, x1, y2 - r),  // bottom-left: rounded
+        line(x1, y1 + c),
+        'Z'
+      ].join(' ')}')`;
     }
   }
 
@@ -199,6 +108,14 @@ export default function RoundaboutGrid({ sections, imageUrls }) {
     br: { left: G - BW, top: G - BH },
   };
 
+  // Content offset: push content away from the diagonal cut
+  const contentOffset = {
+    tl: { x: -BW * 0.06, y: -BW * 0.06 },
+    tr: { x:  BW * 0.06, y: -BW * 0.06 },
+    bl: { x: -BW * 0.06, y:  BW * 0.06 },
+    br: { x:  BW * 0.06, y:  BW * 0.06 },
+  };
+
   return (
     <div ref={containerRef} className="pb-8 w-full">
       <div className="relative" style={{ width: G, height: G }}>
@@ -207,13 +124,8 @@ export default function RoundaboutGrid({ sections, imageUrls }) {
           const q = quadrants[i];
           const pos = buttonPos[q];
           const clipPath = buildPath(q);
-          // Badge position: outer corner of each quadrant
-          const badgeStyle = {
-            tl: { top: 8, left: 8 },
-            tr: { top: 8, right: 8 },
-            bl: { bottom: 8, left: 8 },
-            br: { bottom: 8, right: 8 },
-          }[q];
+          const offset = contentOffset[q];
+
           return (
             <React.Fragment key={section.title}>
               <motion.div
@@ -232,12 +144,12 @@ export default function RoundaboutGrid({ sections, imageUrls }) {
               >
                 <Link to={createPageUrl(section.href)} style={{ display: 'block', width: '100%', height: '100%' }}>
                   <div className={`w-full h-full flex flex-col items-center justify-center ${section.bgColor} cursor-pointer hover:brightness-110 transition-all duration-300`}>
-                    <div style={{ marginTop: (q === 'tl' || q === 'tr') ? -BW * 0.08 : 0, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                    <div style={{ transform: `translate(${offset.x}px, ${offset.y}px)`, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                       {imageUrls[section.imageKey] && (
                         <img
                           src={imageUrls[section.imageKey]}
                           alt={section.title}
-                          style={{ width: BW * 0.65, height: BW * 0.65, objectFit: 'contain', marginBottom: 6 }}
+                          style={{ width: BW * 0.55, height: BW * 0.55, objectFit: 'contain', marginBottom: 4 }}
                         />
                       )}
                       <h3 className="font-bold text-white drop-shadow-lg whitespace-nowrap" style={{ fontSize: BW * 0.11 }}>
@@ -259,33 +171,44 @@ export default function RoundaboutGrid({ sections, imageUrls }) {
           );
         })}
 
-        {/* Central circle */}
+        {/* Central diamond button */}
         <Link to={createPageUrl('Decisions')}>
           <motion.div
-            initial={{ opacity: 0, scale: 0 }}
-            animate={{ opacity: 1, scale: 1 }}
+            initial={{ opacity: 0, scale: 0, rotate: 45 }}
+            animate={{ opacity: 1, scale: 1, rotate: 45 }}
             transition={{ duration: 0.4, delay: 0.5 }}
             className="hover:brightness-110 transition-all duration-300"
             style={{
               position: 'absolute',
-              left: CX - circleR,
-              top: CY - circleR,
-              width: circleR * 2,
-              height: circleR * 2,
-              borderRadius: '50%',
-              background: 'transparent',
+              left: CX - diamondHalf,
+              top: CY - diamondHalf,
+              width: diamondHalf * 2,
+              height: diamondHalf * 2,
+              borderRadius: diamondHalf * 0.28,
+              background: '#e8e4f5',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               cursor: 'pointer',
               zIndex: 10,
-              overflow: 'visible',
+              overflow: 'hidden',
+              boxShadow: '0 4px 20px rgba(0,0,0,0.25)',
             }}
           >
             <img
               src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/2105216e3_8181C62D-0250-452F-8B0C-D68964D40A49.png"
               alt="Family Decisions"
-              style={{ width: '210%', height: '210%', objectFit: 'cover', borderRadius: '50%', position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, calc(-50% + 4px))' }}
+              style={{
+                width: '160%',
+                height: '160%',
+                objectFit: 'cover',
+                transform: 'rotate(-45deg)',
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                marginTop: '-80%',
+                marginLeft: '-80%',
+              }}
             />
           </motion.div>
         </Link>
