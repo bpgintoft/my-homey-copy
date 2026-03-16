@@ -122,6 +122,7 @@ export default function DecisionDialog({ decision, currentUserEmail, onSave, onD
   const otherVote = isBryan ? decision.kate_vote : decision.bryan_vote;
 
   return (
+    <>
     <Dialog open onOpenChange={onClose}>
       <DialogContent className="sm:max-w-md max-h-[90vh] flex flex-col overflow-hidden p-0 border-0 rounded-3xl" style={{background: 'linear-gradient(160deg, #2d1b69 0%, #4a3fb5 60%, #5B4FCF 100%)'}}>
         <DialogHeader className="px-5 pt-5 pb-3">
