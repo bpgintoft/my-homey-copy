@@ -200,7 +200,7 @@ export default function RoundaboutGrid({ sections, imageUrls }) {
               flexDirection: 'column',
               alignItems: 'center',
               justifyContent: 'center',
-              gap: 2,
+              gap: 0,
               width: diamondHalf * 1.2,
               height: diamondHalf * 1.6,
             }}>
