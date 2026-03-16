@@ -25,7 +25,7 @@ export default function RoundaboutGrid({ sections, imageUrls }) {
   const BH = BW;                  // square buttons
   const outerR = BW * 0.20;      // outer corner radius (large, like reference)
   const innerR = gap * 0.7;      // inner corner radius (small concave transition)
-  const circleR = (gap / 2) + BW * 0.36; // radius of the center circle
+  const circleR = (gap / 2) + BW * 0.18; // radius of the center circle
   // The concave cutout on each inner edge is a quarter-circle arc of radius = circleR + gap/2
   // But in the reference, the concave on each inner edge is a simple rounded notch into the corner
   // Looking at reference: inner corners have a convex-outward arc (the button "hugs" the circle)
@@ -269,7 +269,7 @@ export default function RoundaboutGrid({ sections, imageUrls }) {
             style={{
               position: 'absolute',
               left: CX - circleR,
-              top: CY - circleR + 8,
+              top: CY - circleR,
               width: circleR * 2,
               height: circleR * 2,
               borderRadius: '50%',
