@@ -182,31 +182,49 @@ export default function RoundaboutGrid({ sections, imageUrls }) {
               width: diamondHalf * 2,
               height: diamondHalf * 2,
               borderRadius: diamondHalf * 0.22,
-              background: '#e8e4f5',
+              background: 'linear-gradient(135deg, #4a2d9c 0%, #6b46c1 50%, #7c3aed 100%)',
               display: 'flex',
+              flexDirection: 'column',
               alignItems: 'center',
               justifyContent: 'center',
               cursor: 'pointer',
               zIndex: 10,
               overflow: 'hidden',
-              boxShadow: '0 4px 20px rgba(0,0,0,0.25)',
+              boxShadow: '0 4px 20px rgba(0,0,0,0.35)',
             }}
           >
-            <img
-              src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/2105216e3_8181C62D-0250-452F-8B0C-D68964D40A49.png"
-              alt="Family Decisions"
-              style={{
-                width: '160%',
-                height: '160%',
-                objectFit: 'cover',
-                transform: 'rotate(-45deg)',
-                position: 'absolute',
-                top: '50%',
-                left: '50%',
-                marginTop: '-80%',
-                marginLeft: '-80%',
-              }}
-            />
+            {/* Content rotated back to be upright */}
+            <div style={{
+              transform: 'rotate(-45deg)',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 2,
+              width: diamondHalf * 1.2,
+            }}>
+              {/* Kate - above */}
+              <img
+                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/d7b8218e7_katehome.png"
+                alt="Kate"
+                style={{ width: diamondHalf * 0.55, height: diamondHalf * 0.55, objectFit: 'contain' }}
+              />
+              {/* Label */}
+              <span style={{
+                color: 'white',
+                fontWeight: '800',
+                fontSize: diamondHalf * 0.22,
+                textShadow: '0 1px 4px rgba(0,0,0,0.5)',
+                letterSpacing: '0.02em',
+                lineHeight: 1,
+              }}>Decisions</span>
+              {/* Bryan - below */}
+              <img
+                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/fc0753fbc_bryanhome.png"
+                alt="Bryan"
+                style={{ width: diamondHalf * 0.55, height: diamondHalf * 0.55, objectFit: 'contain' }}
+              />
+            </div>
           </motion.div>
         </Link>
       </div>
