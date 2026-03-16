@@ -120,7 +120,7 @@ export default function Decisions() {
               className={`relative px-4 py-2.5 rounded-full transition-all font-semibold text-sm ${
                 filter === f.key
                   ? 'bg-white/20 text-white border border-white/30'
-                  : 'text-indigo-300 hover:text-white hover:bg-white/10 border border-white/15'
+                  : 'text-indigo-300 hover:text-white hover:bg-white/10 border border-white/8'
               }`}
             >
               {f.label}
