@@ -204,12 +204,21 @@ export default function RoundaboutGrid({ sections, imageUrls }) {
               width: diamondHalf * 1.2,
               height: diamondHalf * 1.6,
             }}>
-              {/* Kate - above */}
-              <img
-                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/d7b8218e7_katehome.png"
-                alt="Kate"
-                style={{ width: diamondHalf * 0.75, height: diamondHalf * 0.75, objectFit: 'contain', marginTop: -4 }}
-              />
+              {/* Kate - above, centered between top diamond edge and label */}
+              <div style={{
+                flex: 1,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                height: diamondHalf * 0.75,
+                marginBottom: diamondHalf * 0.15,
+              }}>
+                <img
+                  src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/d7b8218e7_katehome.png"
+                  alt="Kate"
+                  style={{ width: diamondHalf * 0.75, height: diamondHalf * 0.75, objectFit: 'contain' }}
+                />
+              </div>
               {/* Label */}
               <span style={{
                 color: 'white',
