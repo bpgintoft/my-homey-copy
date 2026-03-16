@@ -262,9 +262,9 @@ export default function RoundaboutGrid({ sections, imageUrls }) {
         {/* Central circle */}
         <Link to={createPageUrl('Decisions')}>
           <motion.div
-            initial={{ opacity: 0, scale: 0 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.4, delay: 0.5 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.3, delay: 0.5 }}
             className="hover:brightness-110 transition-all duration-300"
             style={{
               position: 'absolute',
