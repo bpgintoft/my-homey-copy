@@ -285,7 +285,7 @@ export default function RoundaboutGrid({ sections, imageUrls }) {
             <img
               src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/2105216e3_8181C62D-0250-452F-8B0C-D68964D40A49.png"
               alt="Family Decisions"
-              style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }}
+              style={{ width: '130%', height: '130%', objectFit: 'cover', borderRadius: '50%' }}
             />
           </motion.div>
         </Link>
