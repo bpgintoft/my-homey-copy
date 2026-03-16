@@ -32,6 +32,7 @@ export default function DecisionDialog({ decision, currentUserEmail, onSave, onD
   const [editingIndex, setEditingIndex] = useState(null);
   const [editingText, setEditingText] = useState('');
   const [localComments, setLocalComments] = useState(decision.comments || []);
+  const [lightboxUrl, setLightboxUrl] = useState(null);
   const commentsEndRef = useRef(null);
   const fileInputRef = useRef(null);
 
