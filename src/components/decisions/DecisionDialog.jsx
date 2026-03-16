@@ -291,7 +291,7 @@ export default function DecisionDialog({ decision, currentUserEmail, onSave, onD
           </div>
 
           <div className="flex gap-2 pt-2 pb-4">
-            <button onClick={handleSave} className="flex-1 flex items-center justify-center gap-1.5 bg-white text-[#5B4FCF] font-semibold py-2.5 rounded-full hover:bg-indigo-50 transition-colors">
+            <button onClick={handleSave} disabled={uploadingImage} className="flex-1 flex items-center justify-center gap-1.5 bg-white text-[#5B4FCF] font-semibold py-2.5 rounded-full hover:bg-indigo-50 transition-colors disabled:opacity-60">
               <Send className="w-4 h-4" />
               Save
             </button>
