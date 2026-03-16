@@ -27,10 +27,37 @@ export default function DecisionDialog({ decision, currentUserEmail, onSave, onD
   );
   const [status, setStatus] = useState(decision.status || 'pending');
   const [newComment, setNewComment] = useState('');
+  const [pendingImages, setPendingImages] = useState([]);
+  const [uploadingImage, setUploadingImage] = useState(false);
   const [editingIndex, setEditingIndex] = useState(null);
   const [editingText, setEditingText] = useState('');
   const [localComments, setLocalComments] = useState(decision.comments || []);
   const commentsEndRef = useRef(null);
+  const fileInputRef = useRef(null);
+
+  const uploadImage = async (file) => {
+    setUploadingImage(true);
+    const { file_url } = await base44.integrations.Core.UploadFile({ file });
+    setPendingImages(prev => [...prev, file_url]);
+    setUploadingImage(false);
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) uploadImage(file);
+    e.target.value = '';
+  };
+
+  const handlePaste = (e) => {
+    const items = e.clipboardData?.items;
+    if (!items) return;
+    for (const item of items) {
+      if (item.type.startsWith('image/')) {
+        const file = item.getAsFile();
+        if (file) uploadImage(file);
+      }
+    }
+  };
 
   useEffect(() => {
     commentsEndRef.current?.scrollIntoView({ behavior: 'smooth' });
