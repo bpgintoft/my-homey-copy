@@ -202,6 +202,7 @@ export default function RoundaboutGrid({ sections, imageUrls }) {
               justifyContent: 'center',
               gap: 2,
               width: diamondHalf * 1.2,
+              height: diamondHalf * 1.6,
             }}>
               {/* Kate - above */}
               <img
