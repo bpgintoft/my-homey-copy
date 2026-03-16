@@ -222,7 +222,7 @@ export default function RoundaboutGrid({ sections, imageUrls }) {
               <img
                 src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/fc0753fbc_bryanhome.png"
                 alt="Bryan"
-                style={{ width: diamondHalf * 0.75, height: diamondHalf * 0.75, objectFit: 'contain' }}
+                style={{ width: diamondHalf * 0.75, height: diamondHalf * 0.75, objectFit: 'contain', marginBottom: -4 }}
               />
             </div>
           </motion.div>
