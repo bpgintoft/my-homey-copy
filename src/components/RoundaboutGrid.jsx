@@ -270,6 +270,7 @@ export default function RoundaboutGrid({ sections, imageUrls }) {
               position: 'absolute',
               left: CX - circleR,
               top: CY - circleR,
+              transform: 'translate(0, 0)',
               width: circleR * 2,
               height: circleR * 2,
               borderRadius: '50%',
