@@ -261,33 +261,26 @@ export default function RoundaboutGrid({ sections, imageUrls }) {
 
         {/* Central circle */}
         <Link to={createPageUrl('Decisions')}>
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.3, delay: 0.5 }}
-            className="hover:brightness-110 transition-all duration-300"
+          <motion.img
+            src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/2105216e3_8181C62D-0250-452F-8B0C-D68964D40A49.png"
+            alt="Family Decisions"
+            initial={{ opacity: 0, scale: 0.5 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5, delay: 0.5, ease: 'easeOut' }}
+            className="hover:brightness-110 transition-[filter] duration-300"
             style={{
               position: 'absolute',
-              left: CX - circleR,
-              top: CY - circleR,
-              width: circleR * 2,
-              height: circleR * 2,
+              width: circleR * 2 * 2.1,
+              height: circleR * 2 * 2.1,
+              objectFit: 'cover',
               borderRadius: '50%',
-              background: 'transparent',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
+              left: CX - circleR * 2.1,
+              top: CY - circleR * 2.1 + 5,
               cursor: 'pointer',
               zIndex: 10,
-              overflow: 'visible',
+              willChange: 'transform, opacity',
             }}
-          >
-            <img
-              src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/2105216e3_8181C62D-0250-452F-8B0C-D68964D40A49.png"
-              alt="Family Decisions"
-              style={{ width: '210%', height: '210%', objectFit: 'cover', borderRadius: '50%', position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, calc(-50% + 5px))' }}
-            />
-          </motion.div>
+          />
         </Link>
       </div>
     </div>
