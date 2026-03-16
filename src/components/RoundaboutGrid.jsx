@@ -226,6 +226,7 @@ export default function RoundaboutGrid({ sections, imageUrls }) {
                 alignItems: 'center',
                 justifyContent: 'center',
                 height: diamondHalf * 0.7875,
+                marginTop: diamondHalf * 0.15,
               }}>
                 <img
                   src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/fc0753fbc_bryanhome.png"
