@@ -3,8 +3,9 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Trash2, Send, Pencil, X, Check } from 'lucide-react';
+import { Trash2, Send, Pencil, X, Check, ImagePlus } from 'lucide-react';
 import { format } from 'date-fns';
+import { base44 } from '@/api/base44Client';
 
 const BRYAN_EMAIL = 'bpgintoft@gmail.com';
 const KATE_EMAIL = 'kateeliz11@gmail.com';
