@@ -199,7 +199,16 @@ export default function DecisionDialog({ decision, currentUserEmail, onSave, onD
                               </div>
                             </div>
                           ) : (
-                            <p className="text-sm leading-snug">{c.text}</p>
+                            <div className="space-y-1.5">
+                              {c.text && <p className="text-sm leading-snug">{c.text}</p>}
+                              {c.images && c.images.length > 0 && (
+                                <div className="flex flex-wrap gap-1.5 mt-1">
+                                  {c.images.map((url, idx) => (
+                                    <img key={idx} src={url} alt="attachment" className="rounded-xl max-w-[180px] max-h-[180px] object-cover cursor-pointer" onClick={() => window.open(url, '_blank')} />
+                                  ))}
+                                </div>
+                              )}
+                            </div>
                           )}
                         </div>
                         <div className="flex items-center gap-2 mt-0.5 px-1">
