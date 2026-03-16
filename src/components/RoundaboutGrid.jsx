@@ -182,7 +182,7 @@ export default function RoundaboutGrid({ sections, imageUrls }) {
               width: diamondHalf * 2,
               height: diamondHalf * 2,
               borderRadius: diamondHalf * 0.22,
-              background: 'linear-gradient(135deg, #4a2d9c 0%, #6b46c1 50%, #7c3aed 100%)',
+              background: 'linear-gradient(160deg, #1a1040 0%, #2d1b69 40%, #3d2a8a 70%, #4a3fb5 100%)',
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
