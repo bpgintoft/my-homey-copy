@@ -212,7 +212,7 @@ export default function Home() {
 
         {/* Footer Image */}
         <Link to={createPageUrl('Family')}>
-          <div className="w-full flex justify-center pb-6 cursor-pointer">
+          <div className="w-full flex justify-center pb-2 -mt-4 cursor-pointer">
             <img 
               src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/8e2cf008e_Gintoftsback.png"
               alt="Gintoft Family"
