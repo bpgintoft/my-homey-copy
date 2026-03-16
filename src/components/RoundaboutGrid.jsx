@@ -111,26 +111,15 @@ export default function RoundaboutGrid({ sections, imageUrls }) {
               borderRadius: '50%',
               cursor: 'pointer',
               zIndex: 10,
-              backgroundColor: 'white',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
+              overflow: 'hidden',
               boxShadow: '0 2px 12px rgba(0,0,0,0.15)',
             }}
           >
             <img
-              src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/2105216e3_8181C62D-0250-452F-8B0C-D68964D40A49.png"
+              src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/bcad3a5c8_8181C62D-0250-452F-8B0C-D68964D40A49.png"
               alt="Family Decisions"
-              style={{ width: '85%', height: '75%', objectFit: 'contain' }}
+              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
             />
-            <span style={{
-              fontWeight: 'bold',
-              fontSize: circleR * 0.28,
-              color: '#5b21b6',
-              lineHeight: 1,
-              marginTop: 2,
-            }}>Decisions</span>
           </motion.div>
         </Link>
       </div>
