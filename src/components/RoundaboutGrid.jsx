@@ -27,7 +27,7 @@ export default function RoundaboutGrid({ sections, imageUrls }) {
 
   // Center diamond: its half-diagonal should equal cutSize * sqrt(2) / 2 ≈ cutSize * 0.707
   // so the diamond tip just touches the cut corners
-  const diamondHalf = cutSize * 0.78;
+  const diamondHalf = cutSize * 0.95;
   const CX = G / 2;
   const CY = G / 2;
 
