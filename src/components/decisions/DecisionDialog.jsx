@@ -308,5 +308,18 @@ export default function DecisionDialog({ decision, currentUserEmail, onSave, onD
         </div>
       </DialogContent>
     </Dialog>
+
+    {/* Lightbox */}
+    {lightboxUrl && (
+      <div
+        className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 p-4"
+        onClick={() => setLightboxUrl(null)}
+      >
+        <img src={lightboxUrl} alt="full size" className="max-w-full max-h-full rounded-2xl object-contain" />
+        <button className="absolute top-4 right-4 text-white bg-black/50 rounded-full p-2" onClick={() => setLightboxUrl(null)}>
+          <X className="w-5 h-5" />
+        </button>
+      </div>
+    )}
   );
 }
