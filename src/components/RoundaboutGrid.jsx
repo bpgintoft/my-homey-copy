@@ -5,140 +5,290 @@ import { motion } from 'framer-motion';
 
 export default function RoundaboutGrid({ sections, imageUrls }) {
   const containerRef = useRef(null);
-  const [W, setW] = useState(0);
+  const [G, setG] = useState(0);
 
   useEffect(() => {
     if (!containerRef.current) return;
     const ro = new ResizeObserver(() => {
-      if (containerRef.current) setW(containerRef.current.offsetWidth);
+      if (containerRef.current) setG(containerRef.current.offsetWidth);
     });
     ro.observe(containerRef.current);
-    setW(containerRef.current.offsetWidth);
+    setG(containerRef.current.offsetWidth);
     return () => ro.disconnect();
   }, []);
 
-  if (W === 0) return <div ref={containerRef} className="w-full pb-6" style={{ minHeight: 300 }} />;
+  if (G === 0) return <div ref={containerRef} className="pb-8 w-full" style={{ minHeight: 200 }} />;
 
-  // Each tile is just under half the container width, with a small gap
-  const gap = Math.round(W * 0.05);
-  const BW = Math.round((W - gap) / 2);
-  const BH = Math.round(BW * 1.0);
-  const tileRadius = Math.round(BW * 0.15);
+  // Layout constants
+  const gap = G * 0.07;          // gap between buttons and circle
+  const BW = (G - gap) / 2;      // button width
+  const BH = BW;                  // square buttons
+  const outerR = BW * 0.20;      // outer corner radius (large, like reference)
+  const innerR = gap * 0.7;      // inner corner radius (small concave transition)
+  const circleR = (gap / 2) + BW * 0.18; // radius of the center circle
+  // The concave cutout on each inner edge is a quarter-circle arc of radius = circleR + gap/2
+  // But in the reference, the concave on each inner edge is a simple rounded notch into the corner
+  // Looking at reference: inner corners have a convex-outward arc (the button "hugs" the circle)
+  const concaveR = circleR + gap * 0.5;
 
-  // The center circle overlaps all 4 inner corners — make it big enough
-  const circleR = Math.round(W * 0.19);
-  const CX = Math.round(W / 2);
-  const CY = Math.round(BH + gap / 2);
+  const CX = G / 2;
+  const CY = G / 2;
 
-  const totalH = BH * 2 + gap;
+  // Each button occupies one quadrant. The inner corner (closest to center) has TWO concave arcs —
+  // one on each inner edge — that follow the circle outline.
+  // The path traces: outer 3 corners with outerR rounding, then two concave arcs at the inner edges.
 
-  const positions = [
-    { left: 0,        top: 0 },
-    { left: BW + gap, top: 0 },
-    { left: 0,        top: BH + gap },
-    { left: BW + gap, top: BH + gap },
-  ];
+  // Intersection of circle (CX,CY,concaveR) with a horizontal line at y=edgeY
+  function circleX(edgeY, sign) {
+    const d2 = concaveR * concaveR - (edgeY - CY) ** 2;
+    if (d2 < 0) return CX;
+    return CX + sign * Math.sqrt(d2);
+  }
+  // Intersection of circle (CX,CY,concaveR) with a vertical line at x=edgeX
+  function circleY(edgeX, sign) {
+    const d2 = concaveR * concaveR - (edgeX - CX) ** 2;
+    if (d2 < 0) return CY;
+    return CY + sign * Math.sqrt(d2);
+  }
+
+  // Build path in LOCAL coordinates of each button
+  function buildPath(q) {
+    let ox, oy;
+    if (q === 'tl') { ox = 0;      oy = 0; }
+    if (q === 'tr') { ox = G - BW; oy = 0; }
+    if (q === 'bl') { ox = 0;      oy = G - BH; }
+    if (q === 'br') { ox = G - BW; oy = G - BH; }
+
+    const x1 = ox, y1 = oy, x2 = ox + BW, y2 = oy + BH;
+    // local conversion
+    const lx = v => +(v - ox).toFixed(2);
+    const ly = v => +(v - oy).toFixed(2);
+
+    if (q === 'tl') {
+      // Outer corners: top-left, top-right, bottom-left (all rounded with outerR)
+      // Inner edges: right edge (x=x2) and bottom edge (y=y2) both curve inward toward circle
+      // On right edge (x=x2): concave arc from (x2, y1+outerR) ... down to intersection with concaveCircle
+      // But actually: the right inner edge is straight from top-right corner down to where the concave notch starts,
+      // then a concave arc, then straight along bottom to where bottom concave notch starts, then concave arc, then to bottom-left corner.
+      // 
+      // The concave arc on the right edge goes from point A (on right edge, above center) to point B (on bottom edge, left of center)
+      // sweeping AROUND the center circle (large arc going outward from center = sweep-flag 0)
+
+      // Point where concave arc meets the right inner edge (x=x2)
+      const Ay = circleY(x2, -1); // above CY
+      // Point where concave arc meets the bottom inner edge (y=y2)  
+      const Bx = circleX(y2, -1); // left of CX
+
+      const pts = [
+        `M ${lx(x1+outerR)} ${ly(y1)}`,
+        // top edge →
+        `L ${lx(x2-innerR)} ${ly(y1)}`,
+        // top-right inner corner (small convex rounding)
+        `Q ${lx(x2)} ${ly(y1)} ${lx(x2)} ${ly(y1+innerR)}`,
+        // right inner edge down to where concave begins
+        `L ${lx(x2)} ${ly(Ay)}`,
+        // concave arc around the circle (sweep=0 goes around the outside)
+        `A ${concaveR} ${concaveR} 0 0 0 ${lx(Bx)} ${ly(y2)}`,
+        // bottom inner edge left to bottom-left inner corner
+        `L ${lx(x1+innerR)} ${ly(y2)}`,
+        // bottom-left outer corner
+        `Q ${lx(x1)} ${ly(y2)} ${lx(x1)} ${ly(y2-outerR)}`,
+        // left edge up
+        `L ${lx(x1)} ${ly(y1+outerR)}`,
+        // top-left outer corner
+        `Q ${lx(x1)} ${ly(y1)} ${lx(x1+outerR)} ${ly(y1)} Z`,
+      ];
+      return `path('${pts.join(' ')}')`;
+    }
+
+    if (q === 'tr') {
+      const Ay = circleY(x1, -1); // above CY on left edge (x=x1)
+      const Bx = circleX(y2, 1);  // right of CX on bottom edge (y=y2)
+
+      const pts = [
+        `M ${lx(x1+innerR)} ${ly(y1)}`,
+        // top edge →
+        `L ${lx(x2-outerR)} ${ly(y1)}`,
+        // top-right outer corner
+        `Q ${lx(x2)} ${ly(y1)} ${lx(x2)} ${ly(y1+outerR)}`,
+        // right edge down
+        `L ${lx(x2)} ${ly(y2-outerR)}`,
+        // bottom-right outer corner
+        `Q ${lx(x2)} ${ly(y2)} ${lx(x2-outerR)} ${ly(y2)}`,
+        // bottom edge left to where concave begins
+        `L ${lx(Bx)} ${ly(y2)}`,
+        // concave arc around center
+        `A ${concaveR} ${concaveR} 0 0 0 ${lx(x1)} ${ly(Ay)}`,
+        // left inner edge up to top-left inner corner
+        `L ${lx(x1)} ${ly(y1+innerR)}`,
+        // top-left inner corner small rounding
+        `Q ${lx(x1)} ${ly(y1)} ${lx(x1+innerR)} ${ly(y1)} Z`,
+      ];
+      return `path('${pts.join(' ')}')`;
+    }
+
+    if (q === 'bl') {
+      const Ax = circleX(y1, -1); // left of CX on top edge (y=y1)
+      const By = circleY(x2, 1);  // below CY on right edge (x=x2)
+
+      const pts = [
+        `M ${lx(x1+outerR)} ${ly(y1)}`,
+        // top edge right to where concave begins
+        `L ${lx(Ax)} ${ly(y1)}`,
+        // concave arc around center
+        `A ${concaveR} ${concaveR} 0 0 0 ${lx(x2)} ${ly(By)}`,
+        // right inner edge down to bottom-right inner corner
+        `L ${lx(x2)} ${ly(y2-innerR)}`,
+        // bottom-right inner corner small rounding
+        `Q ${lx(x2)} ${ly(y2)} ${lx(x2-innerR)} ${ly(y2)}`,
+        // bottom edge left
+        `L ${lx(x1+outerR)} ${ly(y2)}`,
+        // bottom-left outer corner
+        `Q ${lx(x1)} ${ly(y2)} ${lx(x1)} ${ly(y2-outerR)}`,
+        // left edge up
+        `L ${lx(x1)} ${ly(y1+outerR)}`,
+        // top-left outer corner
+        `Q ${lx(x1)} ${ly(y1)} ${lx(x1+outerR)} ${ly(y1)} Z`,
+      ];
+      return `path('${pts.join(' ')}')`;
+    }
+
+    if (q === 'br') {
+      const Ax = circleX(y1, 1);  // right of CX on top edge (y=y1)
+      const By = circleY(x1, 1);  // below CY on left edge (x=x1)
+
+      const pts = [
+        `M ${lx(x1+innerR)} ${ly(y1)}`,
+        // top edge right to where concave begins — NOTE: inner corner top-left
+        // Actually top-left of br is the inner corner
+        // top-left inner corner
+        `Q ${lx(x1)} ${ly(y1)} ${lx(x1)} ${ly(y1+innerR)}`,
+
+        // Hmm, let me retrace. br button: outer corners = top-right, bottom-right, bottom-left. inner = top-left
+        // Start at top edge, left side (inner)
+        // go right along top to top-right outer corner
+      ];
+
+      // Redo br cleanly:
+      const pts2 = [
+        // Start at top edge just right of where concave ends
+        `M ${lx(Ax)} ${ly(y1)}`,
+        // top edge to top-right outer corner
+        `L ${lx(x2-outerR)} ${ly(y1)}`,
+        `Q ${lx(x2)} ${ly(y1)} ${lx(x2)} ${ly(y1+outerR)}`,
+        // right edge down
+        `L ${lx(x2)} ${ly(y2-outerR)}`,
+        `Q ${lx(x2)} ${ly(y2)} ${lx(x2-outerR)} ${ly(y2)}`,
+        // bottom edge left
+        `L ${lx(x1+outerR)} ${ly(y2)}`,
+        `Q ${lx(x1)} ${ly(y2)} ${lx(x1)} ${ly(y2-outerR)}`,
+        // left edge up to where concave begins
+        `L ${lx(x1)} ${ly(By)}`,
+        // concave arc around center back to start
+        `A ${concaveR} ${concaveR} 0 0 0 ${lx(Ax)} ${ly(y1)} Z`,
+      ];
+      return `path('${pts2.join(' ')}')`;
+    }
+  }
+
+  const quadrants = ['tl', 'tr', 'bl', 'br'];
+  const buttonPos = {
+    tl: { left: 0,      top: 0 },
+    tr: { left: G - BW, top: 0 },
+    bl: { left: 0,      top: G - BH },
+    br: { left: G - BW, top: G - BH },
+  };
 
   return (
-    <div ref={containerRef} className="w-full pb-6">
-      <div className="relative" style={{ width: W, height: totalH }}>
+    <div ref={containerRef} className="pb-8 w-full">
+      <div className="relative" style={{ width: G, height: G }}>
 
-        {/* 4 section tiles */}
         {sections.map((section, i) => {
-          const pos = positions[i];
+          const q = quadrants[i];
+          const pos = buttonPos[q];
+          const clipPath = buildPath(q);
+          // Badge position: outer corner of each quadrant
+          const badgeStyle = {
+            tl: { top: 8, left: 8 },
+            tr: { top: 8, right: 8 },
+            bl: { bottom: 8, left: 8 },
+            br: { bottom: 8, right: 8 },
+          }[q];
           return (
-            <div key={section.title} style={{ position: 'absolute', left: pos.left, top: pos.top, zIndex: 1 }}>
+            <React.Fragment key={section.title}>
               <motion.div
-                initial={{ opacity: 0, scale: 0.93 }}
+                initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.35, delay: i * 0.07 }}
-                style={{ width: BW, height: BH, borderRadius: tileRadius, overflow: 'hidden' }}
+                transition={{ duration: 0.4, delay: i * 0.1 }}
+                style={{
+                  position: 'absolute',
+                  left: pos.left,
+                  top: pos.top,
+                  width: BW,
+                  height: BH,
+                  clipPath,
+                  WebkitClipPath: clipPath,
+                }}
               >
                 <Link to={createPageUrl(section.href)} style={{ display: 'block', width: '100%', height: '100%' }}>
-                  <div
-                    className={`w-full h-full flex flex-col items-center justify-between ${section.bgColor} cursor-pointer active:brightness-95 transition-all duration-150`}
-                    style={{ paddingTop: BH * 0.06, paddingBottom: BH * 0.1 }}
-                  >
-                    {imageUrls[section.imageKey] && (
-                      <img
-                        src={imageUrls[section.imageKey]}
-                        alt={section.title}
-                        style={{ width: BW * 0.82, height: BH * 0.62, objectFit: 'contain' }}
-                      />
-                    )}
-                    <h3
-                      className="font-extrabold text-white whitespace-nowrap"
-                      style={{
-                        fontSize: BW * 0.13,
-                        textShadow: '0 1px 4px rgba(0,0,0,0.25)',
-                      }}
-                    >
-                      {section.title}
-                    </h3>
+                  <div className={`w-full h-full flex flex-col items-center justify-center ${section.bgColor} cursor-pointer hover:brightness-110 transition-all duration-300`}>
+                    <div style={{ marginTop: (q === 'tl' || q === 'tr') ? -BW * 0.08 : 0, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                      {imageUrls[section.imageKey] && (
+                        <img
+                          src={imageUrls[section.imageKey]}
+                          alt={section.title}
+                          style={{ width: BW * 0.65, height: BW * 0.65, objectFit: 'contain', marginBottom: 6 }}
+                        />
+                      )}
+                      <h3 className="font-bold text-white drop-shadow-lg whitespace-nowrap" style={{ fontSize: BW * 0.11 }}>
+                        {section.title}
+                      </h3>
+                    </div>
                   </div>
                 </Link>
               </motion.div>
-
-              {/* Badge */}
               {section.count > 0 && (
                 <div
-                  className="absolute bg-red-500 text-white font-bold rounded-full flex items-center justify-center shadow-lg"
-                  style={{
-                    width: BW * 0.14,
-                    height: BW * 0.14,
-                    fontSize: BW * 0.08,
-                    top: -BW * 0.05,
-                    right: -BW * 0.05,
-                    zIndex: 20,
-                  }}
+                  className="absolute bg-red-500 text-white text-xs font-bold rounded-full w-7 h-7 flex items-center justify-center shadow-lg"
+                  style={{ top: pos.top - 10, left: pos.left + BW - 18, zIndex: 20 }}
                 >
                   {section.count}
                 </div>
               )}
-            </div>
+            </React.Fragment>
           );
         })}
 
-        {/* White backing circle — sits behind the Decisions PNG to mask tile corners */}
-        <div
-          style={{
-            position: 'absolute',
-            left: CX - circleR - 4,
-            top: CY - circleR - 4,
-            width: (circleR + 4) * 2,
-            height: (circleR + 4) * 2,
-            borderRadius: '50%',
-            backgroundColor: 'white',
-            zIndex: 8,
-          }}
-        />
-
-        {/* Decisions circle */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.35, delay: 0.4 }}
-          style={{
-            position: 'absolute',
-            left: CX - circleR,
-            top: CY - circleR,
-            width: circleR * 2,
-            height: circleR * 2,
-            borderRadius: '50%',
-            zIndex: 9,
-            overflow: 'hidden',
-            boxShadow: '0 4px 20px rgba(0,0,0,0.2)',
-          }}
-        >
-          <Link to={createPageUrl('Decisions')} style={{ display: 'block', width: '100%', height: '100%' }}>
+        {/* Central circle */}
+        <Link to={createPageUrl('Decisions')}>
+          <motion.div
+            initial={{ opacity: 0, scale: 0 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.4, delay: 0.5 }}
+            className="hover:brightness-110 transition-all duration-300"
+            style={{
+              position: 'absolute',
+              left: CX - circleR,
+              top: CY - circleR,
+              width: circleR * 2,
+              height: circleR * 2,
+              borderRadius: '50%',
+              background: 'transparent',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              zIndex: 10,
+              overflow: 'hidden',
+            }}
+          >
             <img
-              src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/bcad3a5c8_8181C62D-0250-452F-8B0C-D68964D40A49.png"
-              alt="Decisions"
-              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+              src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/2105216e3_8181C62D-0250-452F-8B0C-D68964D40A49.png"
+              alt="Family Decisions"
+              style={{ width: '130%', height: '130%', objectFit: 'cover', borderRadius: '50%' }}
             />
-          </Link>
-        </motion.div>
-
+          </motion.div>
+        </Link>
       </div>
     </div>
   );
