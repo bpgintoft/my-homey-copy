@@ -54,8 +54,10 @@ export default function DecisionDialog({ decision, currentUserEmail, onSave, onD
     if (!items) return;
     for (const item of items) {
       if (item.type.startsWith('image/')) {
+        e.preventDefault();
         const file = item.getAsFile();
         if (file) uploadImage(file);
+        return;
       }
     }
   };
