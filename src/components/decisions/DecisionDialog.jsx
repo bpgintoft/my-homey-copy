@@ -89,18 +89,17 @@ export default function DecisionDialog({ decision, currentUserEmail, onSave, onD
 
     let updatedComments = [...localComments];
     if (newComment.trim() || pendingImages.length > 0) {
-      updatedComments = [
-        ...updatedComments,
-        {
-          commenter_email: currentUserEmail,
-          commenter_name: myName,
-          text: newComment.trim(),
-          images: pendingImages,
-          timestamp: new Date().toISOString(),
-        }
-      ];
+      const newEntry = {
+        commenter_email: currentUserEmail,
+        commenter_name: myName,
+        text: newComment.trim(),
+        images: [...pendingImages],
+        timestamp: new Date().toISOString(),
+      };
+      updatedComments = [...updatedComments, newEntry];
     }
     updates.comments = updatedComments;
+    setNewComment('');
     setPendingImages([]);
     onSave(decision.id, updates);
   };
