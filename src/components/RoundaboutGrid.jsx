@@ -149,7 +149,7 @@ export default function RoundaboutGrid({ sections, imageUrls }) {
                           style={{ width: BW * 0.65, height: BW * 0.65, objectFit: 'contain', marginBottom: 8, ...((['Calendar', 'Meals'].includes(section.title)) && { marginTop: -12 }) }}
                         />
                       )}
-                      <h3 className="font-bold text-white drop-shadow-lg whitespace-nowrap" style={{ fontSize: BW * 0.11, marginTop: -8, ...(section.title === 'Calendar' && { marginLeft: 20 }), ...(section.title === 'Meals' && { marginRight: 20 }) }}>
+                      <h3 className="font-bold text-white drop-shadow-lg whitespace-nowrap" style={{ fontSize: BW * 0.11, marginTop: (['Calendar', 'Meals'].includes(section.title) ? -16 : -8), ...(section.title === 'Calendar' && { marginLeft: 20 }), ...(section.title === 'Meals' && { marginRight: 20 }) }}>
                         {section.title}
                       </h3>
                     </div>
