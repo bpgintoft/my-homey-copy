@@ -149,7 +149,7 @@ export default function RoundaboutGrid({ sections, imageUrls }) {
                           style={{ width: BW * 0.65, height: BW * 0.65, objectFit: 'contain', marginBottom: 8 }}
                         />
                       )}
-                      <h3 className="font-bold text-white drop-shadow-lg whitespace-nowrap" style={{ fontSize: BW * 0.11, marginTop: -8 }}>
+                      <h3 className="font-bold text-white drop-shadow-lg whitespace-nowrap" style={{ fontSize: BW * 0.11, marginTop: -8, ...(section.title === 'Calendar' && { marginLeft: 8 }) }}>
                         {section.title}
                       </h3>
                     </div>
