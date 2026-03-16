@@ -19,15 +19,15 @@ export default function RoundaboutGrid({ sections, imageUrls }) {
 
   if (G === 0) return <div ref={containerRef} className="pb-8 w-full" style={{ minHeight: 200 }} />;
 
-  const gap = G * 0.06;
+  const gap = G * 0.075;
   const BW = (G - gap) / 2;
   const BH = BW;
-  const outerR = BW * 0.18;
-  const cutSize = BW * 0.30; // diagonal cut size on inner corner
+  const outerR = BW * 0.20;
+  const cutSize = BW * 0.38; // diagonal cut size on inner corner — larger = more of the diamond shows
 
-  // Center diamond: fits in the gap area diagonally
-  // The diamond is a square rotated 45deg. Its "radius" (half-diagonal) = gap * 0.85
-  const diamondHalf = (gap / 2) + BW * 0.13;
+  // Center diamond: its half-diagonal should equal cutSize * sqrt(2) / 2 ≈ cutSize * 0.707
+  // so the diamond tip just touches the cut corners
+  const diamondHalf = cutSize * 0.78;
   const CX = G / 2;
   const CY = G / 2;
 
