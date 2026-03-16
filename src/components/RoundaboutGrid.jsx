@@ -184,7 +184,7 @@ export default function RoundaboutGrid({ sections, imageUrls }) {
               top: CY - diamondHalf,
               width: diamondHalf * 2,
               height: diamondHalf * 2,
-              borderRadius: diamondHalf * 0.28,
+              borderRadius: diamondHalf * 0.22,
               background: '#e8e4f5',
               display: 'flex',
               alignItems: 'center',
