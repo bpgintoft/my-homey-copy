@@ -25,7 +25,7 @@ export default function RoundaboutGrid({ sections, imageUrls }) {
   const BH = BW;                  // square buttons
   const outerR = BW * 0.20;      // outer corner radius (large, like reference)
   const innerR = gap * 0.7;      // inner corner radius (small concave transition)
-  const circleR = (gap / 2) + BW * 0.28; // radius of the center circle
+  const circleR = (gap / 2) + BW * 0.18; // radius of the center circle
   // The concave cutout on each inner edge is a quarter-circle arc of radius = circleR + gap/2
   // But in the reference, the concave on each inner edge is a simple rounded notch into the corner
   // Looking at reference: inner corners have a convex-outward arc (the button "hugs" the circle)
@@ -285,7 +285,7 @@ export default function RoundaboutGrid({ sections, imageUrls }) {
             <img
               src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/2105216e3_8181C62D-0250-452F-8B0C-D68964D40A49.png"
               alt="Family Decisions"
-              style={{ width: '250%', height: '250%', objectFit: 'cover', borderRadius: '50%', position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}
+              style={{ width: '210%', height: '210%', objectFit: 'cover', borderRadius: '50%', position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, calc(-50% + 4px))' }}
             />
           </motion.div>
         </Link>
