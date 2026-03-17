@@ -84,7 +84,6 @@ export default function PhoenixPage() {
       {phoenix && (
         <>
           <ChoreNotificationsDialog memberId={phoenix.id} />
-          <AIMemberInfoDialog memberId={phoenix.id} memberName="Phoenix" onSuccess={() => queryClient.invalidateQueries(['familyMember', phoenix.id])} />
           <div className="max-w-2xl mx-auto px-4 sm:px-6 pt-2 pb-6 space-y-4">
             <FamilyMemberDetails memberId={phoenix.id} memberName="Phoenix" color="orange" />
           </div>

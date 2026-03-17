@@ -84,7 +84,6 @@ export default function MaraPage() {
       {mara && (
         <>
           <ChoreNotificationsDialog memberId={mara.id} />
-          <AIMemberInfoDialog memberId={mara.id} memberName="Mara" onSuccess={() => queryClient.invalidateQueries(['familyMember', mara.id])} />
           <div className="max-w-2xl mx-auto px-4 sm:px-6 pt-2 pb-6 space-y-4">
             <FamilyMemberDetails memberId={mara.id} memberName="Mara" color="purple" />
           </div>

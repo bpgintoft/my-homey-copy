@@ -84,7 +84,6 @@ export default function BryanPage() {
       {bryan && (
         <>
           <ChoreNotificationsDialog memberId={bryan.id} />
-          <AIMemberInfoDialog memberId={bryan.id} memberName="Bryan" onSuccess={() => queryClient.invalidateQueries(['familyMember', bryan.id])} />
           <div className="max-w-2xl mx-auto px-4 sm:px-6 pt-2 pb-6 space-y-4">
             <FamilyMemberDetails memberId={bryan.id} memberName="Bryan" color="blue" />
           </div>
