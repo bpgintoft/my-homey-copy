@@ -231,7 +231,7 @@ export default function MonthlyCalendar({ activities }) {
         onTouchStart={e => e.stopPropagation()}
       >
         <div className="text-sm font-semibold text-gray-800 mb-2 px-4">
-          {isSameDay(selectedDay, today) ? 'Today' : format(selectedDay, 'EEEE, MMM d')}
+          {isSameDay(selectedDay, today) ? `Today — ${format(selectedDay, 'EEEE, MMM d')}` : format(selectedDay, 'EEEE, MMM d')}
         </div>
 
         {selectedDayEvents.length === 0 ? (
