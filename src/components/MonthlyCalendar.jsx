@@ -230,7 +230,7 @@ export default function MonthlyCalendar({ activities }) {
         style={{ height: 'calc(100vh - 380px)', overscrollBehavior: 'contain' }}
         onTouchStart={e => e.stopPropagation()}
       >
-        <div className="text-sm font-semibold text-gray-800 mb-2 px-4">
+        <div className="text-lg font-bold text-gray-900 mb-3 px-4">
           {format(selectedDay, 'EEEE, MMM d')}
         </div>
 
