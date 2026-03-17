@@ -231,8 +231,8 @@ export default function MonthlyCalendar({ activities }) {
       {/* Selected day events — isolated scroll container so touch events never propagate up to the page */}
       <div
         ref={eventsRef}
-        className="overflow-y-auto"
-        style={{ height: 'calc(100vh - 440px)', overscrollBehavior: 'contain' }}
+        className="flex-1 overflow-y-auto"
+        style={{ overscrollBehavior: 'contain' }}
         onTouchStart={e => e.stopPropagation()}
       >
 
