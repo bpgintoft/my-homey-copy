@@ -955,10 +955,17 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                   <div className="space-y-2">
                     {categoryLinks.map((link) => (
                       <div key={link.id} className={`flex items-center gap-2 p-2 rounded ${itemBg}`}>
-                        <a href={link.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-blue-600 hover:underline flex-1 min-w-0">
-                          <ExternalLink className="w-4 h-4 flex-shrink-0" />
-                          <span className="overflow-hidden text-ellipsis whitespace-nowrap">{link.title || link.url}</span>
-                        </a>
+                        {link.url ? (
+                          <a href={link.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-blue-600 hover:underline flex-1 min-w-0">
+                            <ExternalLink className="w-4 h-4 flex-shrink-0" />
+                            <span className="overflow-hidden text-ellipsis whitespace-nowrap">{link.title || link.url}</span>
+                          </a>
+                        ) : (
+                          <div className="flex items-center gap-2 flex-1 min-w-0">
+                            <span className="text-base flex-shrink-0">📱</span>
+                            <span className="overflow-hidden text-ellipsis whitespace-nowrap text-gray-800 font-medium">{link.title}</span>
+                          </div>
+                        )}
                         <div className="flex gap-0.5 flex-shrink-0">
                           <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setEditingLink(link)}>
                             <Edit2 className="w-3 h-3 text-gray-500" />
