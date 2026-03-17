@@ -232,7 +232,7 @@ export default function MonthlyCalendar({ activities }) {
       <div
         ref={eventsRef}
         className="overflow-y-auto"
-        style={{ height: 'calc(100vh - 460px)', overscrollBehavior: 'contain' }}
+        style={{ height: 'calc(100vh - 440px)', overscrollBehavior: 'contain' }}
         onTouchStart={e => e.stopPropagation()}
       >
 
