@@ -895,7 +895,8 @@ export default function FamilyCalendar({ activities }) {
                   if (container) {
                     const containerRect = container.getBoundingClientRect();
                     const elementRect = element.getBoundingClientRect();
-                    const scrollTarget = container.scrollTop + (elementRect.top - containerRect.top) - navHeight - 8;
+                    // Extra 16px padding so the day label sits clearly below the sticky bar
+                    const scrollTarget = container.scrollTop + (elementRect.top - containerRect.top) - navHeight - 16;
                     container.scrollTo({ top: scrollTarget, behavior: 'smooth' });
                   }
                 }
