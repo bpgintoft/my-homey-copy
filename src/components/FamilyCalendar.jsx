@@ -892,12 +892,8 @@ export default function FamilyCalendar({ activities }) {
                   if (element) {
                     const container = document.querySelector('main');
                     if (container) {
-                      // Get the sticky nav height dynamically
-                      const stickyNav = container.querySelector('[data-sticky-nav]');
-                      const navHeight = stickyNav ? stickyNav.getBoundingClientRect().height : 100;
-                      const containerRect = container.getBoundingClientRect();
-                      const elementRect = element.getBoundingClientRect();
-                      const scrollTarget = container.scrollTop + (elementRect.top - containerRect.top) - navHeight - 4;
+                      // Use offsetTop (relative to scroll container) directly — no rect math needed
+                      const scrollTarget = element.offsetTop - 120;
                       container.scrollTo({ top: scrollTarget, behavior: 'smooth' });
                     }
                   }
