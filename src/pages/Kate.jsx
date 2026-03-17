@@ -7,7 +7,6 @@ import { base44 } from '@/api/base44Client';
 import { useSwipe } from '../components/useSwipe';
 import FamilyMemberDetails from '../components/FamilyMemberDetails';
 import ChoreNotificationsDialog from '../components/ChoreNotificationsDialog';
-import AIMemberInfoDialog from '../components/AIMemberInfoDialog';
 import { useQueryClient } from '@tanstack/react-query';
 
 export default function KatePage() {
