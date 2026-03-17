@@ -893,7 +893,7 @@ export default function FamilyCalendar({ activities }) {
                     const container = document.querySelector('main');
                     if (container) {
                       // Use offsetTop (relative to scroll container) directly — no rect math needed
-                      const scrollTarget = element.offsetTop - 120;
+                      const scrollTarget = element.offsetTop - 150;
                       container.scrollTo({ top: scrollTarget, behavior: 'smooth' });
                     }
                   }
