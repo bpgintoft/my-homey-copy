@@ -790,7 +790,23 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
             <DialogTitle>Important Links</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
-            <div className="flex gap-2">
+            {/* Toggle: Link vs App */}
+            <div className="flex rounded-lg border border-gray-200 overflow-hidden">
+              <button
+                className={`flex-1 py-2 text-sm font-medium transition-colors ${addLinkType === 'link' ? 'bg-gray-900 text-white' : 'bg-white text-gray-600 hover:bg-gray-50'}`}
+                onClick={() => setAddLinkType('link')}
+              >
+                🔗 Link / Website
+              </button>
+              <button
+                className={`flex-1 py-2 text-sm font-medium transition-colors ${addLinkType === 'app' ? 'bg-gray-900 text-white' : 'bg-white text-gray-600 hover:bg-gray-50'}`}
+                onClick={() => setAddLinkType('app')}
+              >
+                📱 App
+              </button>
+            </div>
+
+            {addLinkType === 'link' ? (
               <Input
                 placeholder="Paste a link here..."
                 value={quickLinkUrl}
@@ -802,7 +818,61 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                   }
                 }}
               />
-            </div>
+            ) : (
+              <div className="flex gap-2">
+                <Input
+                  placeholder="App name (e.g., Duolingo)"
+                  value={newAppEntry.title}
+                  onChange={(e) => setNewAppEntry({ ...newAppEntry, title: e.target.value })}
+                  onKeyDown={(e) => { if (e.key === 'Enter' && newAppEntry.title.trim()) setShowAppDialog(true); }}
+                />
+                <Button
+                  size="sm"
+                  disabled={!newAppEntry.title.trim()}
+                  onClick={() => setShowAppDialog(true)}
+                >
+                  <Plus className="w-4 h-4" />
+                </Button>
+              </div>
+            )}
+
+            {/* App details dialog */}
+            <Dialog open={showAppDialog} onOpenChange={setShowAppDialog}>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Add App</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4">
+                  <Input
+                    placeholder="App name"
+                    value={newAppEntry.title}
+                    onChange={(e) => setNewAppEntry({ ...newAppEntry, title: e.target.value })}
+                  />
+                  <Input
+                    placeholder="Category (e.g., school, entertainment, medical...)"
+                    value={newAppEntry.category}
+                    onChange={(e) => setNewAppEntry({ ...newAppEntry, category: e.target.value })}
+                  />
+                  <p className="text-xs text-gray-500">Leave category blank for AI to categorize automatically</p>
+                  <Button
+                    onClick={() => {
+                      createLinkMutation.mutate({
+                        url: '',
+                        title: newAppEntry.title,
+                        category: newAppEntry.category,
+                        assigned_to_member_id: memberId,
+                        assigned_to_name: memberName,
+                      });
+                      setNewAppEntry({ title: '', category: '' });
+                      setShowAppDialog(false);
+                    }}
+                    disabled={!newAppEntry.title.trim() || categorizingLink}
+                  >
+                    {categorizingLink ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Categorizing...</> : 'Add App'}
+                  </Button>
+                </div>
+              </DialogContent>
+            </Dialog>
 
             <Dialog open={showTitleDialog} onOpenChange={setShowTitleDialog}>
               <DialogContent>
