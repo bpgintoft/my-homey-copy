@@ -223,7 +223,7 @@ export default function MonthlyCalendar({ activities }) {
         </div>
 
         {/* Selected day label — inside sticky block so it's never hidden behind the grid */}
-        <div className="text-lg font-bold text-gray-900 mt-3 mb-1">
+        <div className="text-sm font-semibold text-gray-800 mt-3 mb-1">
           {format(selectedDay, 'EEEE, MMM d')}
         </div>
       </div>
