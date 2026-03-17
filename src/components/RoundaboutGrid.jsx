@@ -171,10 +171,9 @@ export default function RoundaboutGrid({ sections, imageUrls }) {
         {/* Central diamond button */}
         <Link to={createPageUrl('Decisions')}>
           <motion.div
-            initial={{ opacity: 0, rotateX: 90, scale: 0.8, rotate: 45 }}
-            animate={{ opacity: 1, rotateX: 0, scale: 1, rotate: 45 }}
-            transition={{ duration: 0.6, delay: 0.5, type: 'spring', stiffness: 120, damping: 14 }}
-            style={{ perspective: 800 }}
+            initial={{ opacity: 0, rotateY: 90, scale: 0.9, rotate: 45 }}
+            animate={{ opacity: 1, rotateY: 0, scale: 1, rotate: 45 }}
+            transition={{ duration: 0.25, delay: 0.4, type: 'tween', ease: 'easeOut' }}
             className="hover:brightness-110 transition-all duration-300"
             style={{
               position: 'absolute',
