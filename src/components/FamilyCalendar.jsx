@@ -889,7 +889,15 @@ export default function FamilyCalendar({ activities }) {
                 const dayId = `day-${format(day, 'yyyy-MM-dd')}`;
                 const element = document.getElementById(dayId);
                 if (element) {
-                  element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                  const container = document.querySelector('main');
+                  const stickyNav = document.querySelector('[data-sticky-nav]');
+                  const navHeight = stickyNav ? stickyNav.offsetHeight : 80;
+                  if (container) {
+                    const containerRect = container.getBoundingClientRect();
+                    const elementRect = element.getBoundingClientRect();
+                    const scrollTarget = container.scrollTop + (elementRect.top - containerRect.top) - navHeight - 8;
+                    container.scrollTo({ top: scrollTarget, behavior: 'smooth' });
+                  }
                 }
               }}
               className="flex-1 text-center text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg py-1 transition-colors cursor-pointer"
