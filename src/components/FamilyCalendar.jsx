@@ -886,20 +886,22 @@ export default function FamilyCalendar({ activities }) {
               key={day.toISOString()}
               onClick={() => {
                 setShowOnlyToday(false);
-                const dayId = `day-${format(day, 'yyyy-MM-dd')}`;
-                const element = document.getElementById(dayId);
-                if (element) {
-                  const container = document.querySelector('main');
-                  const stickyNav = document.querySelector('[data-sticky-nav]');
-                  const navHeight = stickyNav ? stickyNav.offsetHeight : 80;
-                  if (container) {
-                    const containerRect = container.getBoundingClientRect();
-                    const elementRect = element.getBoundingClientRect();
-                    // Extra padding so the day label sits clearly below the sticky bar
-                    const scrollTarget = container.scrollTop + (elementRect.top - containerRect.top) - navHeight - 24;
-                    container.scrollTo({ top: scrollTarget, behavior: 'smooth' });
+                setTimeout(() => {
+                  const dayId = `day-${format(day, 'yyyy-MM-dd')}`;
+                  const element = document.getElementById(dayId);
+                  if (element) {
+                    const container = document.querySelector('main');
+                    if (container) {
+                      // Get the sticky nav height dynamically
+                      const stickyNav = container.querySelector('[data-sticky-nav]');
+                      const navHeight = stickyNav ? stickyNav.getBoundingClientRect().height : 100;
+                      const containerRect = container.getBoundingClientRect();
+                      const elementRect = element.getBoundingClientRect();
+                      const scrollTarget = container.scrollTop + (elementRect.top - containerRect.top) - navHeight - 4;
+                      container.scrollTo({ top: scrollTarget, behavior: 'smooth' });
+                    }
                   }
-                }
+                }, 0);
               }}
               className="flex-1 text-center text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg py-1 transition-colors cursor-pointer"
             >
