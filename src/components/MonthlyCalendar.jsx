@@ -171,9 +171,9 @@ export default function MonthlyCalendar({ activities }) {
   today.setHours(0, 0, 0, 0);
 
   return (
-    <div className="-mx-6 px-6">
+    <div className="-mx-6 px-6 flex flex-col" style={{ height: 'calc(100vh - 200px)' }}>
       {/* Month navigation */}
-      <div className="pb-3 -mx-6 px-6 pt-3 sticky z-10" style={{ backgroundColor: '#F5F5F7', top: '44px' }}>
+      <div className="pb-3 -mx-6 px-6 pt-3 flex-shrink-0 sticky z-10" style={{ backgroundColor: '#F5F5F7', top: '44px' }}>
         <div className="flex items-center justify-between mb-3">
           <Button variant="ghost" size="icon" className="h-6 w-6 p-0" onClick={() => setCurrentMonth(subMonths(currentMonth, 1))}>
             <ChevronLeft className="w-3.5 h-3.5" />
