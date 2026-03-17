@@ -221,18 +221,18 @@ export default function MonthlyCalendar({ activities }) {
             );
           })}
         </div>
-      </div>
 
-      {/* Selected day label — outside scroll container so it's never clipped */}
-      <div className="text-lg font-bold text-gray-900 mt-4 mb-2 px-4">
-        {format(selectedDay, 'EEEE, MMM d')}
+        {/* Selected day label — inside sticky block so it's never hidden behind the grid */}
+        <div className="text-lg font-bold text-gray-900 mt-3 mb-1">
+          {format(selectedDay, 'EEEE, MMM d')}
+        </div>
       </div>
 
       {/* Selected day events — isolated scroll container so touch events never propagate up to the page */}
       <div
         ref={eventsRef}
         className="overflow-y-auto"
-        style={{ height: 'calc(100vh - 420px)', overscrollBehavior: 'contain' }}
+        style={{ height: 'calc(100vh - 460px)', overscrollBehavior: 'contain' }}
         onTouchStart={e => e.stopPropagation()}
       >
 
