@@ -782,7 +782,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
 
       {/* Links Dialog */}
       <Dialog open={expandedSection === 'links'} onOpenChange={(open) => !open && setExpandedSection(null)}>
-        <DialogContent className="w-[calc(100vw-2rem)] max-w-2xl max-h-[85vh] overflow-y-auto top-4 translate-y-0">
+        <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto top-4 translate-y-0">
           <DialogHeader>
             <DialogTitle>Important Links</DialogTitle>
           </DialogHeader>
