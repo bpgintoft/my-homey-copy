@@ -1454,6 +1454,24 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
           <SchoolProgramSection memberId={memberId} memberName={memberName} personType={member?.person_type || 'kid'} schoolOrWorkName={member?.school_or_work_name} />
         </DialogContent>
       </Dialog>
+
+      {/* Activities Dialog */}
+      <ActivitiesDialog
+        open={showActivities}
+        onClose={() => setShowActivities(false)}
+        memberId={memberId}
+        memberName={memberName}
+        color={color}
+      />
+
+      {/* Financials Dialog */}
+      <FinancialsDialog
+        open={showFinancials}
+        onClose={() => setShowFinancials(false)}
+        memberId={memberId}
+        memberName={memberName}
+        color={color}
+      />
     </div>
   );
 }
