@@ -83,7 +83,12 @@ export default function DecisionDialog({ decision, currentUserEmail, onSave, onD
       finalStatus = 'completed';
     }
 
-    const updates = { status: finalStatus, is_archived: isArchived, last_updated_by_email: currentUserEmail };
+    // Mark the other person as having unread changes
+    const otherEmail = isBryan ? KATE_EMAIL : BRYAN_EMAIL;
+    const currentUnread = decision.unread_by || [];
+    const newUnread = currentUnread.includes(otherEmail) ? currentUnread : [...currentUnread, otherEmail];
+
+    const updates = { status: finalStatus, is_archived: isArchived, last_updated_by_email: currentUserEmail, unread_by: newUnread };
     if (isBryan) updates.bryan_vote = myVote;
     else if (isKate) updates.kate_vote = myVote;
 
