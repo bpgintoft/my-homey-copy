@@ -10,7 +10,7 @@ export default function FinancialsDialog({ open, onClose, memberId, memberName, 
   const queryClient = useQueryClient();
   const [bankName, setBankName] = useState('');
   const [accountType, setAccountType] = useState('');
-  const [selectedMemberIds, setSelectedMemberIds] = useState([memberId]);
+  const [selectedMemberIds, setSelectedMemberIds] = useState([]);
 
   const bgMap = {
     blue: 'bg-blue-50 border-blue-100',
