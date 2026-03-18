@@ -83,6 +83,7 @@ export default function FinancialsDialog({ open, onClose, memberId, memberName, 
       setBankName('');
       setAccountType('');
       setSelectedMemberIds(memberId ? [memberId] : []);
+      setEditMode(false);
     },
   });
 
