@@ -12,6 +12,15 @@ export default function FinancialsDialog({ open, onClose, memberId, memberName, 
   const [accountType, setAccountType] = useState('');
   const [selectedMemberIds, setSelectedMemberIds] = useState([]);
 
+  // Reset form when dialog opens
+  useEffect(() => {
+    if (open && memberId) {
+      setSelectedMemberIds([memberId]);
+      setBankName('');
+      setAccountType('');
+    }
+  }, [open, memberId]);
+
   const bgMap = {
     blue: 'bg-blue-50 border-blue-100',
     green: 'bg-green-50 border-green-100',
