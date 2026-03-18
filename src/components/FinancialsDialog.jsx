@@ -169,13 +169,21 @@ export default function FinancialsDialog({ open, onClose, memberId, memberName, 
               <option value="Savings" />
               <option value="Money Market" />
               <option value="CD" />
+              <option value="Credit Card" />
               <option value="Roth IRA" />
               <option value="Traditional IRA" />
               <option value="401k" />
               <option value="403b" />
               <option value="SEP IRA" />
+              <option value="HSA" />
+              <option value="FSA" />
               <option value="529 College Savings" />
               <option value="Brokerage" />
+              <option value="Mortgage" />
+              <option value="Auto Loan" />
+              <option value="Student Loan" />
+              <option value="HELOC" />
+              <option value="Personal Loan" />
               <option value="Crypto Wallet" />
             </datalist>
 
