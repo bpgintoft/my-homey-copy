@@ -128,7 +128,7 @@ export default function Layout({ children, currentPageName }) {
 
       {/* Mobile Header */}
       <header className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-white/95 backdrop-blur-sm border-b border-gray-200 z-40 flex items-center justify-between px-4">
-        <Link to={createPageUrl('Home')} className="flex items-center gap-2">
+        <Link to={createPageUrl('Home')} onClick={() => currentPageName === 'Home' && window.location.reload()} className="flex items-center gap-2">
           <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-[#E91E8C] to-[#0AACFF] flex items-center justify-center">
             <Home className="w-4 h-4 text-white" />
           </div>
