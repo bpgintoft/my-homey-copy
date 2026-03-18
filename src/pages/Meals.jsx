@@ -272,6 +272,12 @@ export default function Meals() {
       return result;
     },
     onSuccess: (parsedData) => {
+      let recipeUrl = '';
+      try {
+        const trimmed = pastedMealText.trim();
+        new URL(trimmed);
+        recipeUrl = trimmed;
+      } catch {}
       setNewMeal({
         name: parsedData.name || '',
         ingredients: parsedData.ingredients || [],
@@ -282,7 +288,8 @@ export default function Meals() {
         cooking_method: parsedData.cooking_method || '',
         cooking_temperature_or_heat: parsedData.cooking_temperature_or_heat || '',
         nutrition: parsedData.nutrition || undefined,
-        type: 'dinner'
+        type: 'dinner',
+        recipe_url: recipeUrl || parsedData.recipe_url || '',
       });
       setPastedMealText('');
     },
