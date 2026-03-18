@@ -1612,6 +1612,16 @@ export default function Meals() {
             </div>
 
             <div className="space-y-4">
+              <Input
+                placeholder="Meal name"
+                value={newMeal.name || ''}
+                onChange={(e) => setNewMeal({ ...newMeal, name: e.target.value })}
+              />
+              <Input
+                placeholder="Recipe URL (optional)"
+                value={newMeal.recipe_url || ''}
+                onChange={(e) => setNewMeal({ ...newMeal, recipe_url: e.target.value })}
+              />
               <div>
                 <label className="text-sm font-medium text-gray-700 mb-2 block">Meal Image</label>
                 <p className="text-xs text-gray-500 mb-2">Choose file or Ctrl+V to paste image</p>
@@ -1628,11 +1638,6 @@ export default function Meals() {
                   </div>
                 )}
               </div>
-              <Input
-                placeholder="Meal name"
-                value={newMeal.name || ''}
-                onChange={(e) => setNewMeal({ ...newMeal, name: e.target.value })}
-              />
               <div>
                 <label className="text-sm font-medium text-gray-700 mb-2 block">Meal Type(s)</label>
                 <div className="flex flex-wrap gap-2">
