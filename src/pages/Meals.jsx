@@ -842,8 +842,8 @@ export default function Meals() {
                     <CardContent className="p-4">
                       <div className="flex gap-3">
                         {meal.photo_url && (
-                            <div className="w-16 h-16 flex-shrink-0 rounded-lg overflow-hidden">
-                              <img src={getThumbnailUrl(meal.photo_url)} alt={meal.name} className="w-full h-full object-cover" />
+                            <div className="w-16 h-16 flex-shrink-0 rounded-lg overflow-hidden bg-gray-100">
+                              <img src={getThumbnailUrl(meal.photo_url)} alt={meal.name} className="w-full h-full object-cover" loading="lazy" decoding="async" />
                             </div>
                           )}
                         <div className="flex-1 min-w-0 flex flex-col gap-1">
