@@ -1396,8 +1396,8 @@ export default function Meals() {
 
                   return (
                     <Card key={key} className="bg-white border-0 shadow-sm">
-                      <CardContent className="p-5">
-                        <h3 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                      <CardContent className="p-4">
+                        <h3 className="font-semibold text-gray-900 mb-2 flex items-center gap-2">
                           <span className="text-xl">{emoji}</span>
                           {label}
                         </h3>
