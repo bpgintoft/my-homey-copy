@@ -1403,7 +1403,7 @@ export default function Meals() {
                         </h3>
                         <div className="space-y-2">
                           {categoryItems.map((item) => (
-                            <div key={item.id} className={`flex items-center gap-3 p-3 rounded-lg transition-all ${
+                            <div key={item.id} className={`flex items-start gap-3 p-3 rounded-lg transition-all ${
                               item.purchased 
                                 ? 'bg-gray-100' 
                                 : 'bg-white border-2 border-pink-200'
