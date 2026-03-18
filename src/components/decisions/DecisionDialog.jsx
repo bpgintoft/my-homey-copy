@@ -30,13 +30,14 @@ function renderTextWithLinks(text, isMe) {
           href={part}
           target="_blank"
           rel="noopener noreferrer"
-          className={`underline block truncate ${isMe ? 'text-indigo-600' : 'text-indigo-200'}`}
+          className={`underline block truncate text-sm ${isMe ? 'text-indigo-600' : 'text-indigo-200'}`}
         >
           {part}
         </a>
       );
     }
-    return <span key={i}>{part}</span>;
+    // Regular text — split by newline to preserve line breaks, render inline so it wraps
+    return part ? <span key={i} className="whitespace-pre-wrap">{part}</span> : null;
   });
 }
 
