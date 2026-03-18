@@ -44,16 +44,16 @@ export default function FinancialsDialog({ open, onClose, memberId, memberName, 
   const createMutation = useMutation({
     mutationFn: (data) => base44.entities.FinancialAccount.create(data),
     onSuccess: () => {
-      queryClient.invalidateQueries(['financialAccounts', memberId]);
+      queryClient.invalidateQueries({ queryKey: ['financialAccounts', memberId] });
       setBankName('');
       setAccountType('');
-      setSelectedMemberIds([memberId]);
+      setSelectedMemberIds(memberId ? [memberId] : []);
     },
   });
 
   const deleteMutation = useMutation({
     mutationFn: (id) => base44.entities.FinancialAccount.delete(id),
-    onSuccess: () => queryClient.invalidateQueries(['financialAccounts', memberId]),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['financialAccounts', memberId] }),
   });
 
   const toggleMember = (id) => {
