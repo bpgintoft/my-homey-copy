@@ -19,19 +19,24 @@ const statusLabels = {
 
 const voteEmoji = { yes: '✅', no: '❌', maybe: '🤔', '': '—' };
 
-export default function DecisionCard({ decision, onClick }) {
+export default function DecisionCard({ decision, onClick, hasUnread }) {
   const bryanVote = decision.bryan_vote || '';
   const kateVote = decision.kate_vote || '';
   const bothVoted = bryanVote && kateVote;
 
   return (
     <div
-      className="cursor-pointer transition-all duration-200 rounded-3xl px-5 py-4"
+      className="relative cursor-pointer transition-all duration-200 rounded-3xl px-5 py-4"
       style={{background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.12)', backdropFilter: 'blur(10px)'}}
       onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.13)'}
       onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,255,255,0.08)'}
       onClick={() => onClick(decision)}
     >
+      {hasUnread && (
+        <span className="absolute -top-1.5 -right-1.5 bg-red-500 text-white text-xs font-bold rounded-full min-w-[20px] h-[20px] flex items-center justify-center px-1 shadow-lg z-10">
+          1
+        </span>
+      )}
       <div className="flex items-start justify-between gap-2 mb-1">
         <h3 className="font-semibold text-white text-sm leading-snug flex-1">{decision.title}</h3>
         <span className={`text-xs px-2.5 py-0.5 rounded-full font-medium flex-shrink-0 ${statusColors[decision.status] || statusColors.pending}`}>
