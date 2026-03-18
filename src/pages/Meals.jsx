@@ -1727,11 +1727,6 @@ export default function Meals() {
                 onChange={(e) => setNewMeal({ ...newMeal, instructions: e.target.value })}
                 rows={4}
               />
-              <Input
-                placeholder="Recipe URL (optional)"
-                value={newMeal.recipe_url || ''}
-                onChange={(e) => setNewMeal({ ...newMeal, recipe_url: e.target.value })}
-              />
               <div className="grid grid-cols-3 gap-4">
                 <Input
                   type="number"
