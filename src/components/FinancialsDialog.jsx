@@ -88,6 +88,24 @@ export default function FinancialsDialog({ open, onClose, memberId, memberName, 
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['financialAccounts', memberId] }),
   });
 
+  const updateMutation = useMutation({
+    mutationFn: ({ id, data }) => base44.entities.FinancialAccount.update(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['financialAccounts', memberId] });
+      setEditingAccountId(null);
+    },
+  });
+
+  const startEdit = (account) => {
+    setEditingAccountId(account.id);
+    setEditValues({ bank_name: account.bank_name, account_type: account.account_type });
+  };
+
+  const saveEdit = (id) => {
+    if (!editValues.bank_name.trim() || !editValues.account_type.trim()) return;
+    updateMutation.mutate({ id, data: { bank_name: editValues.bank_name.trim(), account_type: editValues.account_type.trim() } });
+  };
+
   const toggleMember = (id) => {
     setSelectedMemberIds(prev =>
       prev.includes(id) ? prev.filter(m => m !== id) : [...prev, id]
