@@ -158,7 +158,8 @@ export default function PersonalInfoSection({ member, color = 'blue' }) {
   const hasWeight = form.weight_lbs !== '';
   const hasPhysical = hasHeight || hasWeight;
   const hasClothing = form.shirt_size || form.pant_size || form.shoe_size || form.jacket_size || form.hat_size;
-  const hasAnything = hasContact || hasRole || hasPassport || hasStudent || hasLicense || hasPhysical || hasClothing;
+  const hasCustom = customInfo.length > 0;
+  const hasAnything = hasContact || hasRole || hasPassport || hasStudent || hasLicense || hasPhysical || hasClothing || hasCustom;
 
   if (!editing) {
     return (
