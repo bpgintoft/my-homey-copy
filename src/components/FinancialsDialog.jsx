@@ -31,6 +31,7 @@ export default function FinancialsDialog({ open, onClose, memberId, memberName, 
   const [accountType, setAccountType] = useState('');
   const [selectedMemberIds, setSelectedMemberIds] = useState([]);
   const [collapsedCategories, setCollapsedCategories] = useState({});
+  const [editMode, setEditMode] = useState(false);
   const [editingAccountId, setEditingAccountId] = useState(null);
   const [editValues, setEditValues] = useState({ bank_name: '', account_type: '' });
 
