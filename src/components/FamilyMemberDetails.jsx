@@ -72,6 +72,8 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
   const [isCustomizing, setIsCustomizing] = useState(false);
   const [currentUser, setCurrentUser] = React.useState(null);
   const [customSectionOrder, setCustomSectionOrder] = useState(null); // null = use saved/default
+  const [showActivities, setShowActivities] = useState(false);
+  const [showFinancials, setShowFinancials] = useState(false);
 
   const DEFAULT_SECTIONS = [
     { key: 'chores', label: 'To-Do List' },
