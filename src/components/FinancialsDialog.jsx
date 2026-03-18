@@ -224,15 +224,42 @@ export default function FinancialsDialog({ open, onClose, memberId, memberName, 
                   {!collapsed && (
                     <div className="space-y-1">
                       {items.map(account => (
-                        <div key={account.id} className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg border border-gray-100 bg-gray-50 hover:bg-gray-100 transition-colors">
-                          <Building2 className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" />
-                          <div className="flex-1 min-w-0 flex items-center gap-2">
-                            <span className="text-sm font-medium text-gray-800 truncate">{account.bank_name}</span>
-                            <span className="text-xs text-gray-400 truncate">{account.account_type}</span>
-                          </div>
-                          <button onClick={() => deleteMutation.mutate(account.id)} className="p-1 rounded hover:bg-red-50 transition-colors flex-shrink-0">
-                            <Trash2 className="w-3 h-3 text-red-400" />
-                          </button>
+                        <div key={account.id} className="rounded-lg border border-gray-100 bg-gray-50 overflow-hidden">
+                          {editingAccountId === account.id ? (
+                            <div className="p-2 space-y-1.5">
+                              <Input
+                                value={editValues.bank_name}
+                                onChange={e => setEditValues(v => ({ ...v, bank_name: e.target.value }))}
+                                placeholder="Bank name"
+                                className="h-7 text-sm"
+                              />
+                              <Input
+                                value={editValues.account_type}
+                                onChange={e => setEditValues(v => ({ ...v, account_type: e.target.value }))}
+                                placeholder="Account type"
+                                className="h-7 text-sm"
+                                list="account-type-suggestions"
+                              />
+                              <div className="flex gap-1">
+                                <Button size="sm" className="flex-1 h-7 text-xs" onClick={() => saveEdit(account.id)} disabled={updateMutation.isPending}>Save</Button>
+                                <button onClick={() => setEditingAccountId(null)} className="p-1 rounded hover:bg-gray-200 transition-colors">
+                                  <X className="w-3.5 h-3.5 text-gray-400" />
+                                </button>
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="flex items-center gap-2 px-2.5 py-1.5 hover:bg-gray-100 transition-colors cursor-pointer" onClick={() => startEdit(account)}>
+                              <Building2 className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" />
+                              <div className="flex-1 min-w-0 flex items-center gap-2">
+                                <span className="text-sm font-medium text-gray-800 truncate">{account.bank_name}</span>
+                                <span className="text-xs text-gray-400 truncate">{account.account_type}</span>
+                              </div>
+                              <Pencil className="w-3 h-3 text-gray-300 flex-shrink-0" />
+                              <button onClick={(e) => { e.stopPropagation(); deleteMutation.mutate(account.id); }} className="p-1 rounded hover:bg-red-50 transition-colors flex-shrink-0">
+                                <Trash2 className="w-3 h-3 text-red-400" />
+                              </button>
+                            </div>
+                          )}
                         </div>
                       ))}
                     </div>
