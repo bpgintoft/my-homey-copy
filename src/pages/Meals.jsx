@@ -1412,7 +1412,7 @@ export default function Meals() {
                                 type="checkbox"
                                 checked={item.purchased || false}
                                 onChange={(e) => togglePurchasedMutation.mutate({ id: item.id, purchased: e.target.checked })}
-                                className="w-5 h-5 rounded border-gray-300 text-pink-600 focus:ring-pink-500 cursor-pointer"
+                                className="w-5 h-5 rounded border-gray-300 text-pink-600 focus:ring-pink-500 cursor-pointer mt-0.5 flex-shrink-0"
                               />
                               <div className="flex-1 min-w-0">
                                 <textarea
