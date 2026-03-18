@@ -39,11 +39,11 @@ export default function Decisions() {
     const params = new URLSearchParams(window.location.search);
     const decisionId = params.get('decision');
     if (decisionId) {
-      const found = decisions.find(d => d.id === decisionId);
-      if (found) {
-        autoOpenedRef.current = true;
-        setSelectedDecision(found);
-      }
+    const found = decisions.find(d => d.id === decisionId);
+    if (found) {
+      autoOpenedRef.current = true;
+      handleOpenDecision(found);
+    }
     }
   }, [decisions]);
 
