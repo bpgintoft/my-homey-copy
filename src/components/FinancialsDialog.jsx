@@ -41,14 +41,15 @@ export default function FinancialsDialog({ open, onClose, memberId, memberName, 
     }
   }, [open, memberId]);
 
-  const bgMap = {
-    blue: 'bg-blue-50 border-blue-100',
-    green: 'bg-green-50 border-green-100',
-    pink: 'bg-pink-50 border-pink-100',
-    purple: 'bg-purple-50 border-purple-100',
-    orange: 'bg-orange-50 border-orange-100',
+  const toggleCategory = (key) => {
+    setCollapsedCategories(prev => ({ ...prev, [key]: !prev[key] }));
   };
-  const itemBg = bgMap[color] || bgMap.blue;
+
+  // Group accounts by category
+  const grouped = CATEGORIES.reduce((acc, cat) => {
+    acc[cat.key] = accounts.filter(a => categorize(a.account_type) === cat.key);
+    return acc;
+  }, {});
 
   // Fetch all family members for multi-select
   const { data: familyMembers = [] } = useQuery({
