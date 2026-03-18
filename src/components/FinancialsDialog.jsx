@@ -65,6 +65,12 @@ export default function FinancialsDialog({ open, onClose, memberId, memberName, 
     (a.family_member_id === memberId)
   );
 
+  // Group accounts by category
+  const grouped = CATEGORIES.reduce((acc, cat) => {
+    acc[cat.key] = accounts.filter(a => categorize(a.account_type) === cat.key);
+    return acc;
+  }, {});
+
   const createMutation = useMutation({
     mutationFn: (data) => base44.entities.FinancialAccount.create(data),
     onSuccess: () => {
