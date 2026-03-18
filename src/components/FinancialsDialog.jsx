@@ -240,7 +240,7 @@ export default function FinancialsDialog({ open, onClose, memberId, memberName, 
                     <div className="space-y-1">
                       {items.map(account => (
                         <div key={account.id} className="rounded-lg border border-gray-100 bg-gray-50 overflow-hidden">
-                          {editingAccountId === account.id ? (
+                          {editMode && editingAccountId === account.id ? (
                             <div className="p-2 space-y-1.5">
                               <Input
                                 value={editValues.bank_name}
@@ -263,16 +263,21 @@ export default function FinancialsDialog({ open, onClose, memberId, memberName, 
                               </div>
                             </div>
                           ) : (
-                            <div className="flex items-center gap-2 px-2.5 py-1.5 hover:bg-gray-100 transition-colors cursor-pointer" onClick={() => startEdit(account)}>
+                            <div
+                              className={`flex items-center gap-2 px-2.5 py-1.5 transition-colors ${editMode ? 'hover:bg-gray-100 cursor-pointer' : ''}`}
+                              onClick={() => editMode && startEdit(account)}
+                            >
                               <Building2 className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" />
                               <div className="flex-1 min-w-0 flex items-center gap-2">
                                 <span className="text-sm font-medium text-gray-800 truncate">{account.bank_name}</span>
                                 <span className="text-xs text-gray-400 truncate">{account.account_type}</span>
                               </div>
-                              <Pencil className="w-3 h-3 text-gray-300 flex-shrink-0" />
-                              <button onClick={(e) => { e.stopPropagation(); deleteMutation.mutate(account.id); }} className="p-1 rounded hover:bg-red-50 transition-colors flex-shrink-0">
-                                <Trash2 className="w-3 h-3 text-red-400" />
-                              </button>
+                              {editMode && <Pencil className="w-3 h-3 text-gray-300 flex-shrink-0" />}
+                              {editMode && (
+                                <button onClick={(e) => { e.stopPropagation(); deleteMutation.mutate(account.id); }} className="p-1 rounded hover:bg-red-50 transition-colors flex-shrink-0">
+                                  <Trash2 className="w-3 h-3 text-red-400" />
+                                </button>
+                              )}
                             </div>
                           )}
                         </div>
