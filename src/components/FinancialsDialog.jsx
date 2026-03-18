@@ -5,7 +5,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, Trash2, Building2, Check, ChevronDown, ChevronRight } from 'lucide-react';
+import { Plus, Trash2, Building2, Check, ChevronDown, ChevronRight, Pencil, X } from 'lucide-react';
 
 const CATEGORIES = [
   { key: 'checking_savings', label: 'Checking & Savings', keywords: ['checking', 'savings', 'money market', 'cd', 'certificate'] },
