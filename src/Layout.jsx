@@ -51,14 +51,30 @@ export default function Layout({ children, currentPageName }) {
     }
   }, [pullDistance]);
 
-  const navItems = [
-    { name: 'Home', icon: Home, href: 'Home' },
-    { name: 'Meals', icon: UtensilsCrossed, href: 'Meals' },
-    { name: 'Calendar', icon: Calendar, href: 'Kids' },
-    { name: 'House', icon: Home, href: 'House' },
-    { name: 'History', icon: History, href: 'History' },
-    { name: 'Decisions', icon: CheckSquare, href: 'Decisions' },
+  const navGroups = [
+    {
+      label: 'Home',
+      items: [
+        { name: 'Home', icon: Home, href: 'Home' },
+        { name: 'Meals', icon: UtensilsCrossed, href: 'Meals' },
+        { name: 'Calendar', icon: Calendar, href: 'Kids' },
+        { name: 'House', icon: Home, href: 'House' },
+        { name: 'History', icon: History, href: 'History' },
+        { name: 'Decisions', icon: CheckSquare, href: 'Decisions' },
+      ],
+    },
+    {
+      label: 'Family',
+      items: [
+        { name: 'Bryan', icon: Users, href: 'Bryan' },
+        { name: 'Kate', icon: Users, href: 'Kate' },
+        { name: 'Phoenix', icon: Users, href: 'Phoenix' },
+        { name: 'Mara', icon: Users, href: 'Mara' },
+      ],
+    },
   ];
+
+  const navItems = navGroups.flatMap(g => g.items);
 
   const NavLink = ({ item, mobile = false }) => {
     const isActive = currentPageName === item.href;
@@ -78,6 +94,15 @@ export default function Layout({ children, currentPageName }) {
       </Link>
     );
   };
+
+  const NavGroup = ({ group, mobile = false }) => (
+    <div className="mb-4">
+      <p className="px-4 py-1 text-xs font-semibold text-gray-400 uppercase tracking-wider">{group.label}</p>
+      {group.items.map(item => (
+        <NavLink key={item.name} item={item} mobile={mobile} />
+      ))}
+    </div>
+  );
 
   return (
     <div className="min-h-screen bg-[#F5F5F7]">
