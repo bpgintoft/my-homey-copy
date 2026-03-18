@@ -125,7 +125,22 @@ export default function FinancialsDialog({ open, onClose, memberId, memberName, 
             placeholder="Account type (e.g., Checking, 529, Roth IRA)"
             value={accountType}
             onChange={e => setAccountType(e.target.value)}
+            list="account-type-suggestions"
           />
+          <datalist id="account-type-suggestions">
+            <option value="Checking" />
+            <option value="Savings" />
+            <option value="Money Market" />
+            <option value="CD" />
+            <option value="Roth IRA" />
+            <option value="Traditional IRA" />
+            <option value="401k" />
+            <option value="403b" />
+            <option value="SEP IRA" />
+            <option value="529 College Savings" />
+            <option value="Brokerage" />
+            <option value="Crypto Wallet" />
+          </datalist>
 
           {/* Family member multi-select */}
           {familyMembers.length > 0 && (
