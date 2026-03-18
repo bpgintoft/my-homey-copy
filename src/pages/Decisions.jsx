@@ -63,6 +63,20 @@ export default function Decisions() {
     },
   });
 
+  const clearUnreadMutation = useMutation({
+    mutationFn: ({ id, unread_by }) => base44.entities.FamilyDecision.update(id, { unread_by }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['familyDecisions'] }),
+  });
+
+  const handleOpenDecision = (d) => {
+    // Remove current user from unread_by
+    if (currentUser && d.unread_by?.includes(currentUser.email)) {
+      const newUnread = d.unread_by.filter(e => e !== currentUser.email);
+      clearUnreadMutation.mutate({ id: d.id, unread_by: newUnread });
+    }
+    setSelectedDecision(d);
+  };
+
   const deleteMutation = useMutation({
     mutationFn: (id) => base44.entities.FamilyDecision.delete(id),
     onSuccess: () => {
