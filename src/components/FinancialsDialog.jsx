@@ -133,75 +133,86 @@ export default function FinancialsDialog({ open, onClose, memberId, memberName, 
     <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
       <DialogContent className="max-w-sm max-h-[85vh] flex flex-col overflow-hidden top-4 translate-y-0">
         <DialogHeader>
-          <DialogTitle>Financials — {memberName}</DialogTitle>
+          <div className="flex items-center justify-between">
+            <DialogTitle>Financials — {memberName}</DialogTitle>
+            <button
+              onClick={() => { setEditMode(e => !e); setEditingAccountId(null); setBankName(''); setAccountType(''); setSelectedMemberIds(memberId ? [memberId] : []); }}
+              className="p-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors mr-6"
+              title={editMode ? 'Done' : 'Edit'}
+            >
+              {editMode ? <Check className="w-4 h-4" /> : <Pencil className="w-4 h-4" />}
+            </button>
+          </div>
         </DialogHeader>
 
-        {/* Add form */}
-        <div className="space-y-2 flex-shrink-0">
-          <Input
-            placeholder="Bank name (e.g., Chase, Vanguard)"
-            value={bankName}
-            onChange={e => setBankName(e.target.value)}
-            onKeyDown={e => e.key === 'Enter' && document.getElementById('acct-type-input')?.focus()}
-          />
-          <Input
-            id="acct-type-input"
-            placeholder="Account type (e.g., Checking, 529, Roth IRA)"
-            value={accountType}
-            onChange={e => setAccountType(e.target.value)}
-            list="account-type-suggestions"
-          />
-          <datalist id="account-type-suggestions">
-            <option value="Checking" />
-            <option value="Savings" />
-            <option value="Money Market" />
-            <option value="CD" />
-            <option value="Roth IRA" />
-            <option value="Traditional IRA" />
-            <option value="401k" />
-            <option value="403b" />
-            <option value="SEP IRA" />
-            <option value="529 College Savings" />
-            <option value="Brokerage" />
-            <option value="Crypto Wallet" />
-          </datalist>
+        {/* Add form — only in edit mode */}
+        {editMode && (
+          <div className="space-y-2 flex-shrink-0">
+            <Input
+              placeholder="Bank name (e.g., Chase, Vanguard)"
+              value={bankName}
+              onChange={e => setBankName(e.target.value)}
+              onKeyDown={e => e.key === 'Enter' && document.getElementById('acct-type-input')?.focus()}
+            />
+            <Input
+              id="acct-type-input"
+              placeholder="Account type (e.g., Checking, 529, Roth IRA)"
+              value={accountType}
+              onChange={e => setAccountType(e.target.value)}
+              list="account-type-suggestions"
+            />
+            <datalist id="account-type-suggestions">
+              <option value="Checking" />
+              <option value="Savings" />
+              <option value="Money Market" />
+              <option value="CD" />
+              <option value="Roth IRA" />
+              <option value="Traditional IRA" />
+              <option value="401k" />
+              <option value="403b" />
+              <option value="SEP IRA" />
+              <option value="529 College Savings" />
+              <option value="Brokerage" />
+              <option value="Crypto Wallet" />
+            </datalist>
 
-          {/* Family member multi-select */}
-          {familyMembers.length > 0 && (
-            <div>
-              <p className="text-xs text-gray-500 mb-1">Members on this account</p>
-              <div className="flex flex-wrap gap-1.5">
-                {familyMembers.map(m => {
-                  const selected = selectedMemberIds.includes(m.id);
-                  return (
-                    <button
-                      key={m.id}
-                      type="button"
-                      onClick={() => toggleMember(m.id)}
-                      className={`flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium border transition-colors ${
-                        selected
-                          ? 'bg-gray-800 text-white border-gray-800'
-                          : 'bg-white text-gray-600 border-gray-200 hover:border-gray-400'
-                      }`}
-                    >
-                      {selected && <Check className="w-3 h-3" />}
-                      {m.name}
-                    </button>
-                  );
-                })}
+            {/* Family member multi-select */}
+            {familyMembers.length > 0 && (
+              <div>
+                <p className="text-xs text-gray-500 mb-1">Members on this account</p>
+                <div className="flex flex-wrap gap-1.5">
+                  {familyMembers.map(m => {
+                    const selected = selectedMemberIds.includes(m.id);
+                    return (
+                      <button
+                        key={m.id}
+                        type="button"
+                        onClick={() => toggleMember(m.id)}
+                        className={`flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium border transition-colors ${
+                          selected
+                            ? 'bg-gray-800 text-white border-gray-800'
+                            : 'bg-white text-gray-600 border-gray-200 hover:border-gray-400'
+                        }`}
+                      >
+                        {selected && <Check className="w-3 h-3" />}
+                        {m.name}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
-            </div>
-          )}
+            )}
 
-          <Button
-            size="sm"
-            className="w-full"
-            onClick={handleAdd}
-            disabled={!bankName.trim() || !accountType.trim() || selectedMemberIds.length === 0}
-          >
-            <Plus className="w-4 h-4 mr-1" /> Add Account
-          </Button>
-        </div>
+            <Button
+              size="sm"
+              className="w-full"
+              onClick={handleAdd}
+              disabled={!bankName.trim() || !accountType.trim() || selectedMemberIds.length === 0}
+            >
+              <Plus className="w-4 h-4 mr-1" /> Add Account
+            </Button>
+          </div>
+        )}
 
         {/* Account list grouped by category */}
         <div className="flex-1 overflow-y-auto mt-2 space-y-3">
