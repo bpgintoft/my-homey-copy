@@ -4,7 +4,26 @@ import { base44 } from '@/api/base44Client';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Plus, Trash2, Building2, Check } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Plus, Trash2, Building2, Check, ChevronDown, ChevronRight } from 'lucide-react';
+
+const CATEGORIES = [
+  { key: 'checking_savings', label: 'Checking & Savings', keywords: ['checking', 'savings', 'money market', 'cd', 'certificate'] },
+  { key: 'retirement', label: 'Retirement', keywords: ['401k', 'ira', 'roth', '403b', 'pension', 'retirement', 'sep'] },
+  { key: 'brokerage', label: 'Brokerages', keywords: ['brokerage', 'investment', 'stock', 'etf', 'taxable', 'trading'] },
+  { key: 'college', label: 'College / Education', keywords: ['529', 'education', 'college', 'coverdell'] },
+  { key: 'crypto', label: 'Cryptocurrency', keywords: ['crypto', 'bitcoin', 'ethereum', 'coinbase', 'wallet', 'defi'] },
+  { key: 'other', label: 'Other', keywords: [] },
+];
+
+function categorize(accountType) {
+  const lower = (accountType || '').toLowerCase();
+  for (const cat of CATEGORIES) {
+    if (cat.key === 'other') continue;
+    if (cat.keywords.some(k => lower.includes(k))) return cat.key;
+  }
+  return 'other';
+}
 
 export default function FinancialsDialog({ open, onClose, memberId, memberName, color = 'blue' }) {
   const queryClient = useQueryClient();
