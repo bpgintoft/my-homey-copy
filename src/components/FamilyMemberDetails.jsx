@@ -594,96 +594,22 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
 
   return (
     <div className="space-y-4">
-      {/* Passport & License/Student # */}
-      <div className={`grid grid-cols-[1.2fr_1.3fr_1fr] gap-x-2 p-2.5 rounded-lg ${itemBg}`}>
-        <div 
-          className="cursor-pointer flex flex-col items-center text-center"
-          onClick={() => {
-            const newDate = prompt('Enter passport expiration date (MM/DD/YYYY):');
-            if (newDate) {
-              const date = new Date(newDate);
-              if (!isNaN(date)) {
-                const formatted = date.toISOString().split('T')[0];
-                updateExpirationDatesMutation.mutate({ passport_expiration_date: formatted });
-              }
-            }
-          }}
+      {/* Activities & Financials quick buttons */}
+      <div className="grid grid-cols-2 gap-2">
+        <button
+          onClick={() => setShowActivities(true)}
+          className="flex items-center gap-2 p-3 rounded-lg border bg-white hover:shadow-md transition-shadow text-left w-full"
         >
-          <div className="text-xs text-gray-500 mb-1 whitespace-nowrap">🛂 Passport Exp:</div>
-          <div className="text-sm font-semibold">
-            {member?.passport_expiration_date 
-            ? new Date(member.passport_expiration_date + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).toUpperCase().replace(',', ',')
-            : 'Not set'}
-          </div>
-        </div>
-        {member?.person_type === 'kid' ? (
-          <div 
-            className="cursor-pointer flex flex-col items-center text-center ml-4"
-            onClick={() => {
-              const newStudent = prompt('Enter student number:');
-              if (newStudent !== null) {
-                updateExpirationDatesMutation.mutate({ student_number: newStudent });
-              }
-            }}
-          >
-            <div className="text-xs text-gray-500 mb-1 whitespace-nowrap">📚 Student #:</div>
-            <div className="text-sm font-semibold whitespace-nowrap">
-              {member?.student_number || 'Not set'}
-            </div>
-          </div>
-        ) : (
-          <div 
-            className="cursor-pointer flex flex-col items-center text-center ml-4"
-            onClick={() => {
-              const newDate = prompt('Enter license expiration date (MM/DD/YYYY):');
-              if (newDate) {
-                const date = new Date(newDate);
-                if (!isNaN(date)) {
-                  const formatted = date.toISOString().split('T')[0];
-                  updateExpirationDatesMutation.mutate({ license_expiration_date: formatted });
-                }
-              }
-            }}
-          >
-            <div className="text-xs text-gray-500 mb-1 whitespace-nowrap">🪪 License Exp:</div>
-            <div className="text-sm font-semibold whitespace-nowrap">
-              {member?.license_expiration_date 
-                ? new Date(member.license_expiration_date + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).toUpperCase().replace(',', ',')
-                : 'Not set'}
-            </div>
-          </div>
-        )}
-        {member?.person_type === 'kid' ? (
-          <div 
-            className="cursor-pointer flex flex-col items-center text-center ml-5"
-            onClick={() => {
-              const newSize = prompt('Enter shoe size:');
-              if (newSize !== null) {
-                updateExpirationDatesMutation.mutate({ shoe_size: newSize });
-              }
-            }}
-          >
-            <div className="text-xs text-gray-500 mb-1 whitespace-nowrap">👟 Shoe Size</div>
-            <div className="text-sm font-semibold">
-              {member?.shoe_size || 'Not set'}
-            </div>
-          </div>
-        ) : (
-          <div 
-            className="cursor-pointer flex flex-col items-center text-center ml-5"
-            onClick={() => {
-              const newPlate = prompt('Enter license plate number:');
-              if (newPlate !== null) {
-                updateExpirationDatesMutation.mutate({ license_plate_number: newPlate });
-              }
-            }}
-          >
-            <div className="text-xs text-gray-500 mb-1">🚗 Plate #</div>
-            <div className="text-sm font-semibold">
-              {member?.license_plate_number || 'Not set'}
-            </div>
-          </div>
-        )}
+          <span className="text-lg">🏃</span>
+          <span className="font-semibold text-sm text-gray-800 leading-tight">Activities</span>
+        </button>
+        <button
+          onClick={() => setShowFinancials(true)}
+          className="flex items-center gap-2 p-3 rounded-lg border bg-white hover:shadow-md transition-shadow text-left w-full"
+        >
+          <span className="text-lg">💰</span>
+          <span className="font-semibold text-sm text-gray-800 leading-tight">Financials</span>
+        </button>
       </div>
 
       {/* 2-Column Grid for Sections */}
