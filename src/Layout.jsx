@@ -119,9 +119,9 @@ export default function Layout({ children, currentPageName }) {
             </div>
           </Link>
         </div>
-        <nav className="flex-1 p-4 space-y-1">
-          {navItems.map(item => (
-            <NavLink key={item.name} item={item} />
+        <nav className="flex-1 p-4">
+          {navGroups.map(group => (
+            <NavGroup key={group.label} group={group} />
           ))}
         </nav>
       </aside>
@@ -152,9 +152,9 @@ export default function Layout({ children, currentPageName }) {
                 </div>
               </div>
             </div>
-            <nav className="p-4 space-y-1">
-              {navItems.map(item => (
-                <NavLink key={item.name} item={item} mobile />
+            <nav className="p-4">
+              {navGroups.map(group => (
+                <NavGroup key={group.label} group={group} mobile />
               ))}
             </nav>
           </SheetContent>
