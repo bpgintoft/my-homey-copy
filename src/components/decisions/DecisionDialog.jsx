@@ -17,6 +17,29 @@ const AVATARS = {
 
 const voteEmoji = { yes: '✅ Yes', no: '❌ No', maybe: '🤔 Maybe' };
 
+const URL_REGEX = /(https?:\/\/[^\s]+)/g;
+
+function renderTextWithLinks(text, isMe) {
+  const parts = text.split(URL_REGEX);
+  return parts.map((part, i) => {
+    if (URL_REGEX.test(part)) {
+      URL_REGEX.lastIndex = 0;
+      return (
+        <a
+          key={i}
+          href={part}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={`underline block truncate ${isMe ? 'text-indigo-600' : 'text-indigo-200'}`}
+        >
+          {part}
+        </a>
+      );
+    }
+    return <span key={i}>{part}</span>;
+  });
+}
+
 export default function DecisionDialog({ decision, currentUserEmail, onSave, onDelete, onClose }) {
   const isBryan = currentUserEmail === BRYAN_EMAIL;
   const isKate = currentUserEmail === KATE_EMAIL;
