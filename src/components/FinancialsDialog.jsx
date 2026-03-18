@@ -9,9 +9,12 @@ import { Plus, Trash2, Building2, Check, ChevronDown, ChevronRight, Pencil, X } 
 
 const CATEGORIES = [
   { key: 'checking_savings', label: 'Checking & Savings', keywords: ['checking', 'savings', 'money market', 'cd', 'certificate'] },
+  { key: 'credit_card', label: 'Credit Cards', keywords: ['credit card', 'credit', 'visa', 'mastercard', 'amex', 'american express', 'discover', 'chase sapphire', 'freedom', 'venture', 'platinum card', 'gold card'] },
   { key: 'retirement', label: 'Retirement', keywords: ['401k', 'ira', 'roth', '403b', 'pension', 'retirement', 'sep'] },
+  { key: 'hsa', label: 'HSA / FSA', keywords: ['hsa', 'fsa', 'health savings', 'flexible spending', 'health spending'] },
   { key: 'brokerage', label: 'Brokerages', keywords: ['brokerage', 'investment', 'stock', 'etf', 'taxable', 'trading'] },
   { key: 'college', label: 'College / Education', keywords: ['529', 'education', 'college', 'coverdell'] },
+  { key: 'loans', label: 'Loans', keywords: ['loan', 'mortgage', 'auto loan', 'car loan', 'student loan', 'heloc', 'home equity', 'personal loan', 'line of credit'] },
   { key: 'crypto', label: 'Cryptocurrency', keywords: ['crypto', 'bitcoin', 'ethereum', 'coinbase', 'wallet', 'defi'] },
   { key: 'other', label: 'Other', keywords: [] },
 ];
