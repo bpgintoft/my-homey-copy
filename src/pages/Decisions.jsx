@@ -167,7 +167,12 @@ export default function Decisions() {
         {filtered.length > 0 && (
           <div className="space-y-3 pb-4">
             {filtered.map(d => (
-              <DecisionCard key={d.id} decision={d} onClick={setSelectedDecision} />
+              <DecisionCard
+                key={d.id}
+                decision={d}
+                onClick={handleOpenDecision}
+                hasUnread={currentUser && d.unread_by?.includes(currentUser.email)}
+              />
             ))}
           </div>
         )}
