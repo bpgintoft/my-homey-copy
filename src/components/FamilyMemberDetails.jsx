@@ -689,6 +689,20 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                 <span className="font-semibold text-sm text-gray-800 leading-tight">{label}</span>
                 </button>
                 ))}
+                <button
+                  onClick={() => setShowActivities(true)}
+                  className="flex items-center gap-2 p-3 rounded-lg border bg-white hover:shadow-md transition-shadow text-left w-full"
+                >
+                  <Activity className={`w-5 h-5 flex-shrink-0 ${iconColor}`} />
+                  <span className="font-semibold text-sm text-gray-800 leading-tight">Activities</span>
+                </button>
+                <button
+                  onClick={() => setShowFinancials(true)}
+                  className="flex items-center gap-2 p-3 rounded-lg border bg-white hover:shadow-md transition-shadow text-left w-full"
+                >
+                  <Wallet className={`w-5 h-5 flex-shrink-0 ${iconColor}`} />
+                  <span className="font-semibold text-sm text-gray-800 leading-tight">Financials</span>
+                </button>
                 </div>
                 </div>
                 );
