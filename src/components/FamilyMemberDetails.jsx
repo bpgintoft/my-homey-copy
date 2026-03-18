@@ -594,24 +594,6 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
 
   return (
     <div className="space-y-4">
-      {/* Activities & Financials quick buttons */}
-      <div className="grid grid-cols-2 gap-2">
-        <button
-          onClick={() => setShowActivities(true)}
-          className="flex items-center gap-2 p-3 rounded-lg border bg-white hover:shadow-md transition-shadow text-left w-full"
-        >
-          <span className="text-lg">🏃</span>
-          <span className="font-semibold text-sm text-gray-800 leading-tight">Activities</span>
-        </button>
-        <button
-          onClick={() => setShowFinancials(true)}
-          className="flex items-center gap-2 p-3 rounded-lg border bg-white hover:shadow-md transition-shadow text-left w-full"
-        >
-          <span className="text-lg">💰</span>
-          <span className="font-semibold text-sm text-gray-800 leading-tight">Financials</span>
-        </button>
-      </div>
-
       {/* 2-Column Grid for Sections */}
       <div className="relative">
 
