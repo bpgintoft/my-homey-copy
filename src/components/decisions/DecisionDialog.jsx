@@ -231,7 +231,7 @@ export default function DecisionDialog({ decision, currentUserEmail, onSave, onD
                             </div>
                           ) : (
                             <div className="space-y-1.5">
-                              {c.text && <p className="text-sm leading-snug">{c.text}</p>}
+                              {c.text && <p className="text-sm leading-snug break-words">{renderTextWithLinks(c.text, isMe)}</p>}
                               {c.images && c.images.length > 0 && (
                                 <div className="flex flex-wrap gap-1.5 mt-1">
                                   {c.images.map((url, idx) => (
