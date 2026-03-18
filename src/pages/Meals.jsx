@@ -1590,7 +1590,7 @@ export default function Meals() {
                 placeholder="Paste the entire recipe here... (we'll parse it automatically)"
                 value={pastedMealText}
                 onChange={(e) => setPastedMealText(e.target.value)}
-                rows={4}
+                rows={2}
                 className="text-sm"
               />
               <Button
