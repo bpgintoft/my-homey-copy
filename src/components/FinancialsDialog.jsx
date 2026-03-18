@@ -30,6 +30,7 @@ export default function FinancialsDialog({ open, onClose, memberId, memberName, 
   const [bankName, setBankName] = useState('');
   const [accountType, setAccountType] = useState('');
   const [selectedMemberIds, setSelectedMemberIds] = useState([]);
+  const [collapsedCategories, setCollapsedCategories] = useState({});
 
   // Reset form when dialog opens
   useEffect(() => {
