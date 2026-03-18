@@ -450,6 +450,56 @@ export default function PersonalInfoSection({ member, color = 'blue' }) {
         </div>
       )}
 
+      {/* Custom Items */}
+      <div>
+        <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">Custom Items</h3>
+        {customInfo.length > 0 && (
+          <div className="space-y-2 mb-3">
+            {customInfo.map((item, i) => (
+              <div key={i} className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg bg-gray-50 border border-gray-100">
+                <div className="flex-1 min-w-0">
+                  <span className="text-xs text-gray-400">{item.category} · </span>
+                  <span className="text-sm font-medium text-gray-700">{item.label}: </span>
+                  <span className="text-sm text-gray-600">{item.value}</span>
+                </div>
+                <button onClick={() => removeCustomItem(i)} className="p-1 rounded text-gray-400 hover:text-red-500 transition-colors shrink-0">
+                  <Trash2 className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+        <div className="space-y-2 p-3 bg-gray-50 rounded-lg border border-dashed border-gray-200">
+          <Input
+            placeholder="Category (e.g., Memberships, Subscriptions)"
+            value={newCustomItem.category}
+            onChange={e => setNewCustomItem(v => ({ ...v, category: e.target.value }))}
+            className={`h-8 text-sm ${inputClass}`}
+          />
+          <div className="flex gap-2">
+            <Input
+              placeholder="Label"
+              value={newCustomItem.label}
+              onChange={e => setNewCustomItem(v => ({ ...v, label: e.target.value }))}
+              className={`h-8 text-sm ${inputClass}`}
+            />
+            <Input
+              placeholder="Value"
+              value={newCustomItem.value}
+              onChange={e => setNewCustomItem(v => ({ ...v, value: e.target.value }))}
+              className={`h-8 text-sm ${inputClass}`}
+            />
+          </div>
+          <button
+            onClick={addCustomItem}
+            disabled={!newCustomItem.label.trim() || !newCustomItem.value.trim()}
+            className="flex items-center gap-1.5 text-xs font-medium text-gray-600 hover:text-gray-900 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+          >
+            <Plus className="w-3.5 h-3.5" /> Add item
+          </button>
+        </div>
+      </div>
+
       <Button onClick={handleSave} disabled={updateMutation.isPending} className="w-full">
         {updateMutation.isPending ? 'Saving...' : saved ? '✓ Saved!' : 'Save'}
       </Button>
