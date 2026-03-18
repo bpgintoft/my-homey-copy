@@ -173,7 +173,7 @@ export default function RoundaboutGrid({ sections, imageUrls }) {
           <motion.div
             initial={{ opacity: 0, scale: 0.95, rotate: 45 }}
             animate={{ opacity: 1, scale: 1, rotate: 45 }}
-            transition={{ duration: 0.4, delay: 0.5 }}
+            transition={{ duration: 0.4, delay: 0.3 }}
             className="hover:brightness-110 transition-all duration-300"
             style={{
               position: 'absolute',
