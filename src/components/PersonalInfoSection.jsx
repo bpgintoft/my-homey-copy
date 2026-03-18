@@ -247,6 +247,25 @@ export default function PersonalInfoSection({ member, color = 'blue' }) {
           </div>
         )}
 
+        {hasCustom && (() => {
+          const grouped = customInfo.reduce((acc, item) => {
+            const cat = item.category || 'Other';
+            if (!acc[cat]) acc[cat] = [];
+            acc[cat].push(item);
+            return acc;
+          }, {});
+          return Object.entries(grouped).map(([cat, items]) => (
+            <div key={cat}>
+              <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2">{cat}</h3>
+              <div className="space-y-1.5">
+                {items.map((item, i) => (
+                  <ViewRow key={i} label={item.label} value={item.value} copyKey={`custom-${cat}-${i}`} />
+                ))}
+              </div>
+            </div>
+          ));
+        })()}
+
         {isKid && (
           <div>
             <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2">🎁 Gift Ideas</h3>
