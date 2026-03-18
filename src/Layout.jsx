@@ -109,7 +109,7 @@ export default function Layout({ children, currentPageName }) {
       {/* Desktop Sidebar */}
       <aside className="hidden lg:flex fixed left-0 top-0 bottom-0 w-64 bg-white border-r border-gray-200 flex-col z-40">
         <div className="p-6 border-b border-gray-100">
-          <Link to={createPageUrl('Home')} className="flex items-center gap-3">
+          <Link to={createPageUrl('Home')} onClick={() => currentPageName === 'Home' && window.location.reload()} className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#E91E8C] to-[#0AACFF] flex items-center justify-center">
               <Home className="w-5 h-5 text-white" />
             </div>
