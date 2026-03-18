@@ -90,6 +90,21 @@ export default function PersonalInfoSection({ member, color = 'blue' }) {
     },
   });
 
+  const addCustomItem = () => {
+    if (!newCustomItem.label.trim() || !newCustomItem.value.trim()) return;
+    const updated = [...customInfo, {
+      category: newCustomItem.category.trim() || 'Other',
+      label: newCustomItem.label.trim(),
+      value: newCustomItem.value.trim(),
+    }];
+    setCustomInfo(updated);
+    setNewCustomItem({ category: '', label: '', value: '' });
+  };
+
+  const removeCustomItem = (index) => {
+    setCustomInfo(prev => prev.filter((_, i) => i !== index));
+  };
+
   const handleSave = () => {
     updateMutation.mutate({
       phone: form.phone || null,
@@ -108,6 +123,7 @@ export default function PersonalInfoSection({ member, color = 'blue' }) {
       shoe_size: form.shoe_size || null,
       jacket_size: form.jacket_size || null,
       hat_size: form.hat_size || null,
+      custom_info: customInfo,
     });
   };
 
