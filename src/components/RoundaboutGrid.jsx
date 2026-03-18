@@ -254,6 +254,7 @@ export default function RoundaboutGrid({ sections, imageUrls }) {
           </div>
           </motion.div>
         </Link>
+
       </div>
     </div>
   );
