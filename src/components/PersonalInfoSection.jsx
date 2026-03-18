@@ -31,6 +31,8 @@ export default function PersonalInfoSection({ member, color = 'blue' }) {
   const [copiedKey, setCopiedKey] = useState(null);
   const [newGiftIdea, setNewGiftIdea] = useState('');
   const [giftIdeas, setGiftIdeas] = useState(member?.gift_ideas || []);
+  const [customInfo, setCustomInfo] = useState(member?.custom_info || []);
+  const [newCustomItem, setNewCustomItem] = useState({ category: '', label: '', value: '' });
 
   React.useEffect(() => {
     setGiftIdeas(member?.gift_ideas || []);
