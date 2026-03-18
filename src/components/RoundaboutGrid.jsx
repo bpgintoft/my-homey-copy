@@ -174,21 +174,28 @@ export default function RoundaboutGrid({ sections, imageUrls }) {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.4, delay: 0.3 }}
-            className="hover:brightness-110 transition-all duration-300"
-            style={{ rotate: '45deg',
+            style={{
               position: 'absolute',
               left: CX - diamondHalf,
               top: CY - diamondHalf,
               width: diamondHalf * 2,
               height: diamondHalf * 2,
+              zIndex: 10,
+              cursor: 'pointer',
+            }}
+          >
+          <div
+            className="hover:brightness-110 transition-all duration-300"
+            style={{
+              width: '100%',
+              height: '100%',
+              transform: 'rotate(45deg)',
               borderRadius: diamondHalf * 0.22,
               background: 'linear-gradient(160deg, #c4b5f5 0%, #a78bfa 40%, #9b7af0 70%, #8b6fe8 100%)',
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
               justifyContent: 'center',
-              cursor: 'pointer',
-              zIndex: 10,
               overflow: 'hidden',
               boxShadow: '0 4px 20px rgba(0,0,0,0.35)',
             }}
