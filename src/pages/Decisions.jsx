@@ -200,6 +200,7 @@ export default function Decisions() {
           decision={selectedDecision}
           currentUserEmail={currentUser.email}
           onSave={(id, data) => updateMutation.mutate({ id, data })}
+          onReaction={(id, data) => reactionMutation.mutate({ id, data })}
           onDelete={(id) => {
             if (confirm('Delete this decision?')) deleteMutation.mutate(id);
           }}
