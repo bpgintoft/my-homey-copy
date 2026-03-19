@@ -34,10 +34,14 @@ export default function PersonalInfoSection({ member, color = 'blue' }) {
   const [customInfo, setCustomInfo] = useState(member?.custom_info || []);
   const [newCustomItem, setNewCustomItem] = useState({ category: '', label: '', value: '' });
 
+  const memberCustomInfoStr = JSON.stringify(member?.custom_info);
+  const memberGiftIdeasStr = JSON.stringify(member?.gift_ideas);
+
   React.useEffect(() => {
     setGiftIdeas(member?.gift_ideas || []);
     setCustomInfo(member?.custom_info || []);
-  }, [member?.gift_ideas, member?.custom_info]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [memberCustomInfoStr, memberGiftIdeasStr]);
 
   const saveGiftIdeas = (ideas) => {
     updateMutation.mutate({ gift_ideas: ideas });
