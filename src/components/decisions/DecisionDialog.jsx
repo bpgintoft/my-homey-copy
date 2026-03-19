@@ -350,7 +350,7 @@ export default function DecisionDialog({ decision, currentUserEmail, onSave, onD
                               <button
                                 key={emoji}
                                 onMouseDown={(e) => { e.preventDefault(); handleReactionSelect(i, emoji); }}
-                                onTouchEnd={(e) => { e.preventDefault(); handleReactionSelect(i, emoji); }}
+                                onTouchEnd={(e) => { e.stopPropagation(); handleReactionSelect(i, emoji); }}
                                 className={`flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-xs transition-all ${
                                   users.includes(currentUserEmail)
                                     ? 'bg-indigo-400/60 text-white'
