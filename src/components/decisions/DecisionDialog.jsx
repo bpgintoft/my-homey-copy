@@ -179,32 +179,7 @@ export default function DecisionDialog({ decision, currentUserEmail, onSave, onD
     commentsEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [localComments.length]);
 
-  const startLongPress = (i) => {
-    longPressTimers.current[i] = setTimeout(() => {
-      setReactionPickerIndex(i);
-    }, 500);
-  };
 
-  const cancelLongPress = (i) => {
-    clearTimeout(longPressTimers.current[i]);
-  };
-
-  const handleReactionSelect = (commentIndex, emoji) => {
-    setReactionPickerIndex(null);
-    setLocalComments(prev => prev.map((c, i) => {
-      if (i !== commentIndex) return c;
-      const reactions = { ...(c.reactions || {}) };
-      const users = reactions[emoji] ? [...reactions[emoji]] : [];
-      if (users.includes(currentUserEmail)) {
-        const filtered = users.filter(u => u !== currentUserEmail);
-        if (filtered.length === 0) delete reactions[emoji];
-        else reactions[emoji] = filtered;
-      } else {
-        reactions[emoji] = [...users, currentUserEmail];
-      }
-      return { ...c, reactions };
-    }));
-  };
 
   const handleSave = () => {
     const bryantVote = isBryan ? myVote : decision.bryan_vote;
