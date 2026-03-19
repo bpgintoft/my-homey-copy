@@ -316,7 +316,7 @@ export default function PersonalInfoSection({ member, color = 'blue' }) {
   return (
     <div className="space-y-5 relative">
       <button
-        onClick={() => { handleSave(); }}
+        onClick={() => setEditing(false)}
         className="absolute top-0 right-0 p-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors"
         title="Done editing"
       >
