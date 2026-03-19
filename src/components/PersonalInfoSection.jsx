@@ -85,11 +85,13 @@ export default function PersonalInfoSection({ member, color = 'blue' }) {
 
   const updateMutation = useMutation({
     mutationFn: (data) => base44.entities.FamilyMember.update(member.id, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries(['familyMember', member?.id]);
+    onSuccess: async (_, variables) => {
+      // Sync local state immediately from what we just saved
+      if (variables.custom_info !== undefined) setCustomInfo(variables.custom_info);
       setSaved(true);
       setEditing(false);
       setTimeout(() => setSaved(false), 2000);
+      queryClient.invalidateQueries(['familyMember', member?.id]);
     },
   });
 
