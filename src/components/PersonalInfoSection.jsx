@@ -37,6 +37,24 @@ export default function PersonalInfoSection({ member, color = 'blue' }) {
   React.useEffect(() => {
     setGiftIdeas(member?.gift_ideas || []);
     setCustomInfo(member?.custom_info || []);
+    setForm({
+      phone: member?.phone ?? '',
+      email: member?.email ?? '',
+      role: member?.role ?? '',
+      passport_expiration_date: member?.passport_expiration_date ?? '',
+      student_number: member?.student_number ?? '',
+      license_number: member?.license_number ?? '',
+      license_issue_date: member?.license_issue_date ?? '',
+      license_expiration_date: member?.license_expiration_date ?? '',
+      height_feet: member?.height_feet ?? '',
+      height_inches: member?.height_inches ?? '',
+      weight_lbs: member?.weight_lbs ?? '',
+      shirt_size: member?.shirt_size ?? '',
+      pant_size: member?.pant_size ?? '',
+      shoe_size: member?.shoe_size ?? '',
+      jacket_size: member?.jacket_size ?? '',
+      hat_size: member?.hat_size ?? '',
+    });
     setEditing(false);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [member?.id]);
