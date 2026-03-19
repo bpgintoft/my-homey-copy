@@ -56,6 +56,11 @@ export default function DecisionDialog({ decision, currentUserEmail, onSave, onR
   const [editingIndex, setEditingIndex] = useState(null);
   const [editingText, setEditingText] = useState('');
   const [localComments, setLocalComments] = useState(decision.comments || []);
+
+  // Keep localComments in sync if parent updates the decision (e.g. after reaction save)
+  useEffect(() => {
+    setLocalComments(decision.comments || []);
+  }, [decision.comments]);
   const [showReactionsFor, setShowReactionsFor] = useState(null);
 
   const REACTION_OPTIONS = ['👍', '👎', '❤️', '❗', '❓', '😂', '🎉', '😮'];
