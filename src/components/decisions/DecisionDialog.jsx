@@ -66,7 +66,6 @@ export default function DecisionDialog({ decision, currentUserEmail, onSave, onD
       const reactions = { ...(c.reactions || {}) };
       const users = reactions[emoji] || [];
       if (users.includes(currentUserEmail)) {
-        // remove reaction
         const newUsers = users.filter(e => e !== currentUserEmail);
         if (newUsers.length === 0) delete reactions[emoji];
         else reactions[emoji] = newUsers;
@@ -77,6 +76,8 @@ export default function DecisionDialog({ decision, currentUserEmail, onSave, onD
     });
     setLocalComments(updated);
     setShowReactionsFor(null);
+    // Save immediately without adding a new comment
+    onSave(decision.id, { comments: updated });
   };
   const [lightboxUrl, setLightboxUrl] = useState(null);
   const commentsEndRef = useRef(null);
