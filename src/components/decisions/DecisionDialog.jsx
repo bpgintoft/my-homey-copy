@@ -72,8 +72,6 @@ function renderTextWithLinks(text, isMe) {
   });
 }
 
-import { createPortal } from 'react-dom';
-
 function ReactionPicker({ pos, onSelect, onClose }) {
   useEffect(() => {
     const handler = () => onClose();
