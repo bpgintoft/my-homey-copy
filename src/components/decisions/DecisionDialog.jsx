@@ -17,6 +17,8 @@ const AVATARS = {
 
 const voteEmoji = { yes: '✅ Yes', no: '❌ No', maybe: '🤔 Maybe' };
 
+const REACTION_OPTIONS = ['👍', '👎', '❤️', '😂', '😮', '❗', '❓'];
+
 const URL_REGEX = /(https?:\/\/[^\s]+)/g;
 
 function renderTextWithLinks(text, isMe) {
@@ -36,9 +38,52 @@ function renderTextWithLinks(text, isMe) {
         </a>
       );
     }
-    // Regular text — split by newline to preserve line breaks, render inline so it wraps
     return part ? <span key={i} className="whitespace-pre-wrap">{part}</span> : null;
   });
+}
+
+// Reaction picker popup
+function ReactionPicker({ position, onSelect, onClose }) {
+  const ref = useRef(null);
+
+  useEffect(() => {
+    const handler = (e) => {
+      if (ref.current && !ref.current.contains(e.target)) onClose();
+    };
+    document.addEventListener('mousedown', handler);
+    document.addEventListener('touchstart', handler);
+    return () => {
+      document.removeEventListener('mousedown', handler);
+      document.removeEventListener('touchstart', handler);
+    };
+  }, [onClose]);
+
+  return (
+    <div
+      ref={ref}
+      className="absolute z-50 flex gap-1 p-2 rounded-2xl shadow-xl"
+      style={{
+        background: 'rgba(45, 27, 105, 0.97)',
+        border: '1px solid rgba(200,170,255,0.4)',
+        bottom: '100%',
+        left: '50%',
+        transform: 'translateX(-50%)',
+        marginBottom: 6,
+        whiteSpace: 'nowrap',
+      }}
+    >
+      {REACTION_OPTIONS.map(emoji => (
+        <button
+          key={emoji}
+          onMouseDown={(e) => { e.preventDefault(); onSelect(emoji); }}
+          onTouchEnd={(e) => { e.preventDefault(); onSelect(emoji); }}
+          className="text-xl hover:scale-125 transition-transform active:scale-110 px-1"
+        >
+          {emoji}
+        </button>
+      ))}
+    </div>
+  );
 }
 
 export default function DecisionDialog({ decision, currentUserEmail, onSave, onDelete, onClose }) {
@@ -57,8 +102,10 @@ export default function DecisionDialog({ decision, currentUserEmail, onSave, onD
   const [editingText, setEditingText] = useState('');
   const [localComments, setLocalComments] = useState(decision.comments || []);
   const [lightboxUrl, setLightboxUrl] = useState(null);
+  const [reactionPickerIndex, setReactionPickerIndex] = useState(null);
   const commentsEndRef = useRef(null);
   const fileInputRef = useRef(null);
+  const longPressTimers = useRef({});
 
   const uploadImage = async (file) => {
     setUploadingImage(true);
@@ -90,24 +137,50 @@ export default function DecisionDialog({ decision, currentUserEmail, onSave, onD
     commentsEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [localComments.length]);
 
+  // Long press handlers
+  const startLongPress = (i) => {
+    longPressTimers.current[i] = setTimeout(() => {
+      setReactionPickerIndex(i);
+    }, 500);
+  };
+
+  const cancelLongPress = (i) => {
+    clearTimeout(longPressTimers.current[i]);
+  };
+
+  const handleReactionSelect = (commentIndex, emoji) => {
+    setReactionPickerIndex(null);
+    setLocalComments(prev => prev.map((c, i) => {
+      if (i !== commentIndex) return c;
+      const reactions = { ...(c.reactions || {}) };
+      const users = reactions[emoji] ? [...reactions[emoji]] : [];
+      if (users.includes(currentUserEmail)) {
+        // toggle off
+        const filtered = users.filter(u => u !== currentUserEmail);
+        if (filtered.length === 0) delete reactions[emoji];
+        else reactions[emoji] = filtered;
+      } else {
+        reactions[emoji] = [...users, currentUserEmail];
+      }
+      return { ...c, reactions };
+    }));
+  };
+
   const handleSave = () => {
     const bryantVote = isBryan ? myVote : decision.bryan_vote;
     const kateVote = isKate ? myVote : decision.kate_vote;
     
-    // Auto-update status: if both voted yes, move to needs_action
     let finalStatus = status;
     if (bryantVote === 'yes' && kateVote === 'yes' && status === 'pending') {
       finalStatus = 'needs_action';
     }
     
-    // Auto-archive: if status is completed, archive it
     let isArchived = decision.is_archived;
     if (finalStatus === 'completed') {
       isArchived = true;
       finalStatus = 'completed';
     }
 
-    // Mark the other person as having unread changes
     const otherEmail = isBryan ? KATE_EMAIL : BRYAN_EMAIL;
     const currentUnread = decision.unread_by || [];
     const newUnread = currentUnread.includes(otherEmail) ? currentUnread : [...currentUnread, otherEmail];
@@ -146,8 +219,6 @@ export default function DecisionDialog({ decision, currentUserEmail, onSave, onD
   const handleDeleteComment = (i) => {
     setLocalComments(localComments.filter((_, idx) => idx !== i));
   };
-
-  const otherVote = isBryan ? decision.kate_vote : decision.bryan_vote;
 
   return (
     <>
@@ -202,6 +273,9 @@ export default function DecisionDialog({ decision, currentUserEmail, onSave, onD
                 {localComments.map((c, i) => {
                   const isMe = c.commenter_email === currentUserEmail;
                   const isEditing = editingIndex === i;
+                  const reactions = c.reactions || {};
+                  const reactionEntries = Object.entries(reactions).filter(([, users]) => users.length > 0);
+
                   return (
                     <div key={i} className={`flex items-end gap-1.5 ${isMe ? 'flex-row-reverse' : 'flex-row'}`}>
                       <img
@@ -210,7 +284,25 @@ export default function DecisionDialog({ decision, currentUserEmail, onSave, onD
                         className="w-6 h-6 rounded-full object-cover flex-shrink-0 mb-5"
                       />
                       <div className={`flex flex-col max-w-[80%] min-w-0 overflow-hidden ${isMe ? 'items-end' : 'items-start'}`}>
-                        <div className="rounded-2xl px-3 py-2 w-full overflow-hidden" style={isMe ? {background: 'rgba(220,200,255,0.9)', color: '#3d2a8a'} : {background: 'rgba(180,140,255,0.3)', color: 'white', border: '1px solid rgba(200,170,255,0.3)'}}>
+                        {/* Bubble with long-press */}
+                        <div
+                          className="rounded-2xl px-3 py-2 w-full overflow-hidden relative select-none"
+                          style={isMe ? {background: 'rgba(220,200,255,0.9)', color: '#3d2a8a'} : {background: 'rgba(180,140,255,0.3)', color: 'white', border: '1px solid rgba(200,170,255,0.3)'}}
+                          onMouseDown={() => !isEditing && startLongPress(i)}
+                          onMouseUp={() => cancelLongPress(i)}
+                          onMouseLeave={() => cancelLongPress(i)}
+                          onTouchStart={() => !isEditing && startLongPress(i)}
+                          onTouchEnd={() => cancelLongPress(i)}
+                          onTouchCancel={() => cancelLongPress(i)}
+                        >
+                          {/* Reaction picker */}
+                          {reactionPickerIndex === i && (
+                            <ReactionPicker
+                              onSelect={(emoji) => handleReactionSelect(i, emoji)}
+                              onClose={() => setReactionPickerIndex(null)}
+                            />
+                          )}
+
                           <p className={`text-xs font-semibold mb-0.5 ${isMe ? 'text-indigo-400' : 'text-indigo-200'}`}>{c.commenter_name}</p>
                           {isEditing ? (
                             <div className="space-y-1">
@@ -243,6 +335,28 @@ export default function DecisionDialog({ decision, currentUserEmail, onSave, onD
                             </div>
                           )}
                         </div>
+
+                        {/* Reaction bubbles */}
+                        {reactionEntries.length > 0 && (
+                          <div className={`flex flex-wrap gap-1 mt-1 px-1 ${isMe ? 'justify-end' : 'justify-start'}`}>
+                            {reactionEntries.map(([emoji, users]) => (
+                              <button
+                                key={emoji}
+                                onMouseDown={(e) => { e.preventDefault(); handleReactionSelect(i, emoji); }}
+                                onTouchEnd={(e) => { e.preventDefault(); handleReactionSelect(i, emoji); }}
+                                className={`flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-xs transition-all ${
+                                  users.includes(currentUserEmail)
+                                    ? 'bg-indigo-400/60 text-white'
+                                    : 'bg-white/10 text-white/80 hover:bg-white/20'
+                                }`}
+                              >
+                                <span>{emoji}</span>
+                                {users.length > 1 && <span className="ml-0.5">{users.length}</span>}
+                              </button>
+                            ))}
+                          </div>
+                        )}
+
                         <div className="flex items-center gap-2 mt-0.5 px-1">
                           <p className="text-xs text-indigo-300">
                             {c.timestamp ? format(new Date(c.timestamp), 'MMM d, h:mm a') : ''}
@@ -276,7 +390,6 @@ export default function DecisionDialog({ decision, currentUserEmail, onSave, onD
                 className="border-0 text-white placeholder:text-indigo-300 bg-transparent rounded-none resize-none"
                 style={{ fontSize: '16px' }}
               />
-              {/* Pending images preview */}
               {pendingImages.length > 0 && (
                 <div className="flex flex-wrap gap-2 px-3 pb-2">
                   {pendingImages.map((url, idx) => (
@@ -292,7 +405,6 @@ export default function DecisionDialog({ decision, currentUserEmail, onSave, onD
                   ))}
                 </div>
               )}
-              {/* Image attach button */}
               <div className="flex items-center px-3 pb-2">
                 <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
                 <button
