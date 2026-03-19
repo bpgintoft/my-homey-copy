@@ -34,7 +34,10 @@ export default function PersonalInfoSection({ member, color = 'blue' }) {
   const [customInfo, setCustomInfo] = useState(member?.custom_info || []);
   const [newCustomItem, setNewCustomItem] = useState({ category: '', label: '', value: '' });
 
+  // Sync ALL state from member prop whenever it changes (new data from server)
+  // but only when NOT actively editing (to avoid overwriting in-progress edits)
   React.useEffect(() => {
+    if (editing) return;
     setGiftIdeas(member?.gift_ideas || []);
     setCustomInfo(member?.custom_info || []);
     setForm({
@@ -55,9 +58,8 @@ export default function PersonalInfoSection({ member, color = 'blue' }) {
       jacket_size: member?.jacket_size ?? '',
       hat_size: member?.hat_size ?? '',
     });
-    setEditing(false);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [member?.id]);
+  }, [member]);
 
   const saveGiftIdeas = (ideas) => {
     updateMutation.mutate({ gift_ideas: ideas });
