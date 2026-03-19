@@ -292,7 +292,7 @@ export default function DecisionDialog({ decision, currentUserEmail, onSave, onD
                           {!isEditing && (
                             <div className="relative">
                               <button
-                                onClick={() => setShowReactionsFor(showReactionsFor === i ? null : i)}
+                                onPointerDown={e => { e.stopPropagation(); e.preventDefault(); setShowReactionsFor(showReactionsFor === i ? null : i); }}
                                 className="text-xs text-indigo-300 hover:text-white"
                               >
                                 React
