@@ -298,11 +298,15 @@ export default function DecisionDialog({ decision, currentUserEmail, onSave, onD
                                 React
                               </button>
                               {showReactionsFor === i && (
-                                <div className={`absolute bottom-5 ${isMe ? 'right-0' : 'left-0'} z-10 flex gap-1 p-1.5 rounded-2xl shadow-lg`} style={{background: 'rgba(45,27,105,0.97)', border: '1px solid rgba(200,170,255,0.3)'}}>
+                                <div
+                                  className={`absolute bottom-5 ${isMe ? 'right-0' : 'left-0'} z-10 flex gap-1 p-1.5 rounded-2xl shadow-lg`}
+                                  style={{background: 'rgba(45,27,105,0.97)', border: '1px solid rgba(200,170,255,0.3)'}}
+                                  onClick={e => e.stopPropagation()}
+                                >
                                   {REACTION_OPTIONS.map(emoji => (
                                     <button
                                       key={emoji}
-                                      onClick={() => handleReaction(i, emoji)}
+                                      onPointerDown={e => { e.stopPropagation(); e.preventDefault(); handleReaction(i, emoji); }}
                                       className="text-lg hover:scale-125 transition-transform px-0.5"
                                     >
                                       {emoji}
