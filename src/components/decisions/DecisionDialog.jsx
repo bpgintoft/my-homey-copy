@@ -41,7 +41,7 @@ function renderTextWithLinks(text, isMe) {
   });
 }
 
-export default function DecisionDialog({ decision, currentUserEmail, onSave, onDelete, onClose }) {
+export default function DecisionDialog({ decision, currentUserEmail, onSave, onReaction, onDelete, onClose }) {
   const isBryan = currentUserEmail === BRYAN_EMAIL;
   const isKate = currentUserEmail === KATE_EMAIL;
   const myName = isBryan ? 'Bryan' : 'Kate';
