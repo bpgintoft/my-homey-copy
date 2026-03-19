@@ -4,7 +4,7 @@ import { base44 } from '@/api/base44Client';
 import { Button } from "@/components/ui/button";
 import { Plus } from 'lucide-react';
 import DecisionCard from '../components/decisions/DecisionCard';
-import DecisionDialog from '../components/decisions/DecisionDialog';
+import DecisionDialog from '../components/decisions/DecisionDialog.jsx';
 import NewDecisionDialog from '../components/decisions/NewDecisionDialog';
 
 const BRYAN_EMAIL = 'bpgintoft@gmail.com';
