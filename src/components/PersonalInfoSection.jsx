@@ -111,7 +111,9 @@ export default function PersonalInfoSection({ member, color = 'blue' }) {
   };
 
   const removeCustomItem = (index) => {
-    setCustomInfo(prev => prev.filter((_, i) => i !== index));
+    const updated = customInfo.filter((_, i) => i !== index);
+    setCustomInfo(updated);
+    savePartialMutation.mutate({ custom_info: updated });
   };
 
   const handleSave = () => {
