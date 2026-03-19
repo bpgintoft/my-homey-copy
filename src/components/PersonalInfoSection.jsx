@@ -85,8 +85,8 @@ export default function PersonalInfoSection({ member, color = 'blue' }) {
 
   const updateMutation = useMutation({
     mutationFn: (data) => base44.entities.FamilyMember.update(member.id, data),
-    onSuccess: async (_, variables) => {
-      // Sync local state immediately from what we just saved
+    onSuccess: (_, variables) => {
+      // Immediately sync local state from what we just saved so view mode shows it
       if (variables.custom_info !== undefined) setCustomInfo(variables.custom_info);
       setSaved(true);
       setEditing(false);
