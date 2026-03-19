@@ -35,12 +35,11 @@ export default function PersonalInfoSection({ member, color = 'blue' }) {
   const [newCustomItem, setNewCustomItem] = useState({ category: '', label: '', value: '' });
 
   React.useEffect(() => {
-    if (!editing) {
-      setGiftIdeas(member?.gift_ideas || []);
-      setCustomInfo(member?.custom_info || []);
-    }
+    setGiftIdeas(member?.gift_ideas || []);
+    setCustomInfo(member?.custom_info || []);
+    setEditing(false);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [member?.id, JSON.stringify(member?.custom_info), JSON.stringify(member?.gift_ideas)]);
+  }, [member?.id]);
 
   const saveGiftIdeas = (ideas) => {
     updateMutation.mutate({ gift_ideas: ideas });
