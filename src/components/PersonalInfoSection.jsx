@@ -528,7 +528,7 @@ export default function PersonalInfoSection({ member, color = 'blue' }) {
           <button
             onClick={addCustomItem}
             disabled={!newCustomItem.label.trim() || !newCustomItem.value.trim()}
-            className="flex items-center gap-1.5 text-xs font-medium text-gray-600 hover:text-gray-900 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+            className="flex items-center gap-1.5 text-xs font-medium bg-gray-900 text-white px-3 py-1.5 rounded-md hover:bg-gray-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
           >
             <Plus className="w-3.5 h-3.5" /> Add item
           </button>
