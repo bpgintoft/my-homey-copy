@@ -68,9 +68,8 @@ export default function Decisions() {
   const reactionMutation = useMutation({
     mutationFn: ({ id, data }) => base44.entities.FamilyDecision.update(id, data),
     onSuccess: (_, { id, data }) => {
-      // Update selectedDecision in place immediately (don't wait for refetch)
-      setSelectedDecision(prev => prev && prev.id === id ? { ...prev, ...data } : prev);
-      queryClient.invalidateQueries({ queryKey: ['familyDecisions'] });
+      // Update selectedDecision comments in place - do NOT invalidate to avoid race condition
+      setSelectedDecision(prev => prev && prev.id === id ? { ...prev, comments: data.comments } : prev);
     },
   });
 
