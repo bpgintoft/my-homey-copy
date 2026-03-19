@@ -282,14 +282,15 @@ export default function DecisionDialog({ decision, currentUserEmail, onSave, onD
                       />
                       <div className={`flex flex-col max-w-[80%] min-w-0 overflow-hidden ${isMe ? 'items-end' : 'items-start'}`}>
                         <div
-                          className="rounded-2xl px-3 py-2 w-full overflow-hidden relative select-none"
-                          style={isMe ? {background: 'rgba(220,200,255,0.9)', color: '#3d2a8a'} : {background: 'rgba(180,140,255,0.3)', color: 'white', border: '1px solid rgba(200,170,255,0.3)'}}
+                          className="rounded-2xl px-3 py-2 w-full overflow-visible relative select-none"
+                          style={isMe ? {background: 'rgba(220,200,255,0.9)', color: '#3d2a8a', WebkitUserSelect: 'none', userSelect: 'none'} : {background: 'rgba(180,140,255,0.3)', color: 'white', border: '1px solid rgba(200,170,255,0.3)', WebkitUserSelect: 'none', userSelect: 'none'}}
                           onMouseDown={() => !isEditing && startLongPress(i)}
                           onMouseUp={() => cancelLongPress(i)}
                           onMouseLeave={() => cancelLongPress(i)}
-                          onTouchStart={() => !isEditing && startLongPress(i)}
-                          onTouchEnd={() => cancelLongPress(i)}
+                          onTouchStart={(e) => { if (!isEditing) { e.preventDefault(); startLongPress(i); } }}
+                          onTouchEnd={(e) => { e.preventDefault(); cancelLongPress(i); }}
                           onTouchCancel={() => cancelLongPress(i)}
+                          onContextMenu={(e) => e.preventDefault()}
                         >
                           {reactionPickerIndex === i && (
                             <ReactionPicker
