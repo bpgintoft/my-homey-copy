@@ -90,6 +90,13 @@ export default function PersonalInfoSection({ member, color = 'blue' }) {
     },
   });
 
+  const savePartialMutation = useMutation({
+    mutationFn: (data) => base44.entities.FamilyMember.update(member.id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['familyMember', member?.id]);
+    },
+  });
+
   const addCustomItem = () => {
     if (!newCustomItem.label.trim() || !newCustomItem.value.trim()) return;
     const updated = [...customInfo, {
