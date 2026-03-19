@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -17,56 +17,39 @@ const AVATARS = {
 };
 
 const VOTE_LABELS = { yes: '✅ Yes', no: '❌ No', maybe: '🤔 Maybe' };
-const REACTION_OPTIONS = ['👍', '👎', '❤️', '😂', '😮', '❗', '❓'];
-const URL_REGEX = /(https?:\/\/[^\s]+)/g;
+const EMOJIS = ['👍', '👎', '❤️', '😂', '😮', '❗', '❓'];
 
 function renderTextWithLinks(text, isMe) {
-  const parts = text.split(URL_REGEX);
-  return parts.map((part, i) => {
-    if (/^https?:\/\//.test(part)) {
-      return (
-        <a key={i} href={part} target="_blank" rel="noopener noreferrer"
-          className={`underline block truncate text-sm ${isMe ? 'text-indigo-600' : 'text-indigo-200'}`}>
-          {part}
-        </a>
-      );
-    }
-    return part ? <span key={i} className="whitespace-pre-wrap">{part}</span> : null;
-  });
+  const URL_REGEX = /(https?:\/\/[^\s]+)/g;
+  return text.split(URL_REGEX).map((part, i) =>
+    /^https?:\/\//.test(part)
+      ? <a key={i} href={part} target="_blank" rel="noopener noreferrer" className={`underline block truncate text-sm ${isMe ? 'text-indigo-600' : 'text-indigo-200'}`}>{part}</a>
+      : part ? <span key={i} className="whitespace-pre-wrap">{part}</span> : null
+  );
 }
 
-function ReactionPicker({ pos, onSelect, onClose }) {
-  useEffect(() => {
-    const handler = () => onClose();
-    document.addEventListener('touchstart', handler);
-    document.addEventListener('mousedown', handler);
-    return () => {
-      document.removeEventListener('touchstart', handler);
-      document.removeEventListener('mousedown', handler);
-    };
-  }, [onClose]);
-
-  const left = Math.max(8, Math.min(pos.x - 140, window.innerWidth - 310));
-  const top = Math.max(8, pos.y - 70);
+function ReactionPicker({ x, y, onSelect, onClose }) {
+  const left = Math.max(8, Math.min(x - 140, window.innerWidth - 310));
+  const top = Math.max(8, y - 70);
 
   return createPortal(
-    <div
-      className="fixed z-[9999] flex gap-1 p-2 rounded-2xl shadow-xl"
-      style={{ background: 'rgba(45,27,105,0.97)', border: '1px solid rgba(200,170,255,0.4)', left, top, whiteSpace: 'nowrap' }}
-      onMouseDown={(e) => e.stopPropagation()}
-      onTouchStart={(e) => e.stopPropagation()}
-    >
-      {REACTION_OPTIONS.map(emoji => (
-        <button
-          key={emoji}
-          onMouseDown={(e) => { e.stopPropagation(); onSelect(emoji); }}
-          onTouchEnd={(e) => { e.stopPropagation(); onSelect(emoji); }}
-          className="text-2xl hover:scale-125 transition-transform active:scale-110 px-1"
-        >
-          {emoji}
-        </button>
-      ))}
-    </div>,
+    <>
+      <div className="fixed inset-0 z-[9998]" onClick={onClose} />
+      <div
+        className="fixed z-[9999] flex gap-1 p-2 rounded-2xl shadow-xl"
+        style={{ left, top, background: 'rgba(45,27,105,0.97)', border: '1px solid rgba(200,170,255,0.4)' }}
+      >
+        {EMOJIS.map(emoji => (
+          <button
+            key={emoji}
+            onClick={() => onSelect(emoji)}
+            className="text-2xl hover:scale-125 transition-transform active:scale-110 px-1"
+          >
+            {emoji}
+          </button>
+        ))}
+      </div>
+    </>,
     document.body
   );
 }
@@ -85,46 +68,30 @@ export default function DecisionDialog({ decision, currentUserEmail, onSave, onD
   const [editingText, setEditingText] = useState('');
   const [localComments, setLocalComments] = useState(decision.comments || []);
   const [lightboxUrl, setLightboxUrl] = useState(null);
-  const [pickerIndex, setPickerIndex] = useState(null);
-  const [pickerPos, setPickerPos] = useState({ x: 0, y: 0 });
+  const [picker, setPicker] = useState(null); // { index, x, y }
 
   const commentsEndRef = useRef(null);
   const fileInputRef = useRef(null);
-  const longPressTimer = useRef(null);
-
-  useEffect(() => {
-    commentsEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [localComments.length]);
+  const pressTimer = useRef(null);
 
   const startPress = (i, e) => {
-    const touch = e.touches?.[0];
-    const x = touch ? touch.clientX : e.clientX;
-    const y = touch ? touch.clientY : e.clientY;
-    longPressTimer.current = setTimeout(() => {
-      setPickerPos({ x, y });
-      setPickerIndex(i);
-    }, 500);
+    const t = e.touches?.[0] || e;
+    pressTimer.current = setTimeout(() => setPicker({ index: i, x: t.clientX, y: t.clientY }), 500);
   };
+  const cancelPress = () => clearTimeout(pressTimer.current);
 
-  const cancelPress = () => {
-    if (longPressTimer.current) clearTimeout(longPressTimer.current);
-  };
-
-  const applyReaction = (commentIndex, emoji) => {
-    setPickerIndex(null);
+  const toggleReaction = (commentIndex, emoji) => {
     setLocalComments(prev => prev.map((c, i) => {
       if (i !== commentIndex) return c;
-      const reactions = { ...(c.reactions || {}) };
-      const users = reactions[emoji] ? [...reactions[emoji]] : [];
-      if (users.includes(currentUserEmail)) {
-        const filtered = users.filter(u => u !== currentUserEmail);
-        if (filtered.length === 0) delete reactions[emoji];
-        else reactions[emoji] = filtered;
-      } else {
-        reactions[emoji] = [...users, currentUserEmail];
-      }
+      const users = c.reactions?.[emoji] || [];
+      const next = users.includes(currentUserEmail)
+        ? users.filter(u => u !== currentUserEmail)
+        : [...users, currentUserEmail];
+      const reactions = { ...c.reactions, [emoji]: next };
+      if (next.length === 0) delete reactions[emoji];
       return { ...c, reactions };
     }));
+    setPicker(null);
   };
 
   const uploadImage = async (file) => {
@@ -134,20 +101,11 @@ export default function DecisionDialog({ decision, currentUserEmail, onSave, onD
     setUploadingImage(false);
   };
 
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    if (file) uploadImage(file);
-    e.target.value = '';
-  };
-
   const handlePaste = (e) => {
-    const items = e.clipboardData?.items;
-    if (!items) return;
-    for (const item of items) {
+    for (const item of e.clipboardData?.items || []) {
       if (item.type.startsWith('image/')) {
         e.preventDefault();
-        const file = item.getAsFile();
-        if (file) uploadImage(file);
+        uploadImage(item.getAsFile());
         return;
       }
     }
@@ -158,12 +116,12 @@ export default function DecisionDialog({ decision, currentUserEmail, onSave, onD
     const kateVote = isKate ? myVote : decision.kate_vote;
     let finalStatus = status;
     if (bryantVote === 'yes' && kateVote === 'yes' && status === 'pending') finalStatus = 'needs_action';
-    let isArchived = decision.is_archived;
-    if (finalStatus === 'completed') isArchived = true;
+    const isArchived = finalStatus === 'completed' ? true : decision.is_archived;
 
     const otherEmail = isBryan ? KATE_EMAIL : BRYAN_EMAIL;
-    const currentUnread = decision.unread_by || [];
-    const newUnread = currentUnread.includes(otherEmail) ? currentUnread : [...currentUnread, otherEmail];
+    const newUnread = (decision.unread_by || []).includes(otherEmail)
+      ? decision.unread_by
+      : [...(decision.unread_by || []), otherEmail];
 
     const updates = { status: finalStatus, is_archived: isArchived, last_updated_by_email: currentUserEmail, unread_by: newUnread };
     if (isBryan) updates.bryan_vote = myVote;
@@ -171,13 +129,7 @@ export default function DecisionDialog({ decision, currentUserEmail, onSave, onD
 
     let updatedComments = [...localComments];
     if (newComment.trim() || pendingImages.length > 0) {
-      updatedComments = [...updatedComments, {
-        commenter_email: currentUserEmail,
-        commenter_name: myName,
-        text: newComment.trim(),
-        images: [...pendingImages],
-        timestamp: new Date().toISOString(),
-      }];
+      updatedComments.push({ commenter_email: currentUserEmail, commenter_name: myName, text: newComment.trim(), images: [...pendingImages], timestamp: new Date().toISOString() });
     }
     updates.comments = updatedComments;
     setNewComment('');
@@ -185,28 +137,22 @@ export default function DecisionDialog({ decision, currentUserEmail, onSave, onD
     onSave(decision.id, updates);
   };
 
-  const handleEditSave = (i) => {
-    if (!editingText.trim()) return;
-    setLocalComments(localComments.map((c, idx) => idx === i ? { ...c, text: editingText.trim() } : c));
-    setEditingIndex(null);
-    setEditingText('');
-  };
-
   return (
     <>
       <Dialog open onOpenChange={onClose}>
-        <DialogContent className="sm:max-w-md max-h-[90vh] flex flex-col overflow-hidden p-0 border-0 rounded-3xl" style={{background: 'linear-gradient(160deg, #2d1b69 0%, #4a3fb5 60%, #5B4FCF 100%)'}}>
+        <DialogContent className="sm:max-w-md max-h-[90vh] flex flex-col overflow-hidden p-0 border-0 rounded-3xl" style={{ background: 'linear-gradient(160deg, #2d1b69 0%, #4a3fb5 60%, #5B4FCF 100%)' }}>
           <DialogHeader className="px-5 pt-5 pb-3">
             <DialogTitle className="text-base leading-snug text-white pr-6">{decision.title}</DialogTitle>
             {decision.description && <p className="text-sm text-indigo-200 mt-0.5">{decision.description}</p>}
           </DialogHeader>
 
           <div className="flex-1 overflow-y-auto space-y-4 px-5 pb-2">
-            {/* Votes row */}
+
+            {/* Votes */}
             <div className="flex gap-3">
               {[BRYAN_EMAIL, KATE_EMAIL].map(email => (
-                <div key={email} className="flex-1 rounded-2xl p-3 flex flex-row items-center gap-3" style={{background: 'rgba(180,140,255,0.25)', border: '1px solid rgba(200,170,255,0.3)'}}>
-                  <img src={AVATARS[email]} alt={email === BRYAN_EMAIL ? 'Bryan' : 'Kate'} className="w-9 h-9 rounded-full object-cover flex-shrink-0" />
+                <div key={email} className="flex-1 rounded-2xl p-3 flex items-center gap-3" style={{ background: 'rgba(180,140,255,0.25)', border: '1px solid rgba(200,170,255,0.3)' }}>
+                  <img src={AVATARS[email]} alt="" className="w-9 h-9 rounded-full object-cover flex-shrink-0" />
                   <p className="text-sm font-medium text-white">
                     {email === BRYAN_EMAIL ? (decision.bryan_vote ? VOTE_LABELS[decision.bryan_vote] : '—') : (decision.kate_vote ? VOTE_LABELS[decision.kate_vote] : '—')}
                   </p>
@@ -221,7 +167,7 @@ export default function DecisionDialog({ decision, currentUserEmail, onSave, onD
                 {['yes', 'no', 'maybe'].map(v => (
                   <button key={v} onClick={() => setMyVote(v)}
                     className={`flex-1 py-2 rounded-full text-sm font-medium transition-all border ${myVote === v ? 'text-[#3d2a8a] border-transparent shadow-lg scale-105' : 'text-white/70 border-white/20 hover:border-white/40 hover:text-white'}`}
-                    style={myVote === v ? {background: 'rgba(200,170,255,0.9)'} : {background: 'rgba(180,140,255,0.15)'}}>
+                    style={myVote === v ? { background: 'rgba(200,170,255,0.9)' } : { background: 'rgba(180,140,255,0.15)' }}>
                     {VOTE_LABELS[v]}
                   </button>
                 ))}
@@ -236,17 +182,18 @@ export default function DecisionDialog({ decision, currentUserEmail, onSave, onD
                   {localComments.map((c, i) => {
                     const isMe = c.commenter_email === currentUserEmail;
                     const isEditing = editingIndex === i;
-                    const reactionEntries = Object.entries(c.reactions || {}).filter(([, users]) => users.length > 0);
+                    const reactions = Object.entries(c.reactions || {}).filter(([, u]) => u.length > 0);
 
                     return (
                       <div key={i} className={`flex items-end gap-1.5 ${isMe ? 'flex-row-reverse' : 'flex-row'}`}>
-                        <img src={AVATARS[c.commenter_email] || ''} alt={c.commenter_name} className="w-6 h-6 rounded-full object-cover flex-shrink-0 mb-5" />
-                        <div className={`flex flex-col max-w-[80%] min-w-0 ${isMe ? 'items-end' : 'items-start'}`}>
+                        <img src={AVATARS[c.commenter_email]} alt="" className="w-6 h-6 rounded-full object-cover flex-shrink-0 mb-5" />
+                        <div className={`flex flex-col max-w-[80%] ${isMe ? 'items-end' : 'items-start'}`}>
+                          {/* Bubble */}
                           <div
-                            className="rounded-2xl px-3 py-2 w-full relative select-none"
+                            className="rounded-2xl px-3 py-2 w-full select-none"
                             style={isMe
-                              ? {background: 'rgba(220,200,255,0.9)', color: '#3d2a8a', WebkitUserSelect: 'none', userSelect: 'none', WebkitTouchCallout: 'none'}
-                              : {background: 'rgba(180,140,255,0.3)', color: 'white', border: '1px solid rgba(200,170,255,0.3)', WebkitUserSelect: 'none', userSelect: 'none', WebkitTouchCallout: 'none'}}
+                              ? { background: 'rgba(220,200,255,0.9)', color: '#3d2a8a', WebkitUserSelect: 'none', WebkitTouchCallout: 'none' }
+                              : { background: 'rgba(180,140,255,0.3)', color: 'white', border: '1px solid rgba(200,170,255,0.3)', WebkitUserSelect: 'none', WebkitTouchCallout: 'none' }}
                             onMouseDown={(e) => !isEditing && startPress(i, e)}
                             onMouseUp={cancelPress}
                             onMouseLeave={cancelPress}
@@ -261,16 +208,20 @@ export default function DecisionDialog({ decision, currentUserEmail, onSave, onD
                                 <Textarea value={editingText} onChange={e => setEditingText(e.target.value)} rows={2} className="text-sm text-gray-900 bg-white border-0" style={{ fontSize: '16px' }} />
                                 <div className="flex gap-1 justify-end">
                                   <Button size="sm" variant="ghost" className="h-6 px-2 text-xs text-gray-500" onClick={() => { setEditingIndex(null); setEditingText(''); }}><X className="w-3 h-3" /></Button>
-                                  <Button size="sm" className="h-6 px-2 text-xs bg-[#5B4FCF] text-white" onClick={() => handleEditSave(i)}><Check className="w-3 h-3" /></Button>
+                                  <Button size="sm" className="h-6 px-2 text-xs bg-[#5B4FCF] text-white" onClick={() => {
+                                    if (!editingText.trim()) return;
+                                    setLocalComments(localComments.map((c2, idx) => idx === i ? { ...c2, text: editingText.trim() } : c2));
+                                    setEditingIndex(null); setEditingText('');
+                                  }}><Check className="w-3 h-3" /></Button>
                                 </div>
                               </div>
                             ) : (
                               <div className="space-y-1.5">
-                                {c.text && <div className="text-sm leading-snug break-words w-full">{renderTextWithLinks(c.text, isMe)}</div>}
+                                {c.text && <div className="text-sm leading-snug break-words">{renderTextWithLinks(c.text, isMe)}</div>}
                                 {c.images?.length > 0 && (
                                   <div className="flex flex-wrap gap-1.5 mt-1">
                                     {c.images.map((url, idx) => (
-                                      <img key={idx} src={url} alt="attachment" className="rounded-xl max-w-[180px] max-h-[180px] object-cover cursor-pointer" onClick={() => setLightboxUrl(url)} />
+                                      <img key={idx} src={url} alt="" className="rounded-xl max-w-[180px] max-h-[180px] object-cover cursor-pointer" onClick={() => setLightboxUrl(url)} />
                                     ))}
                                   </div>
                                 )}
@@ -278,20 +229,20 @@ export default function DecisionDialog({ decision, currentUserEmail, onSave, onD
                             )}
                           </div>
 
-                          {reactionEntries.length > 0 && (
+                          {/* Reactions row */}
+                          {reactions.length > 0 && (
                             <div className={`flex flex-wrap gap-1 mt-1 px-1 ${isMe ? 'justify-end' : 'justify-start'}`}>
-                              {reactionEntries.map(([emoji, users]) => (
+                              {reactions.map(([emoji, users]) => (
                                 <button key={emoji}
-                                  onMouseDown={(e) => { e.preventDefault(); applyReaction(i, emoji); }}
-                                  onTouchEnd={(e) => { e.stopPropagation(); applyReaction(i, emoji); }}
+                                  onClick={() => toggleReaction(i, emoji)}
                                   className={`flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-xs transition-all ${users.includes(currentUserEmail) ? 'bg-indigo-400/60 text-white' : 'bg-white/10 text-white/80 hover:bg-white/20'}`}>
-                                  <span>{emoji}</span>
-                                  {users.length > 1 && <span className="ml-0.5">{users.length}</span>}
+                                  {emoji}{users.length > 1 && <span className="ml-0.5">{users.length}</span>}
                                 </button>
                               ))}
                             </div>
                           )}
 
+                          {/* Timestamp + actions */}
                           <div className="flex items-center gap-2 mt-0.5 px-1">
                             <p className="text-xs text-indigo-300">{c.timestamp ? format(new Date(c.timestamp), 'MMM d, h:mm a') : ''}</p>
                             {isMe && !isEditing && (
@@ -310,10 +261,10 @@ export default function DecisionDialog({ decision, currentUserEmail, onSave, onD
               </div>
             )}
 
-            {/* New comment */}
+            {/* New comment input */}
             <div className="space-y-2">
               <p className="text-xs font-semibold text-indigo-200 uppercase tracking-wide">{localComments.length > 0 ? 'Add a comment' : 'Comment (optional)'}</p>
-              <div className="rounded-2xl overflow-hidden" style={{background: 'rgba(180,140,255,0.2)', border: '1px solid rgba(200,170,255,0.25)'}}>
+              <div className="rounded-2xl overflow-hidden" style={{ background: 'rgba(180,140,255,0.2)', border: '1px solid rgba(200,170,255,0.25)' }}>
                 <Textarea value={newComment} onChange={e => setNewComment(e.target.value)} onPaste={handlePaste}
                   placeholder="Add context, conditions, thoughts... (paste images directly)" rows={2}
                   className="border-0 text-white placeholder:text-indigo-300 bg-transparent rounded-none resize-none" style={{ fontSize: '16px' }} />
@@ -321,7 +272,7 @@ export default function DecisionDialog({ decision, currentUserEmail, onSave, onD
                   <div className="flex flex-wrap gap-2 px-3 pb-2">
                     {pendingImages.map((url, idx) => (
                       <div key={idx} className="relative">
-                        <img src={url} alt="pending" className="rounded-lg w-16 h-16 object-cover" />
+                        <img src={url} alt="" className="rounded-lg w-16 h-16 object-cover" />
                         <button onClick={() => setPendingImages(prev => prev.filter((_, i) => i !== idx))} className="absolute -top-1 -right-1 bg-red-500 rounded-full w-4 h-4 flex items-center justify-center">
                           <X className="w-2.5 h-2.5 text-white" />
                         </button>
@@ -330,7 +281,7 @@ export default function DecisionDialog({ decision, currentUserEmail, onSave, onD
                   </div>
                 )}
                 <div className="flex items-center px-3 pb-2">
-                  <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
+                  <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={e => { if (e.target.files[0]) uploadImage(e.target.files[0]); e.target.value = ''; }} />
                   <button onClick={() => fileInputRef.current?.click()} disabled={uploadingImage} className="flex items-center gap-1.5 text-xs text-indigo-300 hover:text-white transition-colors">
                     <ImagePlus className="w-4 h-4" />
                     {uploadingImage ? 'Uploading...' : 'Add photo'}
@@ -343,7 +294,7 @@ export default function DecisionDialog({ decision, currentUserEmail, onSave, onD
             <div className="space-y-2">
               <p className="text-xs font-semibold text-indigo-200 uppercase tracking-wide">Status</p>
               <Select value={status} onValueChange={setStatus}>
-                <SelectTrigger className="border-0 text-white rounded-2xl" style={{background: 'rgba(180,140,255,0.2)', border: '1px solid rgba(200,170,255,0.25)'}}>
+                <SelectTrigger className="border-0 text-white rounded-2xl" style={{ background: 'rgba(180,140,255,0.2)', border: '1px solid rgba(200,170,255,0.25)' }}>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -358,7 +309,7 @@ export default function DecisionDialog({ decision, currentUserEmail, onSave, onD
               <button onClick={handleSave} disabled={uploadingImage} className="flex-1 flex items-center justify-center gap-1.5 bg-white text-[#5B4FCF] font-semibold py-2.5 rounded-full hover:bg-indigo-50 transition-colors disabled:opacity-60">
                 <Send className="w-4 h-4" /> Save
               </button>
-              <button onClick={onClose} className="px-4 py-2.5 rounded-full text-white font-medium text-sm" style={{background: 'rgba(180,140,255,0.25)', border: '1px solid rgba(200,170,255,0.3)'}}>Cancel</button>
+              <button onClick={onClose} className="px-4 py-2.5 rounded-full text-white font-medium text-sm" style={{ background: 'rgba(180,140,255,0.25)', border: '1px solid rgba(200,170,255,0.3)' }}>Cancel</button>
               {decision.proposer_email === currentUserEmail && (
                 <button onClick={() => onDelete(decision.id)} className="p-2.5 rounded-full bg-red-400/30 text-red-200 hover:bg-red-400/50 transition-colors">
                   <Trash2 className="w-4 h-4" />
@@ -369,17 +320,24 @@ export default function DecisionDialog({ decision, currentUserEmail, onSave, onD
         </DialogContent>
       </Dialog>
 
+      {/* Lightbox */}
       {lightboxUrl && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 p-4" onClick={() => setLightboxUrl(null)}>
-          <img src={lightboxUrl} alt="full size" className="max-w-full max-h-full rounded-2xl object-contain" />
+          <img src={lightboxUrl} alt="" className="max-w-full max-h-full rounded-2xl object-contain" />
           <button className="absolute top-4 right-4 text-white bg-black/50 rounded-full p-2" onClick={() => setLightboxUrl(null)}>
             <X className="w-5 h-5" />
           </button>
         </div>
       )}
 
-      {pickerIndex !== null && (
-        <ReactionPicker pos={pickerPos} onSelect={(emoji) => applyReaction(pickerIndex, emoji)} onClose={() => setPickerIndex(null)} />
+      {/* Reaction picker portal */}
+      {picker && (
+        <ReactionPicker
+          x={picker.x}
+          y={picker.y}
+          onSelect={(emoji) => toggleReaction(picker.index, emoji)}
+          onClose={() => setPicker(null)}
+        />
       )}
     </>
   );
