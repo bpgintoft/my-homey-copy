@@ -65,9 +65,10 @@ export default function Decisions() {
 
   const reactionMutation = useMutation({
     mutationFn: ({ id, data }) => base44.entities.FamilyDecision.update(id, data),
-    onSuccess: () => {
+    onSuccess: (_, { id, data }) => {
       queryClient.invalidateQueries({ queryKey: ['familyDecisions'] });
-      // Do NOT close the dialog
+      // Update selectedDecision in place so re-opening shows fresh data
+      setSelectedDecision(prev => prev && prev.id === id ? { ...prev, ...data } : prev);
     },
   });
 
