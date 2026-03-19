@@ -21,6 +21,35 @@ const REACTION_OPTIONS = ['👍', '👎', '❤️', '😂', '😮', '❗', '❓'
 
 const URL_REGEX = /(https?:\/\/[^\s]+)/g;
 
+function useReactionPicker(onReact) {
+  const timerRef = useRef(null);
+  const [pickerIndex, setPickerIndex] = useState(null);
+  const [pickerPos, setPickerPos] = useState({ x: 0, y: 0 });
+
+  const startPress = (i, e) => {
+    const touch = e.touches?.[0];
+    const x = touch ? touch.clientX : e.clientX;
+    const y = touch ? touch.clientY : e.clientY;
+    timerRef.current = setTimeout(() => {
+      setPickerPos({ x, y });
+      setPickerIndex(i);
+    }, 500);
+  };
+
+  const cancelPress = () => {
+    if (timerRef.current) clearTimeout(timerRef.current);
+  };
+
+  const selectReaction = (emoji) => {
+    onReact(pickerIndex, emoji);
+    setPickerIndex(null);
+  };
+
+  const closePicker = () => setPickerIndex(null);
+
+  return { startPress, cancelPress, pickerIndex, pickerPos, selectReaction, closePicker };
+}
+
 function renderTextWithLinks(text, isMe) {
   const parts = text.split(URL_REGEX);
   return parts.map((part, i) => {
