@@ -560,7 +560,8 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
       'long-term': sortChores(chores.filter(c => c.timing === 'long-term')),
     };
     setLocalChores(grouped);
-  }, [chores]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [JSON.stringify(chores)]);
 
   const choresByTiming = localChores['short-term'] ? localChores : {
     'short-term': sortChores(chores.filter(c => c.timing === 'short-term')),
