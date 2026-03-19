@@ -468,6 +468,14 @@ export default function DecisionDialog({ decision, currentUserEmail, onSave, onD
         </button>
       </div>
     )}
+
+    {pickerIndex !== null && (
+      <ReactionPicker
+        pos={pickerPos}
+        onSelect={selectReaction}
+        onClose={closePicker}
+      />
+    )}
     </>
   );
 }
