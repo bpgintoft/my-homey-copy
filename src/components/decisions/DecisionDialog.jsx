@@ -56,6 +56,28 @@ export default function DecisionDialog({ decision, currentUserEmail, onSave, onD
   const [editingIndex, setEditingIndex] = useState(null);
   const [editingText, setEditingText] = useState('');
   const [localComments, setLocalComments] = useState(decision.comments || []);
+  const [showReactionsFor, setShowReactionsFor] = useState(null);
+
+  const REACTION_OPTIONS = ['👍', '👎', '❤️', '❗', '❓', '😂', '🎉', '😮'];
+
+  const handleReaction = (commentIndex, emoji) => {
+    const updated = localComments.map((c, i) => {
+      if (i !== commentIndex) return c;
+      const reactions = { ...(c.reactions || {}) };
+      const users = reactions[emoji] || [];
+      if (users.includes(currentUserEmail)) {
+        // remove reaction
+        const newUsers = users.filter(e => e !== currentUserEmail);
+        if (newUsers.length === 0) delete reactions[emoji];
+        else reactions[emoji] = newUsers;
+      } else {
+        reactions[emoji] = [...users, currentUserEmail];
+      }
+      return { ...c, reactions };
+    });
+    setLocalComments(updated);
+    setShowReactionsFor(null);
+  };
   const [lightboxUrl, setLightboxUrl] = useState(null);
   const commentsEndRef = useRef(null);
   const fileInputRef = useRef(null);
