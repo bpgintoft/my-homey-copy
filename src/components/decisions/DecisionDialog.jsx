@@ -128,10 +128,26 @@ export default function DecisionDialog({ decision, currentUserEmail, onSave, onD
   const [editingText, setEditingText] = useState('');
   const [localComments, setLocalComments] = useState(decision.comments || []);
   const [lightboxUrl, setLightboxUrl] = useState(null);
-  const [reactionPickerIndex, setReactionPickerIndex] = useState(null);
   const commentsEndRef = useRef(null);
   const fileInputRef = useRef(null);
-  const longPressTimers = useRef({});
+
+  const handleReactionSelect = (commentIndex, emoji) => {
+    setLocalComments(prev => prev.map((c, i) => {
+      if (i !== commentIndex) return c;
+      const reactions = { ...(c.reactions || {}) };
+      const users = reactions[emoji] ? [...reactions[emoji]] : [];
+      if (users.includes(currentUserEmail)) {
+        const filtered = users.filter(u => u !== currentUserEmail);
+        if (filtered.length === 0) delete reactions[emoji];
+        else reactions[emoji] = filtered;
+      } else {
+        reactions[emoji] = [...users, currentUserEmail];
+      }
+      return { ...c, reactions };
+    }));
+  };
+
+  const { startPress, cancelPress, pickerIndex, pickerPos, selectReaction, closePicker } = useReactionPicker(handleReactionSelect);
 
   const uploadImage = async (file) => {
     setUploadingImage(true);
