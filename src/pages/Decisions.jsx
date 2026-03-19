@@ -32,8 +32,6 @@ export default function Decisions() {
     queryFn: () => base44.entities.FamilyDecision.list('-created_date', 100),
   });
 
-
-
   // Auto-open a specific decision if linked from a notification (run once)
   const autoOpenedRef = useRef(false);
   useEffect(() => {
@@ -62,14 +60,6 @@ export default function Decisions() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['familyDecisions'] });
       setSelectedDecision(null);
-    },
-  });
-
-  const reactionMutation = useMutation({
-    mutationFn: ({ id, data }) => base44.entities.FamilyDecision.update(id, data),
-    onSuccess: (_, { id, data }) => {
-      // Update selectedDecision comments in place - do NOT invalidate to avoid race condition
-      setSelectedDecision(prev => prev && prev.id === id ? { ...prev, comments: data.comments } : prev);
     },
   });
 
@@ -202,7 +192,6 @@ export default function Decisions() {
           decision={selectedDecision}
           currentUserEmail={currentUser.email}
           onSave={(id, data) => updateMutation.mutate({ id, data })}
-          onReaction={(id, data) => reactionMutation.mutate({ id, data })}
           onDelete={(id) => {
             if (confirm('Delete this decision?')) deleteMutation.mutate(id);
           }}
