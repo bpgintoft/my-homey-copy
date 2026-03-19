@@ -106,10 +106,8 @@ export default function PersonalInfoSection({ member, color = 'blue' }) {
     }];
     setCustomInfo(updated);
     setNewCustomItem({ category: '', label: '', value: '' });
-    // Save immediately so it's not lost
-    updateMutation.mutate({
-      custom_info: updated,
-    });
+    // Save immediately without exiting edit mode
+    savePartialMutation.mutate({ custom_info: updated });
   };
 
   const removeCustomItem = (index) => {
