@@ -32,6 +32,13 @@ export default function Decisions() {
     queryFn: () => base44.entities.FamilyDecision.list('-created_date', 100),
   });
 
+  // Keep selectedDecision in sync with latest server data after any refetch
+  useEffect(() => {
+    if (!selectedDecision) return;
+    const fresh = decisions.find(d => d.id === selectedDecision.id);
+    if (fresh) setSelectedDecision(fresh);
+  }, [decisions]);
+
   // Auto-open a specific decision if linked from a notification (run once)
   const autoOpenedRef = useRef(false);
   useEffect(() => {
