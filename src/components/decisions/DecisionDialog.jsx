@@ -76,8 +76,7 @@ export default function DecisionDialog({ decision, currentUserEmail, onSave, onR
     });
     setLocalComments(updated);
     setShowReactionsFor(null);
-    // Save immediately without adding a new comment
-    onSave(decision.id, { comments: updated });
+    onReaction(decision.id, { comments: updated });
   };
   const [lightboxUrl, setLightboxUrl] = useState(null);
   const commentsEndRef = useRef(null);
