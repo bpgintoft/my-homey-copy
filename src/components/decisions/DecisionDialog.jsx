@@ -71,46 +71,44 @@ function renderTextWithLinks(text, isMe) {
   });
 }
 
-function ReactionPicker({ onSelect, onClose }) {
-  const ref = useRef(null);
+import { createPortal } from 'react-dom';
 
+function ReactionPicker({ pos, onSelect, onClose }) {
   useEffect(() => {
-    const handler = (e) => {
-      if (ref.current && !ref.current.contains(e.target)) onClose();
-    };
-    document.addEventListener('mousedown', handler);
+    const handler = () => onClose();
     document.addEventListener('touchstart', handler);
+    document.addEventListener('mousedown', handler);
     return () => {
-      document.removeEventListener('mousedown', handler);
       document.removeEventListener('touchstart', handler);
+      document.removeEventListener('mousedown', handler);
     };
   }, [onClose]);
 
-  return (
+  return createPortal(
     <div
-      ref={ref}
-      className="absolute z-50 flex gap-1 p-2 rounded-2xl shadow-xl"
+      className="fixed z-[9999] flex gap-1 p-2 rounded-2xl shadow-xl"
       style={{
         background: 'rgba(45, 27, 105, 0.97)',
         border: '1px solid rgba(200,170,255,0.4)',
-        bottom: '100%',
-        left: '50%',
-        transform: 'translateX(-50%)',
-        marginBottom: 6,
+        left: Math.min(pos.x - 140, window.innerWidth - 300),
+        top: pos.y - 60,
         whiteSpace: 'nowrap',
       }}
+      onMouseDown={(e) => e.stopPropagation()}
+      onTouchStart={(e) => e.stopPropagation()}
     >
       {REACTION_OPTIONS.map(emoji => (
         <button
           key={emoji}
-          onMouseDown={(e) => { e.preventDefault(); onSelect(emoji); }}
-          onTouchEnd={(e) => { e.preventDefault(); onSelect(emoji); }}
-          className="text-xl hover:scale-125 transition-transform active:scale-110 px-1"
+          onMouseDown={(e) => { e.stopPropagation(); onSelect(emoji); }}
+          onTouchEnd={(e) => { e.stopPropagation(); onSelect(emoji); }}
+          className="text-2xl hover:scale-125 transition-transform active:scale-110 px-1"
         >
           {emoji}
         </button>
       ))}
-    </div>
+    </div>,
+    document.body
   );
 }
 
