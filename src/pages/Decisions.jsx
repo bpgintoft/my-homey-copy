@@ -63,6 +63,14 @@ export default function Decisions() {
     },
   });
 
+  const reactionMutation = useMutation({
+    mutationFn: ({ id, data }) => base44.entities.FamilyDecision.update(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['familyDecisions'] });
+      // Do NOT close the dialog
+    },
+  });
+
   const clearUnreadMutation = useMutation({
     mutationFn: ({ id, unread_by }) => base44.entities.FamilyDecision.update(id, { unread_by }),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['familyDecisions'] }),
