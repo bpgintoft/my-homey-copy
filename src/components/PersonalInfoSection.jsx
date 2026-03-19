@@ -36,7 +36,9 @@ export default function PersonalInfoSection({ member, color = 'blue' }) {
 
   React.useEffect(() => {
     setGiftIdeas(member?.gift_ideas || []);
-    setCustomInfo(member?.custom_info || []);
+    if (!editing) {
+      setCustomInfo(member?.custom_info || []);
+    }
   }, [member?.gift_ideas, member?.custom_info]);
 
   const saveGiftIdeas = (ideas) => {
