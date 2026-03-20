@@ -19,11 +19,7 @@ const statusLabels = {
 
 const voteEmoji = { yes: '✅', no: '❌', maybe: '🤔', '': '—' };
 
-export default function DecisionCard({ decision, onClick, hasUnread }) {
-  const bryanVote = decision.bryan_vote || '';
-  const kateVote = decision.kate_vote || '';
-  const bothVoted = bryanVote && kateVote;
-
+export default function DecisionCard({ decision, onClick, hasUnread, familyMembers = [] }) {
   return (
     <div
       className="relative cursor-pointer transition-all duration-200 rounded-3xl px-5 py-4"
@@ -48,19 +44,20 @@ export default function DecisionCard({ decision, onClick, hasUnread }) {
       )}
       <div className="flex items-center justify-between mt-2">
         <div className="flex items-center gap-2">
-          <span className="inline-flex items-center gap-1 bg-white/15 rounded-full px-2.5 py-1 text-xs text-white">
-            Bryan {voteEmoji[bryanVote] || '—'}
-          </span>
-          <span className="inline-flex items-center gap-1 bg-white/15 rounded-full px-2.5 py-1 text-xs text-white">
-            Kate {voteEmoji[kateVote] || '—'}
-          </span>
+          {familyMembers.map(m => {
+            const vote = decision[`${m.name.toLowerCase()}_vote`] || '';
+            return (
+              <span key={m.id} className="inline-flex items-center gap-1 bg-white/15 rounded-full px-2.5 py-1 text-xs text-white">
+                {m.name} {voteEmoji[vote] || '—'}
+              </span>
+            );
+          })}
         </div>
         <div className="flex items-center gap-2 text-indigo-200 text-xs">
           {decision.comments?.length > 0 && <span>💬 {decision.comments.length}</span>}
           <span>{decision.created_date ? format(new Date(decision.created_date), 'MMM d') : ''}</span>
         </div>
       </div>
-
     </div>
   );
 }
