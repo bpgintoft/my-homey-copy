@@ -205,11 +205,12 @@ export default function DecisionDialog({ decision, currentUserEmail, familyMembe
                   const isEditing = editingIndex === i;
                   return (
                     <div key={i} className={`flex items-end gap-1.5 ${isMe ? 'flex-row-reverse' : 'flex-row'}`}>
-                      <img
-                        src={AVATARS[c.commenter_email] || ''}
-                        alt={c.commenter_name}
-                        className="w-6 h-6 rounded-full object-cover flex-shrink-0 mb-5"
-                      />
+                      {(() => {
+                        const commenterMember = familyMembers.find(m => m.email === c.commenter_email);
+                        return commenterMember?.photo_url
+                          ? <img src={commenterMember.photo_url} alt={c.commenter_name} className="w-6 h-6 rounded-full object-cover flex-shrink-0 mb-5" />
+                          : <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center text-white text-xs font-bold flex-shrink-0 mb-5">{c.commenter_name?.[0] || '?'}</div>;
+                      })()}
                       <div className={`flex flex-col max-w-[80%] min-w-0 overflow-hidden ${isMe ? 'items-end' : 'items-start'}`}>
                         <div className="rounded-2xl px-3 py-2 w-full overflow-hidden" style={isMe ? {background: 'rgba(220,200,255,0.9)', color: '#3d2a8a'} : {background: 'rgba(180,140,255,0.3)', color: 'white', border: '1px solid rgba(200,170,255,0.3)'}}>
                           <p className={`text-xs font-semibold mb-0.5 ${isMe ? 'text-indigo-400' : 'text-indigo-200'}`}>{c.commenter_name}</p>
