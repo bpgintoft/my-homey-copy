@@ -142,8 +142,6 @@ export default function DecisionDialog({ decision, currentUserEmail, familyMembe
     setLocalComments(localComments.filter((_, idx) => idx !== i));
   };
 
-  const otherVote = isBryan ? decision.kate_vote : decision.bryan_vote;
-
   return (
     <>
     <Dialog open onOpenChange={onClose}>
@@ -156,16 +154,24 @@ export default function DecisionDialog({ decision, currentUserEmail, familyMembe
         </DialogHeader>
 
         <div className="flex-1 overflow-y-auto space-y-4 px-5 pb-2">
-          {/* Votes row */}
+          {/* Votes row — one card per adult family member */}
           <div className="flex gap-3">
-            <div className="flex-1 rounded-2xl p-3 flex flex-row items-center gap-3" style={{background: 'rgba(180,140,255,0.25)', border: '1px solid rgba(200,170,255,0.3)'}}>
-              <img src={AVATARS[BRYAN_EMAIL]} alt="Bryan" className="w-9 h-9 rounded-full object-cover flex-shrink-0" />
-              <p className="text-sm font-medium text-white">{decision.bryan_vote ? voteEmoji[decision.bryan_vote] : '—'}</p>
-            </div>
-            <div className="flex-1 rounded-2xl p-3 flex flex-row items-center gap-3" style={{background: 'rgba(180,140,255,0.25)', border: '1px solid rgba(200,170,255,0.3)'}}>
-              <img src={AVATARS[KATE_EMAIL]} alt="Kate" className="w-9 h-9 rounded-full object-cover flex-shrink-0" />
-              <p className="text-sm font-medium text-white">{decision.kate_vote ? voteEmoji[decision.kate_vote] : '—'}</p>
-            </div>
+            {familyMembers.map(m => {
+              const voteKey = `${m.name.toLowerCase()}_vote`;
+              const vote = decision[voteKey];
+              return (
+                <div key={m.id} className="flex-1 rounded-2xl p-3 flex flex-row items-center gap-3" style={{background: 'rgba(180,140,255,0.25)', border: '1px solid rgba(200,170,255,0.3)'}}>
+                  {m.photo_url
+                    ? <img src={m.photo_url} alt={m.name} className="w-9 h-9 rounded-full object-cover flex-shrink-0" />
+                    : <div className="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center text-white font-bold flex-shrink-0">{m.name[0]}</div>
+                  }
+                  <div>
+                    <p className="text-xs text-indigo-200">{m.name}</p>
+                    <p className="text-sm font-medium text-white">{vote ? voteEmoji[vote] : '—'}</p>
+                  </div>
+                </div>
+              );
+            })}
           </div>
 
           {/* My vote */}
