@@ -179,7 +179,7 @@ export default function Decisions() {
       {showNew && currentUser && (
         <NewDecisionDialog
           proposerEmail={currentUser.email}
-          proposerName={nameForEmail(currentUser.email)}
+          proposerName={currentUser.full_name || currentUser.email}
           onSave={(data) => createMutation.mutate(data)}
           onClose={() => setShowNew(false)}
         />
@@ -189,6 +189,7 @@ export default function Decisions() {
         <DecisionDialog
           decision={selectedDecision}
           currentUserEmail={currentUser.email}
+          familyMembers={adultMembers}
           onSave={(id, data) => updateMutation.mutate({ id, data })}
           onDelete={(id) => {
             if (confirm('Delete this decision?')) deleteMutation.mutate(id);
