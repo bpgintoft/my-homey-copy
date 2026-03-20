@@ -170,6 +170,7 @@ export default function Decisions() {
                 decision={d}
                 onClick={handleOpenDecision}
                 hasUnread={currentUser && d.unread_by?.includes(currentUser.email)}
+                familyMembers={adultMembers}
               />
             ))}
           </div>
