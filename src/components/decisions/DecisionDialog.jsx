@@ -33,14 +33,15 @@ function renderTextWithLinks(text, isMe) {
   });
 }
 
-export default function DecisionDialog({ decision, currentUserEmail, onSave, onDelete, onClose }) {
-  const isBryan = currentUserEmail === BRYAN_EMAIL;
-  const isKate = currentUserEmail === KATE_EMAIL;
-  const myName = isBryan ? 'Bryan' : 'Kate';
+export default function DecisionDialog({ decision, currentUserEmail, familyMembers = [], onSave, onDelete, onClose }) {
+  // Find current user's member record by email
+  const myMember = familyMembers.find(m => m.email === currentUserEmail);
+  const myName = myMember?.name || currentUserEmail;
+  // Vote fields are stored by member name (lowercase) e.g. bryan_vote, kate_vote
+  const myVoteKey = `${myName.toLowerCase()}_vote`;
+  const otherMembers = familyMembers.filter(m => m.email !== currentUserEmail);
 
-  const [myVote, setMyVote] = useState(
-    isBryan ? (decision.bryan_vote || '') : (decision.kate_vote || '')
-  );
+  const [myVote, setMyVote] = useState(decision[myVoteKey] || '');
   const [status, setStatus] = useState(decision.status || 'pending');
   const [newComment, setNewComment] = useState('');
   const [pendingImages, setPendingImages] = useState([]);
