@@ -36,28 +36,37 @@ Deno.serve(async (req) => {
 
     const decisionId = decision.id || event?.entity_id || '';
 
+    // Look up the actual FamilyMember IDs by name so notifications match what ChoreNotificationsDialog queries
+    const allMembers = await base44.asServiceRole.entities.FamilyMember.list();
+    const actorName = actorEmail === BRYAN_EMAIL ? 'Bryan' : 'Kate';
+    const recipientName = actorEmail === BRYAN_EMAIL ? 'Kate' : 'Bryan';
+    const recipientMember = allMembers.find(m => m.name === recipientName);
+
+    if (!recipientMember) {
+      return Response.json({ ok: true, skipped: 'recipient family member not found' });
+    }
+
     // Check if an unread notification already exists for this decision + recipient
-    // to avoid spamming multiple notifications for the same proposal
     const existingNotifs = await base44.asServiceRole.entities.Notification.filter({
-      recipient_member_id: notifyEmail,
+      recipient_member_id: recipientMember.id,
       chore_id: decisionId,
       is_read: false,
     });
 
     if (existingNotifs.length > 0) {
-      // Already have an unread notification for this decision — don't create another
       return Response.json({ ok: true, skipped: 'notification already exists' });
     }
 
-    const actorName = actorEmail === BRYAN_EMAIL ? 'Bryan' : 'Kate';
     const notifTitle = isCreate
       ? `New decision proposed: "${decision.title}"`
       : `${actorName} updated: "${decision.title}"`;
 
+    const actorMember = allMembers.find(m => m.name === actorName);
+
     await base44.asServiceRole.entities.Notification.create({
-      recipient_member_id: notifyEmail,
-      triggering_member_name: actorEmail === BRYAN_EMAIL ? 'Bryan' : 'Kate',
-      triggering_member_id: actorEmail,
+      recipient_member_id: recipientMember.id,
+      triggering_member_name: actorName,
+      triggering_member_id: actorMember?.id || actorEmail,
       chore_title: notifTitle,
       chore_id: decisionId,
       completed_date: new Date().toISOString(),
