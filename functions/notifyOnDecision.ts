@@ -1,7 +1,4 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.20';
-
-const BRYAN_EMAIL = 'bpgintoft@gmail.com';
-const KATE_EMAIL = 'kateeliz11@gmail.com';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.21';
 
 Deno.serve(async (req) => {
   try {
@@ -24,56 +21,58 @@ Deno.serve(async (req) => {
       return Response.json({ ok: true, skipped: 'no actor email' });
     }
 
-    // Notify the other person
-    let notifyEmail = null;
-    if (actorEmail === BRYAN_EMAIL) {
-      notifyEmail = KATE_EMAIL;
-    } else if (actorEmail === KATE_EMAIL) {
-      notifyEmail = BRYAN_EMAIL;
-    } else {
-      return Response.json({ ok: true, skipped: 'unknown actor' });
+    // Load all adult family members dynamically
+    const allMembers = await base44.asServiceRole.entities.FamilyMember.list();
+    const adultMembers = allMembers.filter(m => m.person_type === 'adult');
+
+    const actorMember = adultMembers.find(m => m.email === actorEmail);
+    if (!actorMember) {
+      return Response.json({ ok: true, skipped: 'actor not a known adult family member' });
+    }
+
+    // Notify all other adult members
+    const recipients = adultMembers.filter(m => m.email !== actorEmail);
+
+    if (recipients.length === 0) {
+      return Response.json({ ok: true, skipped: 'no other adults to notify' });
     }
 
     const decisionId = decision.id || event?.entity_id || '';
 
-    // Look up the actual FamilyMember IDs by name so notifications match what ChoreNotificationsDialog queries
-    const allMembers = await base44.asServiceRole.entities.FamilyMember.list();
-    const actorName = actorEmail === BRYAN_EMAIL ? 'Bryan' : 'Kate';
-    const recipientName = actorEmail === BRYAN_EMAIL ? 'Kate' : 'Bryan';
-    const recipientMember = allMembers.find(m => m.name === recipientName);
-
-    if (!recipientMember) {
-      return Response.json({ ok: true, skipped: 'recipient family member not found' });
-    }
-
-    // Check if an unread notification already exists for this decision + recipient
-    const existingNotifs = await base44.asServiceRole.entities.Notification.filter({
-      recipient_member_id: recipientMember.id,
-      chore_id: decisionId,
-      is_read: false,
-    });
-
-    if (existingNotifs.length > 0) {
-      return Response.json({ ok: true, skipped: 'notification already exists' });
-    }
-
     const notifTitle = isCreate
       ? `New decision proposed: "${decision.title}"`
-      : `${actorName} updated: "${decision.title}"`;
+      : `${actorMember.name} updated: "${decision.title}"`;
 
-    const actorMember = allMembers.find(m => m.name === actorName);
+    // For each recipient, check for existing unread notification and create if none
+    const results = await Promise.all(
+      recipients.map(async (recipient) => {
+        if (!recipient.id) return { skipped: 'no member id' };
 
-    await base44.asServiceRole.entities.Notification.create({
-      recipient_member_id: recipientMember.id,
-      triggering_member_name: actorName,
-      triggering_member_id: actorMember?.id || actorEmail,
-      chore_title: notifTitle,
-      chore_id: decisionId,
-      completed_date: new Date().toISOString(),
-      is_read: false,
-    });
+        const existingNotifs = await base44.asServiceRole.entities.Notification.filter({
+          recipient_member_id: recipient.id,
+          chore_id: decisionId,
+          is_read: false,
+        });
 
-    return Response.json({ ok: true, notified: notifyEmail });
+        if (existingNotifs.length > 0) {
+          return { skipped: `notification already exists for ${recipient.name}` };
+        }
+
+        await base44.asServiceRole.entities.Notification.create({
+          recipient_member_id: recipient.id,
+          triggering_member_name: actorMember.name,
+          triggering_member_id: actorMember.id,
+          chore_title: notifTitle,
+          chore_id: decisionId,
+          completed_date: new Date().toISOString(),
+          is_read: false,
+        });
+
+        return { notified: recipient.name };
+      })
+    );
+
+    return Response.json({ ok: true, results });
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });
   }
