@@ -7,15 +7,6 @@ import DecisionCard from '../components/decisions/DecisionCard';
 import DecisionDialog from '../components/decisions/DecisionDialog';
 import NewDecisionDialog from '../components/decisions/NewDecisionDialog';
 
-const BRYAN_EMAIL = 'bpgintoft@gmail.com';
-const KATE_EMAIL = 'kateeliz11@gmail.com';
-
-const nameForEmail = (email) => {
-  if (email === BRYAN_EMAIL) return 'Bryan';
-  if (email === KATE_EMAIL) return 'Kate';
-  return email;
-};
-
 export default function Decisions() {
   const [currentUser, setCurrentUser] = useState(null);
   const [showNew, setShowNew] = useState(false);
