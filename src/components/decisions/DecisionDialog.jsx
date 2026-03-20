@@ -84,30 +84,32 @@ export default function DecisionDialog({ decision, currentUserEmail, familyMembe
   }, [localComments.length]);
 
   const handleSave = () => {
-    const bryantVote = isBryan ? myVote : decision.bryan_vote;
-    const kateVote = isKate ? myVote : decision.kate_vote;
-    
-    // Auto-update status: if both voted yes, move to needs_action
+    // Build all current votes: update mine, keep others as-is
+    const allVotes = {};
+    familyMembers.forEach(m => {
+      const key = `${m.name.toLowerCase()}_vote`;
+      allVotes[key] = m.email === currentUserEmail ? myVote : (decision[key] || '');
+    });
+
+    // Auto-update status: if all adults voted yes, move to needs_action
+    const allVotedYes = familyMembers.length > 0 && familyMembers.every(m => allVotes[`${m.name.toLowerCase()}_vote`] === 'yes');
     let finalStatus = status;
-    if (bryantVote === 'yes' && kateVote === 'yes' && status === 'pending') {
+    if (allVotedYes && status === 'pending') {
       finalStatus = 'needs_action';
     }
-    
+
     // Auto-archive: if status is completed, archive it
     let isArchived = decision.is_archived;
     if (finalStatus === 'completed') {
       isArchived = true;
-      finalStatus = 'completed';
     }
 
-    // Mark the other person as having unread changes
-    const otherEmail = isBryan ? KATE_EMAIL : BRYAN_EMAIL;
+    // Mark all other members as having unread changes
+    const otherEmails = otherMembers.map(m => m.email).filter(Boolean);
     const currentUnread = decision.unread_by || [];
-    const newUnread = currentUnread.includes(otherEmail) ? currentUnread : [...currentUnread, otherEmail];
+    const newUnread = [...new Set([...currentUnread, ...otherEmails])];
 
-    const updates = { status: finalStatus, is_archived: isArchived, last_updated_by_email: currentUserEmail, unread_by: newUnread };
-    if (isBryan) updates.bryan_vote = myVote;
-    else if (isKate) updates.kate_vote = myVote;
+    const updates = { ...allVotes, status: finalStatus, is_archived: isArchived, last_updated_by_email: currentUserEmail, unread_by: newUnread };
 
     let updatedComments = [...localComments];
     if (newComment.trim() || pendingImages.length > 0) {
