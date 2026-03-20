@@ -7,14 +7,6 @@ import { Trash2, Send, Pencil, X, Check, ImagePlus } from 'lucide-react';
 import { format } from 'date-fns';
 import { base44 } from '@/api/base44Client';
 
-const BRYAN_EMAIL = 'bpgintoft@gmail.com';
-const KATE_EMAIL = 'kateeliz11@gmail.com';
-
-const AVATARS = {
-  [BRYAN_EMAIL]: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/b093cc037_Bryan.png',
-  [KATE_EMAIL]: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/d14194fd4_Kate.png',
-};
-
 const voteEmoji = { yes: '✅ Yes', no: '❌ No', maybe: '🤔 Maybe' };
 
 const URL_REGEX = /(https?:\/\/[^\s]+)/g;
