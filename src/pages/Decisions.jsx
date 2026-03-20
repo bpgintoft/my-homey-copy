@@ -64,7 +64,7 @@ export default function Decisions() {
   });
 
   const clearUnreadMutation = useMutation({
-    mutationFn: ({ id, unread_by }) => base44.entities.FamilyDecision.update(id, { unread_by }),
+    mutationFn: ({ id, unread_by }) => base44.entities.FamilyDecision.update(id, { unread_by, last_updated_by_email: null }),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['familyDecisions'] }),
   });
 
