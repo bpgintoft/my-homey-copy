@@ -23,6 +23,13 @@ export default function Decisions() {
     queryFn: () => base44.entities.FamilyDecision.list('-created_date', 100),
   });
 
+  const { data: familyMembers = [] } = useQuery({
+    queryKey: ['familyMembers'],
+    queryFn: () => base44.entities.FamilyMember.list(),
+  });
+
+  const adultMembers = familyMembers.filter(m => m.person_type === 'adult');
+
   // Auto-open a specific decision if linked from a notification (run once)
   const autoOpenedRef = useRef(false);
   useEffect(() => {
