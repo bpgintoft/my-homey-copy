@@ -358,7 +358,7 @@ export default function Family() {
 
       {/* Edit Dialog */}
       <Dialog open={!!editingMember} onOpenChange={() => setEditingMember(null)}>
-        <DialogContent>
+        <DialogContent className="w-[calc(100vw-2rem)] max-w-lg overflow-y-auto max-h-[90vh]">
           {editingMember && (
             <>
               <DialogHeader>
