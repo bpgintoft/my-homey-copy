@@ -153,7 +153,7 @@ export default function Family() {
         </div>
         <div>
           <Label>Color</Label>
-          <div className="flex gap-2 mt-2">
+          <div className="flex flex-wrap gap-2 mt-2">
             {COLORS.map(color => (
               <button
                 key={color}
