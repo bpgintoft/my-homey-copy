@@ -227,7 +227,7 @@ export default function Family() {
                 Add Family Member
               </Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="w-[calc(100vw-2rem)] max-w-lg overflow-y-auto max-h-[90vh]">
               <DialogHeader>
                 <DialogTitle>Add Family Member</DialogTitle>
               </DialogHeader>
