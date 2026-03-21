@@ -694,7 +694,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                   onClick={() => setShowActivities(true)}
                   className="flex items-center gap-2 p-3 rounded-lg border bg-white hover:shadow-md transition-shadow text-left w-full"
                 >
-                  <Activity className="w-5 h-5 flex-shrink-0 text-cyan-500" />
+                  <span className="text-lg flex-shrink-0">📊</span>
                   <span className="font-semibold text-sm text-gray-800 leading-tight">Activities</span>
                 </button>
                 <button
