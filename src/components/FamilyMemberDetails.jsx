@@ -611,18 +611,6 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
             vehicles: <span className="text-lg flex-shrink-0">🚗</span>,
             personalInfo: <span className="text-lg flex-shrink-0">👤</span>,
           };
-          const sectionBgMap = {
-            chores: 'bg-green-50 border-green-100',
-            schoolProgram: 'bg-blue-50 border-blue-100',
-            links: 'bg-gray-50 border-gray-200',
-            contacts: 'bg-teal-50 border-teal-100',
-            notes: 'bg-yellow-50 border-yellow-100',
-            milestones: 'bg-red-50 border-red-100',
-            health: 'bg-rose-50 border-rose-100',
-            documents: 'bg-orange-50 border-orange-100',
-            vehicles: 'bg-sky-50 border-sky-100',
-            personalInfo: 'bg-violet-50 border-violet-100',
-          };
           const sectionLabelMap = {
             chores: 'To-Do List',
             schoolProgram: member?.school_or_work_name || 'School & Work',
@@ -696,7 +684,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                 <button
                 key={key}
                 onClick={() => setExpandedSection(key)}
-                className={`flex items-center gap-2 p-3 rounded-lg border hover:shadow-md transition-shadow text-left w-full ${sectionBgMap[key] || 'bg-white border-gray-200'}`}
+                className="flex items-center gap-2 p-3 rounded-lg border bg-white hover:shadow-md transition-shadow text-left w-full"
                 >
                 {icon}
                 <span className="font-semibold text-sm text-gray-800 leading-tight">{label}</span>
@@ -704,14 +692,14 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                 ))}
                 <button
                   onClick={() => setShowActivities(true)}
-                  className="flex items-center gap-2 p-3 rounded-lg border bg-purple-50 border-purple-100 hover:shadow-md transition-shadow text-left w-full"
+                  className="flex items-center gap-2 p-3 rounded-lg border bg-white hover:shadow-md transition-shadow text-left w-full"
                 >
                   <span className="text-lg flex-shrink-0">📊</span>
                   <span className="font-semibold text-sm text-gray-800 leading-tight">Activities</span>
                 </button>
                 <button
                   onClick={() => setShowFinancials(true)}
-                  className="flex items-center gap-2 p-3 rounded-lg border bg-emerald-50 border-emerald-100 hover:shadow-md transition-shadow text-left w-full"
+                  className="flex items-center gap-2 p-3 rounded-lg border bg-white hover:shadow-md transition-shadow text-left w-full"
                 >
                   <span className="text-lg flex-shrink-0">💰</span>
                   <span className="font-semibold text-sm text-gray-800 leading-tight">Financials</span>
