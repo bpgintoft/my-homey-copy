@@ -153,58 +153,37 @@ export default function Home() {
       {/* Family Member Cards */}
       <div className="container mx-auto px-6 -mt-6 relative z-10">
         <div className="grid grid-cols-4 gap-2 mb-6">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-          >
-            <Link to={createPageUrl('Bryan')}>
-              <Card className="border-0 shadow-lg bg-white hover:shadow-xl transition-shadow cursor-pointer">
-                <CardContent className="py-2 px-2 text-center">
-                  <div className="text-sm font-bold text-gray-900">{bryanMember.name}</div>
-                </CardContent>
-              </Card>
-            </Link>
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-          >
-            <Link to={createPageUrl('Kate')}>
-              <Card className="border-0 shadow-lg bg-white hover:shadow-xl transition-shadow cursor-pointer">
-                <CardContent className="py-2 px-2 text-center">
-                  <div className="text-sm font-bold text-gray-900">{kateMember.name}</div>
-                </CardContent>
-              </Card>
-            </Link>
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-          >
-            <Link to={createPageUrl('Phoenix')}>
-              <Card className="border-0 shadow-lg bg-white hover:shadow-xl transition-shadow cursor-pointer">
-                <CardContent className="py-2 px-2 text-center">
-                  <div className="text-sm font-bold text-gray-900">{phoenixMember.name}</div>
-                </CardContent>
-              </Card>
-            </Link>
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5 }}
-          >
-            <Link to={createPageUrl('Mara')}>
-              <Card className="border-0 shadow-lg bg-white hover:shadow-xl transition-shadow cursor-pointer">
-                <CardContent className="py-2 px-2 text-center">
-                  <div className="text-sm font-bold text-gray-900">{maraMember.name}</div>
-                </CardContent>
-              </Card>
-            </Link>
-          </motion.div>
+          {[
+            { member: bryanMember, href: 'Bryan', delay: 0.2 },
+            { member: kateMember, href: 'Kate', delay: 0.3 },
+            { member: phoenixMember, href: 'Phoenix', delay: 0.4 },
+            { member: maraMember, href: 'Mara', delay: 0.5 },
+          ].map(({ member, href, delay }) => (
+            <motion.div
+              key={href}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay }}
+            >
+              <Link to={createPageUrl(href)}>
+                <Card className="border-0 shadow-lg bg-white hover:shadow-xl transition-shadow cursor-pointer overflow-hidden">
+                  <CardContent className="p-0 flex flex-col items-center">
+                    <div
+                      className="w-full flex items-center justify-center"
+                      style={{ backgroundColor: member.color || '#e5e7eb', height: 72 }}
+                    >
+                      {member.photo_url ? (
+                        <img src={member.photo_url} alt={member.name} className="h-full w-full object-cover" />
+                      ) : (
+                        <span className="text-2xl font-bold text-white">{member.name?.[0]}</span>
+                      )}
+                    </div>
+                    <div className="py-1 text-xs font-bold text-gray-900">{member.name}</div>
+                  </CardContent>
+                </Card>
+              </Link>
+            </motion.div>
+          ))}
         </div>
 
         {/* Main Sections - Roundabout Layout */}
