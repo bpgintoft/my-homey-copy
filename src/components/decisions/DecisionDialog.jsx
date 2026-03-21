@@ -149,60 +149,73 @@ export default function DecisionDialog({ decision, currentUserEmail, familyMembe
     <>
     <Dialog open onOpenChange={onClose}>
       <DialogContent className="sm:max-w-md max-h-[90vh] flex flex-col overflow-hidden p-0 border-0 rounded-3xl" style={{background: 'linear-gradient(160deg, #2d1b69 0%, #4a3fb5 60%, #5B4FCF 100%)'}}>
-        <DialogHeader className="px-5 pt-5 pb-3">
-          <DialogTitle className="text-base leading-snug text-white pr-6">{decision.title}</DialogTitle>
-          {decision.description && (
-            <p className="text-sm text-indigo-200 mt-0.5">{decision.description}</p>
-          )}
-        </DialogHeader>
+
+        {/* Header — hidden in focus mode */}
+        {!focusChat && (
+          <DialogHeader className="px-5 pt-5 pb-3">
+            <DialogTitle className="text-base leading-snug text-white pr-6">{decision.title}</DialogTitle>
+            {decision.description && (
+              <p className="text-sm text-indigo-200 mt-0.5">{decision.description}</p>
+            )}
+          </DialogHeader>
+        )}
 
         <div className="flex-1 overflow-y-auto space-y-4 px-5 pb-2">
-          {/* Votes row — one card per adult family member */}
-          <div className="flex gap-3">
-            {familyMembers.map(m => {
-              const voteKey = `${m.name.toLowerCase()}_vote`;
-              const vote = decision[voteKey];
-              return (
-                <div key={m.id} className="flex-1 rounded-2xl p-3 flex flex-row items-center gap-3" style={{background: 'rgba(180,140,255,0.25)', border: '1px solid rgba(200,170,255,0.3)'}}>
-                  {m.photo_url
-                    ? <img src={m.photo_url} alt={m.name} className="w-9 h-9 rounded-full object-cover flex-shrink-0" />
-                    : <div className="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center text-white font-bold flex-shrink-0">{m.name[0]}</div>
-                  }
-                  <div>
-                    <p className="text-xs text-indigo-200">{m.name}</p>
-                    <p className="text-sm font-medium text-white">{vote ? voteEmoji[vote] : '—'}</p>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
 
-          {/* My vote */}
-          <div className="space-y-2">
-            <p className="text-xs font-semibold text-indigo-200 uppercase tracking-wide">Your Vote</p>
-            <div className="flex gap-2">
-              {['yes', 'no', 'maybe'].map(v => (
-                <button
-                  key={v}
-                  onClick={() => setMyVote(v)}
-                  className={`flex-1 py-2 rounded-full text-sm font-medium transition-all border ${
-                   myVote === v
-                     ? 'text-[#3d2a8a] border-transparent shadow-lg scale-105'
-                     : 'text-white/70 border-white/20 hover:border-white/40 hover:text-white'
-                  }`}
-                  style={myVote === v ? {background: 'rgba(200,170,255,0.9)'} : {background: 'rgba(180,140,255,0.15)'}}
-                >
-                  {voteEmoji[v]}
-                </button>
-              ))}
-            </div>
-          </div>
+          {/* Votes + My vote — hidden in focus mode */}
+          {!focusChat && (
+            <>
+              <div className="flex gap-3">
+                {familyMembers.map(m => {
+                  const voteKey = `${m.name.toLowerCase()}_vote`;
+                  const vote = decision[voteKey];
+                  return (
+                    <div key={m.id} className="flex-1 rounded-2xl p-3 flex flex-row items-center gap-3" style={{background: 'rgba(180,140,255,0.25)', border: '1px solid rgba(200,170,255,0.3)'}}>
+                      {m.photo_url
+                        ? <img src={m.photo_url} alt={m.name} className="w-9 h-9 rounded-full object-cover flex-shrink-0" />
+                        : <div className="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center text-white font-bold flex-shrink-0">{m.name[0]}</div>
+                      }
+                      <div>
+                        <p className="text-xs text-indigo-200">{m.name}</p>
+                        <p className="text-sm font-medium text-white">{vote ? voteEmoji[vote] : '—'}</p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+              <div className="space-y-2">
+                <p className="text-xs font-semibold text-indigo-200 uppercase tracking-wide">Your Vote</p>
+                <div className="flex gap-2">
+                  {['yes', 'no', 'maybe'].map(v => (
+                    <button
+                      key={v}
+                      onClick={() => setMyVote(v)}
+                      className={`flex-1 py-2 rounded-full text-sm font-medium transition-all border ${
+                       myVote === v
+                         ? 'text-[#3d2a8a] border-transparent shadow-lg scale-105'
+                         : 'text-white/70 border-white/20 hover:border-white/40 hover:text-white'
+                      }`}
+                      style={myVote === v ? {background: 'rgba(200,170,255,0.9)'} : {background: 'rgba(180,140,255,0.15)'}}
+                    >
+                      {voteEmoji[v]}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </>
+          )}
 
           {/* Comments chat log */}
           {localComments.length > 0 && (
             <div className="space-y-2">
-              <p className="text-xs font-semibold text-indigo-200 uppercase tracking-wide">Discussion</p>
-              <div className="space-y-2 max-h-48 overflow-y-auto">
+              <div
+                className="flex items-center justify-between cursor-pointer select-none"
+                onClick={() => setFocusChat(f => !f)}
+              >
+                <p className="text-xs font-semibold text-indigo-200 uppercase tracking-wide">Discussion</p>
+                <span className="text-indigo-300 text-xs">{focusChat ? '↕ collapse' : '↕ expand'}</span>
+              </div>
+              <div className={`space-y-2 overflow-y-auto transition-all ${focusChat ? 'max-h-[65vh]' : 'max-h-48'}`}>
                 {localComments.map((c, i) => {
                   const isMe = c.commenter_email === currentUserEmail;
                   const isEditing = editingIndex === i;
