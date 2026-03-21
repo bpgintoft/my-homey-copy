@@ -210,9 +210,9 @@ export default function DecisionDialog({ decision, currentUserEmail, familyMembe
             <div
               className="space-y-2 cursor-pointer"
               onClick={(e) => {
-                // Don't trigger if clicking edit/delete buttons or textarea inside
+                // Don't trigger if clicking edit/delete buttons, textarea, or links inside
                 if (e.target.closest('button') || e.target.closest('textarea') || e.target.closest('a')) return;
-                if (!focusChat) setFocusChat(true);
+                setFocusChat(f => !f);
               }}
             >
               <div className="flex items-center justify-between select-none">
