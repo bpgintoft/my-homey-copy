@@ -292,15 +292,6 @@ export default function DecisionDialog({ decision, currentUserEmail, familyMembe
             </div>
           )}
 
-          {/* New comment input — hidden in focus mode */}
-          {focusChat && (
-            <button
-              onClick={() => setFocusChat(false)}
-              className="w-full text-center text-xs text-indigo-300 py-1 hover:text-white"
-            >
-              ↕ Show votes & actions
-            </button>
-          )}
           {/* New comment input */}
           <div className="space-y-2">
             <div
