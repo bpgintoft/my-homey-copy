@@ -14,7 +14,6 @@ import { Label } from "@/components/ui/label";
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import { createPortal } from 'react-dom';
 import SchoolProgramSection from './SchoolProgramSection';
-import SectionPillButton from './SectionPillButton';
 import ActivitiesDialog from './ActivitiesDialog';
 import FinancialsDialog from './FinancialsDialog';
 import PersonalInfoSection from './PersonalInfoSection';
@@ -605,7 +604,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
             schoolProgram: member?.person_type !== 'adult' ? <span className="text-lg flex-shrink-0">🎓</span> : <span className="text-lg flex-shrink-0">💼</span>,
             links: <span className="text-lg flex-shrink-0">🔗</span>,
             contacts: <span className="text-lg flex-shrink-0">👥</span>,
-            notes: <span className="text-lg flex-shrink-0">📝</span>,
+            notes: <span className="text-lg flex-shrink-0">💡</span>,
             milestones: <span className="text-lg flex-shrink-0">🎯</span>,
             health: <span className="text-lg flex-shrink-0">❤️</span>,
             documents: <span className="text-lg flex-shrink-0">📁</span>,
@@ -680,28 +679,36 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                 >
                 <Settings2 className="w-3 h-3 text-gray-500" />
                 </button>
-                <div className="grid grid-cols-2 gap-3">
-                {orderedSections.map(({ key, label }) => (
-                  <SectionPillButton
-                    key={key}
-                    label={label}
-                    emoji={sectionIconMap[key]?.props?.children}
-                    onClick={() => setExpandedSection(key)}
-                    color={color}
-                  />
+                <div className="grid grid-cols-2 gap-2">
+                {orderedSections.map(({ key, icon, label }) => (
+                <button
+                key={key}
+                onClick={() => setExpandedSection(key)}
+                className="relative flex items-center gap-2 p-3 rounded-lg border bg-white hover:shadow-md transition-shadow text-left w-full overflow-hidden"
+                >
+                <span className="absolute right-[-8px] top-1/2 -translate-y-1/2 text-[80px] opacity-[0.07] pointer-events-none select-none leading-none" aria-hidden="true">
+                  {sectionIconMap[key]?.props?.children}
+                </span>
+                {icon}
+                <span className="font-semibold text-sm text-gray-800 leading-tight">{label}</span>
+                </button>
                 ))}
-                <SectionPillButton
-                  label="Activities"
-                  emoji="📊"
+                <button
                   onClick={() => setShowActivities(true)}
-                  color={color}
-                />
-                <SectionPillButton
-                  label="Financials"
-                  emoji="💰"
+                  className="relative flex items-center gap-2 p-3 rounded-lg border bg-white hover:shadow-md transition-shadow text-left w-full overflow-hidden"
+                >
+                  <span className="absolute right-[-8px] top-1/2 -translate-y-1/2 text-[80px] opacity-[0.07] pointer-events-none select-none leading-none">📊</span>
+                  <span className="text-lg flex-shrink-0">📊</span>
+                  <span className="font-semibold text-sm text-gray-800 leading-tight">Activities</span>
+                </button>
+                <button
                   onClick={() => setShowFinancials(true)}
-                  color={color}
-                />
+                  className="relative flex items-center gap-2 p-3 rounded-lg border bg-white hover:shadow-md transition-shadow text-left w-full overflow-hidden"
+                >
+                  <span className="absolute right-[-8px] top-1/2 -translate-y-1/2 text-[80px] opacity-[0.07] pointer-events-none select-none leading-none">💰</span>
+                  <span className="text-lg flex-shrink-0">💰</span>
+                  <span className="font-semibold text-sm text-gray-800 leading-tight">Financials</span>
+                </button>
                 </div>
                 </div>
                 );
