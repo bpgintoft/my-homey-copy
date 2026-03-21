@@ -1818,7 +1818,7 @@ export default function Meals() {
                 <Button
                   onClick={() => {
                     if (editingMeal) {
-                      updateMealMutation.mutate(newMeal);
+                      updateMealMutation.mutate({ id: editingMeal.id, data: newMeal });
                     } else {
                       createMealMutation.mutate({ ...newMeal, kid_friendly: true, age_range: '4-9 years' });
                     }
