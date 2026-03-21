@@ -222,6 +222,21 @@ export default function Family() {
             </div>
           )}
         </div>
+        {/* Can vote toggle */}
+        <div className="flex items-center justify-between rounded-xl border border-slate-200 px-4 py-3 bg-slate-50">
+          <div>
+            <p className="text-sm font-medium text-slate-700">Can vote on decisions</p>
+            <p className="text-xs text-slate-500">Show this member on the Decisions page</p>
+          </div>
+          <button
+            type="button"
+            onClick={() => setFormData(f => ({ ...f, can_vote: !f.can_vote }))}
+            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${formData.can_vote ? 'bg-teal-500' : 'bg-slate-300'}`}
+          >
+            <span className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform ${formData.can_vote ? 'translate-x-6' : 'translate-x-1'}`} />
+          </button>
+        </div>
+
         <div className="flex gap-3 pt-4">
           <Button variant="outline" onClick={onCancel} className="flex-1">Cancel</Button>
           <Button 
