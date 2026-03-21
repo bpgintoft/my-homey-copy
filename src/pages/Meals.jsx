@@ -106,14 +106,6 @@ export default function Meals() {
 
   const createMealMutation = useMutation({
     mutationFn: (data) => base44.entities.Meal.create(data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['meals'] });
-      setShowMealDialog(false);
-      setNewMeal({});
-    },
-    onError: (err) => {
-      console.error('Create meal error:', err);
-    },
   });
 
   const updateMealMutation = useMutation({
