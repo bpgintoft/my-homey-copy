@@ -60,21 +60,15 @@ export default function PhoenixPage() {
       `}</style>
       <div ref={bannerRef} className="relative h-64 overflow-hidden phoenix-banner">
         <div className="relative z-10 h-full flex items-center px-6 sm:px-8">
-          <motion.h1 
-            initial={{ opacity: 0, x: -50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6 }}
+          <h1 
             className="text-5xl sm:text-7xl font-bold text-white drop-shadow-lg"
             style={{ textShadow: '3px 3px 6px rgba(0,0,0,0.3)' }}
           >
             Phoenix
-          </motion.h1>
-          <motion.img
+          </h1>
+          <img
             src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/a53d7db8e_Phoenixpage.png"
             alt="Phoenix"
-            initial={{ opacity: 0, x: 50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
             className="absolute right-0 top-1 h-80 w-auto object-contain"
           />
         </div>
