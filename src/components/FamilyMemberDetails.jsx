@@ -611,6 +611,18 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
             vehicles: <span className="text-lg flex-shrink-0">🚗</span>,
             personalInfo: <span className="text-lg flex-shrink-0">👤</span>,
           };
+          const sectionBgMap = {
+            chores: 'bg-green-50 border-green-100',
+            schoolProgram: 'bg-blue-50 border-blue-100',
+            links: 'bg-gray-50 border-gray-200',
+            contacts: 'bg-teal-50 border-teal-100',
+            notes: 'bg-yellow-50 border-yellow-100',
+            milestones: 'bg-red-50 border-red-100',
+            health: 'bg-rose-50 border-rose-100',
+            documents: 'bg-orange-50 border-orange-100',
+            vehicles: 'bg-sky-50 border-sky-100',
+            personalInfo: 'bg-violet-50 border-violet-100',
+          };
           const sectionLabelMap = {
             chores: 'To-Do List',
             schoolProgram: member?.school_or_work_name || 'School & Work',
