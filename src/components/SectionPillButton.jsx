@@ -1,53 +1,55 @@
 import React from 'react';
 
-const colorSchemes = {
-  blue: ['#3B82F6', '#60A5FA', '#93C5FD'],
-  green: ['#22C55E', '#4ADE80', '#86EFAC'],
-  pink: ['#EC4899', '#F472B6', '#F9A8D4'],
-  purple: ['#8B5CF6', '#A78BFA', '#C4B5FD'],
-  orange: ['#F97316', '#FB923C', '#FDBA74'],
+const colorGradients = {
+  blue:   ['#0AACFF', '#3B82F6'],
+  green:  ['#22C55E', '#16A34A'],
+  pink:   ['#EC4899', '#F97316'],
+  purple: ['#8B5CF6', '#EC4899'],
+  orange: ['#F97316', '#EF4444'],
 };
 
 export default function SectionPillButton({ label, emoji, onClick, color = 'blue' }) {
-  const [c1, c2, c3] = colorSchemes[color] || colorSchemes.blue;
+  const [c1, c2] = colorGradients[color] || colorGradients.blue;
 
   return (
     <button
       onClick={onClick}
-      className="relative flex items-center w-full group"
-      style={{ height: 52 }}
+      className="relative flex items-center w-full active:scale-95 transition-transform"
+      style={{ height: 58 }}
     >
-      {/* Outer colored pill layers */}
+      {/* Thick gradient C-shaped border — rendered as a rounded pill behind the white pill */}
       <div
-        className="absolute inset-0 rounded-full"
+        className="absolute rounded-full"
         style={{
-          background: c1,
-          transform: 'translateX(-4px)',
+          inset: 0,
+          background: `linear-gradient(135deg, ${c1}, ${c2})`,
+          /* Leave the right side open visually by shrinking the white pill less on the right */
         }}
       />
+      {/* Inner white pill — shifted right so the left side shows the colored border like a "C" */}
       <div
-        className="absolute inset-0 rounded-full"
-        style={{
-          background: c2,
-          transform: 'translateX(-1px)',
-          top: 2, bottom: 2, left: 2, right: 2,
-        }}
+        className="absolute bg-white rounded-full"
+        style={{ top: 5, bottom: 5, left: 10, right: 46 }}
       />
-      {/* White inner pill */}
-      <div className="absolute rounded-full bg-white shadow-sm"
-        style={{ top: 4, bottom: 4, left: 6, right: 6 }}
-      />
-      {/* Content */}
-      <div className="relative flex items-center justify-between w-full px-4 z-10">
-        <span className="font-bold text-sm text-gray-800 tracking-wide pl-2 truncate">
+      {/* Label */}
+      <div className="relative z-10 flex items-center justify-between w-full pl-5 pr-2">
+        <span
+          className="font-black text-xs tracking-widest uppercase text-gray-900 truncate"
+          style={{ letterSpacing: '0.08em' }}
+        >
           {label}
         </span>
-        <div
-          className="flex-shrink-0 w-10 h-10 rounded-full bg-white shadow-md flex items-center justify-center border-2"
-          style={{ borderColor: c1 }}
-        >
-          <span className="text-lg leading-none">{emoji}</span>
-        </div>
+      </div>
+      {/* Circular icon on the right — sits on top of the gradient pill */}
+      <div
+        className="absolute right-0 top-1/2 -translate-y-1/2 flex items-center justify-center bg-white rounded-full shadow-md z-20 border-2"
+        style={{
+          width: 52,
+          height: 52,
+          borderColor: c1,
+        }}
+      >
+        <span className="text-xl leading-none">{emoji}</span>
       </div>
     </button>
   );
