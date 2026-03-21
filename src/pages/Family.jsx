@@ -85,6 +85,17 @@ export default function Family() {
   const MemberForm = ({ member, onSave, onCancel, isEdit = false }) => {
     const [formData, setFormData] = useState(member);
     const [respInput, setRespInput] = useState('');
+    const [uploading, setUploading] = useState(false);
+    const fileInputRef = useRef(null);
+
+    const handlePhotoUpload = async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      setUploading(true);
+      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      setFormData(f => ({ ...f, photo_url: file_url }));
+      setUploading(false);
+    };
 
     const addResponsibility = () => {
       if (respInput.trim() && !formData.responsibilities?.includes(respInput.trim())) {
