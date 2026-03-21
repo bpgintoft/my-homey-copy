@@ -269,46 +269,63 @@ export default function DecisionDialog({ decision, currentUserEmail, familyMembe
 
           {/* New comment input */}
           <div className="space-y-2">
-            <p className="text-xs font-semibold text-indigo-200 uppercase tracking-wide">{localComments.length > 0 ? 'Add a comment' : 'Comment (optional)'}</p>
-            <div className="rounded-2xl overflow-hidden" style={{background: 'rgba(180,140,255,0.2)', border: '1px solid rgba(200,170,255,0.25)'}}>
-              <Textarea
-                value={newComment}
-                onChange={e => setNewComment(e.target.value)}
-                onPaste={handlePaste}
-                placeholder="Add context, conditions, thoughts... (paste images directly)"
-                rows={2}
-                className="border-0 text-white placeholder:text-indigo-300 bg-transparent rounded-none resize-none"
-                style={{ fontSize: '16px' }}
-              />
-              {/* Pending images preview */}
-              {pendingImages.length > 0 && (
-                <div className="flex flex-wrap gap-2 px-3 pb-2">
-                  {pendingImages.map((url, idx) => (
-                    <div key={idx} className="relative">
-                      <img src={url} alt="pending" className="rounded-lg w-16 h-16 object-cover" />
-                      <button
-                        onClick={() => setPendingImages(prev => prev.filter((_, i) => i !== idx))}
-                        className="absolute -top-1 -right-1 bg-red-500 rounded-full w-4 h-4 flex items-center justify-center"
-                      >
-                        <X className="w-2.5 h-2.5 text-white" />
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              )}
-              {/* Image attach button */}
-              <div className="flex items-center px-3 pb-2">
-                <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
-                <button
-                  onClick={() => fileInputRef.current?.click()}
-                  disabled={uploadingImage}
-                  className="flex items-center gap-1.5 text-xs text-indigo-300 hover:text-white transition-colors"
-                >
-                  <ImagePlus className="w-4 h-4" />
-                  {uploadingImage ? 'Uploading...' : 'Add photo'}
-                </button>
-              </div>
+            <div
+              className="flex items-center justify-between cursor-pointer select-none"
+              onTouchStart={e => { commentDragStartY.current = e.touches[0].clientY; }}
+              onTouchEnd={e => {
+                if (commentDragStartY.current !== null) {
+                  const delta = e.changedTouches[0].clientY - commentDragStartY.current;
+                  if (delta > 30) setCommentCollapsed(true);
+                  else if (delta < -30) setCommentCollapsed(false);
+                  commentDragStartY.current = null;
+                }
+              }}
+              onClick={() => setCommentCollapsed(c => !c)}
+            >
+              <p className="text-xs font-semibold text-indigo-200 uppercase tracking-wide">
+                {localComments.length > 0 ? 'Add a comment' : 'Comment (optional)'}
+              </p>
+              <span className="text-indigo-300 text-xs">{commentCollapsed ? '▲ expand' : '▼ minimize'}</span>
             </div>
+            {!commentCollapsed && (
+              <div className="rounded-2xl overflow-hidden" style={{background: 'rgba(180,140,255,0.2)', border: '1px solid rgba(200,170,255,0.25)'}}>
+                <Textarea
+                  value={newComment}
+                  onChange={e => setNewComment(e.target.value)}
+                  onPaste={handlePaste}
+                  placeholder="Add context, conditions, thoughts... (paste images directly)"
+                  rows={2}
+                  className="border-0 text-white placeholder:text-indigo-300 bg-transparent rounded-none resize-none"
+                  style={{ fontSize: '16px' }}
+                />
+                {pendingImages.length > 0 && (
+                  <div className="flex flex-wrap gap-2 px-3 pb-2">
+                    {pendingImages.map((url, idx) => (
+                      <div key={idx} className="relative">
+                        <img src={url} alt="pending" className="rounded-lg w-16 h-16 object-cover" />
+                        <button
+                          onClick={() => setPendingImages(prev => prev.filter((_, i) => i !== idx))}
+                          className="absolute -top-1 -right-1 bg-red-500 rounded-full w-4 h-4 flex items-center justify-center"
+                        >
+                          <X className="w-2.5 h-2.5 text-white" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                <div className="flex items-center px-3 pb-2">
+                  <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
+                  <button
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={uploadingImage}
+                    className="flex items-center gap-1.5 text-xs text-indigo-300 hover:text-white transition-colors"
+                  >
+                    <ImagePlus className="w-4 h-4" />
+                    {uploadingImage ? 'Uploading...' : 'Add photo'}
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Status */}
