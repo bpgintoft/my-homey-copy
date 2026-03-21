@@ -604,7 +604,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
             schoolProgram: member?.person_type !== 'adult' ? <span className="text-lg flex-shrink-0">🎓</span> : <span className="text-lg flex-shrink-0">💼</span>,
             links: <span className="text-lg flex-shrink-0">🔗</span>,
             contacts: <span className="text-lg flex-shrink-0">👥</span>,
-            notes: <span className="text-lg flex-shrink-0">💡</span>,
+            notes: <span className="text-lg flex-shrink-0">📝</span>,
             milestones: <span className="text-lg flex-shrink-0">🎯</span>,
             health: <span className="text-lg flex-shrink-0">❤️</span>,
             documents: <span className="text-lg flex-shrink-0">📁</span>,
