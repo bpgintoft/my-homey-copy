@@ -321,12 +321,16 @@ export default function Family() {
                       <CardContent className="p-6">
                         <div className="flex items-start justify-between mb-4">
                           <div className="flex items-center gap-4">
-                            <div 
-                              className="w-16 h-16 rounded-full flex items-center justify-center text-white text-2xl font-bold"
-                              style={{ backgroundColor: member.color || '#64748b' }}
-                            >
-                              {member.name?.charAt(0)}
-                            </div>
+                            {member.photo_url ? (
+                              <img src={member.photo_url} alt={member.name} className="w-16 h-16 rounded-full object-cover flex-shrink-0" />
+                            ) : (
+                              <div
+                                className="w-16 h-16 rounded-full flex items-center justify-center text-white text-2xl font-bold flex-shrink-0"
+                                style={{ backgroundColor: member.color || '#64748b' }}
+                              >
+                                {member.name?.charAt(0)}
+                              </div>
+                            )}
                             <div>
                               <h3 className="font-semibold text-lg text-slate-800">{member.name}</h3>
                               {member.role && <p className="text-slate-500">{member.role}</p>}
