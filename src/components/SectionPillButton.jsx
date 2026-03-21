@@ -17,18 +17,29 @@ export default function SectionPillButton({ label, emoji, onClick, color = 'blue
       className="relative flex items-center w-full active:scale-95 transition-transform"
       style={{ minHeight: 58 }}
     >
-      {/* Gradient pill background */}
+      {/* Gradient background — rounded only on left, straight on right (hidden behind circle) */}
       <div
-        className="absolute rounded-full"
-        style={{ inset: 0, background: `linear-gradient(135deg, ${c1}, ${c2})` }}
+        className="absolute"
+        style={{
+          inset: 0,
+          right: 26, /* extends under the circle */
+          borderRadius: '999px 0 0 999px',
+          background: `linear-gradient(135deg, ${c1}, ${c2})`,
+        }}
       />
-      {/* Inner white pill */}
+      {/* Inner white area — rounded only on left, straight on right */}
       <div
-        className="absolute bg-white rounded-full"
-        style={{ top: 5, bottom: 5, left: 10, right: 46 }}
+        className="absolute bg-white"
+        style={{
+          top: 5,
+          bottom: 5,
+          left: 10,
+          right: 26,
+          borderRadius: '999px 0 0 999px',
+        }}
       />
-      {/* Label — wraps naturally */}
-      <div className="relative z-10 flex items-center w-full pl-5 pr-14 py-3">
+      {/* Label */}
+      <div className="relative z-10 flex items-center w-full pl-5 pr-16 py-3">
         <span
           className="font-black text-xs uppercase text-gray-900 leading-tight text-left"
           style={{ letterSpacing: '0.08em' }}
@@ -36,10 +47,10 @@ export default function SectionPillButton({ label, emoji, onClick, color = 'blue
           {label}
         </span>
       </div>
-      {/* Circular icon on the right */}
+      {/* Circular icon — sits on top, covering the right open end */}
       <div
         className="absolute right-0 top-1/2 -translate-y-1/2 flex items-center justify-center bg-white rounded-full shadow-md z-20 border-2"
-        style={{ width: 52, height: 52, borderColor: c1 }}
+        style={{ width: 52, height: 52, borderColor: c1, flexShrink: 0 }}
       >
         <span className="text-xl leading-none">{emoji}</span>
       </div>
