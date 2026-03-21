@@ -175,7 +175,7 @@ export default function Layout({ children, currentPageName }) {
             style={{ transform: `rotate(${pullDistance * 3}deg)` }}
           />
         </div>
-        <div key={currentPageName}>
+        <div>
           {children}
         </div>
       </main>
