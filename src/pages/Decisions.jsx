@@ -28,7 +28,7 @@ export default function Decisions() {
     queryFn: () => base44.entities.FamilyMember.list(),
   });
 
-  const adultMembers = familyMembers.filter(m => m.person_type === 'adult');
+  const adultMembers = familyMembers.filter(m => m.can_vote === true);
 
   // Auto-open a specific decision if linked from a notification (run once)
   const autoOpenedRef = useRef(false);
