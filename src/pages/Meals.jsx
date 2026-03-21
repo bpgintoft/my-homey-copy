@@ -1810,17 +1810,26 @@ export default function Meals() {
                   </div>
                 )}
                 <Button
-                  onClick={async () => {
+                  onClick={() => {
                     const mealId = editingMeal?.id;
-                    if (mealId) {
-                      await updateMealMutation.mutateAsync({ id: mealId, data: { ...newMeal } });
-                    } else {
-                      await createMealMutation.mutateAsync({ ...newMeal, kid_friendly: true, age_range: '4-9 years' });
-                    }
-                    queryClient.invalidateQueries({ queryKey: ['meals'] });
-                    setShowMealDialog(false);
-                    setEditingMeal(null);
-                    setNewMeal({});
+                    const mealData = { ...newMeal };
+                    if (!mealData.type) mealData.type = 'dinner';
+                    if (mealData.kid_friendly === undefined) mealData.kid_friendly = true;
+                    const { id: _id, created_date, updated_date, created_by, ...cleanData } = mealData;
+
+                    const savePromise = mealId
+                      ? base44.entities.Meal.update(mealId, cleanData)
+                      : base44.entities.Meal.create({ ...cleanData, kid_friendly: true, age_range: '4-9 years' });
+
+                    savePromise.then(() => {
+                      queryClient.invalidateQueries({ queryKey: ['meals'] });
+                      setShowMealDialog(false);
+                      setEditingMeal(null);
+                      setNewMeal({});
+                    }).catch((err) => {
+                      console.error('Save meal failed:', err);
+                      alert('Failed to save: ' + (err?.message || err));
+                    });
                   }}
                   disabled={!newMeal.name || updateMealMutation.isPending || createMealMutation.isPending}
                   className="w-full bg-gradient-to-r from-[#E91E8C] to-[#D01576] text-white"
