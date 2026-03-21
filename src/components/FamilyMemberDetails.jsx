@@ -14,6 +14,7 @@ import { Label } from "@/components/ui/label";
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import { createPortal } from 'react-dom';
 import SchoolProgramSection from './SchoolProgramSection';
+import SectionPillButton from './SectionPillButton';
 import ActivitiesDialog from './ActivitiesDialog';
 import FinancialsDialog from './FinancialsDialog';
 import PersonalInfoSection from './PersonalInfoSection';
