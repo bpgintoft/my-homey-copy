@@ -123,15 +123,6 @@ export default function Meals() {
       if (cleanData.kid_friendly === undefined) cleanData.kid_friendly = true;
       return base44.entities.Meal.update(id, cleanData);
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['meals'] });
-      setShowMealDialog(false);
-      setEditingMeal(null);
-      setNewMeal({});
-    },
-    onError: (err) => {
-      console.error('Update meal error:', err);
-    },
   });
 
   const updateMealRatingMutation = useMutation({
