@@ -680,7 +680,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                 >
                 <Settings2 className="w-3 h-3 text-gray-500" />
                 </button>
-                <div className="flex flex-col gap-2">
+                <div className="grid grid-cols-2 gap-3">
                 {orderedSections.map(({ key, label }) => (
                   <SectionPillButton
                     key={key}
