@@ -49,8 +49,8 @@ export default function SectionPillButton({ label, emoji, onClick, color = 'blue
       </div>
       {/* Circular icon — sits on top, covering the right open end */}
       <div
-        className="absolute right-0 top-1/2 -translate-y-1/2 flex items-center justify-center bg-white rounded-full shadow-md z-20 border-2"
-        style={{ width: 52, height: 52, borderColor: c1, flexShrink: 0 }}
+        className="absolute right-0 top-1/2 -translate-y-1/2 flex items-center justify-center bg-white rounded-full z-20"
+        style={{ width: 52, height: 52, border: `5px solid ${c1}`, flexShrink: 0 }}
       >
         <span className="text-xl leading-none">{emoji}</span>
       </div>
