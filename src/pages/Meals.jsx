@@ -1810,13 +1810,17 @@ export default function Meals() {
                   </div>
                 )}
                 <Button
-                  onClick={() => {
+                  onClick={async () => {
                     const mealId = editingMeal?.id;
                     if (mealId) {
-                      updateMealMutation.mutate({ id: mealId, data: { ...newMeal } });
+                      await updateMealMutation.mutateAsync({ id: mealId, data: { ...newMeal } });
                     } else {
-                      createMealMutation.mutate({ ...newMeal, kid_friendly: true, age_range: '4-9 years' });
+                      await createMealMutation.mutateAsync({ ...newMeal, kid_friendly: true, age_range: '4-9 years' });
                     }
+                    queryClient.invalidateQueries({ queryKey: ['meals'] });
+                    setShowMealDialog(false);
+                    setEditingMeal(null);
+                    setNewMeal({});
                   }}
                   disabled={!newMeal.name || updateMealMutation.isPending || createMealMutation.isPending}
                   className="w-full bg-gradient-to-r from-[#E91E8C] to-[#D01576] text-white"
