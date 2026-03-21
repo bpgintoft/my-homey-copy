@@ -61,15 +61,23 @@ export default function MaraPage() {
       `}</style>
       <div ref={bannerRef} className="relative h-64 overflow-hidden mara-banner">
         <div className="relative z-10 h-full flex items-center px-6 sm:px-8">
-          <h1 
+          <motion.h1
+            key="mara-title"
+            initial={{ opacity: 0, x: -50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6 }}
             className="text-5xl sm:text-7xl font-bold text-white drop-shadow-lg"
             style={{ textShadow: '3px 3px 6px rgba(0,0,0,0.3)' }}
           >
             Mara
-          </h1>
-          <img
+          </motion.h1>
+          <motion.img
+            key="mara-img"
             src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/ad7a0defd_Marapage.png"
             alt="Mara"
+            initial={{ opacity: 0, x: 50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
             className="absolute right-0 top-1 h-80 w-auto object-contain"
           />
         </div>
