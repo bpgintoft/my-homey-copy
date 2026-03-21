@@ -121,10 +121,13 @@ export default function Meals() {
       return base44.entities.Meal.update(id, cleanData);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(['meals']);
+      queryClient.invalidateQueries({ queryKey: ['meals'] });
       setShowMealDialog(false);
       setEditingMeal(null);
       setNewMeal({});
+    },
+    onError: (err) => {
+      console.error('Update meal error:', err);
     },
   });
 
