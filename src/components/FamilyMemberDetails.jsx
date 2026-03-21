@@ -686,7 +686,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                 onClick={() => setExpandedSection(key)}
                 className="relative flex items-center gap-2 p-3 rounded-lg border bg-white hover:shadow-md transition-shadow text-left w-full overflow-hidden"
                 >
-                <span className="absolute right-[-4px] bottom-[-8px] text-7xl opacity-[0.07] pointer-events-none select-none leading-none">{icon}</span>
+                <span className="absolute right-[-12px] bottom-[-16px] text-[120px] opacity-[0.07] pointer-events-none select-none leading-none">{icon}</span>
                 {icon}
                 <span className="font-semibold text-sm text-gray-800 leading-tight">{label}</span>
                 </button>
