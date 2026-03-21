@@ -116,6 +116,29 @@ export default function Family() {
 
     return (
       <div className="space-y-4 mt-4">
+        {/* Avatar upload */}
+        <div className="flex flex-col items-center gap-2">
+          <div
+            className="w-20 h-20 rounded-full overflow-hidden cursor-pointer border-2 border-dashed border-slate-300 flex items-center justify-center bg-slate-50 hover:border-teal-400 transition-colors"
+            onClick={() => fileInputRef.current?.click()}
+          >
+            {uploading ? (
+              <Loader2 className="w-6 h-6 text-teal-500 animate-spin" />
+            ) : formData.photo_url ? (
+              <img src={formData.photo_url} alt="avatar" className="w-full h-full object-cover" />
+            ) : (
+              <div className="flex flex-col items-center gap-1 text-slate-400">
+                <Upload className="w-5 h-5" />
+                <span className="text-xs">Photo</span>
+              </div>
+            )}
+          </div>
+          <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handlePhotoUpload} />
+          {formData.photo_url && (
+            <button type="button" className="text-xs text-red-400 hover:text-red-600" onClick={() => setFormData(f => ({ ...f, photo_url: '' }))}>Remove</button>
+          )}
+        </div>
+
         <div className="grid grid-cols-1 gap-4">
           <div>
             <Label>Name *</Label>
