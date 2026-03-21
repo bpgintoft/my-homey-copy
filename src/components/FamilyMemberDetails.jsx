@@ -611,6 +611,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
             vehicles: <span className="text-lg flex-shrink-0">🚗</span>,
             personalInfo: <span className="text-lg flex-shrink-0">👤</span>,
           };
+          // sectionLabelMap below
           const sectionLabelMap = {
             chores: 'To-Do List',
             schoolProgram: member?.school_or_work_name || 'School & Work',
