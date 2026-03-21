@@ -686,7 +686,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                 onClick={() => setExpandedSection(key)}
                 className="relative flex items-center gap-2 p-3 rounded-lg border bg-white hover:shadow-md transition-shadow text-left w-full overflow-hidden"
                 >
-                <span className="absolute right-[-12px] top-1/2 -translate-y-1/2 text-[120px] opacity-[0.07] pointer-events-none select-none leading-none" aria-hidden="true">
+                <span className="absolute right-[-8px] top-1/2 -translate-y-1/2 text-[80px] opacity-[0.07] pointer-events-none select-none leading-none" aria-hidden="true">
                   {sectionIconMap[key]?.props?.children}
                 </span>
                 {icon}
