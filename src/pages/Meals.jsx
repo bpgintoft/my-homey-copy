@@ -616,7 +616,7 @@ export default function Meals() {
     if (!file) return;
     setUploadingImage(true);
     const result = await base44.integrations.Core.UploadFile({ file });
-    setNewMeal({ ...newMeal, photo_url: result.file_url });
+    setNewMeal(prev => ({ ...prev, photo_url: result.file_url }));
     setUploadingImage(false);
   };
 
