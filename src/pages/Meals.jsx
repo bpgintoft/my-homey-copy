@@ -116,6 +116,8 @@ export default function Meals() {
   const updateMealMutation = useMutation({
     mutationFn: ({ id, data }) => {
       const { id: _id, created_date, updated_date, created_by, ...cleanData } = data;
+      if (!cleanData.type) cleanData.type = 'dinner';
+      if (cleanData.kid_friendly === undefined) cleanData.kid_friendly = true;
       return base44.entities.Meal.update(id, cleanData);
     },
     onSuccess: () => {
