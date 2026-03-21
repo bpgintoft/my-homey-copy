@@ -51,6 +51,7 @@ export default function DecisionDialog({ decision, currentUserEmail, familyMembe
   const [localComments, setLocalComments] = useState(decision.comments || []);
   const [lightboxUrl, setLightboxUrl] = useState(null);
   const [commentCollapsed, setCommentCollapsed] = useState(false);
+  const [focusChat, setFocusChat] = useState(false);
   const commentsEndRef = useRef(null);
   const fileInputRef = useRef(null);
   const commentDragStartY = useRef(null);
