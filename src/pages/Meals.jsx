@@ -534,7 +534,7 @@ export default function Meals() {
       return result;
     },
     onSuccess: (nutrition) => {
-      setNewMeal({ ...newMeal, nutrition });
+      setNewMeal(prev => ({ ...prev, nutrition }));
     },
   });
 
