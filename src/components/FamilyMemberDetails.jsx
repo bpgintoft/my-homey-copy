@@ -600,16 +600,16 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
 
         {(() => {
           const sectionIconMap = {
-            chores: <ListTodo className={`w-5 h-5 flex-shrink-0 ${iconColor}`} />,
-            schoolProgram: member?.person_type !== 'adult' ? <GraduationCap className={`w-5 h-5 flex-shrink-0 ${iconColor}`} /> : <Briefcase className={`w-5 h-5 flex-shrink-0 ${iconColor}`} />,
-            links: <Link2 className={`w-5 h-5 flex-shrink-0 ${iconColor}`} />,
-            contacts: <Users className={`w-5 h-5 flex-shrink-0 ${iconColor}`} />,
-            notes: <Lightbulb className={`w-5 h-5 flex-shrink-0 ${iconColor}`} />,
-            milestones: <Target className={`w-5 h-5 flex-shrink-0 ${iconColor}`} />,
-            health: <HeartPulse className={`w-5 h-5 flex-shrink-0 ${iconColor}`} />,
-            documents: <FolderOpen className={`w-5 h-5 flex-shrink-0 ${iconColor}`} />,
-            vehicles: <Car className={`w-5 h-5 flex-shrink-0 ${iconColor}`} />,
-            personalInfo: <User className={`w-5 h-5 flex-shrink-0 ${iconColor}`} />,
+            chores: <ListTodo className="w-5 h-5 flex-shrink-0 text-green-500" />,
+            schoolProgram: member?.person_type !== 'adult' ? <GraduationCap className="w-5 h-5 flex-shrink-0 text-blue-500" /> : <Briefcase className="w-5 h-5 flex-shrink-0 text-blue-500" />,
+            links: <Link2 className="w-5 h-5 flex-shrink-0 text-violet-500" />,
+            contacts: <Users className="w-5 h-5 flex-shrink-0 text-teal-500" />,
+            notes: <Lightbulb className="w-5 h-5 flex-shrink-0 text-yellow-500" />,
+            milestones: <Target className="w-5 h-5 flex-shrink-0 text-red-500" />,
+            health: <HeartPulse className="w-5 h-5 flex-shrink-0 text-rose-500" />,
+            documents: <FolderOpen className="w-5 h-5 flex-shrink-0 text-orange-500" />,
+            vehicles: <Car className="w-5 h-5 flex-shrink-0 text-amber-500" />,
+            personalInfo: <User className="w-5 h-5 flex-shrink-0 text-indigo-500" />,
           };
           const sectionLabelMap = {
             chores: 'To-Do List',
