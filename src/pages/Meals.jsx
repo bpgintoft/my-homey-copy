@@ -1817,13 +1817,14 @@ export default function Meals() {
                 )}
                 <Button
                   onClick={() => {
-                    if (editingMeal) {
-                      updateMealMutation.mutate({ id: editingMeal.id, data: newMeal });
+                    const mealId = editingMeal?.id;
+                    if (mealId) {
+                      updateMealMutation.mutate({ id: mealId, data: { ...newMeal } });
                     } else {
                       createMealMutation.mutate({ ...newMeal, kid_friendly: true, age_range: '4-9 years' });
                     }
                   }}
-                  disabled={!newMeal.name}
+                  disabled={!newMeal.name || updateMealMutation.isPending || createMealMutation.isPending}
                   className="w-full bg-gradient-to-r from-[#E91E8C] to-[#D01576] text-white"
                 >
                   {editingMeal ? 'Save Changes' : 'Add Meal'}
