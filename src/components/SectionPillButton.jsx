@@ -27,14 +27,15 @@ export default function SectionPillButton({ label, emoji, onClick, color = 'blue
         }}
       />
       {/* Inner white pill — shifted right so the left side shows the colored border like a "C" */}
+      {/* Inner white pill — height is auto to accommodate wrapped text */}
       <div
         className="absolute bg-white rounded-full"
         style={{ top: 5, bottom: 5, left: 10, right: 46 }}
       />
       {/* Label */}
-      <div className="relative z-10 flex items-center justify-between w-full pl-5 pr-2">
+      <div className="relative z-10 flex items-center w-full pl-5 pr-14">
         <span
-          className="font-black text-xs tracking-widest uppercase text-gray-900 truncate"
+          className="font-black text-xs tracking-widest uppercase text-gray-900 leading-tight text-left"
           style={{ letterSpacing: '0.08em' }}
         >
           {label}
