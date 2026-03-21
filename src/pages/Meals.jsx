@@ -114,7 +114,10 @@ export default function Meals() {
   });
 
   const updateMealMutation = useMutation({
-    mutationFn: ({ id, data }) => base44.entities.Meal.update(id, data),
+    mutationFn: ({ id, data }) => {
+      const { id: _id, created_date, updated_date, created_by, ...cleanData } = data;
+      return base44.entities.Meal.update(id, cleanData);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries(['meals']);
       setShowMealDialog(false);
