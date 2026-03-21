@@ -696,7 +696,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                 <button
                 key={key}
                 onClick={() => setExpandedSection(key)}
-                className="flex items-center gap-2 p-3 rounded-lg border bg-white hover:shadow-md transition-shadow text-left w-full"
+                className={`flex items-center gap-2 p-3 rounded-lg border hover:shadow-md transition-shadow text-left w-full ${sectionBgMap[key] || 'bg-white border-gray-200'}`}
                 >
                 {icon}
                 <span className="font-semibold text-sm text-gray-800 leading-tight">{label}</span>
@@ -704,14 +704,14 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                 ))}
                 <button
                   onClick={() => setShowActivities(true)}
-                  className="flex items-center gap-2 p-3 rounded-lg border bg-white hover:shadow-md transition-shadow text-left w-full"
+                  className="flex items-center gap-2 p-3 rounded-lg border bg-purple-50 border-purple-100 hover:shadow-md transition-shadow text-left w-full"
                 >
                   <span className="text-lg flex-shrink-0">📊</span>
                   <span className="font-semibold text-sm text-gray-800 leading-tight">Activities</span>
                 </button>
                 <button
                   onClick={() => setShowFinancials(true)}
-                  className="flex items-center gap-2 p-3 rounded-lg border bg-white hover:shadow-md transition-shadow text-left w-full"
+                  className="flex items-center gap-2 p-3 rounded-lg border bg-emerald-50 border-emerald-100 hover:shadow-md transition-shadow text-left w-full"
                 >
                   <span className="text-lg flex-shrink-0">💰</span>
                   <span className="font-semibold text-sm text-gray-800 leading-tight">Financials</span>
