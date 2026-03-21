@@ -175,17 +175,9 @@ export default function Layout({ children, currentPageName }) {
             style={{ transform: `rotate(${pullDistance * 3}deg)` }}
           />
         </div>
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={currentPageName}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-          >
-            {children}
-          </motion.div>
-        </AnimatePresence>
+        <div key={currentPageName}>
+          {children}
+        </div>
       </main>
 
     </div>
