@@ -1815,6 +1815,12 @@ export default function Meals() {
                     const mealData = { ...newMeal };
                     if (!mealData.type) mealData.type = 'dinner';
                     if (mealData.kid_friendly === undefined) mealData.kid_friendly = true;
+                    // Sanitize number fields — remove them if empty/NaN
+                    ['prep_time', 'cook_time', 'servings'].forEach(field => {
+                      const val = parseInt(mealData[field]);
+                      if (isNaN(val)) delete mealData[field];
+                      else mealData[field] = val;
+                    });
                     const { id: _id, created_date, updated_date, created_by, ...cleanData } = mealData;
 
                     const savePromise = mealId
