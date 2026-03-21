@@ -1823,7 +1823,7 @@ export default function Meals() {
                       createMealMutation.mutate({ ...newMeal, kid_friendly: true, age_range: '4-9 years' });
                     }
                   }}
-                  disabled={!newMeal.name || !newMeal.type}
+                  disabled={!newMeal.name}
                   className="w-full bg-gradient-to-r from-[#E91E8C] to-[#D01576] text-white"
                 >
                   {editingMeal ? 'Save Changes' : 'Add Meal'}
