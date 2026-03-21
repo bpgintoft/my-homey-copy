@@ -206,7 +206,7 @@ export default function DecisionDialog({ decision, currentUserEmail, familyMembe
                   return (
                     <div key={i} className={`flex items-end gap-1.5 ${isMe ? 'flex-row-reverse' : 'flex-row'}`}>
                       {(() => {
-                        const commenterMember = familyMembers.find(m => m.email === c.commenter_email);
+                        const commenterMember = familyMembers.find(m => m.email === c.commenter_email) || familyMembers.find(m => m.name === c.commenter_name);
                         return commenterMember?.photo_url
                           ? <img src={commenterMember.photo_url} alt={c.commenter_name} className="w-6 h-6 rounded-full object-cover flex-shrink-0 mb-5" />
                           : <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center text-white text-xs font-bold flex-shrink-0 mb-5">{c.commenter_name?.[0] || '?'}</div>;
