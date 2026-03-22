@@ -117,7 +117,7 @@ export default function ChoreCommentsSheet({ chore, open, onOpenChange }) {
                     <div className="flex-1 min-w-0">
                       <p className="text-gray-900">{comment.text}</p>
                       <p className="text-xs text-gray-400 mt-1">
-                        {formatDistanceToNow(new Date(comment.created_date), { addSuffix: true })}
+                        {formatDistanceToNow(new Date(comment.created_date.endsWith('Z') ? comment.created_date : comment.created_date + 'Z'), { addSuffix: true })}
                       </p>
                     </div>
                     <button
