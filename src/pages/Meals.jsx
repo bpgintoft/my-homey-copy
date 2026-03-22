@@ -735,7 +735,7 @@ export default function Meals() {
                     <Button
                       variant="outline"
                       size="sm"
-                      className="border-pink-200 text-pink-600 hover:bg-pink-50 px-2 flex-shrink-0"
+                      className="border-pink-200 text-pink-600 hover:bg-pink-50 px-2 flex-shrink-0 ml-auto"
                     >
                       <Search className="w-4 h-4" />
                     </Button>
