@@ -48,10 +48,11 @@ export default function Meals() {
     const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
     const [appliedProteins, setAppliedProteins] = useState([]);
             const [appliedMealTypes, setAppliedMealTypes] = useState([]);
-            const [appliedRatings, setAppliedRatings] = useState([]);
-            const [uploadingImage, setUploadingImage] = useState(false);
-            const [expandedSections, setExpandedSections] = useState({});
-            const [showHiddenItems, setShowHiddenItems] = useState(false);
+                     const [appliedRatings, setAppliedRatings] = useState([]);
+                     const [uploadingImage, setUploadingImage] = useState(false);
+                     const [expandedSections, setExpandedSections] = useState({});
+                     const [showHiddenItems, setShowHiddenItems] = useState(false);
+                     const [searchQuery, setSearchQuery] = useState('');
             const [newGroceryItem, setNewGroceryItem] = useState({ name: '', category: 'other' });
             const [showAddGrocery, setShowAddGrocery] = useState(false);
             const [editingGroceryNames, setEditingGroceryNames] = useState({});
