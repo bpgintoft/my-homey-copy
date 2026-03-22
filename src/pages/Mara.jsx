@@ -32,7 +32,7 @@ export default function MaraPage() {
   useSwipe(handleSwipe, bannerRef);
 
   return (
-    <div className="min-h-screen bg-[#FFF5F7]">
+    <div className="min-h-screen bg-[#FFE0E8]">
       <style>{`
         .mara-banner {
           background: linear-gradient(135deg, #FFE5B4 0%, #FFDAB9 50%, #FFB6C1 100%);
