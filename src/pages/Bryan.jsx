@@ -32,7 +32,7 @@ export default function BryanPage() {
   useSwipe(handleSwipe, bannerRef);
 
   return (
-    <div className="min-h-screen bg-[#F5F5F7]">
+    <div className="min-h-screen bg-[#EEF4FF]">
       <style>{`
         .bryan-banner {
           background: linear-gradient(135deg, #60A5FA 0%, #3B82F6 50%, #2563EB 100%);
