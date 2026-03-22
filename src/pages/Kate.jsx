@@ -77,8 +77,8 @@ export default function KatePage() {
               rgba(16, 185, 129, 0.15) 25px,
               rgba(16, 185, 129, 0.15) 30px
             );
-          -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0.6) 30%, rgba(0,0,0,0) 55%);
-          mask-image: linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0.6) 30%, rgba(0,0,0,0) 55%);
+          -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 40%, rgba(0,0,0,0.4) 65%, rgba(0,0,0,0) 80%);
+          mask-image: linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 40%, rgba(0,0,0,0.4) 65%, rgba(0,0,0,0) 80%);
         }
       `}</style>
       <div ref={bannerRef} className="relative h-64 overflow-hidden kate-banner">
