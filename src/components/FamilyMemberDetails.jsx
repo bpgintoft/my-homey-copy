@@ -1502,6 +1502,40 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
         </DialogContent>
       </Dialog>
 
+      {/* Archive Dialog */}
+      <Dialog open={showArchive} onOpenChange={setShowArchive}>
+        <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Completed Tasks</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3">
+            {chores.filter(c => c.is_completed).length === 0 ? (
+              <p className="text-sm text-gray-500">No completed tasks yet</p>
+            ) : (
+              chores.filter(c => c.is_completed).sort((a, b) => new Date(b.updated_date) - new Date(a.updated_date)).map((chore) => (
+                <div key={chore.id} className={`rounded-lg p-3 ${itemBg}`}>
+                  <div className="flex items-center justify-between">
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium text-gray-900 line-through">{chore.title}</p>
+                      <p className="text-xs text-gray-500 mt-1">
+                        Completed on {new Date(chore.updated_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => toggleChoreMutation.mutate({ id: chore.id, is_completed: false, maintenance_task_id: chore.maintenance_task_id, linked_chore_ids: chore.linked_chore_ids, chore_title: chore.title })}
+                      className="flex-shrink-0 ml-2 p-1 rounded hover:bg-blue-50 transition-colors"
+                      title="Restore task"
+                    >
+                      <CheckCircle2 className="w-4 h-4 text-green-500" />
+                    </button>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
+
       {/* Chore Comments Sheet */}
       <ChoreCommentsSheet
         chore={commentingChore}
