@@ -716,12 +716,29 @@ export default function FamilyCalendar({ activities }) {
 
   const handleDeleteEvent = () => {
     if (!editingEvent) return;
+    
+    // If this is a recurring event instance, show dialog with options
+    if (editingEvent.isRecurringInstance && editingEvent.recurrence !== 'none') {
+      setRecurringDeleteDialog({ scope: null });
+      return;
+    }
+    
+    // Otherwise show standard confirmation
     if (confirm('Are you sure you want to delete this event?')) {
       deleteEventMutation.mutate({
         calendarId: editingEvent.calendarId,
         eventId: editingEvent.id
       });
     }
+  };
+
+  const handleDeleteRecurringChoice = (scope) => {
+    setRecurringDeleteDialog(null);
+    deleteEventMutation.mutate({
+      calendarId: editingEvent.calendarId,
+      eventId: editingEvent.id,
+      recurringDeleteScope: scope
+    });
   };
 
   // When monthly view is activated, scroll the main container so banner+tabs scroll away
