@@ -1422,6 +1422,9 @@ export default function Meals() {
                                       value={editingGroceryNames[item.id] !== undefined ? editingGroceryNames[item.id] : item.name}
                                       onChange={(e) => {
                                         setEditingGroceryNames(prev => ({ ...prev, [item.id]: e.target.value }));
+                                        // Auto-expand textarea
+                                        e.target.style.height = 'auto';
+                                        e.target.style.height = Math.min(e.target.scrollHeight, 200) + 'px';
                                       }}
                                       onBlur={(e) => {
                                         setFocusedGroceryId(null);
@@ -1431,8 +1434,8 @@ export default function Meals() {
                                         }
                                         setEditingGroceryNames(prev => { const n = { ...prev }; delete n[item.id]; return n; });
                                       }}
-                                      rows={3}
-                                      style={{ fontSize: '16px', resize: 'none', whiteSpace: 'pre-wrap', overflow: 'auto' }}
+                                      rows={2}
+                                      style={{ fontSize: '16px', resize: 'none', whiteSpace: 'pre-wrap', overflow: 'hidden', minHeight: '50px' }}
                                       className={`font-medium bg-white border border-pink-300 rounded px-2 py-1 outline-none w-full ${item.purchased ? 'line-through text-gray-400' : 'text-gray-900'}`}
                                     />
                                  ) : (
