@@ -16,34 +16,53 @@ export function getCommentAuthorMember(
   currentUserMember,
   familyMembers = []
 ) {
+  if (!Array.isArray(familyMembers)) {
+    familyMembers = [];
+  }
+
   // If this is the current user, use their member record directly
-  if (commenterEmail === currentUserEmail && currentUserMember) {
+  if (commenterEmail && commenterEmail === currentUserEmail && currentUserMember) {
     return currentUserMember;
   }
 
   // Strategy 1: Exact email match (case-insensitive)
   if (commenterEmail) {
+    const normalizedEmail = commenterEmail.toLowerCase().trim();
     const emailMatch = familyMembers.find(
-      m => m.email?.toLowerCase() === commenterEmail.toLowerCase()
+      m => m.email && m.email.toLowerCase().trim() === normalizedEmail
     );
     if (emailMatch) return emailMatch;
   }
 
-  // Strategy 2: Exact name match
+  // Strategy 2: Exact name match (case-insensitive)
   if (commenterName) {
+    const normalizedName = commenterName.toLowerCase().trim();
     const nameMatch = familyMembers.find(
-      m => m.name?.toLowerCase() === commenterName.toLowerCase()
+      m => m.name && m.name.toLowerCase().trim() === normalizedName
     );
     if (nameMatch) return nameMatch;
   }
 
-  // Strategy 3: Partial name match (first word or email local part in name)
+  // Strategy 3: First name match in stored name
   if (commenterName) {
-    const firstName = commenterName.split(' ')[0].toLowerCase();
-    const partialMatch = familyMembers.find(m =>
-      m.name?.toLowerCase().includes(firstName)
-    );
-    if (partialMatch) return partialMatch;
+    const firstName = commenterName.split(' ')[0].toLowerCase().trim();
+    if (firstName) {
+      const firstNameMatch = familyMembers.find(m =>
+        m.name && m.name.toLowerCase().includes(firstName)
+      );
+      if (firstNameMatch) return firstNameMatch;
+    }
+  }
+
+  // Strategy 4: Extract first name from email local part and match
+  if (commenterEmail) {
+    const emailLocalPart = commenterEmail.split('@')[0].toLowerCase().trim();
+    if (emailLocalPart) {
+      const emailNameMatch = familyMembers.find(m =>
+        m.name && m.name.toLowerCase().includes(emailLocalPart)
+      );
+      if (emailNameMatch) return emailNameMatch;
+    }
   }
 
   // No match found
