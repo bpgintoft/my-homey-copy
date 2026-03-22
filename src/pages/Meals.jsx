@@ -1434,12 +1434,6 @@ export default function Meals() {
                                       rows={2}
                                       style={{ fontSize: '16px', resize: 'none' }}
                                       className={`font-medium bg-white border border-pink-300 rounded px-2 py-1 outline-none w-full leading-snug ${item.purchased ? 'line-through text-gray-400' : 'text-gray-900'}`}
-                                      onKeyDown={(e) => {
-                                        // Allow Enter to create newlines, not submit
-                                        if (e.key === 'Enter' && !e.shiftKey) {
-                                          // Just let Enter create a newline naturally
-                                        }
-                                      }}
                                     />
                                  ) : (
                                    <p
