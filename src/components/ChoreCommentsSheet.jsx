@@ -31,6 +31,11 @@ function CommentAvatar({ authorName, email, familyMembers }) {
 export default function ChoreCommentsSheet({ chore, open, onOpenChange }) {
   const queryClient = useQueryClient();
   const [newComment, setNewComment] = useState('');
+  const [currentUser, setCurrentUser] = useState(null);
+
+  React.useEffect(() => {
+    base44.auth.me().then(u => setCurrentUser(u)).catch(() => {});
+  }, []);
 
   const { data: familyMembers = [] } = useQuery({
     queryKey: ['familyMembers'],
