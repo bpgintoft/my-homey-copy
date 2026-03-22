@@ -10,9 +10,11 @@ import { formatDistanceToNow } from 'date-fns';
 const AVATAR_COLORS = ['bg-blue-400', 'bg-green-400', 'bg-pink-400', 'bg-purple-400', 'bg-orange-400', 'bg-teal-400'];
 
 function CommentAvatar({ name, email, familyMembers }) {
-  const member = familyMembers.find(m => m.email && email && m.email.toLowerCase() === email.toLowerCase());
-  const displayName = member?.name || name || email?.split('@')[0] || '?';
-  const initials = displayName.slice(0, 2).toUpperCase();
+  const member = familyMembers.find(m => m.email && email && m.email.toLowerCase() === email.toLowerCase())
+    || familyMembers.find(m => m.name && name && m.name.toLowerCase() === name.toLowerCase())
+    || familyMembers.find(m => m.name && email && m.name.toLowerCase() === email.split('@')[0].toLowerCase());
+  const displayName = member?.name || name || email?.split('@')[0] || '';
+  const initials = displayName ? displayName.trim().split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase() : '?';
   const colorIndex = displayName.charCodeAt(0) % AVATAR_COLORS.length;
 
   if (member?.photo_url) {
