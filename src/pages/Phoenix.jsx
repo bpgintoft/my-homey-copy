@@ -77,8 +77,8 @@ export default function PhoenixPage() {
               rgba(251, 146, 60, 0.3) 25px,
               rgba(251, 146, 60, 0.3) 30px
             );
-          -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0) 30%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,1) 70%, rgba(0,0,0,1) 100%);
-          mask-image: linear-gradient(to bottom, rgba(0,0,0,0) 30%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,1) 70%, rgba(0,0,0,1) 100%);
+          -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0) 60%, rgba(0,0,0,0.5) 80%, rgba(0,0,0,1) 95%, rgba(0,0,0,1) 100%);
+          mask-image: linear-gradient(to bottom, rgba(0,0,0,0) 60%, rgba(0,0,0,0.5) 80%, rgba(0,0,0,1) 95%, rgba(0,0,0,1) 100%);
         }
       `}</style>
       <div ref={bannerRef} className="relative h-64 overflow-hidden phoenix-banner">
