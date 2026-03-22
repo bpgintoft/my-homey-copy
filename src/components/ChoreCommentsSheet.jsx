@@ -98,20 +98,26 @@ export default function ChoreCommentsSheet({ chore, open, onOpenChange }) {
             <p className="text-sm text-gray-400 text-center py-8">No comments yet. Be the first!</p>
           ) : (
             comments.map((comment) => (
-              <div key={comment.id} className="bg-gray-50 rounded-lg p-3 text-sm">
-                <div className="flex items-start justify-between gap-2">
-                  <div className="flex-1 min-w-0">
-                    <p className="text-gray-900">{comment.text}</p>
-                    <p className="text-xs text-gray-400 mt-1">
-                      {comment.created_by?.split('@')[0]} · {formatDistanceToNow(new Date(comment.created_date), { addSuffix: true })}
-                    </p>
+              <div key={comment.id} className="flex items-start gap-2">
+                <CommentAvatar name={comment.author_name} email={comment.created_by} familyMembers={familyMembers} />
+                <div className="flex-1 min-w-0 bg-gray-50 rounded-lg p-3 text-sm">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs font-semibold text-gray-600 mb-0.5">
+                        {familyMembers.find(m => m.email?.toLowerCase() === comment.created_by?.toLowerCase())?.name || comment.created_by?.split('@')[0]}
+                      </p>
+                      <p className="text-gray-900">{comment.text}</p>
+                      <p className="text-xs text-gray-400 mt-1">
+                        {formatDistanceToNow(new Date(comment.created_date), { addSuffix: true })}
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => deleteCommentMutation.mutate(comment.id)}
+                      className="text-gray-300 hover:text-red-400 transition-colors flex-shrink-0"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
                   </div>
-                  <button
-                    onClick={() => deleteCommentMutation.mutate(comment.id)}
-                    className="text-gray-300 hover:text-red-400 transition-colors flex-shrink-0"
-                  >
-                    <Trash2 className="w-3.5 h-3.5" />
-                  </button>
                 </div>
               </div>
             ))
