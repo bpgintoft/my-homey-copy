@@ -1261,13 +1261,6 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                                           </div>
                                           <div className="flex-shrink-0 flex items-center gap-0.5">
                                             <button
-                                              className="p-1 rounded hover:bg-gray-100 transition-colors"
-                                              title={chore.synced_google_calendar_id ? "Comments" : "Comments"}
-                                              onClick={() => setCommentingChore(chore)}
-                                            >
-                                              <MessageCircle className="w-4 h-4 text-gray-300 hover:text-blue-400" />
-                                            </button>
-                                            <button
                                               className="p-1 rounded hover:bg-blue-50 transition-colors"
                                               title={chore.synced_google_calendar_id ? "Synced to Google Calendar" : "Sync to Google Calendar"}
                                               onClick={() => setSyncCalendarChore(chore)}
