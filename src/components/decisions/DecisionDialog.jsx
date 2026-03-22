@@ -351,36 +351,32 @@ export default function DecisionDialog({ decision, currentUserEmail, familyMembe
             )}
           </div>
 
-          {/* Status + Save — hidden in focus mode */}
-          {!focusChat && (
-            <>
-              <div className="space-y-2">
-                <p className="text-xs font-semibold text-indigo-200 uppercase tracking-wide">Status</p>
-                <Select value={status} onValueChange={setStatus}>
-                  <SelectTrigger className="border-0 text-white rounded-2xl" style={{background: 'rgba(180,140,255,0.2)', border: '1px solid rgba(200,170,255,0.25)'}}>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="pending">Pending</SelectItem>
-                    <SelectItem value="needs_action">Needs Action</SelectItem>
-                    <SelectItem value="completed">Completed</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="flex gap-2 pt-2 pb-4">
-                <button onClick={handleSave} disabled={uploadingImage} className="flex-1 flex items-center justify-center gap-1.5 bg-white text-[#5B4FCF] font-semibold py-2.5 rounded-full hover:bg-indigo-50 transition-colors disabled:opacity-60">
-                  <Send className="w-4 h-4" />
-                  Save
-                </button>
-                <button onClick={onClose} className="px-4 py-2.5 rounded-full text-white font-medium transition-colors text-sm" style={{background: 'rgba(180,140,255,0.25)', border: '1px solid rgba(200,170,255,0.3)'}}>Cancel</button>
-                {decision.proposer_email === currentUserEmail && (
-                  <button onClick={() => onDelete(decision.id)} className="p-2.5 rounded-full bg-red-400/30 text-red-200 hover:bg-red-400/50 transition-colors">
-                    <Trash2 className="w-4 h-4" />
-                  </button>
-                )}
-              </div>
-            </>
-          )}
+          {/* Status + Save — always visible */}
+          <div className="space-y-2">
+            <p className="text-xs font-semibold text-indigo-200 uppercase tracking-wide">Status</p>
+            <Select value={status} onValueChange={setStatus}>
+              <SelectTrigger className="border-0 text-white rounded-2xl" style={{background: 'rgba(180,140,255,0.2)', border: '1px solid rgba(200,170,255,0.25)'}}>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="pending">Pending</SelectItem>
+                <SelectItem value="needs_action">Needs Action</SelectItem>
+                <SelectItem value="completed">Completed</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="flex gap-2 pt-2 pb-4">
+            <button onClick={handleSave} disabled={uploadingImage} className="flex-1 flex items-center justify-center gap-1.5 bg-white text-[#5B4FCF] font-semibold py-2.5 rounded-full hover:bg-indigo-50 transition-colors disabled:opacity-60">
+              <Send className="w-4 h-4" />
+              Save
+            </button>
+            <button onClick={onClose} className="px-4 py-2.5 rounded-full text-white font-medium transition-colors text-sm" style={{background: 'rgba(180,140,255,0.25)', border: '1px solid rgba(200,170,255,0.3)'}}>Cancel</button>
+            {decision.proposer_email === currentUserEmail && (
+              <button onClick={() => onDelete(decision.id)} className="p-2.5 rounded-full bg-red-400/30 text-red-200 hover:bg-red-400/50 transition-colors">
+                <Trash2 className="w-4 h-4" />
+              </button>
+            )}
+          </div>
         </div>
       </DialogContent>
     </Dialog>
