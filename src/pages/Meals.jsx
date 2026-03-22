@@ -736,9 +736,9 @@ export default function Meals() {
                   variant="outline"
                   className="border-pink-200 text-pink-600 hover:bg-pink-50 px-1.5 flex-shrink-0 text-xs whitespace-nowrap"
                   size="sm"
-                  title="AI Meal Idea"
                 >
-                  <Sparkles className="w-4 h-4" />
+                  <Sparkles className="w-4 h-4 mr-0.5" />
+                  AI Meal Idea
                 </Button>
                 <Popover>
                   <PopoverTrigger asChild>
