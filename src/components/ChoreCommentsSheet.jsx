@@ -42,7 +42,7 @@ export default function ChoreCommentsSheet({ chore, open, onOpenChange }) {
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="right" className="w-full sm:max-w-md flex flex-col">
+      <SheetContent side="bottom" className="h-[85vh] rounded-t-2xl flex flex-col">
         <SheetHeader>
           <SheetTitle className="flex items-center gap-2">
             💬 Comments
@@ -50,7 +50,27 @@ export default function ChoreCommentsSheet({ chore, open, onOpenChange }) {
           {chore && <p className="text-sm text-gray-500 font-normal">{chore.title}</p>}
         </SheetHeader>
 
-        <div className="flex-1 overflow-y-auto mt-4 space-y-3">
+        <form onSubmit={handleSubmit} className="flex gap-2 pt-3 pb-2 border-b border-gray-100">
+          <Textarea
+            placeholder="Add a comment..."
+            value={newComment}
+            onChange={(e) => setNewComment(e.target.value)}
+            rows={2}
+            className="flex-1 resize-none"
+            style={{ fontSize: '16px' }}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                handleSubmit(e);
+              }
+            }}
+          />
+          <Button type="submit" size="icon" disabled={!newComment.trim() || addCommentMutation.isPending}>
+            <Send className="w-4 h-4" />
+          </Button>
+        </form>
+
+        <div className="flex-1 overflow-y-auto mt-3 space-y-3">
           {comments.length === 0 ? (
             <p className="text-sm text-gray-400 text-center py-8">No comments yet. Be the first!</p>
           ) : (
@@ -74,25 +94,6 @@ export default function ChoreCommentsSheet({ chore, open, onOpenChange }) {
             ))
           )}
         </div>
-
-        <form onSubmit={handleSubmit} className="mt-4 flex gap-2 pt-4 border-t border-gray-100">
-          <Textarea
-            placeholder="Add a comment..."
-            value={newComment}
-            onChange={(e) => setNewComment(e.target.value)}
-            rows={2}
-            className="flex-1 resize-none text-sm"
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                handleSubmit(e);
-              }
-            }}
-          />
-          <Button type="submit" size="icon" disabled={!newComment.trim() || addCommentMutation.isPending}>
-            <Send className="w-4 h-4" />
-          </Button>
-        </form>
       </SheetContent>
     </Sheet>
   );
