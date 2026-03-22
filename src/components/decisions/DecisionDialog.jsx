@@ -226,7 +226,8 @@ export default function DecisionDialog({ decision, currentUserEmail, familyMembe
                   return (
                     <div key={i} className={`flex items-end gap-1.5 ${isMe ? 'flex-row-reverse' : 'flex-row'}`}>
                       {(() => {
-                         const commenterMember = getCommentAuthorMember(
+                         // Use myMember directly if this is from current user, otherwise lookup
+                         const commenterMember = isMe ? myMember : getCommentAuthorMember(
                            c.commenter_email,
                            c.commenter_name,
                            currentUserEmail,
