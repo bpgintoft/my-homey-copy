@@ -68,17 +68,17 @@ export default function PhoenixPage() {
           background:
             repeating-linear-gradient(
               45deg,
-              rgba(253, 186, 116, 0.18) 0px,
-              rgba(253, 186, 116, 0.18) 10px,
-              rgba(251, 146, 60, 0.10) 10px,
-              rgba(251, 146, 60, 0.10) 20px,
-              rgba(253, 186, 116, 0.18) 20px,
-              rgba(253, 186, 116, 0.18) 25px,
-              rgba(249, 115, 22, 0.07) 25px,
-              rgba(249, 115, 22, 0.07) 30px
+              rgba(253, 186, 116, 0.45) 0px,
+              rgba(253, 186, 116, 0.45) 10px,
+              rgba(251, 146, 60, 0.25) 10px,
+              rgba(251, 146, 60, 0.25) 20px,
+              rgba(253, 186, 116, 0.45) 20px,
+              rgba(253, 186, 116, 0.45) 25px,
+              rgba(249, 115, 22, 0.15) 25px,
+              rgba(249, 115, 22, 0.15) 30px
             );
-          -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.4) 30%, rgba(0,0,0,0) 55%);
-          mask-image: linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.4) 30%, rgba(0,0,0,0) 55%);
+          -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0.6) 30%, rgba(0,0,0,0) 55%);
+          mask-image: linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0.6) 30%, rgba(0,0,0,0) 55%);
         }
       `}</style>
       <div ref={bannerRef} className="relative h-64 overflow-hidden phoenix-banner">

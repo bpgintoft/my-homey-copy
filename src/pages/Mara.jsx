@@ -68,17 +68,17 @@ export default function MaraPage() {
           background:
             repeating-linear-gradient(
               45deg,
-              rgba(255, 182, 193, 0.18) 0px,
-              rgba(255, 182, 193, 0.18) 10px,
-              rgba(255, 150, 170, 0.10) 10px,
-              rgba(255, 150, 170, 0.10) 20px,
-              rgba(255, 182, 193, 0.18) 20px,
-              rgba(255, 182, 193, 0.18) 25px,
-              rgba(236, 72, 153, 0.07) 25px,
-              rgba(236, 72, 153, 0.07) 30px
+              rgba(255, 182, 193, 0.45) 0px,
+              rgba(255, 182, 193, 0.45) 10px,
+              rgba(255, 150, 170, 0.25) 10px,
+              rgba(255, 150, 170, 0.25) 20px,
+              rgba(255, 182, 193, 0.45) 20px,
+              rgba(255, 182, 193, 0.45) 25px,
+              rgba(236, 72, 153, 0.15) 25px,
+              rgba(236, 72, 153, 0.15) 30px
             );
-          -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.4) 30%, rgba(0,0,0,0) 55%);
-          mask-image: linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.4) 30%, rgba(0,0,0,0) 55%);
+          -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0.6) 30%, rgba(0,0,0,0) 55%);
+          mask-image: linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0.6) 30%, rgba(0,0,0,0) 55%);
         }
       `}</style>
       <div ref={bannerRef} className="relative h-64 overflow-hidden mara-banner">
