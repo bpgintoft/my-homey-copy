@@ -1218,7 +1218,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                         </h4>
                         <Droppable droppableId={timing}>
                           {(provided, snapshot) => (
-                            <div ref={provided.innerRef} {...provided.droppableProps} className={`space-y-2 min-h-[60px] p-2 rounded-lg transition-colors ${snapshot.isDraggingOver ? 'bg-blue-50 border-2 border-blue-300' : 'bg-transparent'}`}>
+                            <div ref={provided.innerRef} {...provided.droppableProps} className={`space-y-2 min-h-[60px] rounded-lg transition-colors ${snapshot.isDraggingOver ? 'bg-blue-50 border-2 border-blue-300 p-1' : 'bg-transparent'}`}>
                               {timingChores.length === 0 && !snapshot.isDraggingOver ? (
                                 <p className="text-xs text-gray-400 text-center py-2">Drop items here</p>
                               ) : (
