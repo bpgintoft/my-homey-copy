@@ -23,6 +23,7 @@ import LinkedMaintenancePanel from './house/LinkedMaintenancePanel';
 import CoAssignedChorePanel from './CoAssignedChorePanel';
 import RescheduleDialog from './house/RescheduleDialog';
 import SyncChoreToCalendarDialog from './SyncChoreToCalendarDialog';
+import ChoreCommentsSheet from './ChoreCommentsSheet';
 
 export default function FamilyMemberDetails({ memberId, memberName, color = 'blue' }) {
   const queryClient = useQueryClient();
