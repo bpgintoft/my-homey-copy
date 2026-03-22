@@ -1418,23 +1418,29 @@ export default function Meals() {
                               <div className="flex-1 min-w-0">
                                  {focusedGroceryId === item.id ? (
                                    <textarea
-                                     autoFocus
-                                     value={editingGroceryNames[item.id] !== undefined ? editingGroceryNames[item.id] : item.name}
-                                     onChange={(e) => {
-                                       setEditingGroceryNames(prev => ({ ...prev, [item.id]: e.target.value }));
-                                     }}
-                                     onBlur={(e) => {
-                                       setFocusedGroceryId(null);
-                                       const newName = e.target.value.trim();
-                                       if (newName && newName !== item.name) {
-                                         updateGroceryNameMutation.mutate({ id: item.id, name: newName });
-                                       }
-                                       setEditingGroceryNames(prev => { const n = { ...prev }; delete n[item.id]; return n; });
-                                     }}
-                                     rows={2}
-                                     style={{ fontSize: '16px', resize: 'none' }}
-                                     className={`font-medium bg-white border border-pink-300 rounded px-2 py-1 outline-none w-full leading-snug ${item.purchased ? 'line-through text-gray-400' : 'text-gray-900'}`}
-                                   />
+                                      autoFocus
+                                      value={editingGroceryNames[item.id] !== undefined ? editingGroceryNames[item.id] : item.name}
+                                      onChange={(e) => {
+                                        setEditingGroceryNames(prev => ({ ...prev, [item.id]: e.target.value }));
+                                      }}
+                                      onBlur={(e) => {
+                                        setFocusedGroceryId(null);
+                                        const newName = e.target.value.trim();
+                                        if (newName && newName !== item.name) {
+                                          updateGroceryNameMutation.mutate({ id: item.id, name: newName });
+                                        }
+                                        setEditingGroceryNames(prev => { const n = { ...prev }; delete n[item.id]; return n; });
+                                      }}
+                                      rows={2}
+                                      style={{ fontSize: '16px', resize: 'none' }}
+                                      className={`font-medium bg-white border border-pink-300 rounded px-2 py-1 outline-none w-full leading-snug ${item.purchased ? 'line-through text-gray-400' : 'text-gray-900'}`}
+                                      onKeyDown={(e) => {
+                                        // Allow Enter to create newlines, not submit
+                                        if (e.key === 'Enter' && !e.shiftKey) {
+                                          // Just let Enter create a newline naturally
+                                        }
+                                      }}
+                                    />
                                  ) : (
                                    <p
                                      onClick={() => setFocusedGroceryId(item.id)}
