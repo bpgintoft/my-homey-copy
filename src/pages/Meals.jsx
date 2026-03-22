@@ -777,7 +777,7 @@ export default function Meals() {
                   size="sm"
                 >
                   <Plus className="w-4 h-4 mr-0.5" />
-                  Add
+                  Add Meal
                 </Button>
               </div>
 
