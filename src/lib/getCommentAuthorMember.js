@@ -54,15 +54,32 @@ export function getCommentAuthorMember(
     }
   }
 
-  // Strategy 4: Extract first name from email local part and match
+  // Strategy 4: Extract first name from email local part (e.g., "bpgintoft" → "bryan")
+  // and match against family member names
   if (commenterEmail) {
     const emailLocalPart = commenterEmail.split('@')[0].toLowerCase().trim();
+    // Try to extract first name from email (bpgintoft → "b", "bp", or full local part)
     if (emailLocalPart) {
-      const emailNameMatch = familyMembers.find(m =>
-        m.name && m.name.toLowerCase().includes(emailLocalPart)
-      );
+      const emailNameMatch = familyMembers.find(m => {
+        if (!m.name) return false;
+        const mNameLower = m.name.toLowerCase();
+        // Match if email local part contains member's first name
+        return emailLocalPart.includes(mNameLower.split(' ')[0]);
+      });
       if (emailNameMatch) return emailNameMatch;
     }
+  }
+
+  // Strategy 5: Match by any family member's email, even if commenterEmail is in different format
+  if (commenterEmail) {
+    const match = familyMembers.find(m => {
+      if (!m.email) return false;
+      // Check if the email domains match and local part partially matches
+      const [commLocal] = commenterEmail.toLowerCase().split('@');
+      const [memLocal] = m.email.toLowerCase().split('@');
+      return commLocal === memLocal || m.email.toLowerCase().includes(commLocal);
+    });
+    if (match) return match;
   }
 
   // No match found
