@@ -98,7 +98,9 @@ export default function ChoreCommentsSheet({ chore, open, onOpenChange }) {
   });
 
   const deleteCommentMutation = useMutation({
-    mutationFn: (id) => base44.entities.ChoreComment.delete(id),
+    mutationFn: async (id) => {
+      await base44.entities.ChoreComment.delete(id);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries(['choreComments', chore?.id]);
       queryClient.invalidateQueries(['choreCommentCounts']);
