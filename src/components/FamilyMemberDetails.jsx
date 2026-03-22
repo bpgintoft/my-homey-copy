@@ -686,9 +686,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                 onClick={() => setExpandedSection(key)}
                 className="relative flex items-center gap-2 p-3 rounded-lg border bg-white hover:shadow-md transition-shadow text-left w-full overflow-hidden"
                 >
-                <span className="absolute right-[-8px] top-1/2 -translate-y-1/2 text-[80px] opacity-[0.07] pointer-events-none select-none leading-none" aria-hidden="true">
-                  {sectionIconMap[key]?.props?.children}
-                </span>
+
                 {icon}
                 <span className="font-semibold text-sm text-gray-800 leading-tight">{label}</span>
                 </button>
@@ -697,7 +695,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                   onClick={() => setShowActivities(true)}
                   className="relative flex items-center gap-2 p-3 rounded-lg border bg-white hover:shadow-md transition-shadow text-left w-full overflow-hidden"
                 >
-                  <span className="absolute right-[-8px] top-1/2 -translate-y-1/2 text-[80px] opacity-[0.07] pointer-events-none select-none leading-none">📊</span>
+
                   <span className="text-lg flex-shrink-0">📊</span>
                   <span className="font-semibold text-sm text-gray-800 leading-tight">Activities</span>
                 </button>
@@ -705,7 +703,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                   onClick={() => setShowFinancials(true)}
                   className="relative flex items-center gap-2 p-3 rounded-lg border bg-white hover:shadow-md transition-shadow text-left w-full overflow-hidden"
                 >
-                  <span className="absolute right-[-8px] top-1/2 -translate-y-1/2 text-[80px] opacity-[0.07] pointer-events-none select-none leading-none">💰</span>
+
                   <span className="text-lg flex-shrink-0">💰</span>
                   <span className="font-semibold text-sm text-gray-800 leading-tight">Financials</span>
                 </button>
