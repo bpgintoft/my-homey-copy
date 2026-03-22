@@ -715,51 +715,61 @@ export default function Meals() {
 
             <div className="space-y-4">
               <div className="flex gap-0 items-start justify-between w-full">
-                <Button
-                  onClick={() => setShowFilters(!showFilters)}
-                  variant="outline"
-                  className="border-pink-200 text-pink-600 hover:bg-pink-50 px-2 flex-shrink-0 text-xs"
-                  size="sm"
-                >
-                  Filter
-                </Button>
-                <Button
-                  onClick={() => setShowFavoritesOnly(!showFavoritesOnly)}
-                  variant="outline"
-                  className={`${showFavoritesOnly ? 'bg-pink-100 border-pink-300' : 'border-pink-200'} text-pink-600 hover:bg-pink-50 px-1.5 flex-shrink-0`}
-                  size="sm"
-                >
-                  <Star className={`w-4 h-4 ${showFavoritesOnly ? 'fill-pink-600' : ''}`} />
-                </Button>
-                <Button
-                  onClick={() => generateMealPlanMutation.mutate()}
-                  disabled={generateMealPlanMutation.isPending}
-                  variant="outline"
-                  className="border-pink-200 text-pink-600 hover:bg-pink-50 px-2 flex-shrink-0 text-xs whitespace-nowrap"
-                  size="sm"
-                >
-                  <Sparkles className="w-4 h-4 mr-0.5" />
-                  AI Meal Idea
-                </Button>
-                <Popover>
-                  <PopoverTrigger asChild>
+                {!searchExpanded ? (
+                  <>
                     <Button
+                      onClick={() => setShowFilters(!showFilters)}
+                      variant="outline"
+                      className="border-pink-200 text-pink-600 hover:bg-pink-50 px-2 flex-shrink-0 text-xs"
+                      size="sm"
+                    >
+                      Filter
+                    </Button>
+                    <Button
+                      onClick={() => setShowFavoritesOnly(!showFavoritesOnly)}
+                      variant="outline"
+                      className={`${showFavoritesOnly ? 'bg-pink-100 border-pink-300' : 'border-pink-200'} text-pink-600 hover:bg-pink-50 px-1.5 flex-shrink-0`}
+                      size="sm"
+                    >
+                      <Star className={`w-4 h-4 ${showFavoritesOnly ? 'fill-pink-600' : ''}`} />
+                    </Button>
+                    <Button
+                      onClick={() => generateMealPlanMutation.mutate()}
+                      disabled={generateMealPlanMutation.isPending}
+                      variant="outline"
+                      className="border-pink-200 text-pink-600 hover:bg-pink-50 px-2 flex-shrink-0 text-xs whitespace-nowrap"
+                      size="sm"
+                    >
+                      <Sparkles className="w-4 h-4 mr-0.5" />
+                      AI Meal Idea
+                    </Button>
+                    <Button
+                      onClick={() => setSearchExpanded(true)}
                       variant="outline"
                       size="sm"
                       className="border-pink-200 text-pink-600 hover:bg-pink-50 px-1.5 flex-shrink-0"
                     >
                       <Search className="w-4 h-4" />
                     </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-64 p-3">
-                    <div className="relative">
+                    <Button
+                      onClick={() => setShowMealDialog(true)}
+                      className="bg-gradient-to-r from-[#E91E8C] to-[#D01576] text-white px-2 flex-shrink-0 text-xs"
+                      size="sm"
+                    >
+                      <Plus className="w-4 h-4 mr-0.5" />
+                      Add Meal
+                    </Button>
+                  </>
+                ) : (
+                  <div className="w-full flex gap-2">
+                    <div className="relative flex-1">
                       <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 flex-shrink-0" />
                       <Input
                         autoFocus
                         placeholder="Search recipes..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="pl-9 text-sm border-pink-200 focus:border-pink-500"
+                        className="pl-9 text-sm border-pink-200 focus:border-pink-500 h-9"
                       />
                       {searchQuery && (
                         <button
@@ -770,16 +780,16 @@ export default function Meals() {
                         </button>
                       )}
                     </div>
-                  </PopoverContent>
-                </Popover>
-                <Button
-                  onClick={() => setShowMealDialog(true)}
-                  className="bg-gradient-to-r from-[#E91E8C] to-[#D01576] text-white px-2 flex-shrink-0 text-xs"
-                  size="sm"
-                >
-                  <Plus className="w-4 h-4 mr-0.5" />
-                  Add Meal
-                </Button>
+                    <Button
+                      onClick={() => { setSearchExpanded(false); setSearchQuery(''); }}
+                      variant="outline"
+                      className="border-pink-200 text-pink-600 hover:bg-pink-50 px-2 flex-shrink-0 text-xs"
+                      size="sm"
+                    >
+                      Cancel
+                    </Button>
+                  </div>
+                )}
               </div>
 
               <ProteinTypeFilter 
