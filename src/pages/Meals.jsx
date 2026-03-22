@@ -734,18 +734,18 @@ export default function Meals() {
                   onClick={() => generateMealPlanMutation.mutate()}
                   disabled={generateMealPlanMutation.isPending}
                   variant="outline"
-                  className="border-pink-200 text-pink-600 hover:bg-pink-50 px-2 flex-shrink-0 text-xs whitespace-nowrap"
+                  className="border-pink-200 text-pink-600 hover:bg-pink-50 px-1.5 flex-shrink-0 text-xs whitespace-nowrap"
                   size="sm"
+                  title="AI Meal Idea"
                 >
-                  <Sparkles className="w-4 h-4 mr-1" />
-                  AI Meal Idea
+                  <Sparkles className="w-4 h-4" />
                 </Button>
                 <Popover>
                   <PopoverTrigger asChild>
                     <Button
                       variant="outline"
                       size="sm"
-                      className="border-pink-200 text-pink-600 hover:bg-pink-50 px-2 flex-shrink-0"
+                      className="border-pink-200 text-pink-600 hover:bg-pink-50 px-1.5 flex-shrink-0"
                     >
                       <Search className="w-4 h-4" />
                     </Button>
@@ -773,11 +773,11 @@ export default function Meals() {
                 </Popover>
                 <Button
                   onClick={() => setShowMealDialog(true)}
-                  className="bg-gradient-to-r from-[#E91E8C] to-[#D01576] text-white px-2 flex-shrink-0 text-xs"
+                  className="bg-gradient-to-r from-[#E91E8C] to-[#D01576] text-white px-1.5 flex-shrink-0 text-xs"
                   size="sm"
                 >
-                  <Plus className="w-4 h-4 mr-1" />
-                  Add Meal
+                  <Plus className="w-4 h-4 mr-0.5" />
+                  Add
                 </Button>
               </div>
 
