@@ -30,9 +30,16 @@ export default function ChoreCommentsSheet({ chore, open, onOpenChange }) {
   const queryClient = useQueryClient();
   const [newComment, setNewComment] = useState('');
   const [currentUser, setCurrentUser] = useState(null);
+  const [currentUserMember, setCurrentUserMember] = useState(null);
 
   useEffect(() => {
-    base44.auth.me().then(u => setCurrentUser(u)).catch(() => {});
+    base44.auth.me().then(u => {
+      setCurrentUser(u);
+      // Fetch current user's family member record for avatar lookup
+      base44.entities.FamilyMember.filter({ email: u.email }).then(members => {
+        if (members.length > 0) setCurrentUserMember(members[0]);
+      }).catch(() => {});
+    }).catch(() => {});
   }, []);
 
   const { data: familyMembers = [] } = useQuery({
