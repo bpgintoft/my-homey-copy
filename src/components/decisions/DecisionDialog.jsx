@@ -210,14 +210,12 @@ export default function DecisionDialog({ decision, currentUserEmail, familyMembe
             <div className="space-y-2">
               <div className="flex items-center justify-between select-none">
                 <p className="text-xs font-semibold text-indigo-200 uppercase tracking-wide">Discussion</p>
-                {focusChat && (
-                  <button
-                    onClick={(e) => { e.stopPropagation(); setFocusChat(false); }}
-                    className="text-indigo-300 text-xs hover:text-white"
-                  >
-                    ↕ collapse
-                  </button>
-                )}
+                <button
+                  onClick={() => setFocusChat(f => !f)}
+                  className="text-indigo-300 text-xs hover:text-white"
+                >
+                  {focusChat ? '↕ collapse' : '⤢ expand'}
+                </button>
               </div>
               <div className={`space-y-2 overflow-y-auto transition-all ${focusChat ? 'max-h-[65vh]' : 'max-h-48'}`}>
                 {localComments.map((c, i) => {
