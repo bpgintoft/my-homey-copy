@@ -1216,16 +1216,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                                   const choreEl = (provided, snapshot) => {
                                     const child = (
                                       <div ref={provided.innerRef} {...provided.draggableProps} className={`relative rounded-lg ${itemBg} ${snapshot.isDragging ? 'shadow-lg opacity-90' : ''}`}>
-                                          <button
-                                            className={`absolute -top-1.5 -right-1.5 z-10 flex items-center gap-0.5 rounded-full px-1 py-0.5 leading-none shadow transition-colors ${commentCountByChoreId[chore.id] > 0 ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-400'}`}
-                                            onClick={() => setCommentingChore(chore)}
-                                            title="Comments"
-                                          >
-                                            <MessageCircle className="w-2.5 h-2.5" />
-                                            {commentCountByChoreId[chore.id] > 0 && (
-                                              <span className="text-[9px] font-bold">{commentCountByChoreId[chore.id]}</span>
-                                            )}
-                                          </button>
+
                                           <div className="flex items-center gap-3 p-3">
                                           <div {...(!chore.maintenance_task_id ? provided.dragHandleProps : {})} className={`flex-shrink-0 ${chore.maintenance_task_id ? 'opacity-0 pointer-events-none' : 'cursor-grab active:cursor-grabbing'}`}>
                                             <GripVertical className="w-4 h-4 text-gray-400" />
