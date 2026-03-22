@@ -1721,12 +1721,23 @@ export default function Meals() {
                 value={newMeal.ingredients?.join('\n') || ''}
                 onChange={(e) => setNewMeal({ ...newMeal, ingredients: e.target.value.split('\n').filter(i => i.trim()) })}
                 rows={4}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && !e.shiftKey) {
+                    // Allow Enter to create newlines, don't submit
+                    e.currentTarget.form?.dispatchEvent(new Event('submit'));
+                  }
+                }}
               />
               <Textarea
                 placeholder="Cooking instructions"
                 value={newMeal.instructions || ''}
                 onChange={(e) => setNewMeal({ ...newMeal, instructions: e.target.value })}
                 rows={4}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && e.shiftKey) {
+                    // Shift+Enter moves to next field, regular Enter creates newline
+                  }
+                }}
               />
               <div className="grid grid-cols-3 gap-4">
                 <Input
