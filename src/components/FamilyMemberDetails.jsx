@@ -1228,8 +1228,8 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                                       <div ref={provided.innerRef} {...provided.draggableProps} className={`relative rounded-lg ${itemBg} ${snapshot.isDragging ? 'shadow-lg opacity-90' : ''}`}>
 
                                           <div className="flex items-center gap-3 p-3">
-                                          <div {...(!chore.maintenance_task_id ? provided.dragHandleProps : {})} className={`flex-shrink-0 ${chore.maintenance_task_id ? 'opacity-0 pointer-events-none' : 'cursor-grab active:cursor-grabbing'}`}>
-                                            <GripVertical className="w-4 h-4 text-gray-400" />
+                                          <div {...(!chore.maintenance_task_id && isReorderingChores ? provided.dragHandleProps : {})} className={`flex-shrink-0 transition-all ${isReorderingChores && !chore.maintenance_task_id ? 'cursor-grab active:cursor-grabbing opacity-100 w-5' : 'opacity-0 w-0 overflow-hidden'}`}>
+                                             <GripVertical className="w-4 h-4 text-gray-400" />
                                           </div>
                                           <button className="flex-shrink-0" onClick={() => {
                                             if (!chore.is_completed && chore.maintenance_task_id) {
