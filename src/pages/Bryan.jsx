@@ -58,6 +58,26 @@ export default function BryanPage() {
           background-size: 100% 100%, 15px 15px;
           background-position: 0 0, 7px 7px;
         }
+        .bryan-page-stripes {
+          position: fixed;
+          inset: 0;
+          pointer-events: none;
+          z-index: 0;
+          background:
+            repeating-linear-gradient(
+              45deg,
+              rgba(147, 197, 253, 0.18) 0px,
+              rgba(147, 197, 253, 0.18) 10px,
+              rgba(96, 165, 250, 0.10) 10px,
+              rgba(96, 165, 250, 0.10) 20px,
+              rgba(147, 197, 253, 0.18) 20px,
+              rgba(147, 197, 253, 0.18) 25px,
+              rgba(59, 130, 246, 0.07) 25px,
+              rgba(59, 130, 246, 0.07) 30px
+            );
+          -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.4) 30%, rgba(0,0,0,0) 55%);
+          mask-image: linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.4) 30%, rgba(0,0,0,0) 55%);
+        }
       `}</style>
       <div ref={bannerRef} className="relative h-64 overflow-hidden bryan-banner">
         <div className="relative z-10 h-full flex items-center px-6 sm:px-8">
