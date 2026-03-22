@@ -1593,6 +1593,12 @@ export default function Meals() {
                 onChange={(e) => setPastedMealText(e.target.value)}
                 rows={2}
                 className="text-sm"
+                onKeyDown={(e) => {
+                  // Allow Enter to create newlines naturally
+                  if (e.key === 'Enter' && !e.shiftKey) {
+                    // Just let it through, don't prevent default
+                  }
+                }}
               />
               <Button
                 onClick={() => parseMealFromTextMutation.mutate(pastedMealText)}
