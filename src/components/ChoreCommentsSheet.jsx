@@ -72,7 +72,14 @@ export default function ChoreCommentsSheet({ chore, open, onOpenChange }) {
 
   const { data: comments = [] } = useQuery({
     queryKey: ['choreComments', chore?.id],
-    queryFn: () => base44.entities.ChoreComment.filter({ chore_id: chore.id }, '-created_date'),
+    queryFn: async () => {
+      if (!chore?.id) return [];
+      const choreIds = [chore.id, ...(chore.linked_chore_ids || [])];
+      const allComments = await Promise.all(
+        choreIds.map(id => base44.entities.ChoreComment.filter({ chore_id: id }, '-created_date'))
+      );
+      return allComments.flat().sort((a, b) => new Date(b.created_date) - new Date(a.created_date));
+    },
     enabled: !!chore?.id && open,
   });
 
