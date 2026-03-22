@@ -3,7 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Trash2, Send, Pencil, X, Check, ImagePlus } from 'lucide-react';
+import { Trash2, Send, Pencil, X, Check, ImagePlus, Calendar } from 'lucide-react';
 import { format } from 'date-fns';
 import { base44 } from '@/api/base44Client';
 import { getCommentAuthorMember } from '@/lib/getCommentAuthorMember';
@@ -44,6 +44,7 @@ export default function DecisionDialog({ decision, currentUserEmail, familyMembe
 
   const [myVote, setMyVote] = useState(decision[myVoteKey] || '');
   const [status, setStatus] = useState(decision.status || 'pending');
+  const [deadline, setDeadline] = useState(decision.deadline || '');
   const [newComment, setNewComment] = useState('');
   const [pendingImages, setPendingImages] = useState([]);
   const [uploadingImage, setUploadingImage] = useState(false);
@@ -114,7 +115,7 @@ export default function DecisionDialog({ decision, currentUserEmail, familyMembe
     const currentUnread = decision.unread_by || [];
     const newUnread = [...new Set([...currentUnread, ...otherEmails])];
 
-    const updates = { ...allVotes, status: finalStatus, is_archived: isArchived, last_updated_by_email: currentUserEmail, unread_by: newUnread };
+    const updates = { ...allVotes, status: finalStatus, deadline: deadline || null, is_archived: isArchived, last_updated_by_email: currentUserEmail, unread_by: newUnread };
 
     let updatedComments = [...localComments];
     if (newComment.trim() || pendingImages.length > 0) {
@@ -158,6 +159,12 @@ export default function DecisionDialog({ decision, currentUserEmail, familyMembe
             <DialogTitle className="text-base leading-snug text-white pr-6">{decision.title}</DialogTitle>
             {decision.description && (
               <p className="text-sm text-indigo-200 mt-0.5">{decision.description}</p>
+            )}
+            {deadline && (
+              <p className="text-xs text-indigo-300 mt-2 flex items-center gap-1">
+                <Calendar className="w-3 h-3" />
+                Due: {format(new Date(deadline + 'T00:00:00'), 'MMM d, yyyy')}
+              </p>
             )}
           </DialogHeader>
         )}
@@ -350,7 +357,7 @@ export default function DecisionDialog({ decision, currentUserEmail, familyMembe
             )}
           </div>
 
-          {/* Status + Save — always visible */}
+          {/* Status + Deadline — always visible */}
           <div className="space-y-2">
             <p className="text-xs font-semibold text-indigo-200 uppercase tracking-wide">Status</p>
             <Select value={status} onValueChange={setStatus}>
@@ -363,6 +370,18 @@ export default function DecisionDialog({ decision, currentUserEmail, familyMembe
                 <SelectItem value="completed">Completed</SelectItem>
               </SelectContent>
             </Select>
+          </div>
+          <div className="space-y-2">
+            <p className="text-xs font-semibold text-indigo-200 uppercase tracking-wide">Deadline (optional)</p>
+            <input
+              type="date"
+              value={deadline}
+              onChange={e => setDeadline(e.target.value)}
+              className="w-full px-3 py-2.5 rounded-2xl border-0 text-white bg-transparent text-sm"
+              style={{background: 'rgba(180,140,255,0.2)', border: '1px solid rgba(200,170,255,0.25)', color: 'white'}}
+              onFocus={(e) => e.target.style.backgroundColor = 'rgba(180,140,255,0.3)'}
+              onBlur={(e) => e.target.style.backgroundColor = 'rgba(180,140,255,0.2)'}
+            />
           </div>
           <div className="flex gap-2 pt-2 pb-4">
             <button onClick={handleSave} disabled={uploadingImage} className="flex-1 flex items-center justify-center gap-1.5 bg-white text-[#5B4FCF] font-semibold py-2.5 rounded-full hover:bg-indigo-50 transition-colors disabled:opacity-60">
