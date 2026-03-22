@@ -165,6 +165,18 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
     queryFn: () => base44.entities.MaintenanceTask.list(),
   });
 
+  const { data: allChoreComments = [] } = useQuery({
+    queryKey: ['choreCommentCounts'],
+    queryFn: () => base44.entities.ChoreComment.list(),
+  });
+
+  const commentCountByChoreId = React.useMemo(() => {
+    return allChoreComments.reduce((acc, c) => {
+      acc[c.chore_id] = (acc[c.chore_id] || 0) + 1;
+      return acc;
+    }, {});
+  }, [allChoreComments]);
+
   const contacts = allContacts.filter(c => 
     !c.linked_to_member_ids || 
     c.linked_to_member_ids.length === 0 || 
