@@ -1431,9 +1431,9 @@ export default function Meals() {
                                         }
                                         setEditingGroceryNames(prev => { const n = { ...prev }; delete n[item.id]; return n; });
                                       }}
-                                      rows={2}
-                                      style={{ fontSize: '16px', resize: 'none', whiteSpace: 'pre-wrap' }}
-                                      className={`font-medium bg-white border border-pink-300 rounded px-2 py-1 outline-none w-full leading-snug ${item.purchased ? 'line-through text-gray-400' : 'text-gray-900'}`}
+                                      rows={3}
+                                      style={{ fontSize: '16px', resize: 'none', whiteSpace: 'pre-wrap', overflow: 'auto' }}
+                                      className={`font-medium bg-white border border-pink-300 rounded px-2 py-1 outline-none w-full ${item.purchased ? 'line-through text-gray-400' : 'text-gray-900'}`}
                                     />
                                  ) : (
                                    <p
