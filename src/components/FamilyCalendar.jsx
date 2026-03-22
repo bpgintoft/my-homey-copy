@@ -1380,6 +1380,24 @@ export default function FamilyCalendar({ activities }) {
         </DialogContent>
       </Dialog>
 
+      {/* Recurring Delete Dialog */}
+      <Dialog open={!!recurringDeleteDialog} onOpenChange={(open) => !open && setRecurringDeleteDialog(null)}>
+        <DialogContent className="sm:max-w-sm">
+          <DialogHeader>
+            <DialogTitle>Delete Recurring Event</DialogTitle>
+          </DialogHeader>
+          <p className="text-sm text-gray-600">This is a recurring event. Do you want to delete only this occurrence, or this and all following events?</p>
+          <DialogFooter className="flex-col sm:flex-row gap-2 mt-2">
+            <Button variant="outline" className="flex-1" onClick={() => handleDeleteRecurringChoice('this')}>
+              Delete This Event Only
+            </Button>
+            <Button variant="destructive" className="flex-1" onClick={() => handleDeleteRecurringChoice('future')}>
+              Delete All Future Events
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       {/* Add Event Dialog */}
       <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
         <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto">
