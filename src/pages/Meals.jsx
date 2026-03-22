@@ -1722,7 +1722,7 @@ export default function Meals() {
               <Textarea
                 placeholder="Ingredients (one per line)"
                 value={newMeal.ingredients?.join('\n') || ''}
-                onChange={(e) => setNewMeal({ ...newMeal, ingredients: e.target.value.split('\n').filter(i => i.trim()) })}
+                onChange={(e) => setNewMeal({ ...newMeal, ingredients: e.target.value.split('\n') })}
                 rows={4}
               />
               <Textarea
