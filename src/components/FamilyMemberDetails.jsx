@@ -197,6 +197,10 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
   // Mutations
   const createChoreMutation = useMutation({
     mutationFn: async ({ choreData, coAssignees }) => {
+      // If no date is set, assign sort_order of 0 to place at top
+      if (!choreData.next_due) {
+        choreData.sort_order = 0;
+      }
       // Create the chore for the current member
       const primaryChore = await base44.entities.Chore.create(choreData);
       
