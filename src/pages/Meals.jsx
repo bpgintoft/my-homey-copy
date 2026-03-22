@@ -713,7 +713,7 @@ export default function Meals() {
             </h2>
 
             <div className="space-y-4">
-              <div className="flex gap-0.5 items-start overflow-x-auto">
+              <div className="flex gap-0.75 items-start overflow-x-auto">
                 <Button
                   onClick={() => setShowFilters(!showFilters)}
                   variant="outline"
