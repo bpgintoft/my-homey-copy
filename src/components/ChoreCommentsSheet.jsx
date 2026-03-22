@@ -10,9 +10,12 @@ import { formatDistanceToNow } from 'date-fns';
 const AVATAR_COLORS = ['bg-blue-400', 'bg-green-400', 'bg-pink-400', 'bg-purple-400', 'bg-orange-400', 'bg-teal-400'];
 
 function CommentAvatar({ authorName, email, familyMembers }) {
-  // Try to match by email first, then by name stored on the comment
+  const emailLocalPart = email?.split('@')[0]?.toLowerCase() || '';
+  // Try to match by email, then by stored author_name, then by email local part vs member name
   const member = (email && familyMembers.find(m => m.email && m.email.toLowerCase() === email.toLowerCase()))
-    || (authorName && familyMembers.find(m => m.name && m.name.toLowerCase() === authorName.toLowerCase()));
+    || (authorName && familyMembers.find(m => m.name && m.name.toLowerCase() === authorName.toLowerCase()))
+    || (emailLocalPart && familyMembers.find(m => m.name && m.name.toLowerCase() === emailLocalPart))
+    || (emailLocalPart && familyMembers.find(m => m.name && emailLocalPart.includes(m.name.toLowerCase())));
 
   const displayName = member?.name || authorName || email?.split('@')[0] || '?';
   const initials = displayName.trim().split(' ').filter(Boolean).map(w => w[0]).join('').slice(0, 2).toUpperCase() || '?';
