@@ -32,7 +32,7 @@ export default function PhoenixPage() {
   useSwipe(handleSwipe, bannerRef);
 
   return (
-    <div className="min-h-screen bg-[#FFE0CC]">
+    <div className="min-h-screen" style={{ background: 'linear-gradient(to bottom, #FFE0CC 0%, #FFB380 100%)' }}>
       <style>{`
         .phoenix-banner {
           background: linear-gradient(135deg, #FB923C 0%, #F97316 50%, #EA580C 100%);
