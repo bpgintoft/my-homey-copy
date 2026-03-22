@@ -1274,13 +1274,15 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                                                 <Trash2 className="w-4 h-4 text-red-500" />
                                               </button>
                                             )}
-                                            <button
-                                              className="p-1 rounded hover:bg-blue-50 transition-colors"
-                                              title={chore.synced_google_calendar_id ? "Synced to Google Calendar" : "Sync to Google Calendar"}
-                                              onClick={() => setSyncCalendarChore(chore)}
-                                            >
-                                              <CalendarPlus className={`w-4 h-4 ${chore.synced_google_calendar_id ? 'text-green-500' : 'text-blue-400'}`} />
-                                            </button>
+                                            {editingChoreId === chore.id && (
+                                              <button
+                                                className="p-1 rounded hover:bg-blue-50 transition-colors"
+                                                title={chore.synced_google_calendar_id ? "Synced to Google Calendar" : "Sync to Google Calendar"}
+                                                onClick={() => setSyncCalendarChore(chore)}
+                                              >
+                                                <CalendarPlus className={`w-4 h-4 ${chore.synced_google_calendar_id ? 'text-green-500' : 'text-blue-400'}`} />
+                                              </button>
+                                            )}
                                             <button
                                               className="p-1 rounded hover:bg-gray-100 transition-colors relative"
                                               title="Comments"
