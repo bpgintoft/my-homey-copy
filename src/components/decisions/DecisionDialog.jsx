@@ -207,7 +207,10 @@ export default function DecisionDialog({ decision, currentUserEmail, familyMembe
 
           {/* Comments chat log */}
           {localComments.length > 0 && (
-            <div className="space-y-2">
+            <div className="space-y-2" onClick={(e) => {
+                if (e.target.closest('button') || e.target.closest('textarea') || e.target.closest('a') || window.getSelection()?.toString()) return;
+                setFocusChat(f => !f);
+              }}>
               <div className="flex items-center justify-between select-none">
                 <p className="text-xs font-semibold text-indigo-200 uppercase tracking-wide">Discussion</p>
                 <button
