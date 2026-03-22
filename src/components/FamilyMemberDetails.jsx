@@ -1231,7 +1231,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                                           <div {...(!chore.maintenance_task_id && isReorderingChores ? provided.dragHandleProps : {})} className={`flex-shrink-0 transition-all ${isReorderingChores && !chore.maintenance_task_id ? 'cursor-grab active:cursor-grabbing opacity-100 w-5' : 'opacity-0 w-0 overflow-hidden'}`}>
                                              <GripVertical className="w-4 h-4 text-gray-400" />
                                           </div>
-                                          <button className="flex-shrink-0" onClick={() => {
+                                          <button className="flex-shrink-0 -ml-1" onClick={() => {
                                             if (!chore.is_completed && chore.maintenance_task_id) {
                                               setRescheduleChore(chore);
                                             } else {
