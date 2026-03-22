@@ -1138,6 +1138,13 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                 >
                   {isReorderingChores ? <><Check className="w-3 h-3" /> Done</> : <><GripVertical className="w-3 h-3" /> Reorder</>}
                 </button>
+                <button
+                  onClick={() => setShowArchive(true)}
+                  className="flex items-center gap-1 text-xs px-2.5 py-1 rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors font-medium"
+                  title="View completed tasks"
+                >
+                  <Archive className="w-3 h-3" />
+                </button>
                 <Dialog open={dialogOpen.chore} onOpenChange={(open) => setDialogOpen({ ...dialogOpen, chore: open })}>
                 <DialogTrigger asChild>
                   <Button size="sm">
