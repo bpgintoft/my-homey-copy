@@ -1123,7 +1123,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
       </Dialog>
 
       {/* Chores Dialog */}
-      <Dialog open={expandedSection === 'chores'} onOpenChange={(open) => !open && setExpandedSection(null)}>
+      <Dialog open={expandedSection === 'chores'} onOpenChange={(open) => { if (!open) { setExpandedSection(null); setIsReorderingChores(false); } }}>
         <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto top-4 translate-y-0">
           <DialogHeader>
             <DialogTitle className="flex items-center justify-between">
