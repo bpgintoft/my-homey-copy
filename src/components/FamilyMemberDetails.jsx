@@ -1260,7 +1260,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                                               </div>
                                             )}
                                           </div>
-                                          <div className="flex-shrink-0 flex flex-col items-center gap-1">
+                                          <div className="flex-shrink-0 flex items-center gap-0.5">
                                             {chore.maintenance_task_id ? (
                                               <button
                                                 onClick={() => setLinkedMaintenanceSheetChore(chore)}
@@ -1272,15 +1272,6 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                                             ) : (
                                               <button className="p-1 rounded hover:bg-red-50 transition-colors" onClick={() => deleteChoreMutation.mutate({ id: chore.id, linked_chore_ids: chore.linked_chore_ids, chore_title: chore.title })}>
                                                 <Trash2 className="w-4 h-4 text-red-500" />
-                                              </button>
-                                            )}
-                                            {editingChoreId === chore.id && (
-                                              <button
-                                                className="p-1 rounded hover:bg-blue-50 transition-colors"
-                                                title={chore.synced_google_calendar_id ? "Synced to Google Calendar" : "Sync to Google Calendar"}
-                                                onClick={() => setSyncCalendarChore(chore)}
-                                              >
-                                                <CalendarPlus className={`w-4 h-4 ${chore.synced_google_calendar_id ? 'text-green-500' : 'text-blue-400'}`} />
                                               </button>
                                             )}
                                             <button
@@ -1295,6 +1286,15 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                                                 </span>
                                               )}
                                             </button>
+                                            {editingChoreId === chore.id && (
+                                              <button
+                                                className="p-1 rounded hover:bg-blue-50 transition-colors"
+                                                title={chore.synced_google_calendar_id ? "Synced to Google Calendar" : "Sync to Google Calendar"}
+                                                onClick={() => setSyncCalendarChore(chore)}
+                                              >
+                                                <CalendarPlus className={`w-4 h-4 ${chore.synced_google_calendar_id ? 'text-green-500' : 'text-blue-400'}`} />
+                                              </button>
+                                            )}
                                           </div>
                                         </div>
                                       </div>
