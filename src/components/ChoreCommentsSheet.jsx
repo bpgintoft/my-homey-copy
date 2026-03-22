@@ -33,7 +33,7 @@ export default function ChoreCommentsSheet({ chore, open, onOpenChange }) {
   const [newComment, setNewComment] = useState('');
   const [currentUser, setCurrentUser] = useState(null);
 
-  React.useEffect(() => {
+  useEffect(() => {
     base44.auth.me().then(u => setCurrentUser(u)).catch(() => {});
   }, []);
 
