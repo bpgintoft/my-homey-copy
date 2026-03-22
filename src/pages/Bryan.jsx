@@ -77,8 +77,8 @@ export default function BryanPage() {
               rgba(96, 165, 250, 0.3) 25px,
               rgba(96, 165, 250, 0.3) 30px
             );
-          -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.3) 40%, rgba(0,0,0,0.8) 70%, rgba(0,0,0,1) 100%);
-          mask-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.3) 40%, rgba(0,0,0,0.8) 70%, rgba(0,0,0,1) 100%);
+          -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0) 30%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,1) 70%, rgba(0,0,0,1) 100%);
+          mask-image: linear-gradient(to bottom, rgba(0,0,0,0) 30%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,1) 70%, rgba(0,0,0,1) 100%);
         }
       `}</style>
       <div ref={bannerRef} className="relative h-64 overflow-hidden bryan-banner">
