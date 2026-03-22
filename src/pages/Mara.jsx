@@ -60,7 +60,7 @@ export default function MaraPage() {
           background-position: 0 0, 7px 7px;
         }
         .mara-page-stripes {
-          position: fixed;
+          position: absolute;
           inset: 0;
           pointer-events: none;
           z-index: 0;
