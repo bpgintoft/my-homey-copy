@@ -62,6 +62,7 @@ export default function BryanPage() {
         .bryan-page-stripes {
           position: absolute;
           inset: 0;
+          min-height: 100%;
           pointer-events: none;
           z-index: 0;
           background:
