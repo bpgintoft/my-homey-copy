@@ -7,9 +7,32 @@ import { Textarea } from "@/components/ui/textarea";
 import { Trash2, Send } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 
+const AVATAR_COLORS = ['bg-blue-400', 'bg-green-400', 'bg-pink-400', 'bg-purple-400', 'bg-orange-400', 'bg-teal-400'];
+
+function CommentAvatar({ name, email, familyMembers }) {
+  const member = familyMembers.find(m => m.email && email && m.email.toLowerCase() === email.toLowerCase());
+  const displayName = member?.name || name || email?.split('@')[0] || '?';
+  const initials = displayName.slice(0, 2).toUpperCase();
+  const colorIndex = displayName.charCodeAt(0) % AVATAR_COLORS.length;
+
+  if (member?.photo_url) {
+    return <img src={member.photo_url} alt={displayName} className="w-8 h-8 rounded-full object-cover flex-shrink-0" />;
+  }
+  return (
+    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0 ${AVATAR_COLORS[colorIndex]}`}>
+      {initials}
+    </div>
+  );
+}
+
 export default function ChoreCommentsSheet({ chore, open, onOpenChange }) {
   const queryClient = useQueryClient();
   const [newComment, setNewComment] = useState('');
+
+  const { data: familyMembers = [] } = useQuery({
+    queryKey: ['familyMembers'],
+    queryFn: () => base44.entities.FamilyMember.list(),
+  });
 
   const { data: comments = [] } = useQuery({
     queryKey: ['choreComments', chore?.id],
