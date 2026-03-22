@@ -769,7 +769,7 @@ export default function Meals() {
                         placeholder="Search recipes..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="pl-9 text-sm border-pink-200 focus:border-pink-500 h-9"
+                        className="pl-9 text-base md:text-sm border-pink-200 focus:border-pink-500 h-9"
                       />
                       {searchQuery && (
                         <button
