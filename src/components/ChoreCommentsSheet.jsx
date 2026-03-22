@@ -6,18 +6,12 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Trash2, Send } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
+import { getCommentAuthorMember } from '@/lib/getCommentAuthorMember';
 
 const AVATAR_COLORS = ['bg-blue-400', 'bg-green-400', 'bg-pink-400', 'bg-purple-400', 'bg-orange-400', 'bg-teal-400'];
 
-function CommentAvatar({ authorName, email, familyMembers }) {
-  const emailLocalPart = email?.split('@')[0]?.toLowerCase() || '';
-  const authorLower = authorName?.toLowerCase() || '';
-  // Try exact email match, then exact name match, then first-name match (handles "Bryan Gintoft" matching "Bryan"), then email local part
-  const member = (email && familyMembers.find(m => m.email && m.email.toLowerCase() === email.toLowerCase()))
-    || (authorLower && familyMembers.find(m => m.name && m.name.toLowerCase() === authorLower))
-    || (authorLower && familyMembers.find(m => m.name && authorLower.startsWith(m.name.toLowerCase())))
-    || (emailLocalPart && familyMembers.find(m => m.name && emailLocalPart.includes(m.name.toLowerCase())));
-
+function CommentAvatar({ authorName, email, familyMembers, currentUserEmail, currentUserMember }) {
+  const member = getCommentAuthorMember(email, authorName, currentUserEmail, currentUserMember, familyMembers);
   const displayName = member?.name || authorName || email?.split('@')[0] || '?';
   const initials = displayName.trim().split(' ').filter(Boolean).map(w => w[0]).join('').slice(0, 2).toUpperCase() || '?';
   const colorIndex = Math.abs(displayName.charCodeAt(0) || 0) % AVATAR_COLORS.length;
