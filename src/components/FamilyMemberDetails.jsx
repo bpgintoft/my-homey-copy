@@ -1220,13 +1220,13 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
             </DialogTitle>
           </DialogHeader>
           <div>
-            {chores.length === 0 ? (
+            {chores.filter(c => !c.is_completed).length === 0 ? (
               <p className="text-sm text-gray-500">No tasks yet</p>
             ) : (
               <DragDropContext onDragEnd={handleDragEnd}>
                 <div className="space-y-4">
                   {['short-term', 'mid-term', 'long-term'].map((timing) => {
-                    const timingChores = choresByTiming[timing];
+                    const timingChores = choresByTiming[timing].filter(c => !c.is_completed);
                     return (
                       <div key={timing}>
                         <h4 className="font-medium text-sm text-gray-700 mb-2 capitalize">
