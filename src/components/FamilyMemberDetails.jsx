@@ -173,11 +173,19 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
   });
 
   const commentCountByChoreId = React.useMemo(() => {
-    return allChoreComments.reduce((acc, c) => {
-      acc[c.chore_id] = (acc[c.chore_id] || 0) + 1;
-      return acc;
-    }, {});
-  }, [allChoreComments]);
+    const counts = {};
+    allChoreComments.forEach(c => {
+      counts[c.chore_id] = (counts[c.chore_id] || 0) + 1;
+    });
+    // For each chore, also count comments from linked chores
+    chores.forEach(chore => {
+      if (chore.linked_chore_ids?.length) {
+        const linkedCount = chore.linked_chore_ids.reduce((sum, linkedId) => sum + (counts[linkedId] || 0), 0);
+        counts[chore.id] = (counts[chore.id] || 0) + linkedCount;
+      }
+    });
+    return counts;
+  }, [allChoreComments, chores]);
 
   const contacts = allContacts.filter(c => 
     !c.linked_to_member_ids || 
