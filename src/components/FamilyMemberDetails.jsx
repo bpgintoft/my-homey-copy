@@ -1129,9 +1129,17 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
           <DialogHeader>
             <DialogTitle className="flex items-center justify-between">
               <span>To-Do List</span>
-              <Dialog open={dialogOpen.chore} onOpenChange={(open) => setDialogOpen({ ...dialogOpen, chore: open })}>
+              <div className="flex items-center gap-2 mr-10">
+                <button
+                  onClick={() => setIsReorderingChores(prev => !prev)}
+                  className={`flex items-center gap-1 text-xs px-2.5 py-1 rounded-full transition-colors font-medium ${isReorderingChores ? 'bg-green-100 text-green-700 hover:bg-green-200' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+                  title="Reorder items"
+                >
+                  {isReorderingChores ? <><Check className="w-3 h-3" /> Done</> : <><GripVertical className="w-3 h-3" /> Reorder</>}
+                </button>
+                <Dialog open={dialogOpen.chore} onOpenChange={(open) => setDialogOpen({ ...dialogOpen, chore: open })}>
                 <DialogTrigger asChild>
-                  <Button size="sm" className="mr-10">
+                  <Button size="sm">
                     <Plus className="w-4 h-4 mr-2" />Add
                   </Button>
                 </DialogTrigger>
