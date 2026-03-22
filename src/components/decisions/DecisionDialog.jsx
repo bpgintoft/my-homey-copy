@@ -221,11 +221,9 @@ export default function DecisionDialog({ decision, currentUserEmail, familyMembe
                 <p className="text-xs font-semibold text-indigo-200 uppercase tracking-wide">Discussion</p>
                 <span className="text-indigo-300 text-xs">{focusChat ? '↕ collapse' : '⤢ expand'}</span>
               </div>
-              {/* In collapsed mode, tapping the bubble area expands to focus mode.
-                  In focus mode, NO click handler — so text selection handles work freely. */}
               <div
-                className={`space-y-2 overflow-y-auto transition-all ${focusChat ? 'max-h-[65vh]' : 'max-h-48 cursor-pointer'}`}
-                onClick={!focusChat ? () => setFocusChat(true) : undefined}
+                className={`space-y-2 overflow-y-auto transition-all ${focusChat ? 'max-h-[65vh] cursor-pointer' : 'max-h-48 cursor-pointer'}`}
+                onClick={() => setFocusChat(f => !f)}
               >
                 {localComments.map((c, i) => {
                   const isMe = c.commenter_email === currentUserEmail;
