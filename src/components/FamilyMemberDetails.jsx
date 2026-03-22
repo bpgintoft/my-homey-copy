@@ -1300,7 +1300,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                                     return snapshot.isDragging ? createPortal(child, document.body) : child;
                                   };
                                   return (
-                                    <Draggable key={chore.id} draggableId={chore.id} index={index} isDragDisabled={!!chore.maintenance_task_id}>
+                                    <Draggable key={chore.id} draggableId={chore.id} index={index} isDragDisabled={!!chore.maintenance_task_id || !isReorderingChores}>
                                       {choreEl}
                                     </Draggable>
                                   );
