@@ -226,10 +226,14 @@ export default function DecisionDialog({ decision, currentUserEmail, familyMembe
                     <div key={i} className={`flex items-end gap-1.5 ${isMe ? 'flex-row-reverse' : 'flex-row'}`}>
                       {(() => {
                          const isMe = c.commenter_email === currentUserEmail;
-                         const photoUrl = isMe ? myMember?.photo_url : familyMembers.find(m => m.email?.toLowerCase() === c.commenter_email?.toLowerCase())?.photo_url;
-                         return photoUrl
-                           ? <img src={photoUrl} alt={c.commenter_name} className="w-6 h-6 rounded-full object-cover flex-shrink-0 mb-5" />
-                           : <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center text-white text-xs font-bold flex-shrink-0 mb-5">{c.commenter_name?.[0] || '?'}</div>;
+                         const commenterMember = isMe 
+                           ? myMember 
+                           : (familyMembers.find(m => m.email?.toLowerCase() === c.commenter_email?.toLowerCase()) 
+                             || familyMembers.find(m => m.name === c.commenter_name)
+                             || familyMembers.find(m => c.commenter_name && m.name.toLowerCase().includes(c.commenter_name.toLowerCase())));
+                         return commenterMember?.photo_url
+                           ? <img src={commenterMember.photo_url} alt={commenterMember.name} className="w-6 h-6 rounded-full object-cover flex-shrink-0 mb-5" />
+                           : <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center text-white text-xs font-bold flex-shrink-0 mb-5">{commenterMember?.name?.[0] || c.commenter_name?.[0] || '?'}</div>;
                        })()}
                       <div className={`flex flex-col max-w-[80%] min-w-0 overflow-hidden ${isMe ? 'items-end' : 'items-start'}`}>
                         <div className="rounded-2xl px-3 py-2 w-full overflow-hidden" style={isMe ? {background: 'rgba(220,200,255,0.9)', color: '#3d2a8a'} : {background: 'rgba(180,140,255,0.3)', color: 'white', border: '1px solid rgba(200,170,255,0.3)'}}>
