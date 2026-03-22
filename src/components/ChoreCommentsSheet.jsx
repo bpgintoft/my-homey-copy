@@ -10,6 +10,29 @@ import { getCommentAuthorMember } from '@/lib/getCommentAuthorMember';
 
 const AVATAR_COLORS = ['bg-blue-400', 'bg-green-400', 'bg-pink-400', 'bg-purple-400', 'bg-orange-400', 'bg-teal-400'];
 
+const URL_REGEX = /(https?:\/\/[^\s]+)/g;
+
+function renderTextWithLinks(text) {
+  const parts = text.split(URL_REGEX);
+  return parts.map((part, i) => {
+    if (URL_REGEX.test(part)) {
+      URL_REGEX.lastIndex = 0;
+      return (
+        <a
+          key={i}
+          href={part}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-blue-600 hover:text-blue-800 underline"
+        >
+          {part}
+        </a>
+      );
+    }
+    return part ? <span key={i}>{part}</span> : null;
+  });
+}
+
 function CommentAvatar({ authorName, email, familyMembers, currentUserEmail, currentUserMember }) {
   const member = getCommentAuthorMember(email, authorName, currentUserEmail, currentUserMember, familyMembers);
   const displayName = member?.name || authorName || email?.split('@')[0] || '?';
