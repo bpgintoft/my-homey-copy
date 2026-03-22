@@ -130,46 +130,58 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
     queryKey: ['familyMember', memberId],
     queryFn: () => base44.entities.FamilyMember.filter({ id: memberId }).then(res => res[0]),
     enabled: !!memberId,
+    staleTime: 5 * 60 * 1000,
   });
 
   const { data: familyMembers = [] } = useQuery({
     queryKey: ['familyMembers'],
     queryFn: () => base44.entities.FamilyMember.list(),
+    staleTime: 10 * 60 * 1000,
   });
 
   const { data: chores = [] } = useQuery({
     queryKey: ['chores', memberId],
     queryFn: () => base44.entities.Chore.filter({ assigned_to_member_id: memberId }),
+    staleTime: 5 * 60 * 1000,
+    enabled: !!memberId,
   });
 
   const { data: milestones = [] } = useQuery({
     queryKey: ['milestones', memberId],
     queryFn: () => base44.entities.Milestone.filter({ assigned_to_member_id: memberId }),
+    staleTime: 5 * 60 * 1000,
+    enabled: !!memberId,
   });
 
   const { data: allContacts = [] } = useQuery({
     queryKey: ['contacts'],
     queryFn: () => base44.entities.ImportantContact.list(),
+    staleTime: 10 * 60 * 1000,
   });
 
   const { data: allAppliances = [] } = useQuery({
     queryKey: ['allRoomItems'],
     queryFn: () => base44.entities.RoomItem.list(),
+    staleTime: 10 * 60 * 1000,
   });
 
   const { data: links = [] } = useQuery({
     queryKey: ['links', memberId],
     queryFn: () => base44.entities.FamilyMemberLink.filter({ assigned_to_member_id: memberId }),
+    staleTime: 5 * 60 * 1000,
+    enabled: !!memberId,
   });
 
   const { data: maintenanceTasks = [] } = useQuery({
     queryKey: ['maintenanceTasks'],
     queryFn: () => base44.entities.MaintenanceTask.list(),
+    staleTime: 10 * 60 * 1000,
   });
 
   const { data: allChoreComments = [] } = useQuery({
     queryKey: ['choreCommentCounts'],
     queryFn: () => base44.entities.ChoreComment.list(),
+    staleTime: 5 * 60 * 1000,
   });
 
   const commentCountByChoreId = React.useMemo(() => {
