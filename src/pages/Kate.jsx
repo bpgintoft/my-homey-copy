@@ -32,7 +32,8 @@ export default function KatePage() {
   useSwipe(handleSwipe, bannerRef);
 
   return (
-    <div className="min-h-screen" style={{ background: 'linear-gradient(to bottom, #E4F8ED 0%, #E4F8ED 60%, #B8EDCF 100%)' }}>
+    <div className="min-h-screen relative" style={{ background: 'linear-gradient(to bottom, #E4F8ED 0%, #E4F8ED 60%, #B8EDCF 100%)' }}>
+      <div className="kate-page-stripes" />
       <style>{`
         .kate-banner {
           background: linear-gradient(135deg, #A7F3D0 0%, #6EE7B7 50%, #34D399 100%);
