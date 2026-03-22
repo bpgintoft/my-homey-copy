@@ -55,6 +55,7 @@ export default function DecisionDialog({ decision, currentUserEmail, familyMembe
   const commentsEndRef = useRef(null);
   const fileInputRef = useRef(null);
   const commentDragStartY = useRef(null);
+  const discussionTapStart = useRef(null);
 
   const uploadImage = async (file) => {
     setUploadingImage(true);
