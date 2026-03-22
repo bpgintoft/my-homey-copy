@@ -4,7 +4,7 @@ import { google } from 'npm:googleapis@144.0.0';
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
-    const { calendarId, eventId } = await req.json();
+    const { calendarId, eventId, recurringDeleteScope } = await req.json();
 
     if (!calendarId || !eventId) {
       return Response.json({ error: 'Missing calendar ID or event ID' }, { status: 400 });
@@ -16,10 +16,22 @@ Deno.serve(async (req) => {
     auth.setCredentials({ access_token: accessToken });
     const calendar = google.calendar({ version: 'v3', auth });
 
-    await calendar.events.delete({
+    // If recurring delete scope is specified, pass it as the 'sendNotifications' option
+    // 'this' = delete only this instance
+    // 'future' = delete this and future events
+    const params = {
       calendarId,
       eventId,
-    });
+    };
+
+    // Add scope parameter if provided (Google Calendar API uses different parameter for this)
+    if (recurringDeleteScope === 'this') {
+      params.scope = 'thisEvent';
+    } else if (recurringDeleteScope === 'future') {
+      params.scope = 'thisAndFollowing';
+    }
+
+    await calendar.events.delete(params);
 
     return Response.json({ success: true });
   } catch (error) {
