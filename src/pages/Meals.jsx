@@ -730,12 +730,22 @@ export default function Meals() {
                 >
                   <Star className={`w-4 h-4 ${showFavoritesOnly ? 'fill-pink-600' : ''}`} />
                 </Button>
+                <Button
+                  onClick={() => generateMealPlanMutation.mutate()}
+                  disabled={generateMealPlanMutation.isPending}
+                  variant="outline"
+                  className="border-pink-200 text-pink-600 hover:bg-pink-50 px-2 flex-shrink-0 text-xs whitespace-nowrap"
+                  size="sm"
+                >
+                  <Sparkles className="w-4 h-4 mr-1" />
+                  AI Meal Idea
+                </Button>
                 <Popover>
                   <PopoverTrigger asChild>
                     <Button
                       variant="outline"
                       size="sm"
-                      className="border-pink-200 text-pink-600 hover:bg-pink-50 px-2 flex-shrink-0 ml-auto"
+                      className="border-pink-200 text-pink-600 hover:bg-pink-50 px-2 flex-shrink-0"
                     >
                       <Search className="w-4 h-4" />
                     </Button>
@@ -761,16 +771,6 @@ export default function Meals() {
                     </div>
                   </PopoverContent>
                 </Popover>
-                <Button
-                  onClick={() => generateMealPlanMutation.mutate()}
-                  disabled={generateMealPlanMutation.isPending}
-                  variant="outline"
-                  className="border-pink-200 text-pink-600 hover:bg-pink-50 px-2 flex-shrink-0 text-xs whitespace-nowrap"
-                  size="sm"
-                >
-                  <Sparkles className="w-4 h-4 mr-1" />
-                  AI Meal Idea
-                </Button>
                 <Button
                   onClick={() => setShowMealDialog(true)}
                   className="bg-gradient-to-r from-[#E91E8C] to-[#D01576] text-white px-2 flex-shrink-0 text-xs"
