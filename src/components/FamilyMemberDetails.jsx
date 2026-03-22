@@ -1481,6 +1481,13 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
         </DialogContent>
       </Dialog>
 
+      {/* Chore Comments Sheet */}
+      <ChoreCommentsSheet
+        chore={commentingChore}
+        open={!!commentingChore}
+        onOpenChange={(open) => !open && setCommentingChore(null)}
+      />
+
       {/* Activities Dialog */}
       <ActivitiesDialog
         open={showActivities}
