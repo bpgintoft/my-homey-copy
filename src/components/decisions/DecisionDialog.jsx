@@ -207,10 +207,17 @@ export default function DecisionDialog({ decision, currentUserEmail, familyMembe
 
           {/* Comments chat log */}
           {localComments.length > 0 && (
-            <div className="space-y-2" onClick={(e) => {
-                if (e.target.closest('button') || e.target.closest('textarea') || e.target.closest('a') || window.getSelection()?.toString()) return;
+            <div
+              className="space-y-2"
+              onPointerDown={(e) => { e._tapStart = Date.now(); }}
+              onClick={(e) => {
+                if (e.target.closest('button') || e.target.closest('textarea') || e.target.closest('a')) return;
+                // Only toggle on quick taps, not press-and-hold (which is for text selection)
+                const duration = Date.now() - (e._tapStart || Date.now());
+                if (duration > 300) return;
                 setFocusChat(f => !f);
-              }}>
+              }}
+            >
               <div className="flex items-center justify-between select-none">
                 <p className="text-xs font-semibold text-indigo-200 uppercase tracking-wide">Discussion</p>
                 <button
