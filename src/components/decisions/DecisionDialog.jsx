@@ -226,12 +226,13 @@ export default function DecisionDialog({ decision, currentUserEmail, familyMembe
                   return (
                     <div key={i} className={`flex items-end gap-1.5 ${isMe ? 'flex-row-reverse' : 'flex-row'}`}>
                       {(() => {
-                         const isMe = c.commenter_email === currentUserEmail;
-                         const commenterMember = isMe 
-                           ? myMember 
-                           : (familyMembers.find(m => m.email?.toLowerCase() === c.commenter_email?.toLowerCase()) 
-                             || familyMembers.find(m => m.name === c.commenter_name)
-                             || familyMembers.find(m => c.commenter_name && m.name.toLowerCase().includes(c.commenter_name.toLowerCase())));
+                         const commenterMember = getCommentAuthorMember(
+                           c.commenter_email,
+                           c.commenter_name,
+                           currentUserEmail,
+                           myMember,
+                           familyMembers
+                         );
                          return commenterMember?.photo_url
                            ? <img src={commenterMember.photo_url} alt={commenterMember.name} className="w-6 h-6 rounded-full object-cover flex-shrink-0 mb-5" />
                            : <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center text-white text-xs font-bold flex-shrink-0 mb-5">{commenterMember?.name?.[0] || c.commenter_name?.[0] || '?'}</div>;
