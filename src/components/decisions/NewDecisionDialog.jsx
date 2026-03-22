@@ -8,12 +8,14 @@ import { Label } from "@/components/ui/label";
 export default function NewDecisionDialog({ proposerEmail, proposerName, onSave, onClose }) {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
+  const [deadline, setDeadline] = useState('');
 
   const handleSave = () => {
     if (!title.trim()) return;
     onSave({
       title: title.trim(),
       description: description.trim(),
+      deadline: deadline || null,
       proposer_email: proposerEmail,
       proposer_name: proposerName,
       status: 'pending',
@@ -47,6 +49,14 @@ export default function NewDecisionDialog({ proposerEmail, proposerName, onSave,
               onChange={e => setDescription(e.target.value)}
               placeholder="Add any context, links, prices, etc."
               rows={3}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label>Deadline (optional)</Label>
+            <Input
+              type="date"
+              value={deadline}
+              onChange={e => setDeadline(e.target.value)}
             />
           </div>
           <div className="flex gap-2 pt-1">
