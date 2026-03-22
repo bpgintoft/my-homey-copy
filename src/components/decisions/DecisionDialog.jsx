@@ -373,15 +373,17 @@ export default function DecisionDialog({ decision, currentUserEmail, familyMembe
           </div>
           <div className="space-y-2">
             <p className="text-xs font-semibold text-indigo-200 uppercase tracking-wide">Deadline (optional)</p>
-            <input
-              type="date"
-              value={deadline}
-              onChange={e => setDeadline(e.target.value)}
-              className="w-full px-3 py-2.5 rounded-2xl border-0 text-white bg-transparent text-sm"
-              style={{background: 'rgba(180,140,255,0.2)', border: '1px solid rgba(200,170,255,0.25)', color: 'white'}}
-              onFocus={(e) => e.target.style.backgroundColor = 'rgba(180,140,255,0.3)'}
-              onBlur={(e) => e.target.style.backgroundColor = 'rgba(180,140,255,0.2)'}
-            />
+            <div className="relative">
+              <input
+                type="date"
+                value={deadline}
+                onChange={e => setDeadline(e.target.value)}
+                className="w-full px-3 py-2.5 rounded-2xl border-0 text-white bg-transparent text-sm appearance-none"
+                style={{background: 'rgba(180,140,255,0.2)', border: '1px solid rgba(200,170,255,0.25)', color: 'white'}}
+                onFocus={(e) => e.target.style.backgroundColor = 'rgba(180,140,255,0.3)'}
+                onBlur={(e) => e.target.style.backgroundColor = 'rgba(180,140,255,0.2)'}
+              />
+            </div>
           </div>
           <div className="flex gap-2 pt-2 pb-4">
             <button onClick={handleSave} disabled={uploadingImage} className="flex-1 flex items-center justify-center gap-1.5 bg-white text-[#5B4FCF] font-semibold py-2.5 rounded-full hover:bg-indigo-50 transition-colors disabled:opacity-60">
