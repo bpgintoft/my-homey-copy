@@ -77,6 +77,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
   const [showFinancials, setShowFinancials] = useState(false);
   const [commentingChore, setCommentingChore] = useState(null);
   const [isReorderingChores, setIsReorderingChores] = useState(false);
+  const [showArchive, setShowArchive] = useState(false);
 
   const DEFAULT_SECTIONS = [
     { key: 'chores', label: 'To-Do List' },
