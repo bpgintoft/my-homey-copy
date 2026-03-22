@@ -6,6 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Trash2, Send, Pencil, X, Check, ImagePlus } from 'lucide-react';
 import { format } from 'date-fns';
 import { base44 } from '@/api/base44Client';
+import { getCommentAuthorMember } from '@/lib/getCommentAuthorMember';
 
 const voteEmoji = { yes: '✅ Yes', no: '❌ No', maybe: '🤔 Maybe' };
 
