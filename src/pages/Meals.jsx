@@ -714,23 +714,6 @@ export default function Meals() {
 
             <div className="space-y-4">
               <div className="flex gap-1 items-start overflow-x-auto">
-                <div className="flex-1 relative min-w-0">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 flex-shrink-0" />
-                  <Input
-                    placeholder="Search recipes..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-9 text-sm border-pink-200 focus:border-pink-500"
-                  />
-                  {searchQuery && (
-                    <button
-                      onClick={() => setSearchQuery('')}
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 flex-shrink-0"
-                    >
-                      <X className="w-4 h-4" />
-                    </button>
-                  )}
-                </div>
                 <Button
                   onClick={() => setShowFilters(!showFilters)}
                   variant="outline"
