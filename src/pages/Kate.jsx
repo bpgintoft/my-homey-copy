@@ -68,14 +68,14 @@ export default function KatePage() {
           background:
             repeating-linear-gradient(
               45deg,
-              rgba(110, 231, 183, 0.45) 0px,
-              rgba(110, 231, 183, 0.45) 10px,
-              rgba(52, 211, 153, 0.25) 10px,
-              rgba(52, 211, 153, 0.25) 20px,
-              rgba(110, 231, 183, 0.45) 20px,
-              rgba(110, 231, 183, 0.45) 25px,
-              rgba(16, 185, 129, 0.15) 25px,
-              rgba(16, 185, 129, 0.15) 30px
+              rgba(16, 185, 129, 0.7) 0px,
+              rgba(16, 185, 129, 0.7) 10px,
+              rgba(110, 231, 183, 0.4) 10px,
+              rgba(110, 231, 183, 0.4) 20px,
+              rgba(16, 185, 129, 0.7) 20px,
+              rgba(16, 185, 129, 0.7) 25px,
+              rgba(52, 211, 153, 0.3) 25px,
+              rgba(52, 211, 153, 0.3) 30px
             );
           -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.3) 40%, rgba(0,0,0,0.8) 70%, rgba(0,0,0,1) 100%);
           mask-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.3) 40%, rgba(0,0,0,0.8) 70%, rgba(0,0,0,1) 100%);

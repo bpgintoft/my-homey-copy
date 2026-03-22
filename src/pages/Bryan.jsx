@@ -68,14 +68,14 @@ export default function BryanPage() {
           background:
             repeating-linear-gradient(
               45deg,
-              rgba(147, 197, 253, 0.45) 0px,
-              rgba(147, 197, 253, 0.45) 10px,
-              rgba(96, 165, 250, 0.25) 10px,
-              rgba(96, 165, 250, 0.25) 20px,
-              rgba(147, 197, 253, 0.45) 20px,
-              rgba(147, 197, 253, 0.45) 25px,
-              rgba(59, 130, 246, 0.15) 25px,
-              rgba(59, 130, 246, 0.15) 30px
+              rgba(59, 130, 246, 0.7) 0px,
+              rgba(59, 130, 246, 0.7) 10px,
+              rgba(147, 197, 253, 0.4) 10px,
+              rgba(147, 197, 253, 0.4) 20px,
+              rgba(59, 130, 246, 0.7) 20px,
+              rgba(59, 130, 246, 0.7) 25px,
+              rgba(96, 165, 250, 0.3) 25px,
+              rgba(96, 165, 250, 0.3) 30px
             );
           -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.3) 40%, rgba(0,0,0,0.8) 70%, rgba(0,0,0,1) 100%);
           mask-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.3) 40%, rgba(0,0,0,0.8) 70%, rgba(0,0,0,1) 100%);

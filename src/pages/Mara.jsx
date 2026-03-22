@@ -68,14 +68,14 @@ export default function MaraPage() {
           background:
             repeating-linear-gradient(
               45deg,
-              rgba(255, 182, 193, 0.45) 0px,
-              rgba(255, 182, 193, 0.45) 10px,
-              rgba(255, 150, 170, 0.25) 10px,
-              rgba(255, 150, 170, 0.25) 20px,
-              rgba(255, 182, 193, 0.45) 20px,
-              rgba(255, 182, 193, 0.45) 25px,
-              rgba(236, 72, 153, 0.15) 25px,
-              rgba(236, 72, 153, 0.15) 30px
+              rgba(236, 72, 153, 0.7) 0px,
+              rgba(236, 72, 153, 0.7) 10px,
+              rgba(255, 182, 193, 0.4) 10px,
+              rgba(255, 182, 193, 0.4) 20px,
+              rgba(236, 72, 153, 0.7) 20px,
+              rgba(236, 72, 153, 0.7) 25px,
+              rgba(255, 150, 170, 0.3) 25px,
+              rgba(255, 150, 170, 0.3) 30px
             );
           -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.3) 40%, rgba(0,0,0,0.8) 70%, rgba(0,0,0,1) 100%);
           mask-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.3) 40%, rgba(0,0,0,0.8) 70%, rgba(0,0,0,1) 100%);
