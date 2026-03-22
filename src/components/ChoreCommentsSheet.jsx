@@ -49,7 +49,7 @@ export default function ChoreCommentsSheet({ chore, open, onOpenChange }) {
   });
 
   const addCommentMutation = useMutation({
-    mutationFn: (text) => base44.entities.ChoreComment.create({ chore_id: chore.id, text }),
+    mutationFn: (text) => base44.entities.ChoreComment.create({ chore_id: chore.id, text, author_name: currentUser?.full_name || '' }),
     onSuccess: () => {
       queryClient.invalidateQueries(['choreComments', chore?.id]);
       queryClient.invalidateQueries(['choreCommentCounts']);
