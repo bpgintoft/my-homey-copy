@@ -34,6 +34,7 @@ export default function BryanPage() {
   return (
     <div className="min-h-screen relative" style={{ background: 'linear-gradient(to bottom, #EEF5FF 0%, #EEF5FF 60%, #C8DEFF 100%)' }}>
       <div className="bryan-page-stripes" />
+      <div className="pointer-events-none fixed bottom-0 left-0 right-0 h-48 z-0" style={{ background: 'linear-gradient(to bottom, transparent, rgba(29, 78, 216, 0.35))' }} />
       <style>{`
         .bryan-banner {
           background: linear-gradient(135deg, #60A5FA 0%, #3B82F6 50%, #2563EB 100%);

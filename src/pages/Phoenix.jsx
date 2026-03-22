@@ -34,6 +34,7 @@ export default function PhoenixPage() {
   return (
     <div className="min-h-screen relative" style={{ background: 'linear-gradient(to bottom, #FFF0E6 0%, #FFF0E6 60%, #FFD5B8 100%)' }}>
       <div className="phoenix-page-stripes" />
+      <div className="pointer-events-none fixed bottom-0 left-0 right-0 h-48 z-0" style={{ background: 'linear-gradient(to bottom, transparent, rgba(180, 83, 9, 0.35))' }} />
       <style>{`
         .phoenix-banner {
           background: linear-gradient(135deg, #FB923C 0%, #F97316 50%, #EA580C 100%);
