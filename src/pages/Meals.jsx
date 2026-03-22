@@ -730,6 +730,37 @@ export default function Meals() {
                 >
                   <Star className={`w-4 h-4 ${showFavoritesOnly ? 'fill-pink-600' : ''}`} />
                 </Button>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="border-pink-200 text-pink-600 hover:bg-pink-50 px-2 flex-shrink-0"
+                    >
+                      <Search className="w-4 h-4" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-64 p-3">
+                    <div className="relative">
+                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 flex-shrink-0" />
+                      <Input
+                        autoFocus
+                        placeholder="Search recipes..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="pl-9 text-sm border-pink-200 focus:border-pink-500"
+                      />
+                      {searchQuery && (
+                        <button
+                          onClick={() => setSearchQuery('')}
+                          className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 flex-shrink-0"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      )}
+                    </div>
+                  </PopoverContent>
+                </Popover>
                 <Button
                   onClick={() => generateMealPlanMutation.mutate()}
                   disabled={generateMealPlanMutation.isPending}
