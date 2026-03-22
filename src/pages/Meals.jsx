@@ -730,6 +730,14 @@ export default function Meals() {
                 >
                   <Star className={`w-4 h-4 ${showFavoritesOnly ? 'fill-pink-600' : ''}`} />
                 </Button>
+                <Button
+                  onClick={() => setShowMealDialog(true)}
+                  className="bg-gradient-to-r from-[#E91E8C] to-[#D01576] text-white px-2 flex-shrink-0 text-xs"
+                  size="sm"
+                >
+                  <Plus className="w-4 h-4 mr-1" />
+                  Add Meal
+                </Button>
                 <Popover>
                   <PopoverTrigger asChild>
                     <Button
@@ -770,14 +778,6 @@ export default function Meals() {
                 >
                   <Sparkles className="w-4 h-4 mr-1" />
                   AI Meal Idea
-                </Button>
-                <Button
-                  onClick={() => setShowMealDialog(true)}
-                  className="bg-gradient-to-r from-[#E91E8C] to-[#D01576] text-white px-2 flex-shrink-0 text-xs"
-                  size="sm"
-                >
-                  <Plus className="w-4 h-4 mr-1" />
-                  Add Meal
                 </Button>
               </div>
 
