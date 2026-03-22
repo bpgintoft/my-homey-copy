@@ -112,7 +112,7 @@ export default function ChoreCommentsSheet({ chore, open, onOpenChange }) {
           ) : (
             comments.map((comment) => (
               <div key={comment.id} className="flex items-start gap-2">
-                <CommentAvatar authorName={comment.author_name} email={comment.created_by} familyMembers={familyMembers} />
+                <CommentAvatar authorName={comment.author_name} email={comment.created_by} familyMembers={familyMembers} currentUserEmail={currentUser?.email} currentUserMember={currentUserMember} />
                 <div className="flex-1 min-w-0 bg-gray-50 rounded-lg p-3 text-sm">
                   <div className="flex items-start justify-between gap-2">
                     <div className="flex-1 min-w-0">
