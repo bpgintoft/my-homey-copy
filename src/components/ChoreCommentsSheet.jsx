@@ -11,10 +11,11 @@ const AVATAR_COLORS = ['bg-blue-400', 'bg-green-400', 'bg-pink-400', 'bg-purple-
 
 function CommentAvatar({ authorName, email, familyMembers }) {
   const emailLocalPart = email?.split('@')[0]?.toLowerCase() || '';
-  // Try to match by email, then by stored author_name, then by email local part vs member name
+  const authorLower = authorName?.toLowerCase() || '';
+  // Try exact email match, then exact name match, then first-name match (handles "Bryan Gintoft" matching "Bryan"), then email local part
   const member = (email && familyMembers.find(m => m.email && m.email.toLowerCase() === email.toLowerCase()))
-    || (authorName && familyMembers.find(m => m.name && m.name.toLowerCase() === authorName.toLowerCase()))
-    || (emailLocalPart && familyMembers.find(m => m.name && m.name.toLowerCase() === emailLocalPart))
+    || (authorLower && familyMembers.find(m => m.name && m.name.toLowerCase() === authorLower))
+    || (authorLower && familyMembers.find(m => m.name && authorLower.startsWith(m.name.toLowerCase())))
     || (emailLocalPart && familyMembers.find(m => m.name && emailLocalPart.includes(m.name.toLowerCase())));
 
   const displayName = member?.name || authorName || email?.split('@')[0] || '?';
