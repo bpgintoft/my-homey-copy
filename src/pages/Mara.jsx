@@ -34,7 +34,7 @@ export default function MaraPage() {
   return (
     <div className="min-h-screen relative" style={{ background: 'linear-gradient(to bottom, #FFF0F4 0%, #FFF0F4 60%, #FFD0DC 100%)' }}>
       <div className="mara-page-stripes" />
-      <div className="pointer-events-none fixed bottom-0 left-0 right-0 h-48 z-0" style={{ background: 'linear-gradient(to bottom, transparent, rgba(157, 23, 77, 0.35))' }} />
+      <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-64 z-0" style={{ background: 'linear-gradient(to bottom, transparent, rgba(157, 23, 77, 0.5))' }} />
       <style>{`
         .mara-banner {
           background: linear-gradient(135deg, #FFE5B4 0%, #FFDAB9 50%, #FFB6C1 100%);
