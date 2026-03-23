@@ -59,6 +59,9 @@ export default function Meals() {
             const [focusedGroceryId, setFocusedGroceryId] = useState(null);
             const [expandedQtyId, setExpandedQtyId] = useState(null);
             const [searchExpanded, setSearchExpanded] = useState(false);
+            const [showWeeklyNutrition, setShowWeeklyNutrition] = useState(false);
+            const [weeklyNutrition, setWeeklyNutrition] = useState(null);
+            const [calculatingWeeklyNutrition, setCalculatingWeeklyNutrition] = useState(false);
             const queryClient = useQueryClient();
 
   const { data: meals = [] } = useQuery({
