@@ -1139,31 +1139,33 @@ export default function Meals() {
 
           <TabsContent value="plan">
                     <div className="space-y-4">
-                      <div className="flex gap-2">
-                        <Button
-                          onClick={() => addAllWeeklyIngredientsToGroceryMutation.mutate()}
-                          disabled={addAllWeeklyIngredientsToGroceryMutation.isPending || mealPlans.length === 0}
-                          className="flex-1 bg-gradient-to-r from-[#E91E8C] to-[#D01576] text-white whitespace-normal h-auto py-1.5"
-                        >
-                          <ShoppingCart className="w-4 h-4 mr-2 flex-shrink-0" />
-                          <span className="text-sm md:text-base">{addAllWeeklyIngredientsToGroceryMutation.isPending ? 'Adding...' : 'Add All Weekly Meal Ingredients to Grocery List'}</span>
-                        </Button>
+                      <div className="space-y-2">
+                        <div className="flex gap-2">
+                          <Button
+                            onClick={() => addAllWeeklyIngredientsToGroceryMutation.mutate()}
+                            disabled={addAllWeeklyIngredientsToGroceryMutation.isPending || mealPlans.length === 0}
+                            className="flex-1 bg-gradient-to-r from-[#E91E8C] to-[#D01576] text-white whitespace-normal h-auto py-1.5"
+                          >
+                            <ShoppingCart className="w-4 h-4 mr-2 flex-shrink-0" />
+                            <span className="text-sm md:text-base">{addAllWeeklyIngredientsToGroceryMutation.isPending ? 'Adding...' : 'Add All Weekly Meal Ingredients to Grocery List'}</span>
+                          </Button>
+                          <Button
+                            onClick={() => mealPlans.forEach(plan => deleteFromMealPlanMutation.mutate(plan.id))}
+                            disabled={deleteFromMealPlanMutation.isPending || mealPlans.length === 0}
+                            variant="outline"
+                            className="max-w-14 border-red-200 text-red-600 hover:bg-red-50 text-xs h-auto py-1.5 whitespace-normal"
+                          >
+                            Clear Plan
+                          </Button>
+                        </div>
                         <Button
                           onClick={() => { setWeeklyNutrition(null); calculateWeeklyNutrition(); }}
                           disabled={mealPlans.length === 0}
                           variant="outline"
-                          className="border-pink-200 text-pink-600 hover:bg-pink-50 h-auto py-1.5 px-2"
-                          title="Weekly Nutrition Summary"
+                          className="w-full border-pink-200 text-pink-600 hover:bg-pink-50 h-auto py-3 text-base font-semibold"
                         >
-                          <TrendingUp className="w-4 h-4" />
-                        </Button>
-                        <Button
-                          onClick={() => mealPlans.forEach(plan => deleteFromMealPlanMutation.mutate(plan.id))}
-                          disabled={deleteFromMealPlanMutation.isPending || mealPlans.length === 0}
-                          variant="outline"
-                          className="max-w-14 border-red-200 text-red-600 hover:bg-red-50 text-xs h-auto py-1.5 whitespace-normal"
-                        >
-                          Clear Plan
+                          <TrendingUp className="w-5 h-5 mr-2" />
+                          Weekly Nutrition Summary
                         </Button>
                       </div>
               {['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].map(day => {
