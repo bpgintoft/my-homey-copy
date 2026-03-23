@@ -137,7 +137,7 @@ export default function SyncChoreToCalendarDialog({ open, onOpenChange, chore })
               <div className="flex items-center gap-2 text-sm text-gray-500">
                 <Loader2 className="w-4 h-4 animate-spin" /> Loading calendars...
               </div>
-            ) : (
+            ) : Array.isArray(calendars) && calendars.length > 0 ? (
               <div className="space-y-2 max-h-48 overflow-y-auto">
                 {calendars.map(cal => (
                   <div
@@ -151,6 +151,8 @@ export default function SyncChoreToCalendarDialog({ open, onOpenChange, chore })
                   </div>
                 ))}
               </div>
+            ) : (
+              <p className="text-sm text-gray-500">No calendars found. Please authorize Google Calendar access.</p>
             )}
           </div>
 
