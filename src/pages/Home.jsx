@@ -73,28 +73,28 @@ export default function Home() {
       href: 'Meals', 
       count: 0,
       imageKey: 'meals',
-      bgColor: 'bg-gradient-to-br from-pink-200 to-pink-300'
+      bgGradient: 'linear-gradient(160deg, #fbc9e2 0%, #f472b6 40%, #e8389a 70%, #d01576 100%)'
     },
     { 
       title: 'Calendar', 
       href: 'Kids', 
       count: todayEvents,
       imageKey: 'kids',
-      bgColor: 'bg-gradient-to-br from-blue-200 to-blue-300'
+      bgGradient: 'linear-gradient(160deg, #bfdbfe 0%, #60a5fa 40%, #3b82f6 70%, #2563eb 100%)'
     },
     { 
       title: 'House', 
       href: 'House', 
       count: 0,
       imageKey: 'house',
-      bgColor: 'bg-gradient-to-br from-green-200 to-green-300'
+      bgGradient: 'linear-gradient(160deg, #bbf7d0 0%, #4ade80 40%, #22c55e 70%, #16a34a 100%)'
     },
     { 
       title: 'History', 
       href: 'History', 
       count: 0,
       imageKey: 'history',
-      bgColor: 'bg-gradient-to-br from-amber-200 to-amber-300'
+      bgGradient: 'linear-gradient(160deg, #fde68a 0%, #fbbf24 40%, #f59e0b 70%, #d97706 100%)'
     },
   ];
 
