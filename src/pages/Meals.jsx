@@ -18,6 +18,7 @@ import { motion } from 'framer-motion';
 import { getThumbnailUrl, getMediumUrl } from '../components/imageHelpers';
 import ProteinTypeFilter from '../components/ProteinTypeFilter';
 import MealQuickSelector from '../components/MealQuickSelector';
+import WeeklyNutritionDialog from '../components/WeeklyNutritionDialog';
 
 export default function Meals() {
   const navigate = useNavigate();
