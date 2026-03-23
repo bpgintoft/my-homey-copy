@@ -566,6 +566,41 @@ export default function Meals() {
     return totals;
   };
 
+  const calculateWeeklyNutrition = async () => {
+    setCalculatingWeeklyNutrition(true);
+    setShowWeeklyNutrition(true);
+    const totals = { calories: 0, protein_g: 0, carbs_g: 0, fat_g: 0, fiber_g: 0, sugar_g: 0 };
+    const mealsWithoutNutrition = [];
+    for (const plan of mealPlans) {
+      const meal = meals.find(m => m.id === plan.meal_id);
+      if (!meal) continue;
+      if (meal.nutrition) {
+        totals.calories += meal.nutrition.calories || 0;
+        totals.protein_g += meal.nutrition.protein_g || 0;
+        totals.carbs_g += meal.nutrition.carbs_g || 0;
+        totals.fat_g += meal.nutrition.fat_g || 0;
+        totals.fiber_g += meal.nutrition.fiber_g || 0;
+        totals.sugar_g += meal.nutrition.sugar_g || 0;
+      } else {
+        mealsWithoutNutrition.push(meal);
+      }
+    }
+    if (mealsWithoutNutrition.length > 0) {
+      const result = await base44.integrations.Core.InvokeLLM({
+        prompt: `Estimate total nutrition for these meals combined: ${mealsWithoutNutrition.map(m => `${m.name} (ingredients: ${m.ingredients?.slice(0, 5).join(', ') || 'unknown'})`).join('; ')}. Return summed values across all meals.`,
+        response_json_schema: { type: "object", properties: { calories: { type: "number" }, protein_g: { type: "number" }, carbs_g: { type: "number" }, fat_g: { type: "number" }, fiber_g: { type: "number" }, sugar_g: { type: "number" } } }
+      });
+      totals.calories += result.calories || 0;
+      totals.protein_g += result.protein_g || 0;
+      totals.carbs_g += result.carbs_g || 0;
+      totals.fat_g += result.fat_g || 0;
+      totals.fiber_g += result.fiber_g || 0;
+      totals.sugar_g += result.sugar_g || 0;
+    }
+    setWeeklyNutrition({ totals, aiEstimatedCount: mealsWithoutNutrition.length, totalMeals: mealPlans.length });
+    setCalculatingWeeklyNutrition(false);
+  };
+
   const kidFriendlyMeals = meals.filter(m => m.kid_friendly);
 
   const filteredMeals = kidFriendlyMeals.filter(meal => {
