@@ -1908,45 +1908,12 @@ export default function Meals() {
               </DialogContent>
       </Dialog>
 
-      <Dialog open={showWeeklyNutrition} onOpenChange={setShowWeeklyNutrition}>
-        <DialogContent className="max-w-sm">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <TrendingUp className="w-5 h-5 text-pink-500" />
-              Weekly Nutrition Summary
-            </DialogTitle>
-          </DialogHeader>
-          {calculatingWeeklyNutrition ? (
-            <div className="flex items-center justify-center py-8 gap-3 text-gray-500">
-              <Loader2 className="w-5 h-5 animate-spin text-pink-500" />
-              Calculating nutrition...
-            </div>
-          ) : weeklyNutrition ? (
-            <div className="space-y-4">
-              <p className="text-sm text-gray-500">{weeklyNutrition.totalMeals} meal{weeklyNutrition.totalMeals !== 1 ? 's' : ''} planned{weeklyNutrition.aiEstimatedCount > 0 ? ` · ${weeklyNutrition.aiEstimatedCount} estimated by AI` : ''}</p>
-              <div className="grid grid-cols-2 gap-4">
-                {[
-                  { label: 'Calories', value: Math.round(weeklyNutrition.totals.calories), unit: 'kcal', color: 'text-orange-600' },
-                  { label: 'Protein', value: Math.round(weeklyNutrition.totals.protein_g), unit: 'g', color: 'text-blue-600' },
-                  { label: 'Carbs', value: Math.round(weeklyNutrition.totals.carbs_g), unit: 'g', color: 'text-yellow-600' },
-                  { label: 'Fat', value: Math.round(weeklyNutrition.totals.fat_g), unit: 'g', color: 'text-red-500' },
-                  { label: 'Fiber', value: Math.round(weeklyNutrition.totals.fiber_g), unit: 'g', color: 'text-green-600' },
-                  { label: 'Sugar', value: Math.round(weeklyNutrition.totals.sugar_g), unit: 'g', color: 'text-pink-500' },
-                ].map(({ label, value, unit, color }) => (
-                  <div key={label} className="bg-gray-50 rounded-xl p-3 text-center">
-                    <div className={`text-2xl font-bold ${color}`}>{value}</div>
-                    <div className="text-xs text-gray-400">{unit}</div>
-                    <div className="text-xs font-medium text-gray-600 mt-0.5">{label}</div>
-                  </div>
-                ))}
-              </div>
-              {weeklyNutrition.aiEstimatedCount > 0 && (
-                <p className="text-xs text-gray-400 italic">* AI estimated nutrition for {weeklyNutrition.aiEstimatedCount} meal{weeklyNutrition.aiEstimatedCount !== 1 ? 's' : ''} without saved nutrition data</p>
-              )}
-            </div>
-          ) : null}
-        </DialogContent>
-      </Dialog>
+      <WeeklyNutritionDialog
+        open={showWeeklyNutrition}
+        onOpenChange={setShowWeeklyNutrition}
+        calculating={calculatingWeeklyNutrition}
+        data={weeklyNutrition}
+      />
 
       <Dialog open={planDialog} onOpenChange={setPlanDialog}>
         <DialogContent className="max-w-md">
