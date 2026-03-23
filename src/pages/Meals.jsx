@@ -1112,6 +1112,15 @@ export default function Meals() {
                           <span className="text-sm md:text-base">{addAllWeeklyIngredientsToGroceryMutation.isPending ? 'Adding...' : 'Add All Weekly Meal Ingredients to Grocery List'}</span>
                         </Button>
                         <Button
+                          onClick={() => { setWeeklyNutrition(null); calculateWeeklyNutrition(); }}
+                          disabled={mealPlans.length === 0}
+                          variant="outline"
+                          className="border-pink-200 text-pink-600 hover:bg-pink-50 h-auto py-1.5 px-2"
+                          title="Weekly Nutrition Summary"
+                        >
+                          <TrendingUp className="w-4 h-4" />
+                        </Button>
+                        <Button
                           onClick={() => mealPlans.forEach(plan => deleteFromMealPlanMutation.mutate(plan.id))}
                           disabled={deleteFromMealPlanMutation.isPending || mealPlans.length === 0}
                           variant="outline"
