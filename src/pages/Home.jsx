@@ -73,28 +73,28 @@ export default function Home() {
       href: 'Meals', 
       count: 0,
       imageKey: 'meals',
-      bgGradient: 'linear-gradient(160deg, #f9a8d4 0%, #f472b6 40%, #ec4899 70%, #db2777 100%)'
+      bgGradient: 'linear-gradient(160deg, #fce7f3 0%, #fbb6d9 40%, #f472b6 70%, #ec4899 100%)'
     },
     { 
       title: 'Calendar', 
       href: 'Kids', 
       count: todayEvents,
       imageKey: 'kids',
-      bgGradient: 'linear-gradient(160deg, #93c5fd 0%, #60a5fa 40%, #3b82f6 70%, #2563eb 100%)'
+      bgGradient: 'linear-gradient(160deg, #dbeafe 0%, #bfdbfe 40%, #93c5fd 70%, #60a5fa 100%)'
     },
     { 
       title: 'House', 
       href: 'House', 
       count: 0,
       imageKey: 'house',
-      bgGradient: 'linear-gradient(160deg, #86efac 0%, #4ade80 40%, #22c55e 70%, #16a34a 100%)'
+      bgGradient: 'linear-gradient(160deg, #dcfce7 0%, #bbf7d0 40%, #86efac 70%, #4ade80 100%)'
     },
     { 
       title: 'History', 
       href: 'History', 
       count: 0,
       imageKey: 'history',
-      bgGradient: 'linear-gradient(160deg, #fcd34d 0%, #fbbf24 40%, #f59e0b 70%, #d97706 100%)'
+      bgGradient: 'linear-gradient(160deg, #fef3c7 0%, #fde68a 40%, #fcd34d 70%, #fbbf24 100%)'
     },
   ];
 
