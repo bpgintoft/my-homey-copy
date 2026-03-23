@@ -140,7 +140,7 @@ export default function RoundaboutGrid({ sections, imageUrls }) {
                 }}
               >
                 <Link to={createPageUrl(section.href)} style={{ display: 'block', width: '100%', height: '100%' }}>
-                  <div className="w-full h-full flex flex-col items-center justify-center cursor-pointer hover:brightness-110 transition-all duration-300" style={{ background: section.bgGradient || section.bgColor }}>
+                  <div className={`w-full h-full flex flex-col items-center justify-center ${section.bgColor} cursor-pointer hover:brightness-110 transition-all duration-300`}>
                     <div style={{ transform: `translate(${offset.x}px, ${offset.y}px)`, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', ...((['Calendar', 'Meals'].includes(section.title)) && { justifyContent: 'center' }) }}>
                       {imageUrls[section.imageKey] && (
                         <img
