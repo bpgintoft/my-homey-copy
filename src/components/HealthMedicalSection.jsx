@@ -99,6 +99,9 @@ export default function HealthMedicalSection({ member, color = 'blue' }) {
   });
   const [saved, setSaved] = useState(false);
   const [copiedKey, setCopiedKey] = useState(null);
+  const [revealedKey, setRevealedKey] = useState(null);
+
+  const toggleReveal = (key) => setRevealedKey(prev => prev === key ? null : key);
 
   const updateMutation = useMutation({
     mutationFn: async (data) => {
@@ -185,21 +188,32 @@ export default function HealthMedicalSection({ member, color = 'blue' }) {
     });
   };
 
-  const ViewRow = ({ label, value, copyKey }) => (
-    <div className="flex items-center gap-2">
-      <span className="text-xs text-gray-500 shrink-0 w-32">{label}</span>
-      <span className={`text-sm font-medium flex-1 ${valueColor}`}>{value}</span>
-      <button
-        onClick={() => handleCopy(value, copyKey || label)}
-        className="p-1 rounded text-gray-400 hover:text-gray-600 transition-colors shrink-0"
-        title="Copy"
-      >
-        {copiedKey === (copyKey || label)
-          ? <Check className="w-3.5 h-3.5 text-green-500" />
-          : <Copy className="w-3.5 h-3.5" />}
-      </button>
-    </div>
-  );
+  const ViewRow = ({ label, value, copyKey }) => {
+    const key = copyKey || label;
+    const isRevealed = revealedKey === key;
+    return (
+      <div className="flex items-center gap-2">
+        <span className="text-xs text-gray-500 shrink-0 w-32">{label}</span>
+        <button
+          onClick={() => toggleReveal(key)}
+          className={`text-sm font-medium flex-1 text-left transition-all ${isRevealed ? valueColor : 'text-gray-300 tracking-widest'}`}
+        >
+          {isRevealed ? value : '••••••••'}
+        </button>
+        {isRevealed && (
+          <button
+            onClick={() => handleCopy(value, key)}
+            className="p-1 rounded text-gray-400 hover:text-gray-600 transition-colors shrink-0"
+            title="Copy"
+          >
+            {copiedKey === key
+              ? <Check className="w-3.5 h-3.5 text-green-500" />
+              : <Copy className="w-3.5 h-3.5" />}
+          </button>
+        )}
+      </div>
+    );
+  };
 
   const isKid = member?.person_type === 'kid';
   const hasHeight = form.height_feet !== '' || form.height_inches !== '';
@@ -281,10 +295,17 @@ export default function HealthMedicalSection({ member, color = 'blue' }) {
           <div>
             <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2">Vaccination History</h3>
             <div className="flex items-start gap-2">
-              <span className={`text-sm font-medium flex-1 ${valueColor} whitespace-pre-wrap`}>{form.vaccination_history}</span>
-              <button onClick={() => handleCopy(form.vaccination_history, 'vaccinations')} className="p-1 rounded text-gray-400 hover:text-gray-600 transition-colors shrink-0 mt-0.5" title="Copy">
-                {copiedKey === 'vaccinations' ? <Check className="w-3.5 h-3.5 text-green-500" /> : <Copy className="w-3.5 h-3.5" />}
+              <button
+                onClick={() => toggleReveal('vaccinations')}
+                className={`text-sm font-medium flex-1 text-left transition-all ${revealedKey === 'vaccinations' ? `${valueColor} whitespace-pre-wrap` : 'text-gray-300 tracking-widest'}`}
+              >
+                {revealedKey === 'vaccinations' ? form.vaccination_history : '••••••••'}
               </button>
+              {revealedKey === 'vaccinations' && (
+                <button onClick={() => handleCopy(form.vaccination_history, 'vaccinations')} className="p-1 rounded text-gray-400 hover:text-gray-600 transition-colors shrink-0 mt-0.5" title="Copy">
+                  {copiedKey === 'vaccinations' ? <Check className="w-3.5 h-3.5 text-green-500" /> : <Copy className="w-3.5 h-3.5" />}
+                </button>
+              )}
             </div>
           </div>
         )}
