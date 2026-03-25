@@ -29,6 +29,8 @@ export default function PersonalInfoSection({ member, color = 'blue' }) {
   const [editing, setEditing] = useState(false);
   const [saved, setSaved] = useState(false);
   const [copiedKey, setCopiedKey] = useState(null);
+  const [revealedKey, setRevealedKey] = useState(null);
+  const toggleReveal = (key) => setRevealedKey(prev => prev === key ? null : key);
   const [newGiftIdea, setNewGiftIdea] = useState('');
   const [giftIdeas, setGiftIdeas] = useState(member?.gift_ideas || []);
   const [customInfo, setCustomInfo] = useState(member?.custom_info || []);
@@ -168,21 +170,32 @@ export default function PersonalInfoSection({ member, color = 'blue' }) {
     setTimeout(() => setCopiedKey(null), 1500);
   };
 
-  const ViewRow = ({ label, value, copyKey }) => (
-    <div className="flex items-center gap-2">
-      <span className="text-xs text-gray-500 shrink-0 w-24">{label}</span>
-      <span className={`text-sm font-medium flex-1 min-w-0 truncate ${valueColor}`}>{value}</span>
-      <button
-        onClick={() => handleCopy(value, copyKey || label)}
-        className="p-1 rounded text-gray-400 hover:text-gray-600 transition-colors shrink-0"
-        title="Copy"
-      >
-        {copiedKey === (copyKey || label)
-          ? <Check className="w-3.5 h-3.5 text-green-500" />
-          : <Copy className="w-3.5 h-3.5" />}
-      </button>
-    </div>
-  );
+  const ViewRow = ({ label, value, copyKey }) => {
+    const key = copyKey || label;
+    const isRevealed = revealedKey === key;
+    return (
+      <div className="flex items-center gap-2">
+        <span className="text-xs text-gray-500 shrink-0 w-24">{label}</span>
+        <button
+          onClick={() => toggleReveal(key)}
+          className={`text-sm font-medium flex-1 min-w-0 text-left transition-all ${isRevealed ? `${valueColor} truncate` : 'text-gray-300 tracking-widest'}`}
+        >
+          {isRevealed ? value : '••••••••'}
+        </button>
+        {isRevealed && (
+          <button
+            onClick={() => handleCopy(value, key)}
+            className="p-1 rounded text-gray-400 hover:text-gray-600 transition-colors shrink-0"
+            title="Copy"
+          >
+            {copiedKey === key
+              ? <Check className="w-3.5 h-3.5 text-green-500" />
+              : <Copy className="w-3.5 h-3.5" />}
+          </button>
+        )}
+      </div>
+    );
+  };
 
   const hasContact = form.phone || form.email;
   const hasRole = !!form.role;

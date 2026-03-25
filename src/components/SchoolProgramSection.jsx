@@ -19,6 +19,8 @@ export default function SchoolProgramSection({ memberId, memberName, programTitl
   const [newPasscode, setNewPasscode] = useState({ name: '', code: '' });
   const [isAddingPasscode, setIsAddingPasscode] = useState(false);
   const [visiblePasscodes, setVisiblePasscodes] = useState([]);
+  const [revealedContact, setRevealedContact] = useState(null);
+  const toggleRevealContact = (key) => setRevealedContact(prev => prev === key ? null : key);
   const [editingWebsite, setEditingWebsite] = useState(false);
   const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
   const [selectedPhotoIndex, setSelectedPhotoIndex] = useState(null);
@@ -196,13 +198,25 @@ export default function SchoolProgramSection({ memberId, memberName, programTitl
               )}
 
               {program.phone && (
-                <div className="flex items-center gap-2 text-sm text-gray-700">
-                  <Phone className="w-4 h-4 text-gray-400" /><span>{program.phone}</span>
+                <div className="flex items-center gap-2 text-sm">
+                  <Phone className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                  <button
+                    onClick={() => toggleRevealContact('phone')}
+                    className={`text-left transition-all ${revealedContact === 'phone' ? 'text-gray-700' : 'text-gray-300 tracking-widest'}`}
+                  >
+                    {revealedContact === 'phone' ? program.phone : '••••••••'}
+                  </button>
                 </div>
               )}
               {program.email && (
-                <div className="flex items-center gap-2 text-sm text-gray-700">
-                  <Mail className="w-4 h-4 text-gray-400" /><span>{program.email}</span>
+                <div className="flex items-center gap-2 text-sm">
+                  <Mail className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                  <button
+                    onClick={() => toggleRevealContact('email')}
+                    className={`text-left transition-all ${revealedContact === 'email' ? 'text-gray-700' : 'text-gray-300 tracking-widest'}`}
+                  >
+                    {revealedContact === 'email' ? program.email : '••••••••'}
+                  </button>
                 </div>
               )}
 
