@@ -58,7 +58,7 @@ export default function Layout({ children, currentPageName }) {
       items: [
         { name: 'Home', icon: Home, href: 'Home' },
         { name: 'Meals', icon: UtensilsCrossed, href: 'Meals' },
-        { name: 'Calendar', icon: Calendar, href: 'Kids' },
+        { name: 'Calendar', icon: Calendar, href: 'Calendar' },
         { name: 'House', icon: Home, href: 'House' },
         { name: 'History', icon: History, href: 'History' },
         { name: 'Decisions', icon: CheckSquare, href: 'Decisions' },

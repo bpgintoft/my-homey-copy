@@ -19,7 +19,7 @@ import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSam
 import FamilyCalendar from '../components/FamilyCalendar';
 import ImportantDatesTab from '../components/ImportantDatesTab';
 
-export default function Kids() {
+export default function Calendar() {
   const navigate = useNavigate();
   const bannerRef = useRef(null);
   const touchStartY = useRef(0);

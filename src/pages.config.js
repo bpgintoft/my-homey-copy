@@ -58,7 +58,7 @@ import Home from './pages/Home';
 import HomeDetails from './pages/HomeDetails';
 import House from './pages/House';
 import Kate from './pages/Kate';
-import Kids from './pages/Kids';
+import Calendar from './pages/Calendar';
 import Maintenance from './pages/Maintenance';
 import MaintenanceCalendar from './pages/MaintenanceCalendar';
 import Mara from './pages/Mara';
@@ -82,7 +82,7 @@ export const PAGES = {
     "HomeDetails": HomeDetails,
     "House": House,
     "Kate": Kate,
-    "Kids": Kids,
+    "Calendar": Calendar,
     "Maintenance": Maintenance,
     "MaintenanceCalendar": MaintenanceCalendar,
     "Mara": Mara,
