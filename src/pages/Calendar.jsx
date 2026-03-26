@@ -174,11 +174,15 @@ export default function Calendar() {
               src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/a100bf97d_familybiking.png" 
               alt="Family Biking"
               className="hidden md:block h-40 md:h-56 w-auto object-cover flex-shrink-0"
+              loading="eager"
+              decoding="async"
             />
             <img 
               src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/5317f8746_familyplaying.png" 
               alt="Family Playing"
               className="h-40 md:h-56 w-auto object-cover flex-shrink-0"
+              loading="eager"
+              decoding="async"
             />
           </div>
         </div>

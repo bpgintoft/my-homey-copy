@@ -47,7 +47,8 @@ export default function Home() {
         const eventEnd = new Date(event.end);
         return eventEnd >= now;
       });
-    }
+    },
+    staleTime: 5 * 60 * 1000, // cache for 5 min — avoid re-fetching on every home visit
   });
 
   const { data: appliances } = useQuery({
@@ -144,6 +145,8 @@ export default function Home() {
                 src={familyImage} 
                 alt="Family Welcome"
                 className="h-40 md:h-56 w-auto object-cover flex-shrink-0 cursor-pointer hover:opacity-80 transition-opacity"
+                loading="eager"
+                decoding="async"
               />
             </Link>
           </div>
@@ -217,6 +220,8 @@ export default function Home() {
               src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/8e2cf008e_Gintoftsback.png"
               alt="Gintoft Family"
               className="w-full max-w-lg h-auto object-contain"
+              loading="lazy"
+              decoding="async"
             />
           </div>
         </Link>
