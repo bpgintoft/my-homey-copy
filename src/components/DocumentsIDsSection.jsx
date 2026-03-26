@@ -1,20 +1,37 @@
 import React, { useState, useRef } from 'react';
-import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Loader2, Plus, Trash2, Eye, EyeOff, Lock, FileText, Image, Upload, X, ShieldCheck } from 'lucide-react';
+import {
+  Loader2, Plus, Trash2, Eye, EyeOff, Lock, FileText, Image,
+  Upload, X, ShieldCheck, Shield, Home, Heart, DollarSign,
+  Plane, Car, GraduationCap, FolderOpen, ChevronDown, ChevronRight
+} from 'lucide-react';
+
+// ─── Category Config ────────────────────────────────────────────────────────
+export const CATEGORIES = [
+  { value: 'identity',   label: 'Identity',   icon: Shield,         color: 'text-blue-600',   bg: 'bg-blue-50',   border: 'border-blue-200' },
+  { value: 'property',   label: 'Property',   icon: Home,           color: 'text-amber-600',  bg: 'bg-amber-50',  border: 'border-amber-200' },
+  { value: 'health',     label: 'Health',     icon: Heart,          color: 'text-rose-600',   bg: 'bg-rose-50',   border: 'border-rose-200' },
+  { value: 'financial',  label: 'Financial',  icon: DollarSign,     color: 'text-green-600',  bg: 'bg-green-50',  border: 'border-green-200' },
+  { value: 'travel',     label: 'Travel',     icon: Plane,          color: 'text-sky-600',    bg: 'bg-sky-50',    border: 'border-sky-200' },
+  { value: 'vehicles',   label: 'Vehicles',   icon: Car,            color: 'text-orange-600', bg: 'bg-orange-50', border: 'border-orange-200' },
+  { value: 'education',  label: 'Education',  icon: GraduationCap,  color: 'text-purple-600', bg: 'bg-purple-50', border: 'border-purple-200' },
+  { value: 'other',      label: 'Other',      icon: FolderOpen,     color: 'text-gray-500',   bg: 'bg-gray-50',   border: 'border-gray-200' },
+];
+
+const getCategoryConfig = (value) =>
+  CATEGORIES.find(c => c.value === value) || CATEGORIES.find(c => c.value === 'other');
 
 // ─── PIN Lock Gate ─────────────────────────────────────────────────────────
 function PinLockGate({ onUnlock }) {
   const [pin, setPin] = useState(['', '', '', '']);
   const [error, setError] = useState(false);
-  const [mode, setMode] = useState('choose'); // 'choose' | 'pin' | 'confirm'
+  const [mode, setMode] = useState('choose');
   const inputRefs = [useRef(), useRef(), useRef(), useRef()];
-
-  // Retrieve stored PIN from localStorage (per-session lock)
   const STORAGE_KEY = 'family_docs_pin';
 
   const handlePinDigit = (index, value) => {
@@ -37,7 +54,6 @@ function PinLockGate({ onUnlock }) {
   const validatePin = (enteredPin) => {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (!stored) {
-      // First time — set the PIN
       localStorage.setItem(STORAGE_KEY, enteredPin);
       onUnlock();
     } else if (stored === enteredPin) {
@@ -127,6 +143,9 @@ function DocumentCard({ doc, color, onDelete }) {
   };
   const valueColor = valueColorMap[color] || valueColorMap.blue;
 
+  const catConfig = getCategoryConfig(doc.category || 'other');
+  const CatIcon = catConfig.icon;
+
   const handleViewFile = async () => {
     if (signedUrl) { window.open(signedUrl, '_blank'); return; }
     setLoadingUrl(true);
@@ -147,8 +166,9 @@ function DocumentCard({ doc, color, onDelete }) {
 
   return (
     <div className="flex items-center gap-3 p-3 rounded-xl border border-gray-100 bg-white shadow-sm">
-      <div className="w-9 h-9 rounded-lg bg-gray-100 flex items-center justify-center flex-shrink-0">
-        {doc.file_uri ? <Image className="w-4 h-4 text-gray-500" /> : <FileText className="w-4 h-4 text-gray-500" />}
+      {/* Category color tag */}
+      <div className={`w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 ${catConfig.bg} ${catConfig.border} border`}>
+        <CatIcon className={`w-4 h-4 ${catConfig.color}`} />
       </div>
       <div className="flex-1 min-w-0">
         <div className="text-sm font-semibold text-gray-800 truncate">{doc.label || DOC_LABELS[doc.type] || doc.type}</div>
@@ -192,6 +212,35 @@ function DocumentCard({ doc, color, onDelete }) {
   );
 }
 
+// ─── Category Group ──────────────────────────────────────────────────────────
+function CategoryGroup({ catConfig, docs, color, onDelete }) {
+  const [open, setOpen] = useState(true);
+  const CatIcon = catConfig.icon;
+
+  return (
+    <div className={`rounded-xl border ${catConfig.border} overflow-hidden`}>
+      <button
+        onClick={() => setOpen(o => !o)}
+        className={`w-full flex items-center justify-between px-4 py-2.5 ${catConfig.bg} hover:opacity-80 transition-opacity`}
+      >
+        <div className="flex items-center gap-2">
+          <CatIcon className={`w-4 h-4 ${catConfig.color}`} />
+          <span className={`text-sm font-semibold ${catConfig.color}`}>{catConfig.label}</span>
+          <span className="text-xs text-gray-400 font-normal">({docs.length})</span>
+        </div>
+        {open ? <ChevronDown className="w-4 h-4 text-gray-400" /> : <ChevronRight className="w-4 h-4 text-gray-400" />}
+      </button>
+      {open && (
+        <div className="p-2 space-y-2 bg-white">
+          {docs.map(doc => (
+            <DocumentCard key={doc.id} doc={doc} color={color} onDelete={onDelete} />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ─── Add Document Form ──────────────────────────────────────────────────────
 function AddDocumentForm({ memberId, memberName, color, onSaved }) {
   const inputColorMap = {
@@ -204,11 +253,10 @@ function AddDocumentForm({ memberId, memberName, color, onSaved }) {
   const inputClass = inputColorMap[color] || inputColorMap.blue;
   const queryClient = useQueryClient();
 
-  const [form, setForm] = useState({ type: '', label: '', value: '', expiry_date: '' });
+  const [form, setForm] = useState({ type: '', category: '', label: '', value: '', expiry_date: '' });
   const [file, setFile] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState(null);
-  const [retryCount, setRetryCount] = useState(0);
   const fileRef = useRef();
 
   const DOC_TYPES = [
@@ -226,12 +274,18 @@ function AddDocumentForm({ memberId, memberName, color, onSaved }) {
     { value: 'other', label: 'Other' },
   ];
 
-  const handleSave = async (attempt = 1) => {
+  const toBase64 = (f) => new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result.split(',')[1]);
+    reader.onerror = reject;
+    reader.readAsDataURL(f);
+  });
+
+  const handleSave = async () => {
     if (!form.type) return;
     setUploading(true);
     setUploadError(null);
 
-    // Step 1: Upload file if present (with retry up to 3 times)
     let file_uri = null;
     if (file) {
       let lastError = null;
@@ -248,7 +302,7 @@ function AddDocumentForm({ memberId, memberName, color, onSaved }) {
           break;
         } catch (err) {
           lastError = err;
-          if (i < 2) await new Promise(r => setTimeout(r, 1000 * (i + 1))); // 1s, 2s backoff
+          if (i < 2) await new Promise(r => setTimeout(r, 1000 * (i + 1)));
         }
       }
       if (lastError) {
@@ -258,13 +312,13 @@ function AddDocumentForm({ memberId, memberName, color, onSaved }) {
       }
     }
 
-    // Step 2: Save the doc entry to the entity
     try {
       const memberData = await base44.entities.FamilyMember.filter({ id: memberId }).then(r => r[0]);
       const existing = memberData?.documents_ids || [];
       const docEntry = {
         id: crypto.randomUUID(),
         type: form.type,
+        category: form.category || 'other',
         label: form.label,
         value: form.value,
         expiry_date: form.expiry_date || null,
@@ -273,9 +327,8 @@ function AddDocumentForm({ memberId, memberName, color, onSaved }) {
       };
       await base44.entities.FamilyMember.update(memberId, { documents_ids: [...existing, docEntry] });
       queryClient.invalidateQueries(['familyMember', memberId]);
-      setForm({ type: '', label: '', value: '', expiry_date: '' });
+      setForm({ type: '', category: '', label: '', value: '', expiry_date: '' });
       setFile(null);
-      setRetryCount(0);
       onSaved?.();
     } catch (err) {
       setUploadError(`Failed to save document record: ${err.message}. Please try again.`);
@@ -284,27 +337,42 @@ function AddDocumentForm({ memberId, memberName, color, onSaved }) {
     }
   };
 
-  const toBase64 = (f) => new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(reader.result.split(',')[1]);
-    reader.onerror = reject;
-    reader.readAsDataURL(f);
-  });
-
   return (
     <div className="space-y-3 p-4 rounded-xl border border-dashed border-gray-200 bg-gray-50">
       <h4 className="text-sm font-semibold text-gray-700">Add Document / ID</h4>
-      <div>
-        <Label className="text-xs text-gray-500 mb-1 block">Document Type</Label>
-        <Select value={form.type} onValueChange={(v) => setForm({ ...form, type: v })}>
-          <SelectTrigger className={inputClass}>
-            <SelectValue placeholder="Select type..." />
-          </SelectTrigger>
-          <SelectContent>
-            {DOC_TYPES.map(t => <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>)}
-          </SelectContent>
-        </Select>
+
+      <div className="grid grid-cols-2 gap-3">
+        <div>
+          <Label className="text-xs text-gray-500 mb-1 block">Document Type</Label>
+          <Select value={form.type} onValueChange={(v) => setForm({ ...form, type: v })}>
+            <SelectTrigger className={inputClass}>
+              <SelectValue placeholder="Select type..." />
+            </SelectTrigger>
+            <SelectContent>
+              {DOC_TYPES.map(t => <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>)}
+            </SelectContent>
+          </Select>
+        </div>
+        <div>
+          <Label className="text-xs text-gray-500 mb-1 block">Category</Label>
+          <Select value={form.category} onValueChange={(v) => setForm({ ...form, category: v })}>
+            <SelectTrigger className={inputClass}>
+              <SelectValue placeholder="Select category..." />
+            </SelectTrigger>
+            <SelectContent>
+              {CATEGORIES.map(c => (
+                <SelectItem key={c.value} value={c.value}>
+                  <span className="flex items-center gap-2">
+                    <c.icon className={`w-3.5 h-3.5 ${c.color}`} />
+                    {c.label}
+                  </span>
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
       </div>
+
       <div>
         <Label className="text-xs text-gray-500 mb-1 block">Label (optional)</Label>
         <Input placeholder="e.g., Bryan's Passport" value={form.label}
@@ -345,6 +413,7 @@ function AddDocumentForm({ memberId, memberName, color, onSaved }) {
         <input ref={fileRef} type="file" accept="image/*,.pdf" className="hidden"
           onChange={e => setFile(e.target.files?.[0] || null)} />
       </div>
+
       {uploadError && (
         <div className="rounded-lg border border-red-200 bg-red-50 p-3 space-y-2">
           <p className="text-xs text-red-600 font-medium leading-snug">{uploadError}</p>
@@ -368,10 +437,10 @@ export default function DocumentsIDsSection({ member, color = 'blue', isReadOnly
   const [unlocked, setUnlocked] = useState(false);
   const queryClient = useQueryClient();
 
-  // Hide completely for child role users
   if (isReadOnly) return null;
 
-  const docs = member?.documents_ids || [];
+  // Normalise: existing docs without a category get 'other' as default
+  const docs = (member?.documents_ids || []).map(d => ({ ...d, category: d.category || 'other' }));
 
   const handleDelete = async (docId) => {
     const updated = docs.filter(d => d.id !== docId);
@@ -383,6 +452,12 @@ export default function DocumentsIDsSection({ member, color = 'blue', isReadOnly
     return <PinLockGate onUnlock={() => setUnlocked(true)} />;
   }
 
+  // Group docs by category, preserving CATEGORIES order
+  const grouped = CATEGORIES.map(cat => ({
+    catConfig: cat,
+    docs: docs.filter(d => d.category === cat.value),
+  })).filter(g => g.docs.length > 0);
+
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-2 text-xs text-gray-400">
@@ -393,9 +468,15 @@ export default function DocumentsIDsSection({ member, color = 'blue', isReadOnly
       {docs.length === 0 ? (
         <p className="text-sm text-gray-400 italic">No documents added yet.</p>
       ) : (
-        <div className="space-y-2">
-          {docs.map(doc => (
-            <DocumentCard key={doc.id} doc={doc} color={color} onDelete={handleDelete} />
+        <div className="space-y-3">
+          {grouped.map(({ catConfig, docs: catDocs }) => (
+            <CategoryGroup
+              key={catConfig.value}
+              catConfig={catConfig}
+              docs={catDocs}
+              color={color}
+              onDelete={handleDelete}
+            />
           ))}
         </div>
       )}

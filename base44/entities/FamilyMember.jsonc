@@ -1,0 +1,294 @@
+{
+  "name": "FamilyMember",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Family member's name"
+    },
+    "person_type": {
+      "type": "string",
+      "enum": [
+        "kid",
+        "adult"
+      ],
+      "description": "Whether this person is a kid or adult"
+    },
+    "can_vote": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether this family member can vote on decisions"
+    },
+    "school_or_work_name": {
+      "type": "string",
+      "description": "Name of their school (if kid) or workplace (if adult)"
+    },
+    "role": {
+      "type": "string",
+      "description": "Role in household (e.g., Parent, Child, etc.)"
+    },
+    "email": {
+      "type": "string"
+    },
+    "phone": {
+      "type": "string"
+    },
+    "photo_url": {
+      "type": "string"
+    },
+    "responsibilities": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "List of household responsibilities"
+    },
+    "color": {
+      "type": "string",
+      "description": "Color for calendar/task display"
+    },
+    "personal_notes": {
+      "type": "string",
+      "description": "Personal notes and reminders for this family member"
+    },
+    "gift_ideas": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "List of gift ideas for this family member (kids only)"
+    },
+    "custom_info": {
+      "type": "array",
+      "description": "Custom info items added by the user",
+      "items": {
+        "type": "object",
+        "properties": {
+          "category": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "documents_ids": {
+      "type": "array",
+      "description": "Sensitive documents and IDs stored securely",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "description": "Document type (ssn, passport_number, passport, drivers_license, etc.)"
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "identity",
+              "property",
+              "health",
+              "financial",
+              "travel",
+              "vehicles",
+              "education",
+              "other"
+            ],
+            "description": "Document category for grouping",
+            "default": "other"
+          },
+          "label": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          },
+          "expiry_date": {
+            "type": "string",
+            "format": "date"
+          },
+          "file_uri": {
+            "type": "string",
+            "description": "Private file URI (not a public URL)"
+          },
+          "created_at": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "passport_expiration_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Expiration date of the family member's passport"
+    },
+    "license_expiration_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Expiration date of the family member's driver's license"
+    },
+    "license_number": {
+      "type": "string",
+      "description": "Driver's license number"
+    },
+    "license_issue_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Issue date of the driver's license"
+    },
+    "license_plate_number": {
+      "type": "string",
+      "description": "License plate number of the family member's vehicle"
+    },
+    "student_number": {
+      "type": "string",
+      "description": "Student ID number for kids"
+    },
+    "shoe_size": {
+      "type": "string"
+    },
+    "shirt_size": {
+      "type": "string"
+    },
+    "pant_size": {
+      "type": "string"
+    },
+    "jacket_size": {
+      "type": "string"
+    },
+    "hat_size": {
+      "type": "string"
+    },
+    "height_feet": {
+      "type": "number"
+    },
+    "height_inches": {
+      "type": "number"
+    },
+    "weight_lbs": {
+      "type": "number"
+    },
+    "blood_type": {
+      "type": "string",
+      "enum": [
+        "A+",
+        "A-",
+        "B+",
+        "B-",
+        "AB+",
+        "AB-",
+        "O+",
+        "O-",
+        "Unknown"
+      ]
+    },
+    "insurance_provider": {
+      "type": "string"
+    },
+    "insurance_member_id": {
+      "type": "string"
+    },
+    "insurance_group_number": {
+      "type": "string"
+    },
+    "dental_insurance_provider": {
+      "type": "string"
+    },
+    "dental_insurance_member_id": {
+      "type": "string"
+    },
+    "dental_insurance_group_number": {
+      "type": "string"
+    },
+    "vision_insurance_provider": {
+      "type": "string"
+    },
+    "vision_insurance_member_id": {
+      "type": "string"
+    },
+    "vision_insurance_group_number": {
+      "type": "string"
+    },
+    "primary_care_physician": {
+      "type": "string"
+    },
+    "pediatrician": {
+      "type": "string"
+    },
+    "dentist": {
+      "type": "string"
+    },
+    "optometrist": {
+      "type": "string"
+    },
+    "specialists": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "specialty": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "vaccination_history": {
+      "type": "string"
+    },
+    "vehicle_make": {
+      "type": "string"
+    },
+    "vehicle_model": {
+      "type": "string"
+    },
+    "vehicle_year": {
+      "type": "number"
+    },
+    "vehicle_vin": {
+      "type": "string"
+    },
+    "vehicle_insurance_provider": {
+      "type": "string"
+    },
+    "vehicle_insurance_policy_number": {
+      "type": "string"
+    },
+    "vehicle_registration_expiration": {
+      "type": "string",
+      "format": "date"
+    },
+    "roadside_assistance_provider": {
+      "type": "string"
+    },
+    "roadside_assistance_member_number": {
+      "type": "string"
+    },
+    "frequent_flyer_programs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "airline": {
+            "type": "string"
+          },
+          "number": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  },
+  "required": [
+    "name"
+  ]
+}
