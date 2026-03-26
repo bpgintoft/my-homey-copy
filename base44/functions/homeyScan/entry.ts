@@ -2,17 +2,25 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
 
 Deno.serve(async (req) => {
   try {
-    // Parse body FIRST — must happen before createClientFromRequest reads it
-    const body = await req.json();
-    const { file_url, file_type } = body;
-
     const base44 = createClientFromRequest(req);
     const user = await base44.auth.me();
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
-    if (!file_url) return Response.json({ error: 'file_url is required' }, { status: 400 });
+    // Receive file via multipart form (sent automatically by base44.functions.invoke when a File is passed)
+    const formData = await req.formData();
+    const file = formData.get('file');
 
-    const prompt = `You are Homey, a helpful family assistant. Carefully analyze this image or document (which may be a school flyer, sports schedule, medical appointment card, event poster, or similar).
+    if (!file) return Response.json({ error: 'No file provided' }, { status: 400 });
+
+    console.log('Received file:', file.name, file.type, file.size, 'bytes');
+
+    // Upload to Base44 storage to get a hosted URL the LLM can access
+    const uploadResult = await base44.asServiceRole.integrations.Core.UploadFile({ file });
+    const file_url = uploadResult.file_url;
+    console.log('Uploaded URL:', file_url);
+
+    const result = await base44.asServiceRole.integrations.Core.InvokeLLM({
+      prompt: `You are Homey, a helpful family assistant. Carefully analyze this image or document (which may be a school flyer, sports schedule, medical appointment card, event poster, sticky note, or similar).
 
 Extract the following details:
 - event_name: The name or title of the event
@@ -28,10 +36,7 @@ Extract the following details:
 - registration_url: Any URL or website mentioned. If not found, return null.
 - confidence: Your confidence level (high, medium, low) in the extraction
 
-Be thorough — dates sometimes appear in formats like "Saturday, April 5th" or "4/5/26". Always convert to YYYY-MM-DD.`;
-
-    const result = await base44.asServiceRole.integrations.Core.InvokeLLM({
-      prompt,
+Be thorough — dates sometimes appear in formats like "Saturday, April 5th", "4/5/26", or "4/1/2026". Always convert to YYYY-MM-DD.`,
       file_urls: [file_url],
       response_json_schema: {
         type: "object",

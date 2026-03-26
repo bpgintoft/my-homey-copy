@@ -99,57 +99,25 @@ export default function HomeyScanModal({ open, onClose, onSaved }) {
     setScanError(null);
 
     try {
-      // Compress image and get base64 data URI for direct LLM vision call
-      let dataUri;
+      // Compress image client-side, then send as a File to the backend (multipart auto-detected)
+      let uploadFile;
       if (file.type.startsWith('image/')) {
         const compressed = await compressImage(file);
-        dataUri = `data:image/jpeg;base64,${compressed.base64}`;
+        const byteChars = atob(compressed.base64);
+        const byteArr = new Uint8Array(byteChars.length);
+        for (let i = 0; i < byteChars.length; i++) byteArr[i] = byteChars.charCodeAt(i);
+        uploadFile = new File([byteArr], 'scan.jpg', { type: 'image/jpeg' });
       } else {
-        // PDF: read as base64 data URI
-        const b64 = await toBase64(file);
-        dataUri = `data:${file.type};base64,${b64}`;
+        // PDF or other — send as-is
+        uploadFile = file;
       }
 
-      const result = await base44.integrations.Core.InvokeLLM({
-        prompt: `You are Homey, a helpful family assistant. Carefully analyze this image or document (which may be a school flyer, sports schedule, medical appointment card, event poster, sticky note, or similar).
-
-Extract the following details:
-- event_name: The name or title of the event
-- date: The date in YYYY-MM-DD format. If multiple dates, use the first/main one. If you cannot find a date, return null.
-- time: Start time in HH:MM 12-hour format with AM/PM (e.g. "3:30 PM"). If not found, return null.
-- end_time: End time if present, same format. If not found, return null.
-- location: Physical location or venue name. If not found, return null.
-- address: Street address if different from location name. If not found, return null.
-- description: A brief 1-2 sentence description summarizing what this event is about.
-- event_type: One of: event, sports_league, program, reminder
-- age_range: Age range if mentioned (e.g. "5-12 years"). If not found, return null.
-- cost: Cost or price if mentioned (e.g. "Free", "$15"). If not found, return null.
-- registration_url: Any URL or website mentioned. If not found, return null.
-- confidence: Your confidence level (high, medium, low) in the extraction
-
-Be thorough — dates sometimes appear in formats like "Saturday, April 5th", "4/5/26", or "4/1/2026". Always convert to YYYY-MM-DD.`,
-        file_urls: [dataUri],
-        response_json_schema: {
-          type: "object",
-          properties: {
-            event_name: { type: "string" },
-            date: { type: ["string", "null"] },
-            time: { type: ["string", "null"] },
-            end_time: { type: ["string", "null"] },
-            location: { type: ["string", "null"] },
-            address: { type: ["string", "null"] },
-            description: { type: "string" },
-            event_type: { type: "string" },
-            age_range: { type: ["string", "null"] },
-            cost: { type: ["string", "null"] },
-            registration_url: { type: ["string", "null"] },
-            confidence: { type: "string" }
-          }
-        }
-      });
+      // Pass File object — SDK auto-sends as multipart/form-data
+      const response = await base44.functions.invoke('homeyScan', { file: uploadFile });
+      const result = response.data?.result;
 
       if (!result) {
-        setScanError("Homey couldn't read that file. Please try a clearer image.");
+        setScanError(response.data?.error || "Homey couldn't read that file. Please try a clearer image.");
         setStep(STEPS.UPLOAD);
         return;
       }
@@ -173,7 +141,8 @@ Be thorough — dates sometimes appear in formats like "Saturday, April 5th", "4
       setMissingDate(!result.date);
       setStep(STEPS.REVIEW);
     } catch (err) {
-      setScanError("Something went wrong while scanning. Please try again.");
+      console.error('HomeyScan error:', err?.message || err);
+      setScanError(err?.message || "Something went wrong while scanning. Please try again.");
       setStep(STEPS.UPLOAD);
     }
   };
