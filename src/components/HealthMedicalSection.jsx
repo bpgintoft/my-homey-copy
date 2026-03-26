@@ -69,7 +69,7 @@ function insurancesToEntityFields(insurances) {
   return fields;
 }
 
-export default function HealthMedicalSection({ member, color = 'blue' }) {
+export default function HealthMedicalSection({ member, color = 'blue', isReadOnly = false }) {
   const inputClass = inputColorMap[color] || inputColorMap.blue;
   const valueColor = valueColorMap[color] || valueColorMap.blue;
   const queryClient = useQueryClient();
@@ -232,6 +232,7 @@ export default function HealthMedicalSection({ member, color = 'blue' }) {
   if (!editing) {
     return (
       <div className="space-y-5 relative">
+        {!isReadOnly && (
         <button
           onClick={() => setEditing(true)}
           className="absolute top-0 right-0 p-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors"
@@ -239,6 +240,7 @@ export default function HealthMedicalSection({ member, color = 'blue' }) {
         >
           <Pencil className="w-4 h-4" />
         </button>
+        )}
 
         {!hasAnything && (
           <p className="text-sm text-gray-400 italic">No health or medical info added yet. Click the edit icon to add details.</p>

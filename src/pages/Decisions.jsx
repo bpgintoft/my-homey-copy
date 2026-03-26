@@ -18,6 +18,8 @@ export default function Decisions() {
     base44.auth.me().then(setCurrentUser).catch(() => {});
   }, []);
 
+  const isChildUser = currentUser?.role === 'child';
+
   const { data: decisions = [] } = useQuery({
     queryKey: ['familyDecisions'],
     queryFn: () => base44.entities.FamilyDecision.list('-created_date', 100),
@@ -112,14 +114,16 @@ export default function Decisions() {
           </h1>
           <p className="text-indigo-300 text-xs mt-0.5">Proposals, votes &amp; follow-ups</p>
         </div>
-        <button
-          onClick={() => setShowNew(true)}
-          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full font-semibold text-white text-sm transition-all hover:scale-105 hover:brightness-110 flex-shrink-0"
-          style={{background: 'rgba(180, 140, 255, 0.55)', border: '1px solid rgba(200, 170, 255, 0.5)', backdropFilter: 'blur(10px)'}}
-        >
-          <Plus className="w-4 h-4" />
-          Propose
-        </button>
+        {!isChildUser && (
+          <button
+            onClick={() => setShowNew(true)}
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full font-semibold text-white text-sm transition-all hover:scale-105 hover:brightness-110 flex-shrink-0"
+            style={{background: 'rgba(180, 140, 255, 0.55)', border: '1px solid rgba(200, 170, 255, 0.5)', backdropFilter: 'blur(10px)'}}
+          >
+            <Plus className="w-4 h-4" />
+            Propose
+          </button>
+        )}
       </div>
 
       {/* Filter tabs */}
@@ -177,7 +181,7 @@ export default function Decisions() {
         )}
       </div>
 
-      {showNew && currentUser && (
+      {showNew && currentUser && !isChildUser && (
         <NewDecisionDialog
           proposerEmail={currentUser.email}
           proposerName={currentUser.full_name || currentUser.email}
@@ -186,7 +190,7 @@ export default function Decisions() {
         />
       )}
 
-      {selectedDecision && currentUser && (
+      {selectedDecision && currentUser && !isChildUser && (
         <DecisionDialog
           decision={selectedDecision}
           currentUserEmail={currentUser.email}

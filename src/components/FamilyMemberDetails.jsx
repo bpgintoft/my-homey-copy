@@ -72,6 +72,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
   const [syncCalendarChore, setSyncCalendarChore] = useState(null);
   const [isCustomizing, setIsCustomizing] = useState(false);
   const [currentUser, setCurrentUser] = React.useState(null);
+  const isChildUser = currentUser?.role === 'child';
   const [customSectionOrder, setCustomSectionOrder] = useState(null); // null = use saved/default
   const [showActivities, setShowActivities] = useState(false);
   const [showFinancials, setShowFinancials] = useState(false);
@@ -739,14 +740,15 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                   <span className="text-lg flex-shrink-0">📊</span>
                   <span className="font-semibold text-sm text-gray-800 leading-tight">Activities</span>
                 </button>
+                {!isChildUser && (
                 <button
                   onClick={() => setShowFinancials(true)}
                   className="relative flex items-center gap-2 p-3 rounded-lg border bg-white hover:shadow-md transition-shadow text-left w-full overflow-hidden"
                 >
-
                   <span className="text-lg flex-shrink-0">💰</span>
                   <span className="font-semibold text-sm text-gray-800 leading-tight">Financials</span>
                 </button>
+                )}
                 </div>
                 </div>
                 );
@@ -1485,7 +1487,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
           <DialogHeader>
             <DialogTitle>Health & Medical</DialogTitle>
           </DialogHeader>
-          {member && <HealthMedicalSection member={member} color={color} />}
+          {member && <HealthMedicalSection member={member} color={color} isReadOnly={isChildUser} />}
         </DialogContent>
       </Dialog>
 
@@ -1515,7 +1517,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
           <DialogHeader>
             <DialogTitle>Personal Info Hub</DialogTitle>
           </DialogHeader>
-          {member && <PersonalInfoSection member={member} color={color} />}
+          {member && <PersonalInfoSection member={member} color={color} isReadOnly={isChildUser} />}
         </DialogContent>
       </Dialog>
 
