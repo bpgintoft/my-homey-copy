@@ -12,7 +12,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Plus, Calendar as CalendarIcon, MapPin, DollarSign, Clock, Sparkles, Users, Trash2, ExternalLink, UserPlus, Edit2 } from 'lucide-react';
+import { Plus, Calendar as CalendarIcon, MapPin, DollarSign, Clock, Sparkles, Users, Trash2, ExternalLink, UserPlus, Edit2, ScanLine } from 'lucide-react';
+import HomeyScanModal from '../components/HomeyScanModal';
 import { motion } from 'framer-motion';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, parseISO } from 'date-fns';
 import FamilyCalendar from '../components/FamilyCalendar';
@@ -32,6 +33,7 @@ export default function Kids() {
   }, bannerRef);
 
   const [showDialog, setShowDialog] = useState(false);
+  const [showScanModal, setShowScanModal] = useState(false);
   const [newActivity, setNewActivity] = useState({});
   const [editingActivity, setEditingActivity] = useState(null);
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -191,6 +193,16 @@ export default function Kids() {
           </TabsList>
 
           <TabsContent value="calendar">
+            <div className="flex justify-end pb-2">
+              <Button
+                onClick={() => setShowScanModal(true)}
+                className="bg-gradient-to-r from-[#E91E8C] to-[#0AACFF] text-white font-semibold shadow-md"
+                size="sm"
+              >
+                <ScanLine className="w-4 h-4 mr-2" />
+                Scan to Homey
+              </Button>
+            </div>
             <FamilyCalendar activities={activities} />
           </TabsContent>
 
@@ -200,6 +212,13 @@ export default function Kids() {
             </h2>
 
             <div className="flex flex-col sm:flex-row gap-3">
+              <Button
+                onClick={() => setShowScanModal(true)}
+                className="bg-gradient-to-r from-[#E91E8C] to-[#0AACFF] text-white font-semibold w-full sm:w-auto shadow-md"
+              >
+                <ScanLine className="w-4 h-4 mr-2" />
+                Scan to Homey
+              </Button>
               <Button
                 onClick={() => generateActivitiesMutation.mutate()}
                 disabled={generateActivitiesMutation.isPending}
@@ -211,10 +230,11 @@ export default function Kids() {
               </Button>
               <Button
                 onClick={() => setShowDialog(true)}
-                className="bg-gradient-to-r from-[#0AACFF] to-[#0890D9] text-white w-full sm:w-auto"
+                variant="outline"
+                className="w-full sm:w-auto"
               >
                 <Plus className="w-4 h-4 mr-2" />
-                Add Activity
+                Add Manually
               </Button>
             </div>
 
@@ -331,6 +351,12 @@ export default function Kids() {
           </TabsContent>
         </Tabs>
       </div>
+
+      <HomeyScanModal
+        open={showScanModal}
+        onClose={() => setShowScanModal(false)}
+        onSaved={() => queryClient.invalidateQueries(['kidsActivities'])}
+      />
 
       <Dialog open={showDialog} onOpenChange={(open) => {
         setShowDialog(open);
