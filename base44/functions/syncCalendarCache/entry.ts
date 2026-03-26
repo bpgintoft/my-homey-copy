@@ -87,25 +87,38 @@ Deno.serve(async (req) => {
 
     // Delete stale events no longer in the window
     const toDelete = existing.filter(e => !incomingIds.has(e.google_event_id));
-    await Promise.all(toDelete.map(e => base44.asServiceRole.entities.CachedCalendarEvent.delete(e.id)));
-
-    // Upsert: update existing, create new — in parallel batches of 10
-    const upsertBatch = async (events) => {
-      await Promise.all(events.map(event => {
-        const existing = existingMap[event.google_event_id];
-        if (existing) {
-          return base44.asServiceRole.entities.CachedCalendarEvent.update(existing.id, event);
-        } else {
-          return base44.asServiceRole.entities.CachedCalendarEvent.create(event);
-        }
-      }));
-    };
-
-    for (let i = 0; i < allEvents.length; i += 10) {
-      await upsertBatch(allEvents.slice(i, i + 10));
+    for (const e of toDelete) {
+      await base44.asServiceRole.entities.CachedCalendarEvent.delete(e.id);
+      await sleep(100);
     }
 
-    console.log(`Cache updated: ${allEvents.length} events written`);
+    // Only write events that are new or have changed — skip unchanged ones
+    let created = 0, updated = 0, skipped = 0;
+    for (const event of allEvents) {
+      const ex = existingMap[event.google_event_id];
+      if (ex) {
+        // Check if anything meaningful changed before writing
+        const changed =
+          ex.title !== event.title ||
+          ex.start !== event.start ||
+          ex.end !== event.end ||
+          ex.location !== event.location ||
+          ex.description !== event.description;
+        if (changed) {
+          await base44.asServiceRole.entities.CachedCalendarEvent.update(ex.id, event);
+          await sleep(100);
+          updated++;
+        } else {
+          skipped++;
+        }
+      } else {
+        await base44.asServiceRole.entities.CachedCalendarEvent.create(event);
+        await sleep(100);
+        created++;
+      }
+    }
+
+    console.log(`Cache updated: ${created} created, ${updated} updated, ${skipped} skipped, ${toDelete.length} deleted`);
     return Response.json({ success: true, count: allEvents.length, window: { from: timeMin, to: timeMax } });
   } catch (error) {
     console.error('syncCalendarCache error:', error.message);
