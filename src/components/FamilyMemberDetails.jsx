@@ -19,6 +19,7 @@ import FinancialsDialog from './FinancialsDialog';
 import PersonalInfoSection from './PersonalInfoSection';
 import HealthMedicalSection from './HealthMedicalSection';
 import VehiclesTravelSection from './VehiclesTravelSection';
+import DocumentsIDsSection from './DocumentsIDsSection';
 import LinkedMaintenancePanel from './house/LinkedMaintenancePanel';
 import CoAssignedChorePanel from './CoAssignedChorePanel';
 import RescheduleDialog from './house/RescheduleDialog';
@@ -721,7 +722,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                 <Settings2 className="w-3 h-3 text-gray-500" />
                 </button>
                 <div className="grid grid-cols-2 gap-2">
-                {orderedSections.map(({ key, icon, label }) => (
+                {orderedSections.filter(s => !(isChildUser && s.key === 'documents')).map(({ key, icon, label }) => (
                 <button
                 key={key}
                 onClick={() => setExpandedSection(key)}
@@ -1492,14 +1493,16 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
       </Dialog>
 
       {/* Documents & IDs Dialog */}
+      {!isChildUser && (
       <Dialog open={expandedSection === 'documents'} onOpenChange={(open) => !open && setExpandedSection(null)}>
-        <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto top-4 translate-y-0">
+        <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto top-4 translate-y-0" onOpenAutoFocus={(e) => e.preventDefault()}>
           <DialogHeader>
             <DialogTitle>Documents & IDs</DialogTitle>
           </DialogHeader>
-          <p className="text-sm text-gray-500">Documents & IDs coming soon.</p>
+          {member && <DocumentsIDsSection member={member} color={color} isReadOnly={isChildUser} />}
         </DialogContent>
       </Dialog>
+      )}
 
       {/* Vehicles & Travel Dialog */}
       <Dialog open={expandedSection === 'vehicles'} onOpenChange={(open) => !open && setExpandedSection(null)}>
