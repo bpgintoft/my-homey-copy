@@ -1,6 +1,9 @@
 import React, { useState, useRef, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
+import { useQueryClient } from '@tanstack/react-query';
+import { base44 } from '@/api/base44Client';
+import { addDays } from 'date-fns';
 import { 
   Home, 
   UtensilsCrossed,
@@ -16,8 +19,50 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { motion, AnimatePresence } from 'framer-motion';
 
 
+// Data prefetchers for the most-used pages — called on nav link hover
+const prefetchMap = {
+  Calendar: (queryClient) => {
+    // Prefetch cached calendar events from DB (instant, no API call)
+    queryClient.prefetchQuery({
+      queryKey: ['cachedCalendarEvents'],
+      queryFn: () => base44.entities.CachedCalendarEvent.list('-start', 500),
+      staleTime: 15 * 60 * 1000,
+    });
+    queryClient.prefetchQuery({
+      queryKey: ['kidsActivities'],
+      queryFn: () => base44.entities.KidsActivity.list('-date', 200),
+      staleTime: 2 * 60 * 1000,
+    });
+  },
+  Meals: (queryClient) => {
+    queryClient.prefetchQuery({
+      queryKey: ['meals'],
+      queryFn: () => base44.entities.Meal.list('-updated_date', 100),
+      staleTime: 2 * 60 * 1000,
+    });
+    queryClient.prefetchQuery({
+      queryKey: ['mealPlans'],
+      queryFn: () => base44.entities.MealPlan.list('-week_start_date', 50),
+      staleTime: 2 * 60 * 1000,
+    });
+  },
+  House: (queryClient) => {
+    queryClient.prefetchQuery({
+      queryKey: ['rooms'],
+      queryFn: () => base44.entities.Room.list(),
+      staleTime: 5 * 60 * 1000,
+    });
+    queryClient.prefetchQuery({
+      queryKey: ['appliances'],
+      queryFn: () => base44.entities.RoomItem.list(),
+      staleTime: 5 * 60 * 1000,
+    });
+  },
+};
+
 export default function Layout({ children, currentPageName }) {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const queryClient = useQueryClient();
   const [pullDistance, setPullDistance] = useState(0);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const touchStartY = useRef(0);
@@ -85,6 +130,7 @@ export default function Layout({ children, currentPageName }) {
       <Link
         to={createPageUrl(item.href)}
         onClick={() => mobile && setMobileOpen(false)}
+        onMouseEnter={() => prefetchMap[item.href]?.(queryClient)}
         className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
           isActive 
             ? 'bg-gray-900 text-white' 

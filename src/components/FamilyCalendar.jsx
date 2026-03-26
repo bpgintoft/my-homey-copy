@@ -106,24 +106,8 @@ export default function FamilyCalendar({ activities }) {
       }));
   }, [cachedEvents, currentWeekStart]);
 
-  // Fetch live from Google in background — once loaded, replaces cached view for this week
-  const { data: liveGoogleEvents = [], error: googleError } = useQuery({
-    queryKey: ['googleCalendarEvents', currentWeekStart.toISOString()],
-    queryFn: async () => {
-      const timeMin = currentWeekStart.toISOString();
-      const timeMax = addDays(currentWeekStart, 7).toISOString();
-      const { data } = await base44.functions.invoke('getGoogleCalendarEvents', { timeMin, timeMax });
-      return data.events || [];
-    },
-    staleTime: 10 * 60 * 1000,
-    gcTime: 30 * 60 * 1000,
-    refetchInterval: 10 * 60 * 1000,
-    refetchOnWindowFocus: false,
-    placeholderData: (prev) => prev, // keep previous week's data visible while loading new week
-  });
-
-  // Use live events when available, fall back to cached immediately
-  const googleEvents = liveGoogleEvents.length > 0 ? liveGoogleEvents : cachedWeekEvents;
+  // Use cached events — refreshed every 15 min by the syncCalendarCache scheduled function
+  const googleEvents = cachedWeekEvents;
 
   // Fetch existing thumbnails for Google Calendar events
   const { data: thumbnails = [] } = useQuery({
@@ -276,11 +260,6 @@ export default function FamilyCalendar({ activities }) {
       toast.error('Failed to delete event: ' + error.message);
     }
   });
-
-  // Debug logging
-  if (googleError) {
-    console.error('Google Calendar error:', googleError);
-  }
 
   // Combine activities and Google events
   const allEvents = [
