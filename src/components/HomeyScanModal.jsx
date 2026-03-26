@@ -64,6 +64,28 @@ export default function HomeyScanModal({ open, onClose, onSaved }) {
     }
   };
 
+  // Compress image to max 1200px wide and convert to JPEG base64
+  const compressImage = (f) => new Promise((resolve, reject) => {
+    const MAX_SIZE = 1200;
+    const reader = new FileReader();
+    reader.onerror = reject;
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onerror = reject;
+      img.onload = () => {
+        const scale = Math.min(1, MAX_SIZE / Math.max(img.width, img.height));
+        const canvas = document.createElement('canvas');
+        canvas.width = Math.round(img.width * scale);
+        canvas.height = Math.round(img.height * scale);
+        canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+        const base64 = canvas.toDataURL('image/jpeg', 0.85).split(',')[1];
+        resolve({ base64, type: 'image/jpeg' });
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(f);
+  });
+
   const toBase64 = (f) => new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = () => resolve(reader.result.split(',')[1]);
@@ -77,17 +99,23 @@ export default function HomeyScanModal({ open, onClose, onSaved }) {
     setScanError(null);
 
     try {
-      // Upload file first to get a URL
-      const fileData = await toBase64(file);
-      const uploadRes = await base44.integrations.Core.UploadFile({
-        file: `data:${file.type};base64,${fileData}`
-      });
+      let uploadBlob;
+
+      if (file.type.startsWith('image/')) {
+        // Compress images before uploading (max 1200px, JPEG 85%)
+        const compressed = await compressImage(file);
+        const byteChars = atob(compressed.base64);
+        const byteArr = new Uint8Array(byteChars.length);
+        for (let i = 0; i < byteChars.length; i++) byteArr[i] = byteChars.charCodeAt(i);
+        uploadBlob = new Blob([byteArr], { type: compressed.type });
+      } else {
+        uploadBlob = file;
+      }
+
+      const uploadRes = await base44.integrations.Core.UploadFile({ file: uploadBlob });
       const file_url = uploadRes.file_url;
 
-      const response = await base44.functions.invoke('homeyScan', {
-        file_url,
-        file_type: file.type,
-      });
+      const response = await base44.functions.invoke('homeyScan', { file_url, file_type: uploadBlob.type });
 
       const result = response.data?.result;
       if (!result) {
