@@ -38,7 +38,9 @@ Deno.serve(async (req) => {
     timeMax.setDate(timeMax.getDate() + 21);
 
     const calendarsRes = await calendar.calendarList.list();
-    const calendars = calendarsRes.data.items || [];
+    const calendars = (calendarsRes.data.items || []).filter(cal => cal.accessRole !== 'freeBusyReader');
+
+    const sleep = (ms) => new Promise(r => setTimeout(r, ms));
 
     let allEvents = [];
     for (const cal of calendars) {
@@ -49,7 +51,7 @@ Deno.serve(async (req) => {
           timeMax: timeMax.toISOString(),
           singleEvents: true,
           orderBy: 'startTime',
-          maxResults: 250,
+          maxResults: 100,
         });
 
         const events = (eventsRes.data.items || []).map(event => ({
@@ -67,8 +69,10 @@ Deno.serve(async (req) => {
         }));
 
         allEvents = allEvents.concat(events);
+        await sleep(300); // avoid rate limiting between calendar fetches
       } catch (err) {
         console.error(`Error fetching calendar ${cal.summary}:`, err.message);
+        await sleep(500); // back off a bit more on error
       }
     }
 
