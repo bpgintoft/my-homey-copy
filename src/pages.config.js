@@ -65,6 +65,7 @@ import Mara from './pages/Mara';
 import Meals from './pages/Meals';
 import Phoenix from './pages/Phoenix';
 import RoomDetail from './pages/RoomDetail';
+import Settings from './pages/Settings';
 import Vendors from './pages/Vendors';
 import __Layout from './Layout.jsx';
 
@@ -88,6 +89,7 @@ export const PAGES = {
     "Meals": Meals,
     "Phoenix": Phoenix,
     "RoomDetail": RoomDetail,
+    "Settings": Settings,
     "Vendors": Vendors,
 }
 

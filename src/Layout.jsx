@@ -8,7 +8,8 @@ import {
   History,
   Menu, 
   CheckSquare,
-  Users
+  Users,
+  Settings
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -61,6 +62,7 @@ export default function Layout({ children, currentPageName }) {
         { name: 'House', icon: Home, href: 'House' },
         { name: 'History', icon: History, href: 'History' },
         { name: 'Decisions', icon: CheckSquare, href: 'Decisions' },
+        { name: 'Settings', icon: Settings, href: 'Settings' },
       ],
     },
     {
