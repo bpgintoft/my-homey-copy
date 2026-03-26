@@ -2,8 +2,9 @@ import React, { useState, useRef } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { 
-  Users, Plus, Phone, Mail, Pencil, Trash2, CheckCircle2, Upload, Loader2
+  Users, Plus, Phone, Mail, Pencil, Trash2, CheckCircle2, Upload, Loader2, AlertTriangle
 } from 'lucide-react';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -23,6 +24,8 @@ export default function Family() {
   const [editingMember, setEditingMember] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [responsibilityInput, setResponsibilityInput] = useState('');
+  const [confirmDeleteMember, setConfirmDeleteMember] = useState(null); // member object
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const [newMember, setNewMember] = useState({
     name: '', role: '', email: '', phone: '', person_type: 'adult',
@@ -58,10 +61,17 @@ export default function Family() {
     },
   });
 
-  const deleteMemberMutation = useMutation({
-    mutationFn: (id) => base44.entities.FamilyMember.delete(id),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['familyMembers'] }),
-  });
+  const handleCascadeDelete = async () => {
+    if (!confirmDeleteMember) return;
+    setIsDeleting(true);
+    await base44.functions.invoke('deleteFamilyMember', { memberId: confirmDeleteMember.id });
+    queryClient.invalidateQueries({ queryKey: ['familyMembers'] });
+    queryClient.invalidateQueries({ queryKey: ['chores'] });
+    queryClient.invalidateQueries({ queryKey: ['milestones'] });
+    queryClient.invalidateQueries({ queryKey: ['links'] });
+    setConfirmDeleteMember(null);
+    setIsDeleting(false);
+  };
 
   const resetForm = () => {
     setNewMember({ name: '', role: '', email: '', phone: '', person_type: 'adult', color: COLORS[0], responsibilities: [] });
@@ -340,7 +350,7 @@ export default function Family() {
                             <Button variant="ghost" size="icon" onClick={() => setEditingMember(member)}>
                               <Pencil className="w-4 h-4 text-slate-400" />
                             </Button>
-                            <Button variant="ghost" size="icon" onClick={() => deleteMemberMutation.mutate(member.id)}>
+                            <Button variant="ghost" size="icon" onClick={() => setConfirmDeleteMember(member)}>
                               <Trash2 className="w-4 h-4 text-red-400" />
                             </Button>
                           </div>
@@ -408,6 +418,42 @@ export default function Family() {
           </Card>
         )}
       </div>
+
+      {/* Cascade Delete Confirmation */}
+      <AlertDialog open={!!confirmDeleteMember} onOpenChange={(open) => !open && setConfirmDeleteMember(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2">
+              <AlertTriangle className="w-5 h-5 text-red-500" />
+              Delete {confirmDeleteMember?.name}?
+            </AlertDialogTitle>
+            <AlertDialogDescription className="space-y-2">
+              <p>This will permanently delete <strong>{confirmDeleteMember?.name}</strong> and all of their linked data:</p>
+              <ul className="text-sm list-disc list-inside space-y-1 mt-2 text-slate-600">
+                <li>All To-Do / Chore records</li>
+                <li>Goals & Milestones</li>
+                <li>Important Links</li>
+                <li>School / Work Programs</li>
+                <li>Financial Accounts</li>
+                <li>Notifications</li>
+                <li>Documents & IDs (metadata only — private files must be removed manually)</li>
+              </ul>
+              <p className="mt-2 font-medium text-amber-600">Maintenance Tasks will be <em>unassigned</em> (not deleted) since they belong to the house.</p>
+              <p className="font-semibold text-red-600 mt-2">This action cannot be undone.</p>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleCascadeDelete}
+              disabled={isDeleting}
+              className="bg-red-600 hover:bg-red-700 text-white"
+            >
+              {isDeleting ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Deleting...</> : 'Delete Everything'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       {/* Edit Dialog */}
       <Dialog open={!!editingMember} onOpenChange={() => setEditingMember(null)}>

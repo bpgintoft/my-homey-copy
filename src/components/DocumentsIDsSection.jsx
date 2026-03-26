@@ -207,6 +207,8 @@ function AddDocumentForm({ memberId, memberName, color, onSaved }) {
   const [form, setForm] = useState({ type: '', label: '', value: '', expiry_date: '' });
   const [file, setFile] = useState(null);
   const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState(null);
+  const [retryCount, setRetryCount] = useState(0);
   const fileRef = useRef();
 
   const DOC_TYPES = [
@@ -224,36 +226,62 @@ function AddDocumentForm({ memberId, memberName, color, onSaved }) {
     { value: 'other', label: 'Other' },
   ];
 
-  const handleSave = async () => {
+  const handleSave = async (attempt = 1) => {
     if (!form.type) return;
     setUploading(true);
+    setUploadError(null);
+
+    // Step 1: Upload file if present (with retry up to 3 times)
     let file_uri = null;
     if (file) {
-      const { data } = await base44.functions.invoke('uploadPrivateDocument', {
-        file_name: file.name,
-        file_type: file.type,
-        file_data: await toBase64(file),
-      });
-      file_uri = data?.file_uri;
+      let lastError = null;
+      for (let i = 0; i < 3; i++) {
+        try {
+          const { data } = await base44.functions.invoke('uploadPrivateDocument', {
+            file_name: file.name,
+            file_type: file.type,
+            file_data: await toBase64(file),
+          });
+          if (!data?.file_uri) throw new Error('No file URI returned from server');
+          file_uri = data.file_uri;
+          lastError = null;
+          break;
+        } catch (err) {
+          lastError = err;
+          if (i < 2) await new Promise(r => setTimeout(r, 1000 * (i + 1))); // 1s, 2s backoff
+        }
+      }
+      if (lastError) {
+        setUploading(false);
+        setUploadError(`File upload failed after 3 attempts: ${lastError.message}. Your document was NOT saved. Please try again.`);
+        return;
+      }
     }
-    const docEntry = {
-      id: crypto.randomUUID(),
-      type: form.type,
-      label: form.label,
-      value: form.value,
-      expiry_date: form.expiry_date || null,
-      file_uri,
-      created_at: new Date().toISOString(),
-    };
-    // Store docs in FamilyMember.documents_ids array
-    const member = await base44.entities.FamilyMember.filter({ id: memberId }).then(r => r[0]);
-    const existing = member?.documents_ids || [];
-    await base44.entities.FamilyMember.update(memberId, { documents_ids: [...existing, docEntry] });
-    queryClient.invalidateQueries(['familyMember', memberId]);
-    setForm({ type: '', label: '', value: '', expiry_date: '' });
-    setFile(null);
-    setUploading(false);
-    onSaved?.();
+
+    // Step 2: Save the doc entry to the entity
+    try {
+      const memberData = await base44.entities.FamilyMember.filter({ id: memberId }).then(r => r[0]);
+      const existing = memberData?.documents_ids || [];
+      const docEntry = {
+        id: crypto.randomUUID(),
+        type: form.type,
+        label: form.label,
+        value: form.value,
+        expiry_date: form.expiry_date || null,
+        file_uri,
+        created_at: new Date().toISOString(),
+      };
+      await base44.entities.FamilyMember.update(memberId, { documents_ids: [...existing, docEntry] });
+      queryClient.invalidateQueries(['familyMember', memberId]);
+      setForm({ type: '', label: '', value: '', expiry_date: '' });
+      setFile(null);
+      setRetryCount(0);
+      onSaved?.();
+    } catch (err) {
+      setUploadError(`Failed to save document record: ${err.message}. Please try again.`);
+    } finally {
+      setUploading(false);
+    }
   };
 
   const toBase64 = (f) => new Promise((resolve, reject) => {
@@ -317,6 +345,17 @@ function AddDocumentForm({ memberId, memberName, color, onSaved }) {
         <input ref={fileRef} type="file" accept="image/*,.pdf" className="hidden"
           onChange={e => setFile(e.target.files?.[0] || null)} />
       </div>
+      {uploadError && (
+        <div className="rounded-lg border border-red-200 bg-red-50 p-3 space-y-2">
+          <p className="text-xs text-red-600 font-medium leading-snug">{uploadError}</p>
+          <button
+            onClick={() => { setUploadError(null); handleSave(); }}
+            className="text-xs font-semibold text-red-700 underline hover:no-underline"
+          >
+            Retry
+          </button>
+        </div>
+      )}
       <Button onClick={handleSave} disabled={!form.type || uploading} className="w-full">
         {uploading ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Saving securely...</> : <><Plus className="w-4 h-4 mr-2" />Add Document</>}
       </Button>
