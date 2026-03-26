@@ -77,7 +77,7 @@ export default function Home() {
     },
     { 
       title: 'Calendar', 
-      href: 'Kids', 
+      href: 'Calendar', 
       count: todayEvents,
       imageKey: 'kids',
       bgColor: 'bg-gradient-to-br from-blue-200 to-blue-300'

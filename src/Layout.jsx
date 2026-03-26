@@ -23,7 +23,7 @@ export default function Layout({ children, currentPageName }) {
   const touchStartY = useRef(0);
   const mainRef = useRef(null);
 
-  const isCalendarPage = ['MaintenanceCalendar', 'FamilyCalendar', 'Kids'].includes(currentPageName);
+  const isCalendarPage = ['MaintenanceCalendar', 'FamilyCalendar', 'Calendar'].includes(currentPageName);
 
   const handleTouchStart = useCallback((e) => {
     if (isCalendarPage) return;
