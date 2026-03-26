@@ -76,42 +76,47 @@ export default function HomeyScanModal({ open, onClose, onSaved }) {
     setStep(STEPS.SCANNING);
     setScanError(null);
 
-    // Upload file first to get a URL
-    const fileData = await toBase64(file);
-    const uploadRes = await base44.integrations.Core.UploadFile({
-      file: `data:${file.type};base64,${fileData}`
-    });
-    const file_url = uploadRes.file_url;
+    try {
+      // Upload file first to get a URL
+      const fileData = await toBase64(file);
+      const uploadRes = await base44.integrations.Core.UploadFile({
+        file: `data:${file.type};base64,${fileData}`
+      });
+      const file_url = uploadRes.file_url;
 
-    const response = await base44.functions.invoke('homeyScan', {
-      file_url,
-      file_type: file.type,
-    });
+      const response = await base44.functions.invoke('homeyScan', {
+        file_url,
+        file_type: file.type,
+      });
 
-    const result = response.data?.result;
-    if (!result) {
-      setScanError("Homey couldn't read that file. Please try a clearer image.");
+      const result = response.data?.result;
+      if (!result) {
+        setScanError("Homey couldn't read that file. Please try a clearer image.");
+        setStep(STEPS.UPLOAD);
+        return;
+      }
+
+      setExtracted({
+        title: result.event_name || '',
+        date: result.date || '',
+        time: result.time || '',
+        end_time: result.end_time || '',
+        location: result.location || '',
+        address: result.address || '',
+        description: result.description || '',
+        type: result.event_type || 'event',
+        age_range: result.age_range || '',
+        cost: result.cost || '',
+        registration_url: result.registration_url || '',
+        confidence: result.confidence || 'medium',
+      });
+
+      setMissingDate(!result.date);
+      setStep(STEPS.REVIEW);
+    } catch (err) {
+      setScanError("Something went wrong while scanning. Please try again.");
       setStep(STEPS.UPLOAD);
-      return;
     }
-
-    setExtracted({
-      title: result.event_name || '',
-      date: result.date || '',
-      time: result.time || '',
-      end_time: result.end_time || '',
-      location: result.location || '',
-      address: result.address || '',
-      description: result.description || '',
-      type: result.event_type || 'event',
-      age_range: result.age_range || '',
-      cost: result.cost || '',
-      registration_url: result.registration_url || '',
-      confidence: result.confidence || 'medium',
-    });
-
-    setMissingDate(!result.date);
-    setStep(STEPS.REVIEW);
   };
 
   const toggleMember = (id) => {
