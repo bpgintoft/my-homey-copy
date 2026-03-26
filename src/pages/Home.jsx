@@ -52,7 +52,7 @@ export default function Home() {
 
   const { data: appliances } = useQuery({
     queryKey: ['appliances'],
-    queryFn: () => base44.entities.Appliance.list(),
+    queryFn: () => base44.entities.RoomItem.list(),
   });
 
   const { data: currentUser } = useQuery({
