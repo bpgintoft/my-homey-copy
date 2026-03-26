@@ -99,25 +99,55 @@ export default function HomeyScanModal({ open, onClose, onSaved }) {
     setScanError(null);
 
     try {
-      let uploadBlob;
-
+      // Compress image and get base64 data URI for direct LLM vision call
+      let dataUri;
       if (file.type.startsWith('image/')) {
-        // Compress images before uploading (max 1200px, JPEG 85%)
         const compressed = await compressImage(file);
-        const byteChars = atob(compressed.base64);
-        const byteArr = new Uint8Array(byteChars.length);
-        for (let i = 0; i < byteChars.length; i++) byteArr[i] = byteChars.charCodeAt(i);
-        uploadBlob = new Blob([byteArr], { type: compressed.type });
+        dataUri = `data:image/jpeg;base64,${compressed.base64}`;
       } else {
-        uploadBlob = file;
+        // PDF: read as base64 data URI
+        const b64 = await toBase64(file);
+        dataUri = `data:${file.type};base64,${b64}`;
       }
 
-      const uploadRes = await base44.integrations.Core.UploadFile({ file: uploadBlob });
-      const file_url = uploadRes.file_url;
+      const result = await base44.integrations.Core.InvokeLLM({
+        prompt: `You are Homey, a helpful family assistant. Carefully analyze this image or document (which may be a school flyer, sports schedule, medical appointment card, event poster, sticky note, or similar).
 
-      const response = await base44.functions.invoke('homeyScan', { file_url, file_type: uploadBlob.type });
+Extract the following details:
+- event_name: The name or title of the event
+- date: The date in YYYY-MM-DD format. If multiple dates, use the first/main one. If you cannot find a date, return null.
+- time: Start time in HH:MM 12-hour format with AM/PM (e.g. "3:30 PM"). If not found, return null.
+- end_time: End time if present, same format. If not found, return null.
+- location: Physical location or venue name. If not found, return null.
+- address: Street address if different from location name. If not found, return null.
+- description: A brief 1-2 sentence description summarizing what this event is about.
+- event_type: One of: event, sports_league, program, reminder
+- age_range: Age range if mentioned (e.g. "5-12 years"). If not found, return null.
+- cost: Cost or price if mentioned (e.g. "Free", "$15"). If not found, return null.
+- registration_url: Any URL or website mentioned. If not found, return null.
+- confidence: Your confidence level (high, medium, low) in the extraction
 
-      const result = response.data?.result;
+Be thorough — dates sometimes appear in formats like "Saturday, April 5th", "4/5/26", or "4/1/2026". Always convert to YYYY-MM-DD.`,
+        file_urls: [dataUri],
+        response_json_schema: {
+          type: "object",
+          properties: {
+            event_name: { type: "string" },
+            date: { type: ["string", "null"] },
+            time: { type: ["string", "null"] },
+            end_time: { type: ["string", "null"] },
+            location: { type: ["string", "null"] },
+            address: { type: ["string", "null"] },
+            description: { type: "string" },
+            event_type: { type: "string" },
+            age_range: { type: ["string", "null"] },
+            cost: { type: ["string", "null"] },
+            registration_url: { type: ["string", "null"] },
+            confidence: { type: "string" }
+          }
+        }
+      });
+
       if (!result) {
         setScanError("Homey couldn't read that file. Please try a clearer image.");
         setStep(STEPS.UPLOAD);
@@ -138,6 +168,7 @@ export default function HomeyScanModal({ open, onClose, onSaved }) {
         registration_url: result.registration_url || '',
         confidence: result.confidence || 'medium',
       });
+
 
       setMissingDate(!result.date);
       setStep(STEPS.REVIEW);
