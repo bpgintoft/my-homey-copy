@@ -9,9 +9,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
 import {
-  ScanLine, Upload, Loader2, CheckCircle2, AlertTriangle,
-  Sparkles, Users, ImageIcon, FileText, X, Calendar, Clock,
-  MapPin, ChevronRight
+  ScanLine, Loader2, CheckCircle2, AlertTriangle,
+  Sparkles, Users, ImageIcon, FileText, X, Calendar
 } from 'lucide-react';
 
 const STEPS = {
@@ -34,10 +33,21 @@ export default function HomeyScanModal({ open, onClose, onSaved }) {
   const [selectedMembers, setSelectedMembers] = useState([]);
   const [missingDate, setMissingDate] = useState(false);
 
+  const [selectedCalendarId, setSelectedCalendarId] = useState('');
+
   const { data: familyMembers = [] } = useQuery({
     queryKey: ['familyMembers'],
     queryFn: () => base44.entities.FamilyMember.list(),
   });
+
+  const { data: calendarsData } = useQuery({
+    queryKey: ['googleCalendars'],
+    queryFn: async () => {
+      const { data } = await base44.functions.invoke('getGoogleCalendars');
+      return data;
+    }
+  });
+  const calendars = calendarsData?.calendars || [];
 
   const reset = () => {
     setStep(STEPS.UPLOAD);
@@ -46,6 +56,7 @@ export default function HomeyScanModal({ open, onClose, onSaved }) {
     setScanError(null);
     setExtracted(null);
     setSelectedMembers([]);
+    setSelectedCalendarId('');
     setMissingDate(false);
   };
 
@@ -153,13 +164,62 @@ export default function HomeyScanModal({ open, onClose, onSaved }) {
     );
   };
 
+  // Convert "3:30 PM" style time string to "HH:MM" 24-hour format
+  const parseTo24h = (timeStr) => {
+    if (!timeStr) return null;
+    const match = timeStr.match(/(\d{1,2}):(\d{2})\s*(AM|PM)?/i);
+    if (!match) return null;
+    let hours = parseInt(match[1]);
+    const minutes = match[2];
+    const meridiem = match[3]?.toUpperCase();
+    if (meridiem === 'PM' && hours !== 12) hours += 12;
+    if (meridiem === 'AM' && hours === 12) hours = 0;
+    return `${String(hours).padStart(2, '0')}:${minutes}`;
+  };
+
   const handleConfirm = async () => {
-    if (missingDate && !extracted.date) return; // force date entry
+    if (missingDate && !extracted.date) return;
     setStep(STEPS.SAVING);
 
+    const time24 = parseTo24h(extracted.time);
+    const endTime24 = parseTo24h(extracted.end_time);
+    const isAllDay = !time24;
+
+    let start, end;
+    if (isAllDay) {
+      start = extracted.date;
+      end = extracted.date;
+    } else {
+      start = `${extracted.date}T${time24}:00`;
+      // Default end = 1 hour after start if no end time
+      if (endTime24) {
+        end = `${extracted.date}T${endTime24}:00`;
+      } else {
+        const [h, m] = time24.split(':').map(Number);
+        const endH = String(h + 1).padStart(2, '0');
+        end = `${extracted.date}T${endH}:${String(m).padStart(2, '0')}:00`;
+      }
+    }
+
+    // Create the Google Calendar event if a calendar is selected
+    if (selectedCalendarId) {
+      await base44.functions.invoke('createGoogleCalendarEvent', {
+        summary: extracted.title,
+        description: extracted.description || '',
+        location: extracted.location || '',
+        calendarId: selectedCalendarId,
+        start,
+        end,
+        isAllDay,
+      });
+      queryClient.invalidateQueries({ queryKey: ['cachedCalendarEvents'] });
+      queryClient.invalidateQueries({ queryKey: ['googleCalendarEvents'] });
+    }
+
+    // Also save as KidsActivity for each assigned family member
     const targets = selectedMembers.length > 0
       ? familyMembers.filter(m => selectedMembers.includes(m.id))
-      : [null]; // create one record with no assignment
+      : [];
 
     for (const member of targets) {
       await base44.entities.KidsActivity.create({
@@ -178,7 +238,7 @@ export default function HomeyScanModal({ open, onClose, onSaved }) {
       });
     }
 
-    queryClient.invalidateQueries(['kidsActivities']);
+    queryClient.invalidateQueries({ queryKey: ['kidsActivities'] });
     setStep(STEPS.DONE);
     setTimeout(() => {
       onSaved?.();
@@ -375,6 +435,29 @@ export default function HomeyScanModal({ open, onClose, onSaved }) {
               </div>
             </div>
 
+            {/* Calendar picker */}
+            <div>
+              <Label className="text-xs font-semibold text-gray-700 flex items-center gap-1.5 mb-2">
+                <Calendar className="w-3.5 h-3.5" />
+                Add to Google Calendar (optional)
+              </Label>
+              <Select value={selectedCalendarId} onValueChange={setSelectedCalendarId}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a calendar..." />
+                </SelectTrigger>
+                <SelectContent>
+                  {calendars.map(cal => (
+                    <SelectItem key={cal.id} value={cal.id}>
+                      <div className="flex items-center gap-2">
+                        <div className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: cal.backgroundColor || '#64748b' }} />
+                        {cal.name}
+                      </div>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
             {/* Family member assignment */}
             <div>
               <Label className="text-xs font-semibold text-gray-700 flex items-center gap-1.5 mb-2">
@@ -421,9 +504,7 @@ export default function HomeyScanModal({ open, onClose, onSaved }) {
                 className="flex-1 bg-gradient-to-r from-[#E91E8C] to-[#0AACFF] text-white font-semibold"
               >
                 <CheckCircle2 className="w-4 h-4 mr-2" />
-                {selectedMembers.length > 1
-                  ? `Add for ${selectedMembers.length} people`
-                  : 'Add to Calendar'}
+                Save
               </Button>
             </div>
           </div>

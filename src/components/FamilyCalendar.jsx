@@ -1057,8 +1057,25 @@ export default function FamilyCalendar({ activities }) {
                                         <span className="whitespace-pre-wrap">{activity.description}</span>
                                       </div>
                                     )}
-                                    {activity.source === 'google' && (
-                                      <div className="flex justify-end pt-1">
+                                    <div className="flex justify-end pt-1 gap-2">
+                                      {activity.source === 'manual' && (
+                                        <Button
+                                          variant="outline"
+                                          size="sm"
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            if (confirm('Delete this activity?')) {
+                                              base44.entities.KidsActivity.delete(activity.id).then(() => {
+                                                queryClient.invalidateQueries({ queryKey: ['kidsActivities'] });
+                                              });
+                                            }
+                                          }}
+                                          className="h-8 text-xs text-red-600 border-red-200 hover:bg-red-50"
+                                        >
+                                          Delete
+                                        </Button>
+                                      )}
+                                      {activity.source === 'google' && (
                                         <Button
                                           variant="outline"
                                           size="sm"
@@ -1071,8 +1088,8 @@ export default function FamilyCalendar({ activities }) {
                                           <Edit2 className="w-3 h-3 mr-1" />
                                           Edit Event
                                         </Button>
-                                      </div>
-                                    )}
+                                      )}
+                                    </div>
                                   </div>
                                 </motion.div>
                               )}
