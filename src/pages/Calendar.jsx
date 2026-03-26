@@ -212,7 +212,7 @@ export default function Calendar() {
 
           <TabsContent value="upcoming" className="space-y-6">
             <h2 className="text-xl font-semibold text-gray-900">
-              {upcomingActivities.length} Upcoming Activities
+              {upcomingActivities.length} Upcoming Events
             </h2>
 
             <div className="flex flex-col sm:flex-row gap-3">
@@ -336,8 +336,8 @@ export default function Calendar() {
             {upcomingActivities.length === 0 && (
               <Card className="bg-white border-0 shadow-sm p-12 text-center">
                 <CalendarIcon className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">No activities yet</h3>
-                <p className="text-gray-500 mb-4">Add activities or find local events</p>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">No events yet</h3>
+                <p className="text-gray-500 mb-4">Add events or find local activities</p>
                 <Button
                   onClick={() => generateActivitiesMutation.mutate()}
                   disabled={generateActivitiesMutation.isPending}
@@ -371,11 +371,11 @@ export default function Calendar() {
       }}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>{editingActivity ? 'Edit Activity' : 'Add Activity'}</DialogTitle>
+            <DialogTitle>{editingActivity ? 'Edit Event' : 'Add Event'}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <Input
-              placeholder="Activity title"
+              placeholder="Event title"
               value={newActivity.title || ''}
               onChange={(e) => setNewActivity({ ...newActivity, title: e.target.value })}
             />
@@ -442,7 +442,7 @@ export default function Calendar() {
               disabled={!newActivity.title || !newActivity.type}
               className="w-full bg-gradient-to-r from-[#0AACFF] to-[#0890D9] text-white"
             >
-              {editingActivity ? 'Update Activity' : 'Add Activity'}
+              {editingActivity ? 'Update Event' : 'Add Event'}
             </Button>
           </div>
         </DialogContent>
