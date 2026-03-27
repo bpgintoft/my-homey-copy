@@ -70,9 +70,11 @@ export function useCommandCenterCount() {
       .sort((a, b) => parseISO(a.next_due) - parseISO(b.next_due));
 
     // ✅ Priority Chores: past due, due within 7 days, OR marked urgent
+    // Exclude chores synced from maintenance tasks (those appear in House Health)
     const urgentChores = chores
       .filter(c => {
         if (c.is_completed) return false;
+        if (c.maintenance_task_id) return false; // already shown in House Health
         if (c.priority === 'urgent') return true;
         if (c.next_due) {
           const d = parseISO(c.next_due);
