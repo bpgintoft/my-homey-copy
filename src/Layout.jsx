@@ -12,11 +12,13 @@ import {
   Menu, 
   CheckSquare,
   Users,
-  Settings
+  Settings,
+  Bell
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { motion, AnimatePresence } from 'framer-motion';
+import CommandCenter, { CommandCenterBadge, useCommandCenterCount } from '@/components/CommandCenter';
 
 
 // Data prefetchers for the most-used pages — called on nav link hover
@@ -62,7 +64,9 @@ const prefetchMap = {
 
 export default function Layout({ children, currentPageName }) {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [commandCenterOpen, setCommandCenterOpen] = useState(false);
   const queryClient = useQueryClient();
+  const { count: commandCenterCount } = useCommandCenterCount();
   const [pullDistance, setPullDistance] = useState(0);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const touchStartY = useRef(0);
@@ -172,6 +176,18 @@ export default function Layout({ children, currentPageName }) {
             <NavGroup key={group.label} group={group} />
           ))}
         </nav>
+        <div className="p-4 border-t border-gray-100">
+          <button
+            onClick={() => setCommandCenterOpen(true)}
+            className="relative w-full flex items-center gap-3 px-4 py-3 rounded-xl text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-all"
+          >
+            <div className="relative">
+              <Bell className="w-5 h-5" />
+              <CommandCenterBadge count={commandCenterCount} />
+            </div>
+            <span className="font-medium">Command Center</span>
+          </button>
+        </div>
       </aside>
 
       {/* Mobile Header */}
@@ -182,7 +198,15 @@ export default function Layout({ children, currentPageName }) {
           </div>
           <span className="font-bold text-gray-900">The Gintoft Family</span>
         </Link>
-        <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
+        <div className="flex items-center gap-1">
+          <button
+            onClick={() => setCommandCenterOpen(true)}
+            className="relative p-2 rounded-lg hover:bg-gray-100 transition-colors"
+          >
+            <Bell className="w-5 h-5 text-gray-600" />
+            <CommandCenterBadge count={commandCenterCount} />
+          </button>
+          <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
           <SheetTrigger asChild>
             <Button variant="ghost" size="icon">
               <Menu className="w-5 h-5" />
@@ -207,6 +231,7 @@ export default function Layout({ children, currentPageName }) {
             </nav>
           </SheetContent>
         </Sheet>
+        </div>
       </header>
 
       {/* Main Content */}
@@ -228,6 +253,7 @@ export default function Layout({ children, currentPageName }) {
         </div>
       </main>
 
+      <CommandCenter open={commandCenterOpen} onClose={() => setCommandCenterOpen(false)} />
     </div>
   );
 }
