@@ -165,13 +165,13 @@ function DocumentCard({ doc, color, onDelete }) {
   };
 
   return (
-    <div className="flex items-center gap-3 p-3 rounded-xl border border-gray-100 bg-white shadow-sm">
+    <div className="flex items-center gap-2 p-3 rounded-xl border border-gray-100 bg-white shadow-sm w-full min-w-0">
       {/* Category color tag */}
-      <div className={`w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 ${catConfig.bg} ${catConfig.border} border`}>
+      <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${catConfig.bg} ${catConfig.border} border`}>
         <CatIcon className={`w-4 h-4 ${catConfig.color}`} />
       </div>
-      <div className="flex-1 min-w-0">
-        <div className="text-sm font-semibold text-gray-800 truncate">{doc.label || DOC_LABELS[doc.type] || doc.type}</div>
+      <div className="flex-1 min-w-0 overflow-hidden">
+        <div className="text-sm font-semibold text-gray-800 break-words leading-snug">{doc.label || DOC_LABELS[doc.type] || doc.type}</div>
         {doc.value && (
           <div className="flex items-center gap-1 mt-0.5">
             {isSensitive ? (
@@ -504,7 +504,7 @@ export default function DocumentsIDsSection({ member, color = 'blue', isReadOnly
   })).filter(g => g.docs.length > 0);
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 w-full min-w-0 overflow-hidden">
       <div className="flex items-center gap-2 text-xs text-gray-400">
         <Lock className="w-3 h-3" />
         <span>Files stored in private encrypted storage</span>
