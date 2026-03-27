@@ -85,10 +85,7 @@ export default function ChoreCommentsSheet({ chore, open, onOpenChange }) {
 
   const addCommentMutation = useMutation({
     mutationFn: async (text) => {
-      const choreIds = [chore.id, ...(chore.linked_chore_ids || [])];
-      await Promise.all(
-        choreIds.map(id => base44.entities.ChoreComment.create({ chore_id: id, text, author_name: currentUser?.full_name || '' }))
-      );
+      await base44.entities.ChoreComment.create({ chore_id: chore.id, text, author_name: currentUser?.full_name || '' });
     },
     onSuccess: () => {
       queryClient.invalidateQueries(['choreComments', chore?.id]);
