@@ -339,6 +339,7 @@ export default function HomeyScanModal({ open, onClose, onSaved, contextHint }) 
       if (extracted.insurance_provider && extracted.insurance_type === 'vehicle') {
         if (extracted.insurance_provider) updatePayload.vehicle_insurance_provider = extracted.insurance_provider;
         if (extracted.policy_number) updatePayload.vehicle_insurance_policy_number = extracted.policy_number;
+        if (extracted.expiry_date) updatePayload.vehicle_insurance_expiration = extracted.expiry_date;
       }
 
       if (extracted.insurance_provider && extracted.insurance_type === 'health') {

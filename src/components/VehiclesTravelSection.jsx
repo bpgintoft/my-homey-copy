@@ -35,6 +35,7 @@ export default function VehiclesTravelSection({ member, color = 'blue' }) {
     vehicle_vin: member?.vehicle_vin ?? '',
     vehicle_insurance_provider: member?.vehicle_insurance_provider ?? '',
     vehicle_insurance_policy_number: member?.vehicle_insurance_policy_number ?? '',
+    vehicle_insurance_expiration: member?.vehicle_insurance_expiration ?? '',
     vehicle_registration_expiration: member?.vehicle_registration_expiration ?? '',
     roadside_assistance_provider: member?.roadside_assistance_provider ?? '',
     roadside_assistance_member_number: member?.roadside_assistance_member_number ?? '',
@@ -65,6 +66,7 @@ export default function VehiclesTravelSection({ member, color = 'blue' }) {
       vehicle_vin: form.vehicle_vin || null,
       vehicle_insurance_provider: form.vehicle_insurance_provider || null,
       vehicle_insurance_policy_number: form.vehicle_insurance_policy_number || null,
+      vehicle_insurance_expiration: form.vehicle_insurance_expiration || null,
       vehicle_registration_expiration: form.vehicle_registration_expiration || null,
       roadside_assistance_provider: form.roadside_assistance_provider || null,
       roadside_assistance_member_number: form.roadside_assistance_member_number || null,
@@ -98,6 +100,7 @@ export default function VehiclesTravelSection({ member, color = 'blue' }) {
   const hasRegExpiry = !!form.vehicle_registration_expiration;
   const hasInsuranceProvider = !!form.vehicle_insurance_provider;
   const hasInsurancePolicyNum = !!form.vehicle_insurance_policy_number;
+  const hasInsuranceExpiration = !!form.vehicle_insurance_expiration;
   const hasRoadsideProvider = !!form.roadside_assistance_provider;
   const hasRoadsideMemberNum = !!form.roadside_assistance_member_number;
   const hasLicenseNumber = !!form.license_number;
@@ -191,6 +194,7 @@ export default function VehiclesTravelSection({ member, color = 'blue' }) {
             <div className="space-y-1.5">
               {hasInsuranceProvider && <ViewRow label="Provider" copyKey="ins_provider" value={form.vehicle_insurance_provider} />}
               {hasInsurancePolicyNum && <ViewRow label="Policy Number" copyKey="ins_policy" value={form.vehicle_insurance_policy_number} />}
+              {hasInsuranceExpiration && <ViewRow label="Exp. Date" copyKey="ins_exp" value={new Date(form.vehicle_insurance_expiration + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} />}
             </div>
           </div>
         )}
@@ -302,6 +306,10 @@ export default function VehiclesTravelSection({ member, color = 'blue' }) {
           <div>
             <Label className="text-xs text-gray-600 mb-1 block">Policy Number</Label>
             <Input placeholder="Policy #" value={form.vehicle_insurance_policy_number} onChange={(e) => setForm({ ...form, vehicle_insurance_policy_number: e.target.value })} className={inputClass} />
+          </div>
+          <div>
+            <Label className="text-xs text-gray-600 mb-1 block">Expiration Date</Label>
+            <Input type="date" value={form.vehicle_insurance_expiration} onChange={(e) => setForm({ ...form, vehicle_insurance_expiration: e.target.value })} className={inputClass} />
           </div>
         </div>
       </div>

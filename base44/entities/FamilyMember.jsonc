@@ -263,6 +263,11 @@
     "vehicle_insurance_policy_number": {
       "type": "string"
     },
+    "vehicle_insurance_expiration": {
+      "type": "string",
+      "format": "date",
+      "description": "Expiration date of the vehicle insurance policy"
+    },
     "vehicle_registration_expiration": {
       "type": "string",
       "format": "date"
