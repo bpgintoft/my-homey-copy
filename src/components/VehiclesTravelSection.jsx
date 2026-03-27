@@ -109,12 +109,12 @@ export default function VehiclesTravelSection({ member, color = 'blue' }) {
   const hasFrequentFlyer = form.frequent_flyer_programs.filter(p => p.airline || p.number).length > 0;
   const hasPassport = !!form.passport_expiration_date;
 
-  const hasAnyVehicleInsurance = hasInsuranceProvider || hasInsurancePolicyNum;
+  const hasAnyVehicleInsurance = hasInsuranceProvider || hasInsurancePolicyNum || hasInsuranceExpiration;
 
   const hasAnyRoadside = hasRoadsideProvider || hasRoadsideMemberNum;
   const hasAnyLicense = isAdult && (hasLicenseNumber || hasLicenseIssueDate || hasLicenseExpDate);
 
-  const hasAnything = hasVehicle || hasLicensePlate || hasVin || hasRegExpiry || hasAnyVehicleInsurance || hasAnyRoadside || hasAnyLicense || hasFrequentFlyer || hasPassport;
+  const hasAnything = hasVehicle || hasLicensePlate || hasVin || hasRegExpiry || hasAnyVehicleInsurance || hasInsuranceExpiration || hasAnyRoadside || hasAnyLicense || hasFrequentFlyer || hasPassport;
 
   const [copiedKey, setCopiedKey] = useState(null);
   const [revealedKey, setRevealedKey] = useState(null);
