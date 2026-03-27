@@ -71,24 +71,37 @@ export function useCommandCenterCount() {
 
     // ✅ Priority Chores: past due, due within 7 days, OR marked urgent
     // Exclude chores synced from maintenance tasks (those appear in House Health)
-    const urgentChores = chores
-      .filter(c => {
-        if (c.is_completed) return false;
-        if (c.maintenance_task_id) return false; // already shown in House Health
-        if (c.priority === 'urgent') return true;
-        if (c.next_due) {
-          const d = parseISO(c.next_due);
-          return d <= in7Days; // includes past due
-        }
-        return false;
-      })
-      .sort((a, b) => {
-        // Past due / soonest first; no date goes last
-        if (a.next_due && b.next_due) return parseISO(a.next_due) - parseISO(b.next_due);
-        if (a.next_due) return -1;
-        if (b.next_due) return 1;
-        return 0;
-      });
+    const filteredChores = chores.filter(c => {
+      if (c.is_completed) return false;
+      if (c.maintenance_task_id) return false;
+      if (c.priority === 'urgent') return true;
+      if (c.next_due) {
+        const d = parseISO(c.next_due);
+        return d <= in7Days;
+      }
+      return false;
+    });
+
+    // Deduplicate co-assigned chores: group by linked_chore_ids or id
+    const seenIds = new Set();
+    const deduped = [];
+    for (const c of filteredChores) {
+      if (seenIds.has(c.id)) continue;
+      // Collect all sibling chore IDs (this chore + linked siblings)
+      const siblingIds = new Set([c.id, ...(c.linked_chore_ids || [])]);
+      siblingIds.forEach(id => seenIds.add(id));
+      // Find all sibling chores that also passed the filter
+      const siblings = filteredChores.filter(s => siblingIds.has(s.id));
+      const names = [...new Set(siblings.map(s => s.assigned_to_name).filter(Boolean))];
+      deduped.push({ ...c, _allAssignees: names });
+    }
+
+    const urgentChores = deduped.sort((a, b) => {
+      if (a.next_due && b.next_due) return parseISO(a.next_due) - parseISO(b.next_due);
+      if (a.next_due) return -1;
+      if (b.next_due) return 1;
+      return 0;
+    });
 
     return {
       count: dueMaintenance.length + urgentChores.length + todayEvents.length,
@@ -235,7 +248,7 @@ export default function CommandCenter({ open, onClose }) {
                 <ItemRow
                   key={chore.id}
                   label={chore.title}
-                  sublabel={[chore.assigned_to_name, chore.next_due ? `Due ${format(parseISO(chore.next_due), 'MMM d')}` : (chore.priority === 'urgent' ? 'Urgent' : undefined)].filter(Boolean).join(' · ') || undefined}
+                  sublabel={[(chore._allAssignees?.length > 0 ? chore._allAssignees.join(', ') : chore.assigned_to_name), chore.next_due ? `Due ${format(parseISO(chore.next_due), 'MMM d')}` : (chore.priority === 'urgent' ? 'Urgent' : undefined)].filter(Boolean).join(' · ') || undefined}
                   to={to}
                   onClick={onClose}
                 />
