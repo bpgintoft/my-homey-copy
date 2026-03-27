@@ -363,7 +363,8 @@ export default function HomeyScanModal({ open, onClose, onSaved, contextHint }) 
       await base44.entities.FamilyMember.update(memberId, updatePayload);
     }
 
-    queryClient.invalidateQueries({ queryKey: ['familyMembers'] });
+    // Refetch the family members data to ensure UI updates immediately
+    await queryClient.refetchQueries({ queryKey: ['familyMembers'] });
   };
 
   const saveHouseDoc = async () => {
