@@ -84,6 +84,7 @@ export default function VaultReviewForm({ extracted, setExtracted, docType, fami
                 return (
                   <button
                     key={member.id}
+                    type="button"
                     onClick={() => toggleMember(member.id)}
                     className={`flex items-center gap-2 px-3 py-1.5 rounded-full border text-sm font-medium transition-all ${
                       isSelected

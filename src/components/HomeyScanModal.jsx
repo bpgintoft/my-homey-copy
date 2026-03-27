@@ -176,13 +176,13 @@ export default function HomeyScanModal({ open, onClose, onSaved, contextHint }) 
         notes: result.notes || '',
       });
 
-      // Auto-pre-select family member for personal_id if AI detected a name
+      // Auto-pre-select family members for personal_id if AI detected names
       if (type === 'personal_id' && result.member_name) {
-        const match = familyMembers.find(m =>
-          m.name?.toLowerCase() === result.member_name?.toLowerCase() ||
-          result.member_name?.toLowerCase().includes(m.name?.toLowerCase())
-        );
-        if (match) setSelectedMemberIds([match.id]);
+        const detectedName = result.member_name.toLowerCase();
+        const matches = familyMembers
+          .filter(m => detectedName.includes(m.name?.toLowerCase()))
+          .map(m => m.id);
+        if (matches.length > 0) setSelectedMemberIds(matches);
       }
 
       // Auto-pre-select family member for calendar events
