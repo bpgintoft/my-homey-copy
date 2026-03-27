@@ -118,9 +118,11 @@ export default function Calendar() {
     return activities.filter(a => a.date && isSameDay(parseISO(a.date), day));
   };
 
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
   const upcomingActivities = activities
-    .filter(a => a.date && new Date(a.date) >= new Date())
-    .sort((a, b) => new Date(a.date) - new Date(b.date))
+    .filter(a => a.date && parseISO(a.date) >= today)
+    .sort((a, b) => parseISO(a.date) - parseISO(b.date))
     .slice(0, 6);
 
   const typeColors = {
