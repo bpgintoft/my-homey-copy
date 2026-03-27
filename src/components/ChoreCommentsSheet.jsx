@@ -118,14 +118,14 @@ export default function ChoreCommentsSheet({ chore, open, onOpenChange }) {
       <SheetContent side="bottom" className="h-[85vh] rounded-t-2xl flex flex-col">
         <SheetHeader>
           <SheetTitle className="flex items-center gap-2">
-            💬 Comments
+            📋 Progress & Updates
           </SheetTitle>
           {chore && <p className="text-sm text-gray-500 font-normal">{chore.title}</p>}
         </SheetHeader>
 
         <form onSubmit={handleSubmit} className="flex gap-2 pt-3 pb-2 border-b border-gray-100">
           <Textarea
-            placeholder="Add a comment..."
+            placeholder="Add a progress update or comment..."
             value={newComment}
             onChange={(e) => setNewComment(e.target.value)}
             rows={2}
