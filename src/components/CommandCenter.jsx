@@ -97,11 +97,16 @@ export function useCommandCenterCount() {
   }, [maintenanceTasks, chores, cachedEvents]);
 }
 
-function Section({ emoji, title, items, renderItem, emptyText }) {
+function Section({ emoji, title, items, renderItem, emptyText, emojiIsDay }) {
   return (
     <div>
       <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2 flex items-center gap-1.5">
-        <span>{emoji}</span> {title}
+        {emojiIsDay ? (
+          <span className="inline-flex items-center justify-center w-5 h-5 rounded bg-red-500 text-white text-[10px] font-bold leading-none">{emoji}</span>
+        ) : (
+          <span>{emoji}</span>
+        )}
+        {title}
       </h3>
       {items.length === 0 ? (
         <p className="text-sm text-gray-400 italic pl-1">{emptyText}</p>
@@ -194,7 +199,8 @@ export default function CommandCenter({ open, onClose }) {
 
           {/* Family Pulse */}
           <Section
-            emoji="📅"
+            emoji={new Date().getDate().toString()}
+            emojiIsDay={true}
             title="Family Pulse"
             items={todayEvents}
             emptyText="Nothing urgent today. Enjoy the peace!"
