@@ -57,6 +57,7 @@ For personal_id, extract:
 - expiry_date: expiration date in YYYY-MM-DD. null if not found.
 - member_name: the full name or first name of the person this ID belongs to. null if not found.
 - category: one of: identity, property, health, financial, travel, vehicles, education, other
+- license_number: the driver's license number if this is a driver's license. null otherwise.
 
 For house_doc, extract:
 - title: document title or name
@@ -98,6 +99,7 @@ Also return:
           doc_type: { type: ["string", "null"] },
           expiry_date: { type: ["string", "null"] },
           member_name: { type: ["string", "null"] },
+          license_number: { type: ["string", "null"] },
           // house_doc fields
           title: { type: ["string", "null"] },
           doc_category: { type: ["string", "null"] },

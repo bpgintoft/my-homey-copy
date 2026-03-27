@@ -166,6 +166,7 @@ export default function HomeyScanModal({ open, onClose, onSaved, contextHint }) 
         expiry_date: result.expiry_date || '',
         member_name: result.member_name || '',
         id_category: result.category || 'identity',
+        license_number: result.license_number || '',
         // house_doc
         doc_category: result.doc_category || 'other',
         related_item_name: result.related_item_name || '',
@@ -324,10 +325,14 @@ export default function HomeyScanModal({ open, onClose, onSaved, contextHint }) 
       created_at: new Date().toISOString(),
     };
 
-    // Append — never overwrite existing docs
-    await base44.entities.FamilyMember.update(selectedMemberId, {
-      documents_ids: [...existingDocs, newDoc],
-    });
+    // Build update payload — append doc, and also populate license fields if this is a driver's license
+    const updatePayload = { documents_ids: [...existingDocs, newDoc] };
+    if (extracted.doc_type === 'drivers_license') {
+      if (extracted.license_number) updatePayload.license_number = extracted.license_number;
+      if (extracted.expiry_date) updatePayload.license_expiration_date = extracted.expiry_date;
+    }
+
+    await base44.entities.FamilyMember.update(selectedMemberId, updatePayload);
     queryClient.invalidateQueries({ queryKey: ['familyMembers'] });
   };
 
