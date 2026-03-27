@@ -1495,7 +1495,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
       {/* Documents & IDs Dialog */}
       {!isChildUser && (
       <Dialog open={expandedSection === 'documents'} onOpenChange={(open) => !open && setExpandedSection(null)}>
-        <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto top-4 translate-y-0" onOpenAutoFocus={(e) => e.preventDefault()}>
+        <DialogContent className="max-w-2xl w-[calc(100vw-2rem)] max-h-[85vh] overflow-y-auto overflow-x-hidden top-4 translate-y-0" onOpenAutoFocus={(e) => e.preventDefault()}>
           <DialogHeader>
             <DialogTitle>Documents & IDs</DialogTitle>
           </DialogHeader>

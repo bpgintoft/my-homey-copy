@@ -349,14 +349,14 @@ function AddDocumentForm({ memberId, memberName, color, onSaved, allMembers = []
   };
 
   return (
-    <div className="space-y-3 p-4 rounded-xl border border-dashed border-gray-200 bg-gray-50">
+    <div className="space-y-3 p-4 rounded-xl border border-dashed border-gray-200 bg-gray-50 w-full min-w-0">
       <h4 className="text-sm font-semibold text-gray-700">Add Document / ID</h4>
 
-      <div className="grid grid-cols-1 gap-3">
-        <div>
+      <div className="space-y-3 w-full">
+        <div className="w-full">
           <Label className="text-xs text-gray-500 mb-1 block">Document Type</Label>
           <Select value={form.type} onValueChange={(v) => setForm({ ...form, type: v })}>
-            <SelectTrigger className={inputClass}>
+            <SelectTrigger className={`${inputClass} w-full`}>
               <SelectValue placeholder="Select type..." />
             </SelectTrigger>
             <SelectContent>
@@ -364,10 +364,10 @@ function AddDocumentForm({ memberId, memberName, color, onSaved, allMembers = []
             </SelectContent>
           </Select>
         </div>
-        <div>
+        <div className="w-full">
           <Label className="text-xs text-gray-500 mb-1 block">Category</Label>
           <Select value={form.category} onValueChange={(v) => setForm({ ...form, category: v })}>
-            <SelectTrigger className={inputClass}>
+            <SelectTrigger className={`${inputClass} w-full`}>
               <SelectValue placeholder="Select category..." />
             </SelectTrigger>
             <SelectContent>
