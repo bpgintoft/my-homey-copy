@@ -172,7 +172,7 @@ export default function CommandCenter({ open, onClose }) {
             <div className="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center">
               <Home className="w-5 h-5 text-white" />
             </div>
-            <DialogTitle className="text-white text-lg font-bold">Homey Command Center</DialogTitle>
+            <DialogTitle className="text-white text-lg font-bold">Homey's Noteys</DialogTitle>
           </div>
           <p className="text-gray-300 text-sm ml-12">Here's what needs your love today.</p>
         </div>
