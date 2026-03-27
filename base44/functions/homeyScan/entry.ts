@@ -58,7 +58,7 @@ For maintenance_task, extract:
 For personal_id, extract:
 - doc_label: name or title of the document (e.g. "Passport", "Driver's License", "Insurance Card")
 - doc_type: short type identifier (e.g. "passport", "drivers_license", "insurance_card", "health_insurance_card", "birth_certificate", "ssn")
-- expiry_date: expiration date in YYYY-MM-DD. null if not found.
+- expiry_date: expiration/effective date in YYYY-MM-DD. For insurance cards, look for fields like "Effective Date", "Exp Date", "Valid Through", "Policy Period end date", or any date printed on the card. null if not found.
 - member_name: the full name or first name of the person(s) this ID belongs to. null if not found.
 - category: one of: identity, property, health, financial, travel, vehicles, education, other
 - license_number: the driver's license number if this is a driver's license. null otherwise.
