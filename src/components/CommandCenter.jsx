@@ -134,7 +134,7 @@ export default function CommandCenter({ open, onClose }) {
 
   return (
     <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
-      <DialogContent className="w-[calc(100vw-1rem)] max-w-md max-h-[85vh] overflow-y-auto p-0 rounded-2xl">
+      <DialogContent className="w-[calc(100vw-1rem)] max-w-md max-h-[85vh] overflow-y-auto overflow-x-hidden p-0 rounded-2xl">
         {/* Header */}
         <div className="bg-gradient-to-r from-gray-900 to-gray-800 px-6 py-5 rounded-t-2xl">
           <div className="flex items-center gap-3 mb-1">
