@@ -234,6 +234,9 @@ export default function HomeyScanModal({ open, onClose, onSaved, contextHint }) 
       }
     } catch (err) {
       console.error('Save error:', err);
+      setScanError(err?.message || 'Failed to save. Please try again.');
+      setStep(STEPS.UPLOAD);
+      return;
     }
 
     setStep(STEPS.DONE);
@@ -360,7 +363,7 @@ export default function HomeyScanModal({ open, onClose, onSaved, contextHint }) 
       await base44.entities.FamilyMember.update(memberId, updatePayload);
     }
 
-    await queryClient.refetchQueries({ queryKey: ['familyMembers'] });
+    queryClient.invalidateQueries({ queryKey: ['familyMembers'] });
   };
 
   const saveHouseDoc = async () => {
