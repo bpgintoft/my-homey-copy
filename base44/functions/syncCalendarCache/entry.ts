@@ -110,7 +110,7 @@ Deno.serve(async (req) => {
     const toDelete = existing.filter(e => !incomingIds.has(e.google_event_id));
     for (const e of toDelete) {
       await base44.asServiceRole.entities.CachedCalendarEvent.delete(e.id);
-      await sleep(150);
+      await sleep(500);
     }
     if (toDelete.length > 0) console.log(`Deleted ${toDelete.length} stale events`);
   } else {
@@ -122,7 +122,7 @@ Deno.serve(async (req) => {
     for (const e of incoming) existingMap[e.google_event_id] = e;
   }
 
-  // Upsert only changed/new events
+  // Upsert only changed/new events — throttle writes to avoid rate limits
   let created = 0, updated = 0, skipped = 0;
   for (const event of allEvents) {
     const ex = existingMap[event.google_event_id];
@@ -135,14 +135,14 @@ Deno.serve(async (req) => {
         ex.description !== event.description;
       if (changed) {
         await base44.asServiceRole.entities.CachedCalendarEvent.update(ex.id, event);
-        await sleep(150);
+        await sleep(500);
         updated++;
       } else {
         skipped++;
       }
     } else {
       await base44.asServiceRole.entities.CachedCalendarEvent.create(event);
-      await sleep(150);
+      await sleep(500);
       created++;
     }
   }
