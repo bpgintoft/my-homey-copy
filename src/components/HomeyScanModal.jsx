@@ -4,9 +4,10 @@ import { base44 } from '@/api/base44Client';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
   ScanLine, Loader2, CheckCircle2, AlertTriangle,
-  Sparkles, ImageIcon, FileText, X,
+  Sparkles, ImageIcon, FileText, X, Shield,
 } from 'lucide-react';
 import EventReviewForm from './scan/EventReviewForm';
 import MaintenanceReviewForm from './scan/MaintenanceReviewForm';
@@ -450,10 +451,20 @@ export default function HomeyScanModal({ open, onClose, onSaved, contextHint }) 
         {/* REVIEW */}
         {step === STEPS.REVIEW && extracted && (
           <div className="space-y-4">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-wrap items-center justify-between gap-2">
               <div className="flex items-center gap-2">
-                <p className="text-sm font-medium text-gray-700">Homey classified this as:</p>
-                <Badge className="bg-gray-900 text-white text-xs">{docTypeLabel}</Badge>
+                <p className="text-sm font-medium text-gray-700">Classified as:</p>
+                <Select value={docType} onValueChange={setDocType}>
+                  <SelectTrigger className="h-8 text-xs w-[170px]">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="calendar_event">📅 Calendar Event</SelectItem>
+                    <SelectItem value="maintenance_task">🔧 Maintenance / Service</SelectItem>
+                    <SelectItem value="personal_id">🔒 Personal ID / Vault</SelectItem>
+                    <SelectItem value="house_doc">🏠 House Document</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
               {extracted.confidence && (
                 <Badge className={`text-xs ${confidenceColor[extracted.confidence] || confidenceColor.medium}`}>
@@ -461,6 +472,13 @@ export default function HomeyScanModal({ open, onClose, onSaved, contextHint }) 
                 </Badge>
               )}
             </div>
+
+            {docType === 'personal_id' && (
+              <div className="flex items-center gap-2 p-3 bg-purple-50 border border-purple-200 rounded-lg text-sm text-purple-700">
+                <Shield className="w-4 h-4 flex-shrink-0" />
+                Homey detected a private document. This will be saved to your Secure Vault.
+              </div>
+            )}
 
             {/* Dynamic form based on doc type */}
             {docType === 'calendar_event' && (
