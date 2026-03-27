@@ -12,6 +12,9 @@ import MonthlyCalendar from './MonthlyCalendar';
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Checkbox } from "@/components/ui/checkbox";
 import { format, addDays, startOfWeek, isSameDay, parseISO } from 'date-fns';
+import { formatInTimeZone, toZonedTime } from 'date-fns-tz';
+
+const TZ = 'America/Chicago';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
 import LocationAutocomplete from './LocationAutocomplete';
@@ -19,7 +22,13 @@ import LocationAutocomplete from './LocationAutocomplete';
 export default function FamilyCalendar({ activities }) {
   const [showMonthlyView, setShowMonthlyView] = useState(false);
   const monthlyRef = React.useRef(null);
-  const [currentWeekStart, setCurrentWeekStart] = useState(new Date(new Date().setHours(0,0,0,0)));
+  // Get today's date at midnight in Central time
+  const getTodayCT = () => {
+    const nowCT = toZonedTime(new Date(), TZ);
+    nowCT.setHours(0, 0, 0, 0);
+    return nowCT;
+  };
+  const [currentWeekStart, setCurrentWeekStart] = useState(getTodayCT());
   const [hasNavigated, setHasNavigated] = useState(false);
   const [hasScrolledUp, setHasScrolledUp] = useState(false);
   const [showAddDialog, setShowAddDialog] = useState(false);
@@ -88,7 +97,7 @@ export default function FamilyCalendar({ activities }) {
     return cachedEvents
       .filter(e => {
         if (!e.start) return false;
-        const d = new Date(e.start);
+        const d = e.start.includes('T') ? toZonedTime(new Date(e.start), TZ) : parseISO(e.start);
         return d >= weekStart && d < weekEnd;
       })
       .map(e => ({
@@ -281,7 +290,9 @@ export default function FamilyCalendar({ activities }) {
     const q = searchQuery.toLowerCase().trim();
     return allEvents
       .filter(a => {
-        if (!a.start || !isSameDay(parseISO(a.start), day)) return false;
+        if (!a.start) return false;
+        const eventDay = a.start.includes('T') ? toZonedTime(parseISO(a.start), TZ) : parseISO(a.start);
+        if (!isSameDay(eventDay, day)) return false;
         if (!q) return true;
         return (
           (a.title || '').toLowerCase().includes(q) ||
@@ -426,8 +437,7 @@ export default function FamilyCalendar({ activities }) {
   };
 
   const goToToday = () => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    const today = getTodayCT();
     setCurrentWeekStart(today);
     setHasNavigated(false);
     setHasScrolledUp(false);
@@ -917,9 +927,8 @@ export default function FamilyCalendar({ activities }) {
         <AnimatePresence>
           {weekDays.map((day) => {
             const allDayActivities = getActivitiesForDay(day);
-            const now = new Date();
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
+            const now = toZonedTime(new Date(), TZ);
+            const today = getTodayCT();
             const weekStart = new Date(currentWeekStart);
             weekStart.setHours(0, 0, 0, 0);
             
@@ -938,7 +947,7 @@ export default function FamilyCalendar({ activities }) {
             
             if (dayActivities.length === 0) return null;
 
-            const isToday = isSameDay(day, new Date());
+            const isToday = isSameDay(day, getTodayCT());
 
             return (
               <motion.div
@@ -958,7 +967,7 @@ export default function FamilyCalendar({ activities }) {
                     const memberColor = memberColors[activity.child_name] || 'bg-gray-400';
                     // Check if event is all-day (no time component in ISO string)
                     const isAllDay = activity.start && !activity.start.includes('T');
-                    const eventTime = isAllDay ? 'All Day' : (activity.start ? format(parseISO(activity.start), 'h:mm a') : (activity.time || 'All day'));
+                    const eventTime = isAllDay ? 'All Day' : (activity.start ? formatInTimeZone(parseISO(activity.start), TZ, 'h:mm a') : (activity.time || 'All day'));
                     
                     const avatarUrl = activity.source === 'google' && activity.calendarName 
                       ? getCalendarAvatar(activity.calendarName) 
