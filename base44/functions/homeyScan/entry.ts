@@ -11,10 +11,14 @@ Deno.serve(async (req) => {
 
     console.log('Received file:', file.name, file.type, file.size, 'bytes');
 
-    // Upload to Base44 storage to get a hosted URL the LLM can access
-    const uploadResult = await base44.asServiceRole.integrations.Core.UploadFile({ file });
-    const file_url = uploadResult.file_url;
-    console.log('Uploaded URL:', file_url);
+    // Upload to private storage (for secure vault docs) and also get a public URL for LLM analysis
+    const privateUpload = await base44.asServiceRole.integrations.Core.UploadPrivateFile({ file });
+    const file_uri = privateUpload.file_uri;
+
+    // Get a short-lived signed URL so the LLM can read the image
+    const signedResult = await base44.asServiceRole.integrations.Core.CreateFileSignedUrl({ file_uri, expires_in: 300 });
+    const file_url = signedResult.signed_url;
+    console.log('Private URI:', file_uri, '| Signed URL for LLM:', file_url);
 
     const result = await base44.asServiceRole.integrations.Core.InvokeLLM({
       prompt: `You are Homey, a smart family document assistant. Carefully analyze this image or document and do TWO things:
@@ -112,7 +116,7 @@ Also return:
       }
     });
 
-    return Response.json({ result, file_url });
+    return Response.json({ result, file_url: file_uri });
   } catch (error) {
     console.error('homeyScan error:', error?.message || error);
     return Response.json({ error: error?.message || 'Internal server error' }, { status: 500 });
