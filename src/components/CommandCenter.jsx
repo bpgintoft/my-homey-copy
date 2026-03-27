@@ -41,31 +41,57 @@ export function useCommandCenterCount() {
   });
 
   return useMemo(() => {
-    const now = toZonedTime(new Date(), TZ);
     const todayStart = toZonedTime(new Date(), TZ);
     todayStart.setHours(0, 0, 0, 0);
+    const todayEnd = addDays(todayStart, 1);
+    const in30Days = addDays(todayStart, 30);
     const in7Days = addDays(todayStart, 7);
 
-    const dueMaintenance = maintenanceTasks.filter(t => {
-      if (!t.next_due || t.status === 'completed') return false;
-      const d = parseISO(t.next_due);
-      return d >= todayStart && d <= in7Days;
-    });
+    // 📅 Family Pulse: only TODAY's events
+    const todayEvents = cachedEvents
+      .filter(e => {
+        if (!e.start) return false;
+        const d = e.start.includes('T') ? toZonedTime(new Date(e.start), TZ) : parseISO(e.start);
+        return isSameDay(d, todayStart);
+      })
+      .sort((a, b) => {
+        if (!a.start.includes('T')) return -1;
+        if (!b.start.includes('T')) return 1;
+        return new Date(a.start) - new Date(b.start);
+      });
 
-    const highPriorityChores = chores.filter(c =>
-      !c.is_completed && c.timing === 'short-term'
-    );
+    // 🏠 House Health: past due OR due within 30 days
+    const dueMaintenance = maintenanceTasks
+      .filter(t => {
+        if (!t.next_due || t.status === 'completed') return false;
+        const d = parseISO(t.next_due);
+        return d <= in30Days; // includes past due (before today)
+      })
+      .sort((a, b) => parseISO(a.next_due) - parseISO(b.next_due));
 
-    const todayEvents = cachedEvents.filter(e => {
-      if (!e.start) return false;
-      const d = e.start.includes('T') ? toZonedTime(new Date(e.start), TZ) : parseISO(e.start);
-      return isSameDay(d, todayStart);
-    });
+    // ✅ Priority Chores: past due, due within 7 days, OR marked urgent
+    const urgentChores = chores
+      .filter(c => {
+        if (c.is_completed) return false;
+        if (c.priority === 'urgent') return true;
+        if (c.next_due) {
+          const d = parseISO(c.next_due);
+          return d <= in7Days; // includes past due
+        }
+        return false;
+      })
+      .sort((a, b) => {
+        // Past due / soonest first; no date goes last
+        if (a.next_due && b.next_due) return parseISO(a.next_due) - parseISO(b.next_due);
+        if (a.next_due) return -1;
+        if (b.next_due) return 1;
+        return 0;
+      });
 
     return {
-      count: dueMaintenance.length + highPriorityChores.length + todayEvents.length,
+      count: dueMaintenance.length + urgentChores.length + todayEvents.length,
       dueMaintenance,
-      highPriorityChores,
+      highPriorityChores: urgentChores,
       todayEvents,
     };
   }, [maintenanceTasks, chores, cachedEvents]);
@@ -152,7 +178,7 @@ export default function CommandCenter({ open, onClose }) {
             emoji="🏠"
             title="House Health"
             items={dueMaintenance}
-            emptyText="All clear — no maintenance due this week!"
+            emptyText="Nothing urgent today. Enjoy the peace!"
             renderItem={(task) => (
               <ItemRow
                 key={task.id}
@@ -171,7 +197,7 @@ export default function CommandCenter({ open, onClose }) {
             emoji="📅"
             title="Family Pulse"
             items={todayEvents}
-            emptyText="Nothing on the calendar today."
+            emptyText="Nothing urgent today. Enjoy the peace!"
             renderItem={(event) => (
               <ItemRow
                 key={event.id || event.google_event_id}
@@ -190,7 +216,7 @@ export default function CommandCenter({ open, onClose }) {
             emoji="✅"
             title="Priority Chores"
             items={highPriorityChores}
-            emptyText="No high-priority chores — nice work!"
+            emptyText="Nothing urgent today. Enjoy the peace!"
             renderItem={(chore) => {
               const memberPage = chore.assigned_to_name;
               const knownPages = ['Bryan', 'Kate', 'Phoenix', 'Mara'];
@@ -201,7 +227,7 @@ export default function CommandCenter({ open, onClose }) {
                 <ItemRow
                   key={chore.id}
                   label={chore.title}
-                  sublabel={chore.assigned_to_name || undefined}
+                  sublabel={[chore.assigned_to_name, chore.next_due ? `Due ${format(parseISO(chore.next_due), 'MMM d')}` : (chore.priority === 'urgent' ? 'Urgent' : undefined)].filter(Boolean).join(' · ') || undefined}
                   to={to}
                   onClick={onClose}
                 />
