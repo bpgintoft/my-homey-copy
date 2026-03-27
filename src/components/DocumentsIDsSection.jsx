@@ -242,7 +242,7 @@ function CategoryGroup({ catConfig, docs, color, onDelete }) {
 }
 
 // ─── Add Document Form ──────────────────────────────────────────────────────
-function AddDocumentForm({ memberId, memberName, color, onSaved }) {
+function AddDocumentForm({ memberId, memberName, color, onSaved, allMembers = [] }) {
   const inputColorMap = {
     blue: 'border-blue-400 focus-visible:ring-blue-500 bg-blue-50',
     green: 'border-green-400 focus-visible:ring-green-500 bg-green-50',
@@ -257,7 +257,14 @@ function AddDocumentForm({ memberId, memberName, color, onSaved }) {
   const [file, setFile] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState(null);
+  const [extraMemberIds, setExtraMemberIds] = useState([]);
   const fileRef = useRef();
+
+  const toggleExtraMember = (id) => setExtraMemberIds(prev =>
+    prev.includes(id) ? prev.filter(m => m !== id) : [...prev, id]
+  );
+
+  const otherMembers = allMembers.filter(m => m.id !== memberId);
 
   const DOC_TYPES = [
     { value: 'ssn', label: 'SSN' },
@@ -313,22 +320,26 @@ function AddDocumentForm({ memberId, memberName, color, onSaved }) {
     }
 
     try {
-      const memberData = await base44.entities.FamilyMember.filter({ id: memberId }).then(r => r[0]);
-      const existing = memberData?.documents_ids || [];
-      const docEntry = {
-        id: crypto.randomUUID(),
-        type: form.type,
-        category: form.category || 'other',
-        label: form.label,
-        value: form.value,
-        expiry_date: form.expiry_date || null,
-        file_uri,
-        created_at: new Date().toISOString(),
-      };
-      await base44.entities.FamilyMember.update(memberId, { documents_ids: [...existing, docEntry] });
+      const allTargetIds = [memberId, ...extraMemberIds];
+      for (const targetId of allTargetIds) {
+        const memberData = await base44.entities.FamilyMember.filter({ id: targetId }).then(r => r[0]);
+        const existing = memberData?.documents_ids || [];
+        const docEntry = {
+          id: `${crypto.randomUUID()}`,
+          type: form.type,
+          category: form.category || 'other',
+          label: form.label,
+          value: form.value,
+          expiry_date: form.expiry_date || null,
+          file_uri,
+          created_at: new Date().toISOString(),
+        };
+        await base44.entities.FamilyMember.update(targetId, { documents_ids: [...existing, docEntry] });
+      }
       await queryClient.refetchQueries({ queryKey: ['familyMembers'] });
       setForm({ type: '', category: '', label: '', value: '', expiry_date: '' });
       setFile(null);
+      setExtraMemberIds([]);
       onSaved?.();
     } catch (err) {
       setUploadError(`Failed to save document record: ${err.message}. Please try again.`);
@@ -414,6 +425,32 @@ function AddDocumentForm({ memberId, memberName, color, onSaved }) {
           onChange={e => setFile(e.target.files?.[0] || null)} />
       </div>
 
+      {otherMembers.length > 0 && (
+        <div>
+          <Label className="text-xs text-gray-500 mb-1 block">Also save to (optional)</Label>
+          <div className="flex flex-wrap gap-2">
+            {otherMembers.map(m => {
+              const isSelected = extraMemberIds.includes(m.id);
+              return (
+                <button
+                  key={m.id}
+                  type="button"
+                  onClick={() => toggleExtraMember(m.id)}
+                  className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full border text-xs font-medium transition-all ${
+                    isSelected ? 'border-transparent text-white shadow-sm bg-gray-700' : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
+                  }`}
+                >
+                  <span className="w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold text-white bg-gray-400">
+                    {m.name?.charAt(0)}
+                  </span>
+                  {m.name}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
       {uploadError && (
         <div className="rounded-lg border border-red-200 bg-red-50 p-3 space-y-2">
           <p className="text-xs text-red-600 font-medium leading-snug">{uploadError}</p>
@@ -443,6 +480,7 @@ export default function DocumentsIDsSection({ member, color = 'blue', isReadOnly
     queryFn: () => base44.entities.FamilyMember.list(),
   });
   const liveMember = familyMembers.find(m => m.id === member?.id) || member;
+  const allMembers = familyMembers;
 
   if (isReadOnly) return null;
 
@@ -493,6 +531,7 @@ export default function DocumentsIDsSection({ member, color = 'blue', isReadOnly
         memberName={member.name}
         color={color}
         onSaved={() => {}}
+        allMembers={allMembers}
       />
     </div>
   );

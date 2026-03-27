@@ -26,7 +26,10 @@ const DOC_CATEGORIES = [
   { value: 'other', label: 'Other' },
 ];
 
-export default function VaultReviewForm({ extracted, setExtracted, docType, familyMembers, selectedMemberId, setSelectedMemberId }) {
+export default function VaultReviewForm({ extracted, setExtracted, docType, familyMembers, selectedMemberIds, setSelectedMemberIds }) {
+  const toggleMember = (id) => setSelectedMemberIds(prev =>
+    prev.includes(id) ? prev.filter(m => m !== id) : [...prev, id]
+  );
   const isPersonalId = docType === 'personal_id';
 
   return (
@@ -67,34 +70,38 @@ export default function VaultReviewForm({ extracted, setExtracted, docType, fami
 
           <div>
             <Label className="text-xs font-semibold text-gray-700 mb-2 block">
-              Which family member does this belong to?
+              Which family members does this belong to?
               {extracted.member_name && (
                 <span className="ml-2 text-xs font-normal text-purple-600">
                   (Homey detected: "{extracted.member_name}")
                 </span>
               )}
             </Label>
+            <p className="text-xs text-gray-400 mb-2">Select all that apply — it will be saved to each member's vault.</p>
             <div className="flex flex-wrap gap-2">
-              {familyMembers.map(member => (
-                <button
-                  key={member.id}
-                  onClick={() => setSelectedMemberId(selectedMemberId === member.id ? null : member.id)}
-                  className={`flex items-center gap-2 px-3 py-1.5 rounded-full border text-sm font-medium transition-all ${
-                    selectedMemberId === member.id
-                      ? 'border-transparent text-white shadow-sm'
-                      : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
-                  }`}
-                  style={selectedMemberId === member.id ? { backgroundColor: member.color || '#7c3aed' } : {}}
-                >
-                  <span className="w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold text-white" style={{ backgroundColor: member.color || '#64748b' }}>
-                    {member.name?.charAt(0)}
-                  </span>
-                  {member.name}
-                </button>
-              ))}
+              {familyMembers.map(member => {
+                const isSelected = selectedMemberIds.includes(member.id);
+                return (
+                  <button
+                    key={member.id}
+                    onClick={() => toggleMember(member.id)}
+                    className={`flex items-center gap-2 px-3 py-1.5 rounded-full border text-sm font-medium transition-all ${
+                      isSelected
+                        ? 'border-transparent text-white shadow-sm'
+                        : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
+                    }`}
+                    style={isSelected ? { backgroundColor: member.color || '#7c3aed' } : {}}
+                  >
+                    <span className="w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold text-white" style={{ backgroundColor: member.color || '#64748b' }}>
+                      {member.name?.charAt(0)}
+                    </span>
+                    {member.name}
+                  </button>
+                );
+              })}
             </div>
-            {!selectedMemberId && (
-              <p className="text-xs text-amber-600 mt-1">← Select a family member to save this ID</p>
+            {selectedMemberIds.length === 0 && (
+              <p className="text-xs text-amber-600 mt-1">← Select at least one family member</p>
             )}
           </div>
         </>

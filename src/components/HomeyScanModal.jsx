@@ -47,7 +47,7 @@ export default function HomeyScanModal({ open, onClose, onSaved, contextHint }) 
   const [missingDate, setMissingDate] = useState(false);
 
   // Vault-specific state (personal_id)
-  const [selectedMemberId, setSelectedMemberId] = useState(null);
+  const [selectedMemberIds, setSelectedMemberIds] = useState([]);
 
   const { data: familyMembers = [] } = useQuery({
     queryKey: ['familyMembers'],
@@ -75,7 +75,7 @@ export default function HomeyScanModal({ open, onClose, onSaved, contextHint }) 
     setSelectedMembers([]);
     setSelectedCalendarId('');
     setMissingDate(false);
-    setSelectedMemberId(null);
+    setSelectedMemberIds([]);
   };
 
   const handleClose = () => { reset(); onClose(); };
@@ -182,7 +182,7 @@ export default function HomeyScanModal({ open, onClose, onSaved, contextHint }) 
           m.name?.toLowerCase() === result.member_name?.toLowerCase() ||
           result.member_name?.toLowerCase().includes(m.name?.toLowerCase())
         );
-        if (match) setSelectedMemberId(match.id);
+        if (match) setSelectedMemberIds([match.id]);
       }
 
       // Auto-pre-select family member for calendar events
@@ -305,34 +305,36 @@ export default function HomeyScanModal({ open, onClose, onSaved, contextHint }) 
   };
 
   const savePersonalId = async () => {
-    if (!selectedMemberId) return;
+    if (!selectedMemberIds.length) return;
 
-    // Fetch the current family member to safely append (never overwrite)
-    const member = await base44.entities.FamilyMember.filter({ id: selectedMemberId });
-    const current = member?.[0];
-    if (!current) return;
+    for (const memberId of selectedMemberIds) {
+      // Fetch each member to safely append (never overwrite)
+      const members = await base44.entities.FamilyMember.filter({ id: memberId });
+      const current = members?.[0];
+      if (!current) continue;
 
-    const existingDocs = Array.isArray(current.documents_ids) ? current.documents_ids : [];
+      const existingDocs = Array.isArray(current.documents_ids) ? current.documents_ids : [];
 
-    const newDoc = {
-      id: `doc_${Date.now()}`,
-      type: extracted.doc_type || 'other',
-      category: extracted.id_category || 'identity',
-      label: extracted.doc_label || 'Document',
-      value: '',
-      expiry_date: extracted.expiry_date || null,
-      file_uri: fileUrl || null,
-      created_at: new Date().toISOString(),
-    };
+      const newDoc = {
+        id: `doc_${Date.now()}_${memberId}`,
+        type: extracted.doc_type || 'other',
+        category: extracted.id_category || 'identity',
+        label: extracted.doc_label || 'Document',
+        value: '',
+        expiry_date: extracted.expiry_date || null,
+        file_uri: fileUrl || null,
+        created_at: new Date().toISOString(),
+      };
 
-    // Build update payload — append doc, and also populate license fields if this is a driver's license
-    const updatePayload = { documents_ids: [...existingDocs, newDoc] };
-    if (extracted.doc_type === 'drivers_license') {
-      if (extracted.license_number) updatePayload.license_number = extracted.license_number;
-      if (extracted.expiry_date) updatePayload.license_expiration_date = extracted.expiry_date;
+      const updatePayload = { documents_ids: [...existingDocs, newDoc] };
+      if (extracted.doc_type === 'drivers_license') {
+        if (extracted.license_number) updatePayload.license_number = extracted.license_number;
+        if (extracted.expiry_date) updatePayload.license_expiration_date = extracted.expiry_date;
+      }
+
+      await base44.entities.FamilyMember.update(memberId, updatePayload);
     }
 
-    await base44.entities.FamilyMember.update(selectedMemberId, updatePayload);
     await queryClient.refetchQueries({ queryKey: ['familyMembers'] });
   };
 
@@ -354,7 +356,7 @@ export default function HomeyScanModal({ open, onClose, onSaved, contextHint }) 
     if (!extracted) return true;
     if (docType === 'calendar_event') return !extracted.title || (missingDate && !extracted.date);
     if (docType === 'maintenance_task') return !extracted.task_title;
-    if (docType === 'personal_id') return !extracted.doc_label || !selectedMemberId;
+    if (docType === 'personal_id') return !extracted.doc_label || selectedMemberIds.length === 0;
     if (docType === 'house_doc') return !extracted.title;
     return true;
   };
@@ -510,8 +512,8 @@ export default function HomeyScanModal({ open, onClose, onSaved, contextHint }) 
                 setExtracted={setExtracted}
                 docType={docType}
                 familyMembers={familyMembers}
-                selectedMemberId={selectedMemberId}
-                setSelectedMemberId={setSelectedMemberId}
+                selectedMemberIds={selectedMemberIds}
+                setSelectedMemberIds={setSelectedMemberIds}
               />
             )}
 
