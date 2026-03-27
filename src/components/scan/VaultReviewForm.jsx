@@ -58,6 +58,22 @@ export default function VaultReviewForm({ extracted, setExtracted, docType, fami
             </div>
           </div>
 
+          {extracted.insurance_provider && (
+            <div className="space-y-2 p-3 bg-blue-50 border border-blue-100 rounded-lg">
+              <p className="text-xs font-semibold text-blue-700">Insurance Details (will be saved to member profile)</p>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <Label className="text-xs text-gray-500">Provider</Label>
+                  <Input value={extracted.insurance_provider || ''} onChange={e => setExtracted({ ...extracted, insurance_provider: e.target.value })} className="mt-1 bg-white" placeholder="e.g. State Farm" />
+                </div>
+                <div>
+                  <Label className="text-xs text-gray-500">Policy / Member ID</Label>
+                  <Input value={extracted.policy_number || ''} onChange={e => setExtracted({ ...extracted, policy_number: e.target.value })} className="mt-1 bg-white" placeholder="e.g. 1234567" />
+                </div>
+              </div>
+            </div>
+          )}
+
           <div>
             <Label className="text-xs text-gray-500">Category</Label>
             <Select value={extracted.id_category || 'identity'} onValueChange={v => setExtracted({ ...extracted, id_category: v })}>

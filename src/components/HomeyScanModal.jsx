@@ -167,6 +167,9 @@ export default function HomeyScanModal({ open, onClose, onSaved, contextHint }) 
         member_name: result.member_name || '',
         id_category: result.category || 'identity',
         license_number: result.license_number || '',
+        insurance_provider: result.insurance_provider || '',
+        policy_number: result.policy_number || '',
+        insurance_type: result.insurance_type || '',
         // house_doc
         doc_category: result.doc_category || 'other',
         related_item_name: result.related_item_name || '',
@@ -327,9 +330,30 @@ export default function HomeyScanModal({ open, onClose, onSaved, contextHint }) 
       };
 
       const updatePayload = { documents_ids: [...existingDocs, newDoc] };
+
       if (extracted.doc_type === 'drivers_license') {
         if (extracted.license_number) updatePayload.license_number = extracted.license_number;
         if (extracted.expiry_date) updatePayload.license_expiration_date = extracted.expiry_date;
+      }
+
+      if (extracted.insurance_provider && extracted.insurance_type === 'vehicle') {
+        if (extracted.insurance_provider) updatePayload.vehicle_insurance_provider = extracted.insurance_provider;
+        if (extracted.policy_number) updatePayload.vehicle_insurance_policy_number = extracted.policy_number;
+      }
+
+      if (extracted.insurance_provider && extracted.insurance_type === 'health') {
+        if (extracted.insurance_provider) updatePayload.insurance_provider = extracted.insurance_provider;
+        if (extracted.policy_number) updatePayload.insurance_member_id = extracted.policy_number;
+      }
+
+      if (extracted.insurance_provider && extracted.insurance_type === 'dental') {
+        if (extracted.insurance_provider) updatePayload.dental_insurance_provider = extracted.insurance_provider;
+        if (extracted.policy_number) updatePayload.dental_insurance_member_id = extracted.policy_number;
+      }
+
+      if (extracted.insurance_provider && extracted.insurance_type === 'vision') {
+        if (extracted.insurance_provider) updatePayload.vision_insurance_provider = extracted.insurance_provider;
+        if (extracted.policy_number) updatePayload.vision_insurance_member_id = extracted.policy_number;
       }
 
       await base44.entities.FamilyMember.update(memberId, updatePayload);
