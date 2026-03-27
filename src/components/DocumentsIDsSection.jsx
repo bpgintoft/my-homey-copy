@@ -352,7 +352,7 @@ function AddDocumentForm({ memberId, memberName, color, onSaved, allMembers = []
     <div className="space-y-3 p-4 rounded-xl border border-dashed border-gray-200 bg-gray-50">
       <h4 className="text-sm font-semibold text-gray-700">Add Document / ID</h4>
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 gap-3">
         <div>
           <Label className="text-xs text-gray-500 mb-1 block">Document Type</Label>
           <Select value={form.type} onValueChange={(v) => setForm({ ...form, type: v })}>
