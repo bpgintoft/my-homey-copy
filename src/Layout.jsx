@@ -13,12 +13,14 @@ import {
   CheckSquare,
   Users,
   Settings,
-  Bell
+  Bell,
+  ScanLine
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { motion, AnimatePresence } from 'framer-motion';
 import CommandCenter, { CommandCenterBadge, useCommandCenterCount } from '@/components/CommandCenter';
+import HomeyScanModal from '@/components/HomeyScanModal';
 
 
 // Data prefetchers for the most-used pages — called on nav link hover
@@ -62,9 +64,22 @@ const prefetchMap = {
   },
 };
 
+// Map page names to contextHints for the scan modal
+const PAGE_CONTEXT_HINTS = {
+  House: 'maintenance_task',
+  RoomDetail: 'maintenance_task',
+  Documents: 'house_doc',
+  Bryan: 'personal_id',
+  Kate: 'personal_id',
+  Phoenix: 'personal_id',
+  Mara: 'personal_id',
+  Calendar: 'calendar_event',
+};
+
 export default function Layout({ children, currentPageName }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [commandCenterOpen, setCommandCenterOpen] = useState(false);
+  const [scanOpen, setScanOpen] = useState(false);
   const queryClient = useQueryClient();
   const { count: commandCenterCount } = useCommandCenterCount();
   const [pullDistance, setPullDistance] = useState(0);
@@ -176,7 +191,14 @@ export default function Layout({ children, currentPageName }) {
             <NavGroup key={group.label} group={group} />
           ))}
         </nav>
-        <div className="p-4 border-t border-gray-100">
+        <div className="p-4 border-t border-gray-100 space-y-1">
+          <button
+            onClick={() => setScanOpen(true)}
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-white bg-gradient-to-r from-[#E91E8C] to-[#0AACFF] hover:opacity-90 transition-all font-medium"
+          >
+            <ScanLine className="w-5 h-5" />
+            <span>Scan to Homey</span>
+          </button>
           <button
             onClick={() => setCommandCenterOpen(true)}
             className="relative w-full flex items-center gap-3 px-4 py-3 rounded-xl text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-all"
@@ -199,6 +221,13 @@ export default function Layout({ children, currentPageName }) {
           <span className="font-bold text-gray-900">The Gintoft Family</span>
         </Link>
         <div className="flex items-center gap-1">
+          <button
+            onClick={() => setScanOpen(true)}
+            className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
+            title="Scan to Homey"
+          >
+            <ScanLine className="w-5 h-5 text-[#E91E8C]" />
+          </button>
           <button
             onClick={() => setCommandCenterOpen(true)}
             className="relative p-2 rounded-lg hover:bg-gray-100 transition-colors"
@@ -254,6 +283,13 @@ export default function Layout({ children, currentPageName }) {
       </main>
 
       <CommandCenter open={commandCenterOpen} onClose={() => setCommandCenterOpen(false)} />
+
+      <HomeyScanModal
+        open={scanOpen}
+        onClose={() => setScanOpen(false)}
+        onSaved={() => setScanOpen(false)}
+        contextHint={PAGE_CONTEXT_HINTS[currentPageName] || null}
+      />
     </div>
   );
 }

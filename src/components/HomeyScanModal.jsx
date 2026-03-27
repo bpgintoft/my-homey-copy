@@ -3,15 +3,14 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Label } from "@/components/ui/label";
 import {
   ScanLine, Loader2, CheckCircle2, AlertTriangle,
-  Sparkles, Users, ImageIcon, FileText, X, Calendar
+  Sparkles, ImageIcon, FileText, X,
 } from 'lucide-react';
+import EventReviewForm from './scan/EventReviewForm';
+import MaintenanceReviewForm from './scan/MaintenanceReviewForm';
+import VaultReviewForm from './scan/VaultReviewForm';
 
 const STEPS = {
   UPLOAD: 'upload',
@@ -21,7 +20,15 @@ const STEPS = {
   DONE: 'done',
 };
 
-export default function HomeyScanModal({ open, onClose, onSaved }) {
+// contextHint -> likely doc type label shown to user
+const HINT_LABELS = {
+  maintenance_task: 'Maintenance / Service',
+  personal_id: 'Personal ID / Vault',
+  house_doc: 'House Document',
+  calendar_event: 'Calendar Event',
+};
+
+export default function HomeyScanModal({ open, onClose, onSaved, contextHint }) {
   const fileRef = useRef();
   const queryClient = useQueryClient();
 
@@ -30,10 +37,16 @@ export default function HomeyScanModal({ open, onClose, onSaved }) {
   const [preview, setPreview] = useState(null);
   const [scanError, setScanError] = useState(null);
   const [extracted, setExtracted] = useState(null);
+  const [docType, setDocType] = useState(null);
+  const [fileUrl, setFileUrl] = useState(null);
+
+  // Event-specific state
   const [selectedMembers, setSelectedMembers] = useState([]);
+  const [selectedCalendarId, setSelectedCalendarId] = useState('');
   const [missingDate, setMissingDate] = useState(false);
 
-  const [selectedCalendarId, setSelectedCalendarId] = useState('');
+  // Vault-specific state (personal_id)
+  const [selectedMemberId, setSelectedMemberId] = useState(null);
 
   const { data: familyMembers = [] } = useQuery({
     queryKey: ['familyMembers'],
@@ -45,7 +58,8 @@ export default function HomeyScanModal({ open, onClose, onSaved }) {
     queryFn: async () => {
       const { data } = await base44.functions.invoke('getGoogleCalendars');
       return data;
-    }
+    },
+    enabled: open,
   });
   const calendars = calendarsData?.calendars || [];
 
@@ -55,27 +69,22 @@ export default function HomeyScanModal({ open, onClose, onSaved }) {
     setPreview(null);
     setScanError(null);
     setExtracted(null);
+    setDocType(null);
+    setFileUrl(null);
     setSelectedMembers([]);
     setSelectedCalendarId('');
     setMissingDate(false);
+    setSelectedMemberId(null);
   };
 
-  const handleClose = () => {
-    reset();
-    onClose();
-  };
+  const handleClose = () => { reset(); onClose(); };
 
   const handleFileSelect = (f) => {
     if (!f) return;
     setFile(f);
-    if (f.type.startsWith('image/')) {
-      setPreview(URL.createObjectURL(f));
-    } else {
-      setPreview(null);
-    }
+    setPreview(f.type.startsWith('image/') ? URL.createObjectURL(f) : null);
   };
 
-  // Compress image to max 1200px wide and convert to JPEG base64
   const compressImage = (f) => new Promise((resolve, reject) => {
     const MAX_SIZE = 1200;
     const reader = new FileReader();
@@ -97,20 +106,12 @@ export default function HomeyScanModal({ open, onClose, onSaved }) {
     reader.readAsDataURL(f);
   });
 
-  const toBase64 = (f) => new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(reader.result.split(',')[1]);
-    reader.onerror = reject;
-    reader.readAsDataURL(f);
-  });
-
   const handleScan = async () => {
     if (!file) return;
     setStep(STEPS.SCANNING);
     setScanError(null);
 
     try {
-      // Compress image client-side, then send as a File to the backend (multipart auto-detected)
       let uploadFile;
       if (file.type.startsWith('image/')) {
         const compressed = await compressImage(file);
@@ -119,13 +120,12 @@ export default function HomeyScanModal({ open, onClose, onSaved }) {
         for (let i = 0; i < byteChars.length; i++) byteArr[i] = byteChars.charCodeAt(i);
         uploadFile = new File([byteArr], 'scan.jpg', { type: 'image/jpeg' });
       } else {
-        // PDF or other — send as-is
         uploadFile = file;
       }
 
-      // Pass File object — SDK auto-sends as multipart/form-data
       const response = await base44.functions.invoke('homeyScan', { file: uploadFile });
       const result = response.data?.result;
+      const returnedFileUrl = response.data?.file_url;
 
       if (!result) {
         setScanError(response.data?.error || "Homey couldn't read that file. Please try a clearer image.");
@@ -133,38 +133,75 @@ export default function HomeyScanModal({ open, onClose, onSaved }) {
         return;
       }
 
+      const type = result.document_type || 'calendar_event';
+      setDocType(type);
+      setFileUrl(returnedFileUrl || null);
+
+      // Normalize extracted data into a single object regardless of type
       setExtracted({
-        title: result.event_name || '',
+        // common
+        confidence: result.confidence,
+        description: result.description || '',
+        cost: result.cost || '',
+        // calendar_event
+        title: result.event_name || result.title || '',
         date: result.date || '',
         time: result.time || '',
         end_time: result.end_time || '',
         location: result.location || '',
         address: result.address || '',
-        description: result.description || '',
         type: result.event_type || 'event',
         age_range: result.age_range || '',
-        cost: result.cost || '',
         registration_url: result.registration_url || '',
-        confidence: result.confidence || 'medium',
+        assignee_name: result.assignee_name || '',
+        // maintenance_task
+        task_title: result.task_title || '',
+        appliance_name: result.appliance_name || '',
+        next_due_date: result.next_due_date || '',
+        category: result.category || '',
+        // personal_id
+        doc_label: result.doc_label || '',
+        doc_type: result.doc_type || '',
+        expiry_date: result.expiry_date || '',
+        member_name: result.member_name || '',
+        id_category: result.category || 'identity',
+        // house_doc
+        doc_category: result.doc_category || 'other',
+        related_item_name: result.related_item_name || '',
+        expiration_date: result.expiration_date || '',
+        purchase_date: result.purchase_date || '',
+        purchase_price: result.purchase_price || null,
+        notes: result.notes || '',
       });
 
+      // Auto-pre-select family member for personal_id if AI detected a name
+      if (type === 'personal_id' && result.member_name) {
+        const match = familyMembers.find(m =>
+          m.name?.toLowerCase() === result.member_name?.toLowerCase() ||
+          result.member_name?.toLowerCase().includes(m.name?.toLowerCase())
+        );
+        if (match) setSelectedMemberId(match.id);
+      }
 
-      setMissingDate(!result.date);
+      // Auto-pre-select family member for calendar events
+      if (type === 'calendar_event' && result.assignee_name) {
+        const match = familyMembers.find(m =>
+          result.assignee_name?.toLowerCase().includes(m.name?.toLowerCase())
+        );
+        if (match) setSelectedMembers([match.id]);
+      }
+
+      setMissingDate(type === 'calendar_event' && !result.date);
       setStep(STEPS.REVIEW);
     } catch (err) {
       console.error('HomeyScan error:', err?.message || err);
-      setScanError(err?.message || "Something went wrong while scanning. Please try again.");
+      setScanError(err?.message || "Something went wrong. Please try again.");
       setStep(STEPS.UPLOAD);
     }
   };
 
-  const toggleMember = (id) => {
-    setSelectedMembers(prev =>
-      prev.includes(id) ? prev.filter(m => m !== id) : [...prev, id]
-    );
-  };
+  const toggleMember = (id) => setSelectedMembers(prev => prev.includes(id) ? prev.filter(m => m !== id) : [...prev, id]);
 
-  // Convert "3:30 PM" style time string to "HH:MM" 24-hour format
   const parseTo24h = (timeStr) => {
     if (!timeStr) return null;
     const match = timeStr.match(/(\d{1,2}):(\d{2})\s*(AM|PM)?/i);
@@ -178,9 +215,27 @@ export default function HomeyScanModal({ open, onClose, onSaved }) {
   };
 
   const handleConfirm = async () => {
-    if (missingDate && !extracted.date) return;
     setStep(STEPS.SAVING);
 
+    try {
+      if (docType === 'calendar_event') {
+        await saveCalendarEvent();
+      } else if (docType === 'maintenance_task') {
+        await saveMaintenanceTask();
+      } else if (docType === 'personal_id') {
+        await savePersonalId();
+      } else if (docType === 'house_doc') {
+        await saveHouseDoc();
+      }
+    } catch (err) {
+      console.error('Save error:', err);
+    }
+
+    setStep(STEPS.DONE);
+    setTimeout(() => { onSaved?.(); handleClose(); }, 1500);
+  };
+
+  const saveCalendarEvent = async () => {
     const time24 = parseTo24h(extracted.time);
     const endTime24 = parseTo24h(extracted.end_time);
     const isAllDay = !time24;
@@ -191,7 +246,6 @@ export default function HomeyScanModal({ open, onClose, onSaved }) {
       end = extracted.date;
     } else {
       start = `${extracted.date}T${time24}:00`;
-      // Default end = 1 hour after start if no end time
       if (endTime24) {
         end = `${extracted.date}T${endTime24}:00`;
       } else {
@@ -201,22 +255,17 @@ export default function HomeyScanModal({ open, onClose, onSaved }) {
       }
     }
 
-    // Create the Google Calendar event if a calendar is selected
     if (selectedCalendarId) {
       await base44.functions.invoke('createGoogleCalendarEvent', {
         summary: extracted.title,
         description: extracted.description || '',
         location: extracted.location || '',
         calendarId: selectedCalendarId,
-        start,
-        end,
-        isAllDay,
+        start, end, isAllDay,
       });
       queryClient.invalidateQueries({ queryKey: ['cachedCalendarEvents'] });
-      queryClient.invalidateQueries({ queryKey: ['googleCalendarEvents'] });
     }
 
-    // Also save as KidsActivity for each assigned family member
     const targets = selectedMembers.length > 0
       ? familyMembers.filter(m => selectedMembers.includes(m.id))
       : [];
@@ -237,14 +286,74 @@ export default function HomeyScanModal({ open, onClose, onSaved }) {
         source: 'manual',
       });
     }
-
     queryClient.invalidateQueries({ queryKey: ['kidsActivities'] });
-    setStep(STEPS.DONE);
-    setTimeout(() => {
-      onSaved?.();
-      handleClose();
-    }, 1500);
   };
+
+  const saveMaintenanceTask = async () => {
+    await base44.entities.MaintenanceTask.create({
+      title: extracted.task_title,
+      appliance_name: extracted.appliance_name || null,
+      next_due: extracted.next_due_date || null,
+      description: extracted.description || null,
+      category: extracted.category || 'interior',
+      status: 'pending',
+      priority: 'medium',
+    });
+    queryClient.invalidateQueries({ queryKey: ['maintenanceTasks'] });
+  };
+
+  const savePersonalId = async () => {
+    if (!selectedMemberId) return;
+
+    // Fetch the current family member to safely append (never overwrite)
+    const member = await base44.entities.FamilyMember.filter({ id: selectedMemberId });
+    const current = member?.[0];
+    if (!current) return;
+
+    const existingDocs = Array.isArray(current.documents_ids) ? current.documents_ids : [];
+
+    const newDoc = {
+      id: `doc_${Date.now()}`,
+      type: extracted.doc_type || 'other',
+      category: extracted.id_category || 'identity',
+      label: extracted.doc_label || 'Document',
+      value: '',
+      expiry_date: extracted.expiry_date || null,
+      file_uri: fileUrl || null,
+      created_at: new Date().toISOString(),
+    };
+
+    // Append — never overwrite existing docs
+    await base44.entities.FamilyMember.update(selectedMemberId, {
+      documents_ids: [...existingDocs, newDoc],
+    });
+    queryClient.invalidateQueries({ queryKey: ['familyMembers'] });
+  };
+
+  const saveHouseDoc = async () => {
+    await base44.entities.Document.create({
+      title: extracted.title,
+      type: extracted.doc_category || 'other',
+      related_item_name: extracted.related_item_name || null,
+      expiration_date: extracted.expiration_date || null,
+      purchase_date: extracted.purchase_date || null,
+      purchase_price: extracted.purchase_price || null,
+      notes: extracted.notes || null,
+      file_url: fileUrl || null,
+    });
+    queryClient.invalidateQueries({ queryKey: ['documents'] });
+  };
+
+  const isSaveDisabled = () => {
+    if (!extracted) return true;
+    if (docType === 'calendar_event') return !extracted.title || (missingDate && !extracted.date);
+    if (docType === 'maintenance_task') return !extracted.task_title;
+    if (docType === 'personal_id') return !extracted.doc_label || !selectedMemberId;
+    if (docType === 'house_doc') return !extracted.title;
+    return true;
+  };
+
+  const docTypeLabel = docType ? (HINT_LABELS[docType] || docType) : null;
 
   const confidenceColor = {
     high: 'bg-green-100 text-green-700',
@@ -261,13 +370,18 @@ export default function HomeyScanModal({ open, onClose, onSaved }) {
               <ScanLine className="w-4 h-4 text-white" />
             </div>
             Scan to Homey
+            {contextHint && HINT_LABELS[contextHint] && step === STEPS.UPLOAD && (
+              <Badge className="ml-auto text-xs bg-blue-100 text-blue-700">
+                Hint: {HINT_LABELS[contextHint]}
+              </Badge>
+            )}
           </DialogTitle>
         </DialogHeader>
 
-        {/* STEP: UPLOAD */}
+        {/* UPLOAD */}
         {step === STEPS.UPLOAD && (
           <div className="space-y-4">
-            <p className="text-sm text-gray-500">Upload a school flyer, sports schedule, event poster, or medical appointment card. Homey will extract the details automatically.</p>
+            <p className="text-sm text-gray-500">Upload a school flyer, service invoice, ID card, warranty, or any home document. Homey will figure out what it is automatically.</p>
 
             {scanError && (
               <div className="flex items-center gap-2 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">
@@ -292,10 +406,7 @@ export default function HomeyScanModal({ open, onClose, onSaved }) {
                       <span className="font-medium">{file.name}</span>
                     </div>
                   )}
-                  <button
-                    onClick={(e) => { e.stopPropagation(); setFile(null); setPreview(null); }}
-                    className="text-xs text-gray-400 hover:text-red-500 flex items-center gap-1 mx-auto"
-                  >
+                  <button onClick={(e) => { e.stopPropagation(); setFile(null); setPreview(null); }} className="text-xs text-gray-400 hover:text-red-500 flex items-center gap-1 mx-auto">
                     <X className="w-3 h-3" /> Remove
                   </button>
                 </div>
@@ -313,26 +424,16 @@ export default function HomeyScanModal({ open, onClose, onSaved }) {
               )}
             </div>
 
-            <input
-              ref={fileRef}
-              type="file"
-              accept="image/*,.pdf"
-              className="hidden"
-              onChange={(e) => handleFileSelect(e.target.files?.[0])}
-            />
+            <input ref={fileRef} type="file" accept="image/*,.pdf" className="hidden" onChange={(e) => handleFileSelect(e.target.files?.[0])} />
 
-            <Button
-              onClick={handleScan}
-              disabled={!file}
-              className="w-full bg-gradient-to-r from-[#E91E8C] to-[#0AACFF] text-white font-semibold"
-            >
+            <Button onClick={handleScan} disabled={!file} className="w-full bg-gradient-to-r from-[#E91E8C] to-[#0AACFF] text-white font-semibold">
               <Sparkles className="w-4 h-4 mr-2" />
               Scan with Homey
             </Button>
           </div>
         )}
 
-        {/* STEP: SCANNING */}
+        {/* SCANNING */}
         {step === STEPS.SCANNING && (
           <div className="flex flex-col items-center justify-center py-12 gap-4">
             <div className="relative w-16 h-16">
@@ -342,15 +443,18 @@ export default function HomeyScanModal({ open, onClose, onSaved }) {
               </div>
             </div>
             <p className="font-semibold text-gray-800">Homey is scanning...</p>
-            <p className="text-sm text-gray-400">Extracting event details from your file</p>
+            <p className="text-sm text-gray-400">Identifying document type and extracting details</p>
           </div>
         )}
 
-        {/* STEP: REVIEW */}
+        {/* REVIEW */}
         {step === STEPS.REVIEW && extracted && (
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <p className="text-sm font-medium text-gray-700">Homey found these details. Look good?</p>
+              <div className="flex items-center gap-2">
+                <p className="text-sm font-medium text-gray-700">Homey classified this as:</p>
+                <Badge className="bg-gray-900 text-white text-xs">{docTypeLabel}</Badge>
+              </div>
               {extracted.confidence && (
                 <Badge className={`text-xs ${confidenceColor[extracted.confidence] || confidenceColor.medium}`}>
                   {extracted.confidence} confidence
@@ -358,159 +462,51 @@ export default function HomeyScanModal({ open, onClose, onSaved }) {
               )}
             </div>
 
-            {/* Missing date warning */}
-            {missingDate && (
-              <div className="flex items-start gap-2 p-3 bg-amber-50 border border-amber-200 rounded-lg">
-                <AlertTriangle className="w-4 h-4 text-amber-500 mt-0.5 flex-shrink-0" />
-                <div>
-                  <p className="text-sm font-medium text-amber-800">Homey couldn't find a date in this photo.</p>
-                  <p className="text-xs text-amber-600 mt-0.5">When should I set this for?</p>
-                </div>
-              </div>
+            {/* Dynamic form based on doc type */}
+            {docType === 'calendar_event' && (
+              <EventReviewForm
+                extracted={extracted}
+                setExtracted={setExtracted}
+                familyMembers={familyMembers}
+                selectedMembers={selectedMembers}
+                toggleMember={toggleMember}
+                selectedCalendarId={selectedCalendarId}
+                setSelectedCalendarId={setSelectedCalendarId}
+                calendars={calendars}
+                missingDate={missingDate}
+              />
             )}
 
-            <div className="space-y-3">
-              <div>
-                <Label className="text-xs text-gray-500">Event Name</Label>
-                <Input value={extracted.title} onChange={e => setExtracted({ ...extracted, title: e.target.value })} className="mt-1" />
-              </div>
+            {docType === 'maintenance_task' && (
+              <MaintenanceReviewForm extracted={extracted} setExtracted={setExtracted} />
+            )}
 
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <Label className={`text-xs ${missingDate && !extracted.date ? 'text-amber-600 font-semibold' : 'text-gray-500'}`}>
-                    Date {missingDate && !extracted.date && '← required'}
-                  </Label>
-                  <Input
-                    type="date"
-                    value={extracted.date || ''}
-                    onChange={e => setExtracted({ ...extracted, date: e.target.value })}
-                    className={`mt-1 ${missingDate && !extracted.date ? 'border-amber-400 ring-1 ring-amber-300' : ''}`}
-                  />
-                </div>
-                <div>
-                  <Label className="text-xs text-gray-500">Time</Label>
-                  <Input
-                    placeholder="e.g. 3:30 PM"
-                    value={extracted.time || ''}
-                    onChange={e => setExtracted({ ...extracted, time: e.target.value })}
-                    className="mt-1"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <Label className="text-xs text-gray-500">Location</Label>
-                <Input value={extracted.location || ''} onChange={e => setExtracted({ ...extracted, location: e.target.value })} className="mt-1" placeholder="Venue or location name" />
-              </div>
-
-              <div>
-                <Label className="text-xs text-gray-500">Type</Label>
-                <Select value={extracted.type} onValueChange={v => setExtracted({ ...extracted, type: v })}>
-                  <SelectTrigger className="mt-1">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="event">Event</SelectItem>
-                    <SelectItem value="sports_league">Sports League</SelectItem>
-                    <SelectItem value="program">Program</SelectItem>
-                    <SelectItem value="reminder">Reminder</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div>
-                <Label className="text-xs text-gray-500">Description</Label>
-                <Textarea value={extracted.description || ''} onChange={e => setExtracted({ ...extracted, description: e.target.value })} rows={2} className="mt-1" />
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <Label className="text-xs text-gray-500">Age Range</Label>
-                  <Input value={extracted.age_range || ''} onChange={e => setExtracted({ ...extracted, age_range: e.target.value })} className="mt-1" placeholder="e.g. 5-12 years" />
-                </div>
-                <div>
-                  <Label className="text-xs text-gray-500">Cost</Label>
-                  <Input value={extracted.cost || ''} onChange={e => setExtracted({ ...extracted, cost: e.target.value })} className="mt-1" placeholder="e.g. Free, $15" />
-                </div>
-              </div>
-            </div>
-
-            {/* Calendar picker */}
-            <div>
-              <Label className="text-xs font-semibold text-gray-700 flex items-center gap-1.5 mb-2">
-                <Calendar className="w-3.5 h-3.5" />
-                Add to Google Calendar (optional)
-              </Label>
-              <Select value={selectedCalendarId} onValueChange={setSelectedCalendarId}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select a calendar..." />
-                </SelectTrigger>
-                <SelectContent>
-                  {calendars.map(cal => (
-                    <SelectItem key={cal.id} value={cal.id}>
-                      <div className="flex items-center gap-2">
-                        <div className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: cal.backgroundColor || '#64748b' }} />
-                        {cal.name}
-                      </div>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            {/* Family member assignment */}
-            <div>
-              <Label className="text-xs font-semibold text-gray-700 flex items-center gap-1.5 mb-2">
-                <Users className="w-3.5 h-3.5" />
-                Assign to family members (optional)
-              </Label>
-              <div className="flex flex-wrap gap-2">
-                {familyMembers.map(member => (
-                  <button
-                    key={member.id}
-                    onClick={() => toggleMember(member.id)}
-                    className={`flex items-center gap-2 px-3 py-1.5 rounded-full border text-sm font-medium transition-all ${
-                      selectedMembers.includes(member.id)
-                        ? 'border-transparent text-white shadow-sm'
-                        : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
-                    }`}
-                    style={selectedMembers.includes(member.id) ? { backgroundColor: member.color || '#0AACFF' } : {}}
-                  >
-                    <span
-                      className="w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold text-white"
-                      style={{ backgroundColor: member.color || '#64748b' }}
-                    >
-                      {member.name?.charAt(0)}
-                    </span>
-                    {member.name}
-                    {selectedMembers.includes(member.id) && <CheckCircle2 className="w-3.5 h-3.5" />}
-                  </button>
-                ))}
-              </div>
-              {selectedMembers.length > 1 && (
-                <p className="text-xs text-gray-400 mt-1.5">
-                  Homey will create a separate calendar entry for each person selected.
-                </p>
-              )}
-            </div>
+            {(docType === 'personal_id' || docType === 'house_doc') && (
+              <VaultReviewForm
+                extracted={extracted}
+                setExtracted={setExtracted}
+                docType={docType}
+                familyMembers={familyMembers}
+                selectedMemberId={selectedMemberId}
+                setSelectedMemberId={setSelectedMemberId}
+              />
+            )}
 
             <div className="flex gap-3 pt-1">
-              <Button variant="outline" onClick={reset} className="flex-1">
-                Re-scan
-              </Button>
+              <Button variant="outline" onClick={reset} className="flex-1">Re-scan</Button>
               <Button
                 onClick={handleConfirm}
-                disabled={!extracted.title || (missingDate && !extracted.date)}
+                disabled={isSaveDisabled()}
                 className="flex-1 bg-gradient-to-r from-[#E91E8C] to-[#0AACFF] text-white font-semibold"
               >
                 <CheckCircle2 className="w-4 h-4 mr-2" />
-                Save
+                Save to Homey
               </Button>
             </div>
           </div>
         )}
 
-        {/* STEP: SAVING */}
+        {/* SAVING */}
         {step === STEPS.SAVING && (
           <div className="flex flex-col items-center justify-center py-12 gap-4">
             <Loader2 className="w-10 h-10 text-[#0AACFF] animate-spin" />
@@ -518,16 +514,14 @@ export default function HomeyScanModal({ open, onClose, onSaved }) {
           </div>
         )}
 
-        {/* STEP: DONE */}
+        {/* DONE */}
         {step === STEPS.DONE && (
           <div className="flex flex-col items-center justify-center py-12 gap-3">
             <div className="w-14 h-14 rounded-full bg-green-100 flex items-center justify-center">
               <CheckCircle2 className="w-8 h-8 text-green-500" />
             </div>
-            <p className="font-semibold text-gray-800">Added to Calendar!</p>
-            {selectedMembers.length > 1 && (
-              <p className="text-sm text-gray-500">{selectedMembers.length} entries created</p>
-            )}
+            <p className="font-semibold text-gray-800">Saved to Homey!</p>
+            <p className="text-sm text-gray-500">{docTypeLabel} has been filed.</p>
           </div>
         )}
       </DialogContent>
