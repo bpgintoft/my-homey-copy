@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -326,7 +326,7 @@ function AddDocumentForm({ memberId, memberName, color, onSaved }) {
         created_at: new Date().toISOString(),
       };
       await base44.entities.FamilyMember.update(memberId, { documents_ids: [...existing, docEntry] });
-      queryClient.invalidateQueries(['familyMember', memberId]);
+      await queryClient.refetchQueries({ queryKey: ['familyMembers'] });
       setForm({ type: '', category: '', label: '', value: '', expiry_date: '' });
       setFile(null);
       onSaved?.();
@@ -437,15 +437,22 @@ export default function DocumentsIDsSection({ member, color = 'blue', isReadOnly
   const [unlocked, setUnlocked] = useState(false);
   const queryClient = useQueryClient();
 
+  // Always read from cache so we get live updates when the scan modal saves
+  const { data: familyMembers = [] } = useQuery({
+    queryKey: ['familyMembers'],
+    queryFn: () => base44.entities.FamilyMember.list(),
+  });
+  const liveMember = familyMembers.find(m => m.id === member?.id) || member;
+
   if (isReadOnly) return null;
 
   // Normalise: existing docs without a category get 'other' as default
-  const docs = (member?.documents_ids || []).map(d => ({ ...d, category: d.category || 'other' }));
+  const docs = (liveMember?.documents_ids || []).map(d => ({ ...d, category: d.category || 'other' }));
 
   const handleDelete = async (docId) => {
     const updated = docs.filter(d => d.id !== docId);
     await base44.entities.FamilyMember.update(member.id, { documents_ids: updated });
-    queryClient.invalidateQueries(['familyMember', member.id]);
+    queryClient.invalidateQueries({ queryKey: ['familyMembers'] });
   };
 
   if (!unlocked) {
