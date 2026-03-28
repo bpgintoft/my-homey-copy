@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -11,17 +11,27 @@ export default function RescheduleDialog({
   onConfirm 
 }) {
   const [nextDueDate, setNextDueDate] = useState('');
+  const [showPicker, setShowPicker] = useState(false);
   const dateInputRef = useRef(null);
 
   const handleConfirm = () => {
     if (!nextDueDate) return;
     onConfirm(nextDueDate);
     setNextDueDate('');
+    setShowPicker(false);
+  };
+
+  const handleOpenChange = (open) => {
+    if (!open) {
+      setNextDueDate('');
+      setShowPicker(false);
+    }
+    onOpenChange(open);
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-sm">
+    <Dialog open={open} onOpenChange={handleOpenChange}>
+      <DialogContent className="max-w-sm" onOpenAutoFocus={(e) => e.preventDefault()}>
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <CalendarDays className="w-5 h-5 text-green-600" />
@@ -43,30 +53,32 @@ export default function RescheduleDialog({
             </Label>
             <div
               className="w-full border border-gray-300 rounded-md px-3 py-2.5 text-sm bg-gray-50 text-center text-gray-700 cursor-pointer hover:border-gray-400 transition-colors"
-              onClick={() => dateInputRef.current?.showPicker?.()}
+              onClick={() => {
+                setShowPicker(true);
+                setTimeout(() => dateInputRef.current?.showPicker?.(), 50);
+              }}
             >
               {nextDueDate
                 ? new Date(nextDueDate + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
                 : <span className="text-gray-400">Tap to select a date</span>
               }
             </div>
-            <input
-              ref={dateInputRef}
-              type="date"
-              value={nextDueDate}
-              onChange={(e) => setNextDueDate(e.target.value)}
-              min={new Date().toISOString().split('T')[0]}
-              className="sr-only"
-            />
+            {showPicker && (
+              <input
+                ref={dateInputRef}
+                type="date"
+                value={nextDueDate}
+                onChange={(e) => setNextDueDate(e.target.value)}
+                min={new Date().toISOString().split('T')[0]}
+                className="sr-only"
+              />
+            )}
           </div>
 
           <div className="flex gap-2 justify-end pt-1">
             <Button 
               variant="outline" 
-              onClick={() => {
-                setNextDueDate('');
-                onOpenChange(false);
-              }}
+              onClick={() => handleOpenChange(false)}
             >
               Skip
             </Button>
