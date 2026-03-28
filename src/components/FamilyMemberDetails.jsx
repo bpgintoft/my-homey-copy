@@ -1255,7 +1255,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
               </div>
             </DialogTitle>
           </DialogHeader>
-          <div className="overflow-y-auto max-h-[calc(85vh-8rem)]" style={{ touchAction: 'pan-y' }}>
+          <div className="overflow-y-auto max-h-[calc(85vh-8rem)]">
             {chores.filter(c => !c.is_completed).length === 0 ? (
               <p className="text-sm text-gray-500">No tasks yet</p>
             ) : (
@@ -1276,23 +1276,15 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                               ) : (
                                 timingChores.map((chore, index) => {
                                   const choreEl = (provided, snapshot) => {
-                                    const choreProgress = chore.progress ?? 0;
-                                    const showProgress = choreProgress > 0 && !chore.is_completed;
-                                    const child = (
-                                      <div ref={provided.innerRef} {...provided.draggableProps} className={`relative rounded-lg overflow-hidden ${itemBg} ${snapshot.isDragging ? 'shadow-lg opacity-90' : ''}`} style={{ position: 'relative' }}>
-                                          <div className="flex items-center gap-3 p-3">
-                                          <div {...(!chore.maintenance_task_id ? provided.dragHandleProps : {})} className={`flex-shrink-0 cursor-grab active:cursor-grabbing ${chore.maintenance_task_id || !isReorderingChores ? 'opacity-0 w-0 overflow-hidden' : 'opacity-60 w-5'}`} style={{ touchAction: 'none' }}>
-                                             <GripVertical className="w-4 h-4 text-gray-400" />
-                                          </div>
-                                          {/* Invisible full-row drag handle for touch-hold drag without rearrange mode */}
-                                          {!chore.maintenance_task_id && !isReorderingChores && (
-                                            <div
-                                              {...provided.dragHandleProps}
-                                              className="absolute inset-0 z-0"
-                                              style={{ touchAction: 'none' }}
-                                            />
-                                          )}
-                                          <button className="flex-shrink-0 -ml-1" onClick={() => {
+                                   const choreProgress = chore.progress ?? 0;
+                                   const showProgress = choreProgress > 0 && !chore.is_completed;
+                                   const child = (
+                                     <div ref={provided.innerRef} {...provided.draggableProps} {...(!chore.maintenance_task_id ? provided.dragHandleProps : {})} className={`relative rounded-lg overflow-hidden ${itemBg} ${snapshot.isDragging ? 'shadow-lg opacity-90' : ''}`} style={{ touchAction: 'none' }}>
+                                         <div className="flex items-center gap-3 p-3">
+                                         <div className={`flex-shrink-0 ${chore.maintenance_task_id || !isReorderingChores ? 'opacity-0 w-0 overflow-hidden' : 'opacity-60 w-5 cursor-grab'}`}>
+                                            <GripVertical className="w-4 h-4 text-gray-400" />
+                                         </div>
+                                         <button className="flex-shrink-0 -ml-1" onTouchEnd={(e) => { if (!snapshot.isDragging) { e.preventDefault(); if (!chore.is_completed && chore.maintenance_task_id) { setRescheduleChore(chore); } else { toggleChoreMutation.mutate({ id: chore.id, is_completed: !chore.is_completed, maintenance_task_id: chore.maintenance_task_id, linked_chore_ids: chore.linked_chore_ids, chore_title: chore.title }); } } }} onClick={() => {
                                             if (!chore.is_completed && chore.maintenance_task_id) {
                                               setRescheduleChore(chore);
                                             } else {
@@ -1326,7 +1318,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                                               </div>
                                             ) : (
                                               <div>
-                                                <span className={`cursor-pointer hover:text-blue-600 ${chore.is_completed ? 'line-through text-gray-500' : ''}`} onClick={() => { if (!chore.maintenance_task_id) { if (chore.linked_chore_ids?.length > 0) { setCoAssignedSheetChore(chore); } else { setEditingChoreId(chore.id); setEditingChoreTitle(chore.title); setEditingChoreRef(chore); } } }}>
+                                                <span className={`cursor-pointer hover:text-blue-600 ${chore.is_completed ? 'line-through text-gray-500' : ''}`} onTouchEnd={(e) => { if (!snapshot.isDragging) { e.stopPropagation(); if (!chore.maintenance_task_id) { if (chore.linked_chore_ids?.length > 0) { setCoAssignedSheetChore(chore); } else { setEditingChoreId(chore.id); setEditingChoreTitle(chore.title); setEditingChoreRef(chore); } } } }} onClick={() => { if (!chore.maintenance_task_id) { if (chore.linked_chore_ids?.length > 0) { setCoAssignedSheetChore(chore); } else { setEditingChoreId(chore.id); setEditingChoreTitle(chore.title); setEditingChoreRef(chore); } } }}>
                                                   {chore.title}
                                                 </span>
                                                 {chore.next_due && !chore.maintenance_task_id && (
