@@ -330,16 +330,19 @@ export default function ChoreCommentsSheet({ chore, open, onOpenChange }) {
       {fullScreenImage && createPortal(
         <div 
           className="fixed inset-0 z-[9999] bg-black/95 flex items-center justify-center"
-          onClick={() => setFullScreenImage(null)}
+          onPointerDown={(e) => {
+            if (e.target === e.currentTarget) {
+              setFullScreenImage(null);
+            }
+          }}
         >
           <img 
             src={fullScreenImage} 
             alt="full screen" 
             className="max-w-full max-h-full object-contain"
-            onClick={(e) => e.stopPropagation()}
           />
           <button
-            onClick={(e) => {
+            onPointerDown={(e) => {
               e.stopPropagation();
               setFullScreenImage(null);
             }}
