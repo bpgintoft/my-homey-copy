@@ -2,9 +2,11 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Trash2, Send, TrendingUp, Calendar } from 'lucide-react';
+import { Calendar as CalendarComponent } from "@/components/ui/calendar";
+import { Trash2, Send, TrendingUp, Calendar, X } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { getCommentAuthorMember } from '@/lib/getCommentAuthorMember';
 
@@ -183,9 +185,9 @@ export default function ChoreCommentsSheet({ chore, open, onOpenChange }) {
   const [currentUser, setCurrentUser] = useState(null);
   const [currentUserMember, setCurrentUserMember] = useState(null);
   const [editingDueDate, setEditingDueDate] = useState(null);
+  const [dueDateDialogOpen, setDueDateDialogOpen] = useState(false);
   const chatEndRef = useRef(null);
   const commentRefs = useRef({});
-  const dueDateInputRef = useRef(null);
 
   useEffect(() => {
     base44.auth.me().then(u => {
@@ -419,33 +421,64 @@ export default function ChoreCommentsSheet({ chore, open, onOpenChange }) {
             <Calendar className="w-4 h-4 text-gray-500 flex-shrink-0" />
             <span className="text-xs font-medium text-gray-600">Due Date:</span>
             <button
-              onClick={() => dueDateInputRef.current?.showPicker?.()}
+              onClick={() => setDueDateDialogOpen(true)}
               className="flex-1 px-3 py-1.5 text-xs border border-gray-200 rounded bg-white text-gray-700 hover:bg-gray-50 transition-colors text-left"
             >
               {editingDueDate ? new Date(editingDueDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Tap to set date'}
             </button>
-            <input
-              ref={dueDateInputRef}
-              type="date"
-              value={editingDueDate}
-              onChange={(e) => setEditingDueDate(e.target.value)}
-              onBlur={handleSaveDueDate}
-              min={new Date().toISOString().split('T')[0]}
-              className="hidden"
-            />
             {editingDueDate && (
               <button
                 onClick={() => {
                   setEditingDueDate('');
                   handleSaveDueDate();
                 }}
-                className="text-xs text-gray-400 hover:text-gray-600 transition-colors flex-shrink-0"
+                className="p-1 text-gray-400 hover:text-gray-600 transition-colors flex-shrink-0"
+                title="Clear date"
               >
-                ✕
+                <X className="w-3 h-3" />
               </button>
             )}
           </div>
         </div>
+
+        {/* Date Picker Dialog */}
+        <Dialog open={dueDateDialogOpen} onOpenChange={setDueDateDialogOpen}>
+          <DialogContent className="w-auto p-0 border-0 shadow-lg">
+            <DialogHeader className="px-4 pt-4 pb-2">
+              <DialogTitle className="text-sm">Select Due Date</DialogTitle>
+            </DialogHeader>
+            <div className="px-4 pb-4 flex flex-col gap-3">
+              <CalendarComponent
+                mode="single"
+                selected={editingDueDate ? new Date(editingDueDate) : undefined}
+                onSelect={(date) => {
+                  if (date) {
+                    const isoDate = date.toISOString().split('T')[0];
+                    setEditingDueDate(isoDate);
+                    handleSaveDueDate();
+                    setDueDateDialogOpen(false);
+                  }
+                }}
+                disabled={(date) => date < new Date(new Date().toISOString().split('T')[0])}
+                className="rounded-md border"
+              />
+              {editingDueDate && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    setEditingDueDate('');
+                    handleSaveDueDate();
+                    setDueDateDialogOpen(false);
+                  }}
+                  className="text-xs w-full"
+                >
+                  Clear Date
+                </Button>
+              )}
+            </div>
+          </DialogContent>
+        </Dialog>
 
         {/* Input form */}
         <div className="pt-3 border-t border-gray-100">
