@@ -1281,7 +1281,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                                     const child = (
                                       <div ref={provided.innerRef} {...provided.draggableProps} className={`relative rounded-lg overflow-hidden ${itemBg} ${snapshot.isDragging ? 'shadow-lg opacity-90' : ''}`}>
                                           <div className="flex items-center gap-3 p-3">
-                                          <div {...(!chore.maintenance_task_id ? provided.dragHandleProps : {})} className={`flex-shrink-0 cursor-grab active:cursor-grabbing ${chore.maintenance_task_id ? 'opacity-0 w-0 overflow-hidden' : 'opacity-30 hover:opacity-60 w-5'}`} style={{ touchAction: 'none' }}>
+                                          <div {...(!chore.maintenance_task_id ? provided.dragHandleProps : {})} className={`flex-shrink-0 cursor-grab active:cursor-grabbing ${chore.maintenance_task_id || !isReorderingChores ? 'opacity-0 w-0 overflow-hidden' : 'opacity-60 w-5'}`} style={{ touchAction: 'none' }}>
                                              <GripVertical className="w-4 h-4 text-gray-400" />
                                           </div>
                                           <button className="flex-shrink-0 -ml-1" onClick={() => {
