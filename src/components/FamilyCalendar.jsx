@@ -19,7 +19,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
 import LocationAutocomplete from './LocationAutocomplete';
 
-export default function FamilyCalendar({ activities }) {
+export default function FamilyCalendar({ activities, initialEventId }) {
   const [showMonthlyView, setShowMonthlyView] = useState(false);
   const monthlyRef = React.useRef(null);
   // Get today's date at midnight in Central time
@@ -143,6 +143,22 @@ export default function FamilyCalendar({ activities }) {
       setSelectedCalendarIds(new Set(calendars.map(c => c.id)));
     }
   }, [calendars]);
+
+  // Deep-link: auto-expand the event matching initialEventId
+  React.useEffect(() => {
+    if (!initialEventId || cachedEvents.length === 0) return;
+    const match = cachedEvents.find(e => e.google_event_id === initialEventId || e.id === initialEventId);
+    if (!match) return;
+    // Navigate to the week containing this event
+    if (match.start) {
+      const eventDay = match.start.includes('T') ? toZonedTime(new Date(match.start), TZ) : parseISO(match.start);
+      const weekStart = startOfWeek(eventDay, { weekStartsOn: 0 });
+      weekStart.setHours(0, 0, 0, 0);
+      setCurrentWeekStart(weekStart);
+      setHasNavigated(true);
+    }
+    setExpandedEventId(match.google_event_id || match.id);
+  }, [initialEventId, cachedEvents]);
   
   // Filter events by selected calendars
   const filteredGoogleEvents = googleEvents.filter(event => 

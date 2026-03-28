@@ -101,6 +101,21 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
     base44.auth.me().then(u => setCurrentUser(u)).catch(() => {});
   }, []);
 
+  // Open chores section directly if ?chore=<id> param is present
+  React.useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const choreId = params.get('chore');
+    if (choreId && chores.length > 0) {
+      const target = chores.find(c => c.id === choreId);
+      if (target) {
+        setExpandedSection('chores');
+        setEditingChoreId(choreId);
+        setEditingChoreTitle(target.title);
+        setEditingChoreRef(target);
+      }
+    }
+  }, [chores]);
+
   const savedOrder = currentUser?.family_member_page_layouts?.[memberId];
   const activeSectionKeys = customSectionOrder || savedOrder || DEFAULT_SECTIONS.map(s => s.key);
 

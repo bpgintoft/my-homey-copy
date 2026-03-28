@@ -94,6 +94,7 @@ export default function House() {
     const params = new URLSearchParams(window.location.search);
     const tab = params.get('tab');
     const editId = params.get('editId');
+    const taskId = params.get('taskId');
     
     if (tab) {
       setActiveTab(tab);
@@ -105,7 +106,14 @@ export default function House() {
         setEditingAppliance(applianceToEdit);
       }
     }
-  }, [appliances]);
+
+    if (taskId && maintenanceTasks.length > 0) {
+      const task = maintenanceTasks.find(t => t.id === taskId);
+      if (task) {
+        setEditingTask(task);
+      }
+    }
+  }, [appliances, maintenanceTasks]);
 
   const createRoomMutation = useMutation({
     mutationFn: (data) => base44.entities.Room.create(data),

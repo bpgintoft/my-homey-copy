@@ -209,7 +209,7 @@ export default function Calendar() {
                 Scan to Homey
               </Button>
             </div>
-            <FamilyCalendar activities={activities} />
+            <FamilyCalendar activities={activities} initialEventId={new URLSearchParams(window.location.search).get('eventId')} />
           </TabsContent>
 
           <TabsContent value="upcoming" className="space-y-6">

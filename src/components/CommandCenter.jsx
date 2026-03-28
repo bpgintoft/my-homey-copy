@@ -204,7 +204,7 @@ export default function CommandCenter({ open, onClose }) {
                 key={task.id}
                 label={task.title}
                 sublabel={getMaintenanceSubtitle(task)}
-                to={createPageUrl('House')}
+                to={createPageUrl(`House?tab=maintenance&taskId=${task.id}`)}
                 onClick={onClose}
               />
             )}
@@ -224,7 +224,7 @@ export default function CommandCenter({ open, onClose }) {
                 key={event.id || event.google_event_id}
                 label={event.title}
                 sublabel={getEventTime(event)}
-                to={createPageUrl('Calendar')}
+                to={createPageUrl(`Calendar?eventId=${event.google_event_id || event.id}`)}
                 onClick={onClose}
               />
             )}
@@ -242,7 +242,7 @@ export default function CommandCenter({ open, onClose }) {
               const memberPage = chore.assigned_to_name;
               const knownPages = ['Bryan', 'Kate', 'Phoenix', 'Mara'];
               const to = memberPage && knownPages.includes(memberPage)
-                ? createPageUrl(memberPage)
+                ? createPageUrl(`${memberPage}?chore=${chore.id}`)
                 : createPageUrl('House');
               return (
                 <ItemRow
