@@ -494,23 +494,27 @@ export default function ChoreCommentsSheet({ chore, open, onOpenChange }) {
           <div className="px-4 pb-4 flex flex-col gap-3">
             <CalendarComponent
               mode="single"
-              selected={editingDueDate ? new Date(editingDueDate + 'T00:00:00') : undefined}
-              onSelect={(date) => {
+              selected={editingDueDate ? new Date(editingDueDate) : undefined}
+              onSelect={async (date) => {
                 if (date) {
                   const year = date.getFullYear();
                   const month = String(date.getMonth() + 1).padStart(2, '0');
                   const day = String(date.getDate()).padStart(2, '0');
                   const isoDate = `${year}-${month}-${day}`;
                   setEditingDueDate(isoDate);
-                  base44.entities.Chore.update(chore.id, { next_due: isoDate || null });
+                  await base44.entities.Chore.update(chore.id, { next_due: isoDate || null });
                   if (chore.linked_chore_ids?.length) {
-                    Promise.all(chore.linked_chore_ids.map(id => base44.entities.Chore.update(id, { next_due: isoDate || null })));
+                    await Promise.all(chore.linked_chore_ids.map(id => base44.entities.Chore.update(id, { next_due: isoDate || null })));
                   }
                   savedQueryClient.invalidateQueries(['chores']);
                   setDueDateDialogOpen(false);
                 }
               }}
-              disabled={(date) => date < new Date(new Date().toISOString().split('T')[0])}
+              disabled={(date) => {
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                return date < today;
+              }}
               className="rounded-md border"
             />
             {editingDueDate && (
