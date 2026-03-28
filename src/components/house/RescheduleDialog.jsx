@@ -46,9 +46,9 @@ export default function RescheduleDialog({
             <Label className="mb-2 block text-sm font-medium text-gray-700">
               Schedule next due date for this task:
             </Label>
-            <div className="relative">
+            <div className="relative border border-gray-300 rounded-md bg-gray-50 cursor-pointer hover:border-gray-400 transition-colors">
               {!nextDueDate && (
-                <div className="absolute inset-0 flex items-center justify-center pointer-events-none text-gray-400">
+                <div className="absolute inset-0 flex items-center justify-center text-gray-400 text-sm pointer-events-none">
                   Tap to select a date
                 </div>
               )}
@@ -58,7 +58,7 @@ export default function RescheduleDialog({
                 value={nextDueDate}
                 onChange={(e) => setNextDueDate(e.target.value)}
                 min={new Date().toISOString().split('T')[0]}
-                className="w-full border border-gray-300 rounded-md px-3 py-2.5 text-sm bg-gray-50 text-center text-gray-700 cursor-pointer hover:border-gray-400 transition-colors"
+                className="relative w-full px-3 py-2.5 text-sm text-center text-gray-700 bg-transparent border-0"
                 style={{ colorScheme: 'light' }}
               />
             </div>
