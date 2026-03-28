@@ -449,44 +449,46 @@ export default function ChoreCommentsSheet({ chore, open, onOpenChange }) {
           </div>
 
           {/* Assign to Family Members */}
-          <div>
-            <p className="text-xs font-medium text-gray-600 mb-2">Assign to:</p>
-            <div className="space-y-1 max-h-32 overflow-y-auto">
-              {familyMembers.map((member) => {
-                const isAssigned = member.id === chore?.assigned_to_member_id || coAssignees.includes(member.id);
-                return (
-                  <label key={member.id} className="flex items-center gap-2 cursor-pointer p-1.5 rounded hover:bg-gray-50 transition-colors">
-                    <input
-                      type="checkbox"
-                      checked={isAssigned}
-                      disabled={member.id === chore?.assigned_to_member_id}
-                      onChange={async (e) => {
-                        const newCoAssignees = e.target.checked
-                          ? [...coAssignees, member.id]
-                          : coAssignees.filter(id => id !== member.id);
-                        setCoAssignees(newCoAssignees);
-                        if (chore?.id && chore.linked_chore_ids?.length) {
-                          await Promise.all(
-                            [chore.id, ...chore.linked_chore_ids].map(id =>
-                              base44.entities.Chore.update(id, { co_assigned_member_ids: newCoAssignees })
-                            )
-                          );
-                        } else if (chore?.id) {
-                          await base44.entities.Chore.update(chore.id, { co_assigned_member_ids: newCoAssignees });
-                        }
-                        queryClient.invalidateQueries(['chores']);
-                      }}
-                      className="w-4 h-4 rounded accent-gray-600 cursor-pointer"
-                    />
-                    <span className="text-xs text-gray-700">{member.name}</span>
-                    {member.id === chore?.assigned_to_member_id && (
-                      <span className="text-xs text-gray-400 ml-auto">(primary)</span>
-                    )}
-                  </label>
-                );
-              })}
-            </div>
-          </div>
+           <details className="group">
+             <summary className="cursor-pointer flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-gray-600 rounded hover:bg-gray-50 transition-colors">
+               <span>👥 Assign to: {coAssignees.length > 0 ? `${coAssignees.length} co-assigned` : 'None'}</span>
+             </summary>
+             <div className="mt-2 space-y-1 pl-3">
+               {familyMembers.map((member) => {
+                 const isAssigned = member.id === chore?.assigned_to_member_id || coAssignees.includes(member.id);
+                 return (
+                   <label key={member.id} className="flex items-center gap-2 cursor-pointer p-1.5 rounded hover:bg-gray-50 transition-colors">
+                     <input
+                       type="checkbox"
+                       checked={isAssigned}
+                       disabled={member.id === chore?.assigned_to_member_id}
+                       onChange={async (e) => {
+                         const newCoAssignees = e.target.checked
+                           ? [...coAssignees, member.id]
+                           : coAssignees.filter(id => id !== member.id);
+                         setCoAssignees(newCoAssignees);
+                         if (chore?.id && chore.linked_chore_ids?.length) {
+                           await Promise.all(
+                             [chore.id, ...chore.linked_chore_ids].map(id =>
+                               base44.entities.Chore.update(id, { co_assigned_member_ids: newCoAssignees })
+                             )
+                           );
+                         } else if (chore?.id) {
+                           await base44.entities.Chore.update(chore.id, { co_assigned_member_ids: newCoAssignees });
+                         }
+                         queryClient.invalidateQueries(['chores']);
+                       }}
+                       className="w-4 h-4 rounded accent-gray-600 cursor-pointer"
+                     />
+                     <span className="text-xs text-gray-700">{member.name}</span>
+                     {member.id === chore?.assigned_to_member_id && (
+                       <span className="text-xs text-gray-400 ml-auto">(primary)</span>
+                     )}
+                   </label>
+                 );
+               })}
+             </div>
+           </details>
         </div>
 
         {/* Input form */}
