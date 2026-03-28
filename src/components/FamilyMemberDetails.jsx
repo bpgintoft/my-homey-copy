@@ -26,6 +26,14 @@ import CoAssignedChorePanel from './CoAssignedChorePanel';
 import RescheduleDialog from './house/RescheduleDialog';
 import SyncChoreToCalendarDialog from './SyncChoreToCalendarDialog';
 import ChoreCommentsSheet from './ChoreCommentsSheet';
+import ChoreTimingCustomizer from './ChoreTimingCustomizer';
+
+const DEFAULT_TIMING_CATEGORIES = [
+  { id: 'short-term', name: 'Short-term', order: 0 },
+  { id: 'mid-term', name: 'Mid-term', order: 1 },
+  { id: 'long-term', name: 'Long-term', order: 2 },
+  { id: 'next-year', name: 'Next Year', order: 3 },
+];
 
 export default function FamilyMemberDetails({ memberId, memberName, color = 'blue' }) {
   const queryClient = useQueryClient();
@@ -90,6 +98,8 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
   const [commentingChore, setCommentingChore] = useState(null);
   const [isReorderingChores, setIsReorderingChores] = useState(false);
   const [showArchive, setShowArchive] = useState(false);
+  const [customizingCategories, setCustomizingCategories] = useState(false);
+  const [timingCategories, setTimingCategories] = useState(null);
 
 
 
@@ -614,6 +624,12 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
     if (member?.personal_notes) {
       setPersonalNotes(member.personal_notes);
     }
+    // Load custom timing categories from member
+    if (member?.chore_timing_categories && member.chore_timing_categories.length > 0) {
+      setTimingCategories(member.chore_timing_categories);
+    } else {
+      setTimingCategories(null);
+    }
   }, [member]);
 
   const sortChores = (choreList) => {
@@ -637,22 +653,24 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
   const [localChores, setLocalChores] = React.useState({});
 
   React.useEffect(() => {
-    const grouped = {
-      'short-term': sortChores(chores.filter(c => c.timing === 'short-term')),
-      'mid-term': sortChores(chores.filter(c => c.timing === 'mid-term')),
-      'long-term': sortChores(chores.filter(c => c.timing === 'long-term')),
-      'next-year': sortChores(chores.filter(c => c.timing === 'next-year')),
-    };
+    const categories = timingCategories || DEFAULT_TIMING_CATEGORIES;
+    const grouped = {};
+    categories.forEach(cat => {
+      grouped[cat.id] = sortChores(chores.filter(c => c.timing === cat.id));
+    });
     setLocalChores(grouped);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [JSON.stringify(chores)]);
+  }, [JSON.stringify(chores), JSON.stringify(timingCategories)]);
 
-  const choresByTiming = localChores['short-term'] ? localChores : {
-    'short-term': sortChores(chores.filter(c => c.timing === 'short-term')),
-    'mid-term': sortChores(chores.filter(c => c.timing === 'mid-term')),
-    'long-term': sortChores(chores.filter(c => c.timing === 'long-term')),
-    'next-year': sortChores(chores.filter(c => c.timing === 'next-year')),
-  };
+  const choresByTiming = React.useMemo(() => {
+    if (localChores && Object.keys(localChores).length > 0) return localChores;
+    const categories = timingCategories || DEFAULT_TIMING_CATEGORIES;
+    const grouped = {};
+    categories.forEach(cat => {
+      grouped[cat.id] = sortChores(chores.filter(c => c.timing === cat.id));
+    });
+    return grouped;
+  }, [localChores, chores, timingCategories]);
 
   const linksByCategory = links.reduce((acc, link) => {
     const cat = link.category || 'other';
@@ -1202,6 +1220,13 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
               <span>To-Do List</span>
               <div className="flex items-center gap-2 mr-10">
                 <button
+                  onClick={() => setCustomizingCategories(true)}
+                  className="flex items-center gap-1 text-xs px-2.5 py-1 rounded-full bg-purple-100 text-purple-700 hover:bg-purple-200 transition-colors font-medium"
+                  title="Customize categories"
+                >
+                  <Settings2 className="w-3 h-3" /> Categories
+                </button>
+                <button
                   onClick={() => setIsReorderingChores(prev => !prev)}
                   className={`flex items-center gap-1 text-xs px-2.5 py-1 rounded-full transition-colors font-medium ${isReorderingChores ? 'bg-green-100 text-green-700 hover:bg-green-200' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
                   title="Reorder items"
@@ -1232,10 +1257,9 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="short-term">Short-term</SelectItem>
-                        <SelectItem value="mid-term">Mid-term</SelectItem>
-                        <SelectItem value="long-term">Long-term</SelectItem>
-                        <SelectItem value="next-year">Next Year</SelectItem>
+                        {(timingCategories || DEFAULT_TIMING_CATEGORIES).sort((a, b) => a.order - b.order).map(cat => (
+                          <SelectItem key={cat.id} value={cat.id}>{cat.name}</SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                     <div>
@@ -1288,14 +1312,14 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
             ) : (
               <DragDropContext onDragStart={() => setIsReorderingChores(true)} onDragEnd={handleDragEnd}>
                 <div className="space-y-4">
-                  {['short-term', 'mid-term', 'long-term', 'next-year'].map((timing) => {
-                    const timingChores = choresByTiming[timing].filter(c => !c.is_completed);
+                  {(timingCategories || DEFAULT_TIMING_CATEGORIES).sort((a, b) => a.order - b.order).map((category) => {
+                    const timingChores = choresByTiming[category.id]?.filter(c => !c.is_completed) || [];
                     return (
-                      <div key={timing}>
+                      <div key={category.id}>
                         <h4 className="font-medium text-sm text-gray-700 mb-2 capitalize">
-                          {timing === 'short-term' ? 'Short-term' : timing === 'mid-term' ? 'Mid-term' : timing === 'long-term' ? 'Long-term' : 'Next Year'}
+                          {category.name}
                         </h4>
-                        <Droppable droppableId={timing}>
+                        <Droppable droppableId={category.id}>
                           {(provided, snapshot) => (
                             <div ref={provided.innerRef} {...provided.droppableProps} className={`space-y-2 min-h-[60px] rounded-lg transition-colors ${snapshot.isDraggingOver ? 'bg-blue-50 border-2 border-blue-300 p-1' : 'bg-transparent'}`}>
                               {timingChores.length === 0 && !snapshot.isDraggingOver ? (
@@ -1676,6 +1700,37 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
         memberId={memberId}
         memberName={memberName}
         color={color}
+      />
+
+      {/* Chore Timing Customizer */}
+      <ChoreTimingCustomizer
+        open={customizingCategories}
+        onOpenChange={setCustomizingCategories}
+        categories={timingCategories || DEFAULT_TIMING_CATEGORIES}
+        onSave={async (newCategories) => {
+          // Update member with new categories
+          await base44.entities.FamilyMember.update(memberId, {
+            chore_timing_categories: newCategories
+          });
+          setTimingCategories(newCategories);
+          queryClient.invalidateQueries(['familyMember', memberId]);
+          
+          // Move any chores with deleted category IDs to the first available category
+          const deletedIds = (timingCategories || DEFAULT_TIMING_CATEGORIES)
+            .map(c => c.id)
+            .filter(id => !newCategories.find(nc => nc.id === id));
+          
+          if (deletedIds.length > 0 && newCategories.length > 0) {
+            const fallbackCategoryId = newCategories[0].id;
+            await Promise.all(
+              chores
+                .filter(c => deletedIds.includes(c.timing))
+                .map(c => base44.entities.Chore.update(c.id, { timing: fallbackCategoryId }))
+            );
+            queryClient.invalidateQueries(['chores', memberId]);
+          }
+        }}
+        memberName={memberName}
       />
     </div>
   );

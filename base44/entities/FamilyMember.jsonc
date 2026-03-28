@@ -291,6 +291,27 @@
           }
         }
       }
+    },
+    "chore_timing_categories": {
+      "type": "array",
+      "description": "Custom chore timing categories for this family member",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for this category"
+          },
+          "name": {
+            "type": "string",
+            "description": "Display name of the category"
+          },
+          "order": {
+            "type": "number",
+            "description": "Sort order"
+          }
+        }
+      }
     }
   },
   "required": [
