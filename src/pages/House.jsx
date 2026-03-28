@@ -89,21 +89,25 @@ export default function House() {
     queryFn: () => base44.entities.ImportantContact.list(),
   });
 
-  // Handle URL params for direct editing
+  // Handle URL params for direct editing — consume once, clear params immediately
+  const deepLinkHandled = React.useRef(false);
   React.useEffect(() => {
+    if (deepLinkHandled.current) return;
     const params = new URLSearchParams(window.location.search);
     const tab = params.get('tab');
     const editId = params.get('editId');
     const taskId = params.get('taskId');
-    
-    if (tab) {
-      setActiveTab(tab);
-    }
-    
+
+    if (!tab && !editId && !taskId) return;
+
+    if (tab) setActiveTab(tab);
+
     if (editId && appliances.length > 0) {
       const applianceToEdit = appliances.find(a => a.id === editId);
       if (applianceToEdit) {
         setEditingAppliance(applianceToEdit);
+        deepLinkHandled.current = true;
+        window.history.replaceState(null, '', window.location.pathname + (tab ? `?tab=${tab}` : ''));
       }
     }
 
@@ -111,6 +115,8 @@ export default function House() {
       const task = maintenanceTasks.find(t => t.id === taskId);
       if (task) {
         setEditingTask(task);
+        deepLinkHandled.current = true;
+        window.history.replaceState(null, '', window.location.pathname + (tab ? `?tab=${tab}` : ''));
       }
     }
   }, [appliances, maintenanceTasks]);
