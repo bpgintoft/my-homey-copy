@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -11,6 +11,7 @@ export default function RescheduleDialog({
   onConfirm 
 }) {
   const [nextDueDate, setNextDueDate] = useState('');
+  const dateInputRef = useRef(null);
 
   const handleConfirm = () => {
     if (!nextDueDate) return;
@@ -40,21 +41,23 @@ export default function RescheduleDialog({
             <Label className="mb-2 block text-sm font-medium text-gray-700">
               Schedule next due date for this task:
             </Label>
-            <div className="relative">
-              <input
-                type="date"
-                value={nextDueDate}
-                onChange={(e) => setNextDueDate(e.target.value)}
-                min={new Date().toISOString().split('T')[0]}
-                className="absolute inset-0 opacity-0 w-full h-full cursor-pointer"
-              />
-              <div className="w-full border border-gray-300 rounded-md px-3 py-2.5 text-sm bg-gray-50 text-center text-gray-700 cursor-pointer">
-                {nextDueDate
-                  ? new Date(nextDueDate + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
-                  : <span className="text-gray-400">Tap to select a date</span>
-                }
-              </div>
+            <div
+              className="w-full border border-gray-300 rounded-md px-3 py-2.5 text-sm bg-gray-50 text-center text-gray-700 cursor-pointer hover:border-gray-400 transition-colors"
+              onClick={() => dateInputRef.current?.showPicker?.()}
+            >
+              {nextDueDate
+                ? new Date(nextDueDate + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+                : <span className="text-gray-400">Tap to select a date</span>
+              }
             </div>
+            <input
+              ref={dateInputRef}
+              type="date"
+              value={nextDueDate}
+              onChange={(e) => setNextDueDate(e.target.value)}
+              min={new Date().toISOString().split('T')[0]}
+              className="sr-only"
+            />
           </div>
 
           <div className="flex gap-2 justify-end pt-1">
