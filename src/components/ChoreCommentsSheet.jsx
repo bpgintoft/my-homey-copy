@@ -207,13 +207,6 @@ export default function ChoreCommentsSheet({ chore, open, onOpenChange }) {
     }).catch(() => {});
   }, []);
 
-  // Auto-scroll to last comment when dialog opens
-  useEffect(() => {
-    if (open && comments.length > 0) {
-      setTimeout(() => chatEndRef.current?.scrollIntoView({ behavior: 'smooth' }), 100);
-    }
-  }, [open, comments.length]);
-
   useEffect(() => {
     if (chore) {
       setEditingDueDate(chore.next_due || '');
@@ -238,6 +231,13 @@ export default function ChoreCommentsSheet({ chore, open, onOpenChange }) {
     },
     enabled: !!chore?.id && open,
   });
+
+  // Auto-scroll to last comment when dialog opens
+  useEffect(() => {
+    if (open && comments.length > 0) {
+      setTimeout(() => chatEndRef.current?.scrollIntoView({ behavior: 'smooth' }), 100);
+    }
+  }, [open, comments.length]);
 
   // Separate progress updates (in chronological order)
   const progressUpdates = comments.filter(c => c.is_progress_update);
