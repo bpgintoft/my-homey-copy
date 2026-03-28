@@ -1163,7 +1163,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                   className={`flex items-center gap-1 text-xs px-2.5 py-1 rounded-full transition-colors font-medium ${isReorderingChores ? 'bg-green-100 text-green-700 hover:bg-green-200' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
                   title="Reorder items"
                 >
-                  {isReorderingChores ? <><Check className="w-3 h-3" /> Done</> : <><GripVertical className="w-3 h-3" /> Reorder</>}
+                  {isReorderingChores ? <><Check className="w-3 h-3" /> Done</> : <><GripVertical className="w-3 h-3" /> Rearrange</>}
                 </button>
                 <button
                   onClick={() => setShowArchive(true)}
