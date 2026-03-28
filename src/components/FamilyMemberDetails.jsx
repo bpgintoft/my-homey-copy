@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, Trash2, ExternalLink, CheckCircle2, Circle, Loader2, Edit2, GripVertical, GraduationCap, Briefcase, Link2, Users, ListTodo, Lightbulb, Target, X, Wrench, CalendarPlus, HeartPulse, FolderOpen, Car, User, Settings2, Check, Activity, Wallet, MessageCircle, Archive } from 'lucide-react';
+import { Plus, Trash2, ExternalLink, CheckCircle2, Circle, Loader2, Edit2, GripVertical, GraduationCap, Briefcase, Link2, Users, ListTodo, Lightbulb, Target, X, Wrench, CalendarPlus, HeartPulse, FolderOpen, Car, User, Pencil, Check, Activity, Wallet, MessageCircle, Archive } from 'lucide-react';
 import { Slider } from "@/components/ui/slider";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
@@ -780,7 +780,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                 className="absolute -top-2 -right-2 z-10 w-6 h-6 rounded-full bg-gray-200 hover:bg-gray-300 flex items-center justify-center transition-colors"
                 title="Customize section order"
                 >
-                <Settings2 className="w-3 h-3 text-gray-500" />
+                <Pencil className="w-3 h-3 text-gray-500" />
                 </button>
                 <div className="grid grid-cols-2 gap-2">
                 {orderedSections.filter(s => !(isChildUser && s.key === 'documents')).map(({ key, icon, label }) => (
@@ -1305,7 +1305,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
               className="absolute top-1 right-3 p-1.5 rounded-full hover:bg-gray-200 transition-colors z-10"
               title="Customize categories"
             >
-              <Settings2 className="w-4 h-4 text-gray-600" />
+              <Pencil className="w-4 h-4 text-gray-600" />
             </button>
             {chores.filter(c => !c.is_completed).length === 0 ? (
               <p className="text-sm text-gray-500">No tasks yet</p>
