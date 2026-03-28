@@ -11,6 +11,10 @@
       "default": false,
       "description": "Whether the task is completed"
     },
+    "progress": {
+      "type": "number",
+      "description": "Progress percentage 0-100"
+    },
     "timing": {
       "type": "string",
       "enum": [

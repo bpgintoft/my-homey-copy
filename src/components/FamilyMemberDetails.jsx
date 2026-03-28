@@ -9,6 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Plus, Trash2, ExternalLink, CheckCircle2, Circle, Loader2, Edit2, GripVertical, GraduationCap, Briefcase, Link2, Users, ListTodo, Lightbulb, Target, X, Wrench, CalendarPlus, HeartPulse, FolderOpen, Car, User, Settings2, Check, Activity, Wallet, MessageCircle, Archive } from 'lucide-react';
+import { Slider } from "@/components/ui/slider";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
@@ -363,6 +364,17 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
     onSuccess: () => {
       queryClient.invalidateQueries(['chores']);
     },
+  });
+
+  const updateProgressMutation = useMutation({
+    mutationFn: async ({ id, progress, linked_chore_ids }) => {
+      const is_completed = progress === 100;
+      await base44.entities.Chore.update(id, { progress, is_completed });
+      if (linked_chore_ids?.length) {
+        await Promise.all(linked_chore_ids.map(sibId => base44.entities.Chore.update(sibId, { progress, is_completed })));
+      }
+    },
+    onSuccess: () => queryClient.invalidateQueries(['chores']),
   });
 
   const updateChoreMutation = useMutation({
@@ -1264,9 +1276,10 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                               ) : (
                                 timingChores.map((chore, index) => {
                                   const choreEl = (provided, snapshot) => {
+                                    const choreProgress = chore.progress ?? 0;
+                                    const showProgress = choreProgress > 0 && !chore.is_completed;
                                     const child = (
-                                      <div ref={provided.innerRef} {...provided.draggableProps} className={`relative rounded-lg ${itemBg} ${snapshot.isDragging ? 'shadow-lg opacity-90' : ''}`}>
-
+                                      <div ref={provided.innerRef} {...provided.draggableProps} className={`relative rounded-lg overflow-hidden ${itemBg} ${snapshot.isDragging ? 'shadow-lg opacity-90' : ''}`}>
                                           <div className="flex items-center gap-3 p-3">
                                           <div {...(!chore.maintenance_task_id && isReorderingChores ? provided.dragHandleProps : {})} className={`flex-shrink-0 transition-all ${isReorderingChores && !chore.maintenance_task_id ? 'cursor-grab active:cursor-grabbing opacity-100 w-5' : 'opacity-0 w-0 overflow-hidden'}`} style={{ touchAction: 'none' }}>
                                              <GripVertical className="w-4 h-4 text-gray-400" />
@@ -1286,7 +1299,23 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                                           </button>
                                           <div className="flex-1 min-w-0">
                                             {editingChoreId === chore.id ? (
-                                              <Input value={editingChoreTitle} onChange={(e) => setEditingChoreTitle(e.target.value)} onBlur={() => updateChoreMutation.mutate({ id: chore.id, title: editingChoreTitle, linked_chore_ids: chore.linked_chore_ids, chore: editingChoreRef })} onKeyDown={(e) => { if (e.key === 'Enter') updateChoreMutation.mutate({ id: chore.id, title: editingChoreTitle, linked_chore_ids: chore.linked_chore_ids, chore: editingChoreRef }); if (e.key === 'Escape') setEditingChoreId(null); }} autoFocus className="h-8" />
+                                              <div className="space-y-2">
+                                                <Input value={editingChoreTitle} onChange={(e) => setEditingChoreTitle(e.target.value)} onBlur={() => updateChoreMutation.mutate({ id: chore.id, title: editingChoreTitle, linked_chore_ids: chore.linked_chore_ids, chore: editingChoreRef })} onKeyDown={(e) => { if (e.key === 'Enter') updateChoreMutation.mutate({ id: chore.id, title: editingChoreTitle, linked_chore_ids: chore.linked_chore_ids, chore: editingChoreRef }); if (e.key === 'Escape') setEditingChoreId(null); }} autoFocus className="h-8" />
+                                                <div className="flex items-center gap-2">
+                                                  <span className="text-xs text-gray-500 shrink-0">Progress</span>
+                                                  <Slider
+                                                    value={[choreProgress]}
+                                                    min={0}
+                                                    max={100}
+                                                    step={5}
+                                                    className="flex-1"
+                                                    onValueChange={([val]) => {
+                                                      updateProgressMutation.mutate({ id: chore.id, progress: val, linked_chore_ids: chore.linked_chore_ids });
+                                                    }}
+                                                  />
+                                                  <span className="text-xs text-gray-500 shrink-0 w-8 text-right">{choreProgress}%</span>
+                                                </div>
+                                              </div>
                                             ) : (
                                               <div>
                                                 <span className={`cursor-pointer hover:text-blue-600 ${chore.is_completed ? 'line-through text-gray-500' : ''}`} onClick={() => { if (!chore.maintenance_task_id) { if (chore.linked_chore_ids?.length > 0) { setCoAssignedSheetChore(chore); } else { setEditingChoreId(chore.id); setEditingChoreTitle(chore.title); setEditingChoreRef(chore); } } }}>
@@ -1301,6 +1330,9 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                                             )}
                                           </div>
                                           <div className="flex-shrink-0 flex items-center gap-0.5">
+                                            {showProgress && editingChoreId !== chore.id && (
+                                              <span className="text-[10px] text-gray-400 font-medium mr-0.5">{choreProgress}%</span>
+                                            )}
                                             <button
                                               className="p-1 rounded hover:bg-gray-100 transition-colors relative"
                                               title="Comments"
@@ -1337,6 +1369,15 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                                             )}
                                           </div>
                                         </div>
+                                        {/* Progress bar at bottom edge */}
+                                        {showProgress && (
+                                          <div className="h-[3px] w-full bg-gray-200">
+                                            <div
+                                              className="h-full bg-gradient-to-r from-blue-400 to-blue-500 rounded-r-full transition-all duration-300"
+                                              style={{ width: `${choreProgress}%` }}
+                                            />
+                                          </div>
+                                        )}
                                       </div>
                                     );
                                     return snapshot.isDragging ? createPortal(child, document.body) : child;
