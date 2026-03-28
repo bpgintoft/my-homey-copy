@@ -426,7 +426,10 @@ export default function ChoreCommentsSheet({ chore, open, onOpenChange }) {
               onClick={() => setDueDateDialogOpen(true)}
               className="flex-1 px-3 py-1.5 text-xs border border-gray-200 rounded bg-white text-gray-700 hover:bg-gray-50 transition-colors text-left"
             >
-              {editingDueDate ? new Date(editingDueDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Tap to set date'}
+              {editingDueDate ? (() => {
+                const [year, month, day] = editingDueDate.split('-').map(Number);
+                return new Date(year, month - 1, day).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+              })() : 'Tap to set date'}
             </button>
             {editingDueDate && (
               <button
