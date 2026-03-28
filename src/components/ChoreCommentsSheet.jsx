@@ -187,8 +187,11 @@ export default function ChoreCommentsSheet({ chore, open, onOpenChange }) {
   const [editingDueDate, setEditingDueDate] = useState(null);
   const [dueDateDialogOpen, setDueDateDialogOpen] = useState(false);
   const [coAssignees, setCoAssignees] = useState([]);
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
   const chatEndRef = useRef(null);
   const commentRefs = useRef({});
+  const fileInputRef = useRef(null);
 
   useEffect(() => {
     base44.auth.me().then(u => {
@@ -241,12 +244,13 @@ export default function ChoreCommentsSheet({ chore, open, onOpenChange }) {
   };
 
   const addCommentMutation = useMutation({
-    mutationFn: async ({ text, isProgress }) => {
+    mutationFn: async ({ text, isProgress, imageUrl }) => {
       await base44.entities.ChoreComment.create({
         chore_id: chore.id,
         text,
         author_name: currentUser?.full_name || '',
         is_progress_update: isProgress,
+        ...(imageUrl && { image_url: imageUrl }),
       });
       if (isProgress) {
         await updateChoreProgress(progressUpdates.length + 1);
@@ -257,6 +261,8 @@ export default function ChoreCommentsSheet({ chore, open, onOpenChange }) {
       queryClient.invalidateQueries(['choreCommentCounts']);
       setNewComment('');
       setIsProgressUpdate(false);
+      setSelectedImage(null);
+      setImagePreview(null);
       setTimeout(() => chatEndRef.current?.scrollIntoView({ behavior: 'smooth' }), 100);
     },
   });
@@ -275,10 +281,24 @@ export default function ChoreCommentsSheet({ chore, open, onOpenChange }) {
     },
   });
 
-  const handleSubmit = (e) => {
+  const handleImageSelect = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setSelectedImage(file);
+    const reader = new FileReader();
+    reader.onload = (event) => setImagePreview(event.target?.result);
+    reader.readAsDataURL(file);
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!newComment.trim()) return;
-    addCommentMutation.mutate({ text: newComment.trim(), isProgress: isProgressUpdate });
+    if (!newComment.trim() && !selectedImage) return;
+    let imageUrl = null;
+    if (selectedImage) {
+      const { file_url } = await base44.integrations.Core.UploadFile({ file: selectedImage });
+      imageUrl = file_url;
+    }
+    addCommentMutation.mutate({ text: newComment.trim(), isProgress: isProgressUpdate, imageUrl });
   };
 
   const scrollToComment = (commentId) => {
@@ -329,93 +349,95 @@ export default function ChoreCommentsSheet({ chore, open, onOpenChange }) {
             <p className="text-sm text-gray-400 text-center py-8">No updates yet. Be the first!</p>
           ) : (
             comments.map((comment) => {
-              const member = getCommentAuthorMember(
-                comment.created_by,
-                comment.author_name,
-                currentUser?.email,
-                currentUserMember,
-                familyMembers
-              );
-              const memberColor = member?.color || null;
+               const member = getCommentAuthorMember(
+                 comment.created_by,
+                 comment.author_name,
+                 currentUser?.email,
+                 currentUserMember,
+                 familyMembers
+               );
+               const memberColor = member?.color || null;
 
-              if (comment.is_progress_update) {
-                return (
-                  <div
-                    key={comment.id}
-                    ref={el => commentRefs.current[comment.id] = el}
-                    className="flex items-start gap-2 transition-all duration-300"
-                  >
-                    <CommentAvatar
-                      authorName={comment.author_name}
-                      email={comment.created_by}
-                      familyMembers={familyMembers}
-                      currentUserEmail={currentUser?.email}
-                      currentUserMember={currentUserMember}
-                    />
-                    <div
-                      className="flex-1 min-w-0 rounded-lg p-3 text-sm border"
-                      style={{
-                        backgroundColor: memberColor ? hexToLightBg(memberColor) : '#f0fdf4',
-                        borderColor: memberColor ? hexToBorderColor(memberColor) : '#bbf7d0',
-                      }}
-                    >
-                      <div className="flex items-center gap-1 mb-1">
-                        <TrendingUp className="w-3 h-3 flex-shrink-0" style={{ color: memberColor || '#16a34a' }} />
-                        <span className="text-xs font-semibold" style={{ color: memberColor || '#15803d' }}>
-                          Progress Update
-                        </span>
-                      </div>
-                      <div className="flex items-start justify-between gap-2">
-                        <div className="flex-1 min-w-0">
-                          <p className="text-gray-900">{renderTextWithLinks(comment.text)}</p>
-                          <p className="text-xs text-gray-400 mt-1">
-                            {comment.author_name} · {formatDistanceToNow(new Date(comment.created_date.endsWith('Z') ? comment.created_date : comment.created_date + 'Z'), { addSuffix: true })}
-                          </p>
-                        </div>
-                        <button
-                          onClick={() => deleteCommentMutation.mutate({ id: comment.id, isProgress: true })}
-                          className="text-gray-300 hover:text-red-400 transition-colors flex-shrink-0"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                );
-              }
+               if (comment.is_progress_update) {
+                 return (
+                   <div
+                     key={comment.id}
+                     ref={el => commentRefs.current[comment.id] = el}
+                     className="flex items-start gap-2 transition-all duration-300"
+                   >
+                     <CommentAvatar
+                       authorName={comment.author_name}
+                       email={comment.created_by}
+                       familyMembers={familyMembers}
+                       currentUserEmail={currentUser?.email}
+                       currentUserMember={currentUserMember}
+                     />
+                     <div
+                       className="flex-1 min-w-0 rounded-lg p-3 text-sm border"
+                       style={{
+                         backgroundColor: memberColor ? hexToLightBg(memberColor) : '#f0fdf4',
+                         borderColor: memberColor ? hexToBorderColor(memberColor) : '#bbf7d0',
+                       }}
+                     >
+                       <div className="flex items-center gap-1 mb-1">
+                         <TrendingUp className="w-3 h-3 flex-shrink-0" style={{ color: memberColor || '#16a34a' }} />
+                         <span className="text-xs font-semibold" style={{ color: memberColor || '#15803d' }}>
+                           Progress Update
+                         </span>
+                       </div>
+                       <div className="flex items-start justify-between gap-2">
+                         <div className="flex-1 min-w-0">
+                           <p className="text-gray-900">{renderTextWithLinks(comment.text)}</p>
+                           {comment.image_url && <img src={comment.image_url} alt="comment" className="mt-2 rounded max-w-xs max-h-48 object-cover" />}
+                           <p className="text-xs text-gray-400 mt-1">
+                             {comment.author_name} · {formatDistanceToNow(new Date(comment.created_date.endsWith('Z') ? comment.created_date : comment.created_date + 'Z'), { addSuffix: true })}
+                           </p>
+                         </div>
+                         <button
+                           onClick={() => deleteCommentMutation.mutate({ id: comment.id, isProgress: true })}
+                           className="text-gray-300 hover:text-red-400 transition-colors flex-shrink-0"
+                         >
+                           <Trash2 className="w-3.5 h-3.5" />
+                         </button>
+                       </div>
+                     </div>
+                   </div>
+                 );
+               }
 
-              return (
-                <div
-                  key={comment.id}
-                  ref={el => commentRefs.current[comment.id] = el}
-                  className="flex items-start gap-2 transition-all duration-300"
-                >
-                  <CommentAvatar
-                    authorName={comment.author_name}
-                    email={comment.created_by}
-                    familyMembers={familyMembers}
-                    currentUserEmail={currentUser?.email}
-                    currentUserMember={currentUserMember}
-                  />
-                  <div className="flex-1 min-w-0 bg-gray-50 rounded-lg p-3 text-sm">
-                    <div className="flex items-start justify-between gap-2">
-                      <div className="flex-1 min-w-0">
-                        <p className="text-gray-900">{renderTextWithLinks(comment.text)}</p>
-                        <p className="text-xs text-gray-400 mt-1">
-                          {comment.author_name} · {formatDistanceToNow(new Date(comment.created_date.endsWith('Z') ? comment.created_date : comment.created_date + 'Z'), { addSuffix: true })}
-                        </p>
-                      </div>
-                      <button
-                        onClick={() => deleteCommentMutation.mutate({ id: comment.id, isProgress: false })}
-                        className="text-gray-300 hover:text-red-400 transition-colors flex-shrink-0"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              );
-            })
+               return (
+                 <div
+                   key={comment.id}
+                   ref={el => commentRefs.current[comment.id] = el}
+                   className="flex items-start gap-2 transition-all duration-300"
+                 >
+                   <CommentAvatar
+                     authorName={comment.author_name}
+                     email={comment.created_by}
+                     familyMembers={familyMembers}
+                     currentUserEmail={currentUser?.email}
+                     currentUserMember={currentUserMember}
+                   />
+                   <div className="flex-1 min-w-0 bg-gray-50 rounded-lg p-3 text-sm">
+                     <div className="flex items-start justify-between gap-2">
+                       <div className="flex-1 min-w-0">
+                         <p className="text-gray-900">{renderTextWithLinks(comment.text)}</p>
+                         {comment.image_url && <img src={comment.image_url} alt="comment" className="mt-2 rounded max-w-xs max-h-48 object-cover" />}
+                         <p className="text-xs text-gray-400 mt-1">
+                           {comment.author_name} · {formatDistanceToNow(new Date(comment.created_date.endsWith('Z') ? comment.created_date : comment.created_date + 'Z'), { addSuffix: true })}
+                         </p>
+                       </div>
+                       <button
+                         onClick={() => deleteCommentMutation.mutate({ id: comment.id, isProgress: false })}
+                         className="text-gray-300 hover:text-red-400 transition-colors flex-shrink-0"
+                       >
+                         <Trash2 className="w-3.5 h-3.5" />
+                       </button>
+                     </div>
+                   </div>
+                 </div>
+               );
+             })
           )}
           <div ref={chatEndRef} />
         </div>
@@ -492,41 +514,75 @@ export default function ChoreCommentsSheet({ chore, open, onOpenChange }) {
         </div>
 
         {/* Input form */}
-        <div className="pt-3 border-t border-gray-100">
-          <form onSubmit={handleSubmit} className="flex flex-col gap-2">
-            <div className="flex gap-2">
-              <Textarea
-                placeholder={isProgressUpdate ? "Describe your progress..." : "Add a comment..."}
-                value={newComment}
-                onChange={(e) => setNewComment(e.target.value)}
-                rows={2}
-                className="flex-1 resize-none"
-                style={{ fontSize: '16px' }}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault();
-                    handleSubmit(e);
-                  }
-                }}
-              />
-              <Button type="submit" size="icon" disabled={!newComment.trim() || addCommentMutation.isPending}>
-                <Send className="w-4 h-4" />
-              </Button>
-            </div>
-            <label className="flex items-center gap-2 cursor-pointer w-fit">
-              <input
-                type="checkbox"
-                checked={isProgressUpdate}
-                onChange={(e) => setIsProgressUpdate(e.target.checked)}
-                className="w-4 h-4 rounded accent-gray-600 cursor-pointer"
-              />
-              <span className="text-xs text-gray-500 flex items-center gap-1">
-                <TrendingUp className="w-3 h-3" />
-                Mark as Progress Update
-              </span>
-            </label>
-          </form>
-        </div>
+         <div className="pt-3 border-t border-gray-100">
+           <form onSubmit={handleSubmit} className="flex flex-col gap-2">
+             {imagePreview && (
+               <div className="relative">
+                 <img src={imagePreview} alt="preview" className="rounded max-w-xs max-h-40 object-cover" />
+                 <button
+                   type="button"
+                   onClick={() => {
+                     setSelectedImage(null);
+                     setImagePreview(null);
+                     if (fileInputRef.current) fileInputRef.current.value = '';
+                   }}
+                   className="absolute top-1 right-1 bg-red-500 hover:bg-red-600 text-white rounded-full p-1 transition-colors"
+                 >
+                   <X className="w-3 h-3" />
+                 </button>
+               </div>
+             )}
+             <div className="flex gap-2">
+               <Textarea
+                 placeholder={isProgressUpdate ? "Describe your progress..." : "Add a comment..."}
+                 value={newComment}
+                 onChange={(e) => setNewComment(e.target.value)}
+                 rows={2}
+                 className="flex-1 resize-none"
+                 style={{ fontSize: '16px' }}
+                 onKeyDown={(e) => {
+                   if (e.key === 'Enter' && !e.shiftKey) {
+                     e.preventDefault();
+                     handleSubmit(e);
+                   }
+                 }}
+               />
+               <div className="flex flex-col gap-1">
+                 <Button
+                   type="button"
+                   size="icon"
+                   onClick={() => fileInputRef.current?.click()}
+                   className="bg-gray-200 text-gray-600 hover:bg-gray-300"
+                   title="Add image"
+                 >
+                   <span className="text-lg">+</span>
+                 </Button>
+                 <Button type="submit" size="icon" disabled={(!newComment.trim() && !selectedImage) || addCommentMutation.isPending}>
+                   <Send className="w-4 h-4" />
+                 </Button>
+               </div>
+             </div>
+             <input
+               ref={fileInputRef}
+               type="file"
+               accept="image/*"
+               onChange={handleImageSelect}
+               className="hidden"
+             />
+             <label className="flex items-center gap-2 cursor-pointer w-fit">
+               <input
+                 type="checkbox"
+                 checked={isProgressUpdate}
+                 onChange={(e) => setIsProgressUpdate(e.target.checked)}
+                 className="w-4 h-4 rounded accent-gray-600 cursor-pointer"
+               />
+               <span className="text-xs text-gray-500 flex items-center gap-1">
+                 <TrendingUp className="w-3 h-3" />
+                 Mark as Progress Update
+               </span>
+             </label>
+           </form>
+         </div>
       </SheetContent>
     </Sheet>
 

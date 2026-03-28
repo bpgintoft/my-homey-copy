@@ -18,6 +18,10 @@
       "type": "boolean",
       "default": false,
       "description": "Whether this comment is a progress update milestone"
+    },
+    "image_url": {
+      "type": "string",
+      "description": "Optional image URL attached to the comment"
     }
   },
   "required": [
