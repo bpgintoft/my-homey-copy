@@ -1,0 +1,27 @@
+{
+  "name": "ChoreComment",
+  "type": "object",
+  "properties": {
+    "chore_id": {
+      "type": "string",
+      "description": "Reference to the Chore entity"
+    },
+    "text": {
+      "type": "string",
+      "description": "Comment text"
+    },
+    "author_name": {
+      "type": "string",
+      "description": "Display name of the commenter"
+    },
+    "is_progress_update": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether this comment is a progress update milestone"
+    }
+  },
+  "required": [
+    "chore_id",
+    "text"
+  ]
+}
