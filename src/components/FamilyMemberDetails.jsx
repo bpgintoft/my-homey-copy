@@ -1167,10 +1167,10 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                 </button>
                 <button
                   onClick={() => setShowArchive(true)}
-                  className="flex items-center gap-1 text-xs px-2.5 py-1 rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors font-medium"
+                  className="flex items-center gap-1 text-xs px-3 py-1.5 rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors font-medium"
                   title="View completed tasks"
                 >
-                  <Archive className="w-3 h-3" />
+                  <Archive className="w-4 h-4" />
                 </button>
                 <Dialog open={dialogOpen.chore} onOpenChange={(open) => setDialogOpen({ ...dialogOpen, chore: open })}>
                 <DialogTrigger asChild>
