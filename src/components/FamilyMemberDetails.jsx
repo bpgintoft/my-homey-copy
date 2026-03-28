@@ -1220,13 +1220,6 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
               <span>To-Do List</span>
               <div className="flex items-center gap-2 mr-10">
                 <button
-                  onClick={() => setCustomizingCategories(true)}
-                  className="p-1.5 rounded hover:bg-gray-100 transition-colors"
-                  title="Customize categories"
-                >
-                  <Settings2 className="w-4 h-4 text-gray-600" />
-                </button>
-                <button
                   onClick={() => setIsReorderingChores(prev => !prev)}
                   className={`flex items-center gap-1 text-xs px-2.5 py-1 rounded-full transition-colors font-medium ${isReorderingChores ? 'bg-green-100 text-green-700 hover:bg-green-200' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
                   title="Reorder items"
@@ -1306,7 +1299,14 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
               </div>
             </DialogTitle>
           </DialogHeader>
-          <div className={`overflow-y-auto max-h-[calc(85vh-8rem)] rounded-lg p-2 -mx-2 ${dialogBg}`}>
+          <div className={`overflow-y-auto max-h-[calc(85vh-8rem)] rounded-lg p-2 -mx-2 relative ${dialogBg}`}>
+            <button
+              onClick={() => setCustomizingCategories(true)}
+              className="absolute top-3 right-3 p-1.5 rounded-full hover:bg-gray-200 transition-colors z-10"
+              title="Customize categories"
+            >
+              <Settings2 className="w-4 h-4 text-gray-600" />
+            </button>
             {chores.filter(c => !c.is_completed).length === 0 ? (
               <p className="text-sm text-gray-500">No tasks yet</p>
             ) : (
