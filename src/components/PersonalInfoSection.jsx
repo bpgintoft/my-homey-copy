@@ -253,37 +253,6 @@ export default function PersonalInfoSection({ member, color = 'blue', isReadOnly
           </div>
         )}
 
-        {!isKid && hasLicense && (
-          <div>
-            <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2">Driver's License</h3>
-            <div className="space-y-1.5">
-              {form.license_number && <ViewRow label="License #" copyKey="lic_num" value={form.license_number} />}
-              {form.license_issue_date && (
-                <ViewRow label="Issue Date" copyKey="lic_issue" value={new Date(form.license_issue_date + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} />
-              )}
-              {form.license_expiration_date && (
-                <ViewRow label="Expiration" copyKey="lic_exp" value={new Date(form.license_expiration_date + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} />
-              )}
-            </div>
-          </div>
-        )}
-
-        {hasPhysical && (
-          <div>
-            <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2">Physical</h3>
-            <div className="space-y-1.5">
-              {hasHeight && (
-                <ViewRow
-                  label="Height"
-                  copyKey="height"
-                  value={[form.height_feet !== '' ? `${form.height_feet} ft` : null, form.height_inches !== '' ? `${form.height_inches} in` : null].filter(Boolean).join(' ')}
-                />
-              )}
-              {hasWeight && <ViewRow label="Weight" copyKey="weight" value={`${form.weight_lbs} lbs`} />}
-            </div>
-          </div>
-        )}
-
         {hasClothing && (
           <div>
             <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2">Clothing Sizes</h3>
@@ -395,52 +364,6 @@ export default function PersonalInfoSection({ member, color = 'blue', isReadOnly
               <Input placeholder="Student ID" value={form.student_number} onChange={(e) => setForm({ ...form, student_number: e.target.value })} className={inputClass} />
             </div>
           )}
-        </div>
-      </div>
-
-      {/* Driver's License (adults only) */}
-      {!isKid && (
-        <div>
-          <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">Driver's License</h3>
-          <div className="space-y-3">
-            <div>
-              <Label className="text-xs text-gray-600 mb-1 block">License Number</Label>
-              <Input placeholder="License #" value={form.license_number} onChange={(e) => setForm({ ...form, license_number: e.target.value })} className={inputClass} />
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <Label className="text-xs text-gray-600 mb-1 block">Issue Date</Label>
-                <Input type="date" value={form.license_issue_date} onChange={(e) => setForm({ ...form, license_issue_date: e.target.value })} className={inputClass} />
-              </div>
-              <div>
-                <Label className="text-xs text-gray-600 mb-1 block">Expiration Date</Label>
-                <Input type="date" value={form.license_expiration_date} onChange={(e) => setForm({ ...form, license_expiration_date: e.target.value })} className={inputClass} />
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Physical */}
-      <div>
-        <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">Physical</h3>
-        <div className="grid grid-cols-2 gap-3">
-          <div>
-            <Label className="text-xs text-gray-600 mb-1 block">Height</Label>
-            <div className="flex gap-2 items-center">
-              <Input type="number" placeholder="ft" min={0} max={8} value={form.height_feet} onChange={(e) => setForm({ ...form, height_feet: e.target.value })} className={`w-16 text-center ${inputClass}`} />
-              <span className="text-sm text-gray-500">ft</span>
-              <Input type="number" placeholder="in" min={0} max={11} value={form.height_inches} onChange={(e) => setForm({ ...form, height_inches: e.target.value })} className={`w-16 text-center ${inputClass}`} />
-              <span className="text-sm text-gray-500">in</span>
-            </div>
-          </div>
-          <div>
-            <Label className="text-xs text-gray-600 mb-1 block">Weight</Label>
-            <div className="flex gap-2 items-center">
-              <Input type="number" placeholder="lbs" min={0} value={form.weight_lbs} onChange={(e) => setForm({ ...form, weight_lbs: e.target.value })} className={`w-24 text-center ${inputClass}`} />
-              <span className="text-sm text-gray-500">lbs</span>
-            </div>
-          </div>
         </div>
       </div>
 
