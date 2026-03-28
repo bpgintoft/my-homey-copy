@@ -1243,7 +1243,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
               </div>
             </DialogTitle>
           </DialogHeader>
-          <div className={isReorderingChores ? 'overflow-y-auto max-h-[calc(85vh-8rem)]' : ''}>
+          <div className={isReorderingChores ? 'overflow-y-auto max-h-[calc(85vh-8rem)]' : ''} style={isReorderingChores ? { touchAction: 'none' } : {}}>
             {chores.filter(c => !c.is_completed).length === 0 ? (
               <p className="text-sm text-gray-500">No tasks yet</p>
             ) : (
