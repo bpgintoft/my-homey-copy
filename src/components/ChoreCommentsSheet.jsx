@@ -344,7 +344,7 @@ export default function ChoreCommentsSheet({ chore, open, onOpenChange }) {
       </Dialog>
 
       <Sheet open={open} onOpenChange={onOpenChange}>
-        <SheetContent side="bottom" className="h-[85vh] rounded-t-2xl flex flex-col !top-0">
+        <SheetContent side="bottom" className="h-[85vh] rounded-t-2xl flex flex-col mt-8">
         <div className="h-4" />
         <SheetHeader>
           <SheetTitle className="flex items-center gap-2">
