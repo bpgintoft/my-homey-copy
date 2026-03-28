@@ -482,7 +482,15 @@ export default function ChoreCommentsSheet({ chore, open, onOpenChange }) {
     </Sheet>
 
       {/* Date Picker Dialog (outside Sheet for proper z-index) */}
-      <Dialog open={dueDateDialogOpen} onOpenChange={setDueDateDialogOpen}>
+      <Dialog 
+        open={dueDateDialogOpen} 
+        onOpenChange={(isOpen) => {
+          if (!isOpen && editingDueDate !== chore.next_due) {
+            handleSaveDueDate();
+          }
+          setDueDateDialogOpen(isOpen);
+        }}
+      >
         <DialogContent className="w-auto p-0 border-0 shadow-lg">
           <DialogHeader className="px-4 pt-4 pb-2">
             <DialogTitle className="text-sm">Select Due Date</DialogTitle>
