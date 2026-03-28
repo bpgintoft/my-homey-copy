@@ -329,17 +329,23 @@ export default function ChoreCommentsSheet({ chore, open, onOpenChange }) {
       {/* Full Screen Image Modal - outside Sheet for z-index */}
       {fullScreenImage && createPortal(
         <div 
-          className="fixed inset-0 z-[9999] bg-black/95 flex items-center justify-center"
+          className="fixed inset-0 z-[9999] bg-black/95 flex items-center justify-center cursor-pointer"
           onClick={() => setFullScreenImage(null)}
+          onTouchEnd={() => setFullScreenImage(null)}
         >
           <img 
             src={fullScreenImage} 
             alt="full screen" 
             className="max-w-full max-h-full object-contain pointer-events-none"
             onClick={(e) => e.stopPropagation()}
+            onTouchEnd={(e) => e.stopPropagation()}
           />
           <button
             onClick={(e) => {
+              e.stopPropagation();
+              setFullScreenImage(null);
+            }}
+            onTouchEnd={(e) => {
               e.stopPropagation();
               setFullScreenImage(null);
             }}
