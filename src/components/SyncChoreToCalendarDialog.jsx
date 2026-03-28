@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Loader2, Calendar, CheckCircle2, RefreshCw } from 'lucide-react';
+import { Loader2, Calendar, CheckCircle2, RefreshCw, X } from 'lucide-react';
 
 export default function SyncChoreToCalendarDialog({ open, onOpenChange, chore }) {
   const queryClient = useQueryClient();
@@ -15,6 +15,7 @@ export default function SyncChoreToCalendarDialog({ open, onOpenChange, chore })
   const [autoSync, setAutoSync] = useState(true);
   const [syncing, setSyncing] = useState(false);
   const [synced, setSynced] = useState(false);
+  const [savingDate, setSavingDate] = useState(false);
 
   const alreadySynced = !!(chore?.synced_google_calendar_id && chore?.synced_google_event_id);
 
@@ -40,6 +41,28 @@ export default function SyncChoreToCalendarDialog({ open, onOpenChange, chore })
 
   const calendars = calendarsData || [];
 
+  const handleSaveDueDate = async () => {
+    setSavingDate(true);
+    await base44.entities.Chore.update(chore.id, { next_due: date || null });
+    // If linked chores, update them too
+    if (chore.linked_chore_ids?.length) {
+      await Promise.all(chore.linked_chore_ids.map(id => base44.entities.Chore.update(id, { next_due: date || null })));
+    }
+    queryClient.invalidateQueries(['chores']);
+    setSavingDate(false);
+  };
+
+  const handleRemoveDueDate = async () => {
+    setDate('');
+    setSavingDate(true);
+    await base44.entities.Chore.update(chore.id, { next_due: null });
+    if (chore.linked_chore_ids?.length) {
+      await Promise.all(chore.linked_chore_ids.map(id => base44.entities.Chore.update(id, { next_due: null })));
+    }
+    queryClient.invalidateQueries(['chores']);
+    setSavingDate(false);
+  };
+
   const handleSync = async () => {
     if (!selectedCalendarId || !date) return;
     setSyncing(true);
@@ -48,7 +71,6 @@ export default function SyncChoreToCalendarDialog({ open, onOpenChange, chore })
     const calendarChanged = selectedCalendarId !== chore.synced_google_calendar_id;
 
     if (alreadySynced && !calendarChanged) {
-      // Update existing event
       await base44.functions.invoke('updateGoogleCalendarEvent', {
         calendarId: selectedCalendarId,
         eventId,
@@ -59,7 +81,6 @@ export default function SyncChoreToCalendarDialog({ open, onOpenChange, chore })
         isAllDay: true,
       });
     } else {
-      // Create new event (also if calendar changed)
       const res = await base44.functions.invoke('createGoogleCalendarEvent', {
         calendarId: selectedCalendarId,
         summary: chore.title,
@@ -71,8 +92,8 @@ export default function SyncChoreToCalendarDialog({ open, onOpenChange, chore })
       eventId = res.data?.event?.id;
     }
 
-    // Save sync info back to the chore
     const updatePayload = {
+      next_due: date,
       synced_google_calendar_id: autoSync ? selectedCalendarId : null,
       synced_google_event_id: autoSync ? eventId : null,
     };
@@ -96,49 +117,77 @@ export default function SyncChoreToCalendarDialog({ open, onOpenChange, chore })
     onOpenChange(false);
   };
 
+  const dueDateChanged = date !== (chore?.next_due || '');
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Calendar className="w-5 h-5 text-blue-500" />
-            Sync to Google Calendar
+            Due Date & Calendar
           </DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-4 py-2">
+        <div className="space-y-5 py-2">
           <p className="text-sm text-gray-700 font-medium truncate">{chore?.title}</p>
 
-          {alreadySynced && (
-            <div className="flex items-center gap-2 text-sm text-green-700 bg-green-50 border border-green-200 rounded-lg px-3 py-2">
-              <CheckCircle2 className="w-4 h-4 flex-shrink-0" />
-              <span>Currently synced to Google Calendar</span>
-            </div>
-          )}
-
-          {date ? (
-            <p className="text-sm text-gray-500">
-              Event date: <span className="font-medium text-gray-700">{new Date(date + 'T12:00:00').toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</span>
-            </p>
-          ) : (
-            <div>
-              <Label className="mb-1 block text-sm text-gray-600">Date <span className="text-gray-400">(no due date set on this chore)</span></Label>
+          {/* Due Date Section */}
+          <div className="space-y-2">
+            <Label className="text-sm text-gray-600 font-semibold">Due Date</Label>
+            <div className="flex items-center gap-2">
               <Input
                 type="date"
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
+                className="flex-1"
               />
+              {date && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="text-gray-400 hover:text-red-500 flex-shrink-0"
+                  title="Remove due date"
+                  onClick={handleRemoveDueDate}
+                  disabled={savingDate}
+                >
+                  <X className="w-4 h-4" />
+                </Button>
+              )}
             </div>
-          )}
+            {dueDateChanged && (
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={handleSaveDueDate}
+                disabled={savingDate}
+                className="w-full"
+              >
+                {savingDate ? <><Loader2 className="w-3 h-3 mr-1 animate-spin" />Saving...</> : 'Save Due Date'}
+              </Button>
+            )}
+          </div>
 
-          <div>
-            <Label className="mb-2 block text-sm text-gray-600">Choose a calendar</Label>
+          {/* Divider */}
+          <div className="border-t border-gray-100" />
+
+          {/* Google Calendar Section */}
+          <div className="space-y-3">
+            <Label className="text-sm text-gray-600 font-semibold">Sync to Google Calendar</Label>
+
+            {alreadySynced && (
+              <div className="flex items-center gap-2 text-sm text-green-700 bg-green-50 border border-green-200 rounded-lg px-3 py-2">
+                <CheckCircle2 className="w-4 h-4 flex-shrink-0" />
+                <span>Currently synced to Google Calendar</span>
+              </div>
+            )}
+
             {loadingCalendars ? (
               <div className="flex items-center gap-2 text-sm text-gray-500">
                 <Loader2 className="w-4 h-4 animate-spin" /> Loading calendars...
               </div>
             ) : Array.isArray(calendars) && calendars.length > 0 ? (
-              <div className="space-y-2 max-h-48 overflow-y-auto">
+              <div className="space-y-2 max-h-40 overflow-y-auto">
                 {calendars.map(cal => (
                   <div
                     key={cal.id}
@@ -154,18 +203,18 @@ export default function SyncChoreToCalendarDialog({ open, onOpenChange, chore })
             ) : (
               <p className="text-sm text-gray-500">No calendars found. Please authorize Google Calendar access.</p>
             )}
-          </div>
 
-          <div className="flex items-center gap-2">
-            <Checkbox
-              id="autoSync"
-              checked={autoSync}
-              onCheckedChange={setAutoSync}
-            />
-            <label htmlFor="autoSync" className="text-sm text-gray-700 cursor-pointer flex items-center gap-1.5">
-              <RefreshCw className="w-3.5 h-3.5 text-blue-400" />
-              Keep in sync (auto-update calendar when chore changes)
-            </label>
+            <div className="flex items-center gap-2">
+              <Checkbox
+                id="autoSync"
+                checked={autoSync}
+                onCheckedChange={setAutoSync}
+              />
+              <label htmlFor="autoSync" className="text-sm text-gray-700 cursor-pointer flex items-center gap-1.5">
+                <RefreshCw className="w-3.5 h-3.5 text-blue-400" />
+                Keep in sync (auto-update when chore changes)
+              </label>
+            </div>
           </div>
         </div>
 
