@@ -81,12 +81,20 @@ export default function FamilyMemberPage({ memberName }) {
   const bannerRef = useRef(null);
   const navigate = useNavigate();
 
-  const { data: familyMembers = [] } = useQuery({
+  const { data: familyMembers = [], isLoading } = useQuery({
     queryKey: ['familyMembers'],
     queryFn: () => base44.entities.FamilyMember.list(),
   });
 
   const member = familyMembers.find(m => m.name === memberName);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center" style={{ background: cfg.pageBackground }}>
+        <div className="w-8 h-8 border-4 border-slate-200 border-t-slate-800 rounded-full animate-spin"></div>
+      </div>
+    );
+  }
 
   useSwipe((direction) => {
     if (direction === 'left') navigate(createPageUrl(cfg.swipeLeft));
