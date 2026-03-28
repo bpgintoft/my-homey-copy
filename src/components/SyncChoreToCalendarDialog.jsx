@@ -121,7 +121,7 @@ export default function SyncChoreToCalendarDialog({ open, onOpenChange, chore })
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md" onOpenAutoFocus={(e) => e.preventDefault()}>
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Calendar className="w-5 h-5 text-blue-500" />
@@ -141,6 +141,7 @@ export default function SyncChoreToCalendarDialog({ open, onOpenChange, chore })
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
                 className="flex-1"
+                onFocus={(e) => e.preventDefault()}
               />
               {date && (
                 <Button
