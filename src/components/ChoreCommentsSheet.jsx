@@ -189,6 +189,7 @@ export default function ChoreCommentsSheet({ chore, open, onOpenChange }) {
   const [coAssignees, setCoAssignees] = useState([]);
   const [selectedImage, setSelectedImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
+  const [fullScreenImage, setFullScreenImage] = useState(null);
   const chatEndRef = useRef(null);
   const commentRefs = useRef({});
   const fileInputRef = useRef(null);
@@ -390,7 +391,14 @@ export default function ChoreCommentsSheet({ chore, open, onOpenChange }) {
                        <div className="flex items-start justify-between gap-2">
                          <div className="flex-1 min-w-0">
                            <p className="text-gray-900">{renderTextWithLinks(comment.text)}</p>
-                           {comment.image_url && <img src={comment.image_url} alt="comment" className="mt-2 rounded max-w-xs max-h-48 object-cover" />}
+                           {comment.image_url && (
+                             <img 
+                               src={comment.image_url} 
+                               alt="comment" 
+                               className="mt-2 rounded max-w-xs max-h-48 object-cover cursor-pointer hover:opacity-80 transition-opacity" 
+                               onClick={() => setFullScreenImage(comment.image_url)}
+                             />
+                           )}
                            <p className="text-xs text-gray-400 mt-1">
                              {comment.author_name} · {formatDistanceToNow(new Date(comment.created_date.endsWith('Z') ? comment.created_date : comment.created_date + 'Z'), { addSuffix: true })}
                            </p>
@@ -424,7 +432,14 @@ export default function ChoreCommentsSheet({ chore, open, onOpenChange }) {
                      <div className="flex items-start justify-between gap-2">
                        <div className="flex-1 min-w-0">
                          <p className="text-gray-900">{renderTextWithLinks(comment.text)}</p>
-                         {comment.image_url && <img src={comment.image_url} alt="comment" className="mt-2 rounded max-w-xs max-h-48 object-cover" />}
+                         {comment.image_url && (
+                           <img 
+                             src={comment.image_url} 
+                             alt="comment" 
+                             className="mt-2 rounded max-w-xs max-h-48 object-cover cursor-pointer hover:opacity-80 transition-opacity" 
+                             onClick={() => setFullScreenImage(comment.image_url)}
+                           />
+                         )}
                          <p className="text-xs text-gray-400 mt-1">
                            {comment.author_name} · {formatDistanceToNow(new Date(comment.created_date.endsWith('Z') ? comment.created_date : comment.created_date + 'Z'), { addSuffix: true })}
                          </p>
@@ -595,6 +610,26 @@ export default function ChoreCommentsSheet({ chore, open, onOpenChange }) {
          </div>
       </SheetContent>
     </Sheet>
+
+      {/* Full Screen Image Modal */}
+      {fullScreenImage && (
+        <div 
+          className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center"
+          onClick={() => setFullScreenImage(null)}
+        >
+          <img 
+            src={fullScreenImage} 
+            alt="full screen" 
+            className="max-w-full max-h-full object-contain"
+          />
+          <button
+            onClick={() => setFullScreenImage(null)}
+            className="absolute top-4 right-4 p-2 text-white hover:bg-white/20 rounded-full transition-colors"
+          >
+            <X className="w-6 h-6" />
+          </button>
+        </div>
+      )}
 
       {/* Date Picker Dialog (outside Sheet for proper z-index) */}
       <Dialog 
