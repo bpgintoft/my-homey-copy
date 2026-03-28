@@ -6,7 +6,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
-import { Trash2, Send, TrendingUp, Calendar, X } from 'lucide-react';
+import { Trash2, Send, TrendingUp, Calendar, X, Users } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { getCommentAuthorMember } from '@/lib/getCommentAuthorMember';
 
@@ -180,13 +180,13 @@ function ProgressTimeline({ progressUpdates, onClickNode, familyMembers, current
 
 export default function ChoreCommentsSheet({ chore, open, onOpenChange }) {
   const queryClient = useQueryClient();
-  const savedQueryClient = queryClient;
   const [newComment, setNewComment] = useState('');
   const [isProgressUpdate, setIsProgressUpdate] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
   const [currentUserMember, setCurrentUserMember] = useState(null);
   const [editingDueDate, setEditingDueDate] = useState(null);
   const [dueDateDialogOpen, setDueDateDialogOpen] = useState(false);
+  const [coAssignees, setCoAssignees] = useState([]);
   const chatEndRef = useRef(null);
   const commentRefs = useRef({});
 
@@ -200,7 +200,10 @@ export default function ChoreCommentsSheet({ chore, open, onOpenChange }) {
   }, []);
 
   useEffect(() => {
-    if (chore) setEditingDueDate(chore.next_due || '');
+    if (chore) {
+      setEditingDueDate(chore.next_due || '');
+      setCoAssignees(chore.co_assigned_member_ids || []);
+    }
   }, [chore?.id]);
 
   const { data: familyMembers = [] } = useQuery({
@@ -418,7 +421,7 @@ export default function ChoreCommentsSheet({ chore, open, onOpenChange }) {
         </div>
 
         {/* Due Date Section */}
-        <div className="pt-3 border-t border-gray-100 pb-2">
+        <div className="pt-3 border-t border-gray-100 pb-3 space-y-3">
           <div className="flex items-center gap-2">
             <Calendar className="w-4 h-4 text-gray-500 flex-shrink-0" />
             <span className="text-xs font-medium text-gray-600">Due Date:</span>
@@ -443,6 +446,46 @@ export default function ChoreCommentsSheet({ chore, open, onOpenChange }) {
                 <X className="w-3 h-3" />
               </button>
             )}
+          </div>
+
+          {/* Assign to Family Members */}
+          <div>
+            <p className="text-xs font-medium text-gray-600 mb-2">Assign to:</p>
+            <div className="space-y-1 max-h-32 overflow-y-auto">
+              {familyMembers.map((member) => {
+                const isAssigned = member.id === chore?.assigned_to_member_id || coAssignees.includes(member.id);
+                return (
+                  <label key={member.id} className="flex items-center gap-2 cursor-pointer p-1.5 rounded hover:bg-gray-50 transition-colors">
+                    <input
+                      type="checkbox"
+                      checked={isAssigned}
+                      disabled={member.id === chore?.assigned_to_member_id}
+                      onChange={async (e) => {
+                        const newCoAssignees = e.target.checked
+                          ? [...coAssignees, member.id]
+                          : coAssignees.filter(id => id !== member.id);
+                        setCoAssignees(newCoAssignees);
+                        if (chore?.id && chore.linked_chore_ids?.length) {
+                          await Promise.all(
+                            [chore.id, ...chore.linked_chore_ids].map(id =>
+                              base44.entities.Chore.update(id, { co_assigned_member_ids: newCoAssignees })
+                            )
+                          );
+                        } else if (chore?.id) {
+                          await base44.entities.Chore.update(chore.id, { co_assigned_member_ids: newCoAssignees });
+                        }
+                        queryClient.invalidateQueries(['chores']);
+                      }}
+                      className="w-4 h-4 rounded accent-gray-600 cursor-pointer"
+                    />
+                    <span className="text-xs text-gray-700">{member.name}</span>
+                    {member.id === chore?.assigned_to_member_id && (
+                      <span className="text-xs text-gray-400 ml-auto">(primary)</span>
+                    )}
+                  </label>
+                );
+              })}
+            </div>
           </div>
         </div>
 
@@ -512,7 +555,7 @@ export default function ChoreCommentsSheet({ chore, open, onOpenChange }) {
                   if (chore.linked_chore_ids?.length) {
                     await Promise.all(chore.linked_chore_ids.map(id => base44.entities.Chore.update(id, { next_due: isoDate || null })));
                   }
-                  savedQueryClient.invalidateQueries(['chores']);
+                  queryClient.invalidateQueries(['chores']);
                   setDueDateDialogOpen(false);
                 }
               }}
