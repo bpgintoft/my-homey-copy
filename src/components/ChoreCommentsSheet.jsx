@@ -297,8 +297,9 @@ export default function ChoreCommentsSheet({ chore, open, onOpenChange }) {
   };
 
   return (
-    <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="bottom" className="h-[85vh] rounded-t-2xl flex flex-col">
+    <>
+      <Sheet open={open} onOpenChange={onOpenChange}>
+        <SheetContent side="bottom" className="h-[85vh] rounded-t-2xl flex flex-col">
         <SheetHeader>
           <SheetTitle className="flex items-center gap-2">
             📋 Progress & Updates
@@ -441,45 +442,6 @@ export default function ChoreCommentsSheet({ chore, open, onOpenChange }) {
           </div>
         </div>
 
-        {/* Date Picker Dialog */}
-        <Dialog open={dueDateDialogOpen} onOpenChange={setDueDateDialogOpen}>
-          <DialogContent className="w-auto p-0 border-0 shadow-lg">
-            <DialogHeader className="px-4 pt-4 pb-2">
-              <DialogTitle className="text-sm">Select Due Date</DialogTitle>
-            </DialogHeader>
-            <div className="px-4 pb-4 flex flex-col gap-3">
-              <CalendarComponent
-                mode="single"
-                selected={editingDueDate ? new Date(editingDueDate) : undefined}
-                onSelect={(date) => {
-                  if (date) {
-                    const isoDate = date.toISOString().split('T')[0];
-                    setEditingDueDate(isoDate);
-                    handleSaveDueDate();
-                    setDueDateDialogOpen(false);
-                  }
-                }}
-                disabled={(date) => date < new Date(new Date().toISOString().split('T')[0])}
-                className="rounded-md border"
-              />
-              {editingDueDate && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => {
-                    setEditingDueDate('');
-                    handleSaveDueDate();
-                    setDueDateDialogOpen(false);
-                  }}
-                  className="text-xs w-full"
-                >
-                  Clear Date
-                </Button>
-              )}
-            </div>
-          </DialogContent>
-        </Dialog>
-
         {/* Input form */}
         <div className="pt-3 border-t border-gray-100">
           <form onSubmit={handleSubmit} className="flex flex-col gap-2">
@@ -518,5 +480,45 @@ export default function ChoreCommentsSheet({ chore, open, onOpenChange }) {
         </div>
       </SheetContent>
     </Sheet>
+
+      {/* Date Picker Dialog (outside Sheet for proper z-index) */}
+      <Dialog open={dueDateDialogOpen} onOpenChange={setDueDateDialogOpen}>
+        <DialogContent className="w-auto p-0 border-0 shadow-lg">
+          <DialogHeader className="px-4 pt-4 pb-2">
+            <DialogTitle className="text-sm">Select Due Date</DialogTitle>
+          </DialogHeader>
+          <div className="px-4 pb-4 flex flex-col gap-3">
+            <CalendarComponent
+              mode="single"
+              selected={editingDueDate ? new Date(editingDueDate) : undefined}
+              onSelect={(date) => {
+                if (date) {
+                  const isoDate = date.toISOString().split('T')[0];
+                  setEditingDueDate(isoDate);
+                  handleSaveDueDate();
+                  setDueDateDialogOpen(false);
+                }
+              }}
+              disabled={(date) => date < new Date(new Date().toISOString().split('T')[0])}
+              className="rounded-md border"
+            />
+            {editingDueDate && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setEditingDueDate('');
+                  handleSaveDueDate();
+                  setDueDateDialogOpen(false);
+                }}
+                className="text-xs w-full"
+              >
+                Clear Date
+              </Button>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }
