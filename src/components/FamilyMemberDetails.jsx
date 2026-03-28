@@ -1273,7 +1273,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
               </div>
             </DialogTitle>
           </DialogHeader>
-          <div className="overflow-y-auto max-h-[calc(85vh-8rem)]" style={isReorderingChores ? { touchAction: 'none', overflowY: 'auto' } : {}}>
+          <div className="overflow-y-auto max-h-[calc(85vh-8rem)]">
             {chores.filter(c => !c.is_completed).length === 0 ? (
               <p className="text-sm text-gray-500">No tasks yet</p>
             ) : (
@@ -1304,7 +1304,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                                        className={`relative rounded-lg ${itemBg} transition-shadow`}
                                        style={{
                                          ...provided.draggableProps.style,
-                                         touchAction: (!chore.maintenance_task_id && isReorderingChores) ? 'none' : undefined,
+                                         touchAction: (!chore.maintenance_task_id && isReorderingChores && snapshot.isDragging) ? 'none' : undefined,
                                          ...(snapshot.isDragging ? {
                                            boxShadow: '0 8px 24px rgba(0,0,0,0.18)',
                                            transform: `${provided.draggableProps.style?.transform || ''} scale(1.02)`,
