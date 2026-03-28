@@ -56,9 +56,9 @@ export default function ChoreTimingCustomizer({ open, onOpenChange, categories, 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-md">
-        <DialogHeader>
-          <DialogTitle>Customize To-Do Categories for {memberName}</DialogTitle>
-        </DialogHeader>
+         <DialogHeader>
+           <DialogTitle className="pr-6">Customize To-Do Categories for {memberName}</DialogTitle>
+         </DialogHeader>
         <div className="space-y-4">
           <p className="text-sm text-gray-600">Add, remove, or rename categories for chore timing:</p>
           
