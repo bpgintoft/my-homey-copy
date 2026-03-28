@@ -326,36 +326,16 @@ export default function ChoreCommentsSheet({ chore, open, onOpenChange }) {
 
   return (
     <>
-      {/* Full Screen Image Modal - outside Sheet for z-index */}
-      {fullScreenImage && createPortal(
-        <div 
-          className="fixed inset-0 z-[9999] bg-black/95 flex items-center justify-center cursor-pointer"
-          onClick={() => setFullScreenImage(null)}
-          onTouchStart={(e) => {
-            if (e.target === e.currentTarget) {
-              e.preventDefault();
-              setFullScreenImage(null);
-            }
-          }}
-        >
+      {/* Full Screen Image Modal - Dialog with proper backdrop */}
+      <Dialog open={!!fullScreenImage} onOpenChange={() => setFullScreenImage(null)}>
+        <DialogContent className="max-w-[90vw] max-h-[90vh] p-0 border-0 bg-transparent shadow-none">
           <img 
-            src={fullScreenImage} 
+            src={fullScreenImage || ''} 
             alt="full screen" 
-            className="max-w-full max-h-full object-contain pointer-events-none"
-            onClick={(e) => e.stopPropagation()}
+            className="w-full h-full object-contain"
           />
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              setFullScreenImage(null);
-            }}
-            className="absolute top-4 right-4 p-2 text-white hover:bg-white/20 rounded-full transition-colors"
-          >
-            <X className="w-6 h-6" />
-          </button>
-        </div>,
-        document.body
-      )}
+        </DialogContent>
+      </Dialog>
 
       <Sheet open={open} onOpenChange={onOpenChange}>
         <SheetContent side="bottom" className="h-[85vh] rounded-t-2xl flex flex-col">
