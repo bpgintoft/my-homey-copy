@@ -540,6 +540,9 @@ export default function ChoreCommentsSheet({ chore, open, onOpenChange }) {
                  rows={2}
                  className="flex-1 resize-none"
                  style={{ fontSize: '16px' }}
+                 onFocus={(e) => {
+                   setTimeout(() => e.target.scrollIntoView({ behavior: 'smooth', block: 'center' }), 100);
+                 }}
                  onKeyDown={(e) => {
                    if (e.key === 'Enter' && !e.shiftKey) {
                      e.preventDefault();
