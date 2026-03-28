@@ -451,7 +451,7 @@ export default function ChoreCommentsSheet({ chore, open, onOpenChange }) {
           {/* Assign to Family Members */}
            <details className="group">
              <summary className="cursor-pointer flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-gray-600 rounded hover:bg-gray-50 transition-colors">
-               <span>👥 Assign to: {coAssignees.length > 0 ? `${coAssignees.length} co-assigned` : 'None'}</span>
+               <span>👥 Assign to: {coAssignees.length > 0 ? `${coAssignees.length} co-assigned` : 'Family members'}</span>
              </summary>
              <div className="mt-2 space-y-1 pl-3">
                {familyMembers.map((member) => {
