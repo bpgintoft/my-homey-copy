@@ -1153,7 +1153,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
 
       {/* Chores Dialog */}
       <Dialog open={expandedSection === 'chores'} onOpenChange={(open) => { if (!open) { setExpandedSection(null); setIsReorderingChores(false); } }}>
-        <DialogContent className="max-w-3xl w-[95vw] max-h-[85vh] overflow-y-auto top-4 translate-y-0 px-3 sm:px-6">
+        <DialogContent className={`max-w-3xl w-[95vw] top-4 translate-y-0 px-3 sm:px-6 ${isReorderingChores ? 'overflow-y-hidden max-h-[85vh]' : 'overflow-y-auto max-h-[85vh]'}`}>
           <DialogHeader>
             <DialogTitle className="flex items-center justify-between">
               <span>To-Do List</span>
@@ -1238,7 +1238,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
               </div>
             </DialogTitle>
           </DialogHeader>
-          <div>
+          <div className={isReorderingChores ? 'overflow-y-auto max-h-[calc(85vh-8rem)]' : ''}>
             {chores.filter(c => !c.is_completed).length === 0 ? (
               <p className="text-sm text-gray-500">No tasks yet</p>
             ) : (
@@ -1263,7 +1263,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                                       <div ref={provided.innerRef} {...provided.draggableProps} className={`relative rounded-lg ${itemBg} ${snapshot.isDragging ? 'shadow-lg opacity-90' : ''}`}>
 
                                           <div className="flex items-center gap-3 p-3">
-                                          <div {...(!chore.maintenance_task_id && isReorderingChores ? provided.dragHandleProps : {})} className={`flex-shrink-0 transition-all ${isReorderingChores && !chore.maintenance_task_id ? 'cursor-grab active:cursor-grabbing opacity-100 w-5' : 'opacity-0 w-0 overflow-hidden'}`}>
+                                          <div {...(!chore.maintenance_task_id && isReorderingChores ? provided.dragHandleProps : {})} className={`flex-shrink-0 transition-all ${isReorderingChores && !chore.maintenance_task_id ? 'cursor-grab active:cursor-grabbing opacity-100 w-5' : 'opacity-0 w-0 overflow-hidden'}`} style={{ touchAction: 'none' }}>
                                              <GripVertical className="w-4 h-4 text-gray-400" />
                                           </div>
                                           <button className="flex-shrink-0 -ml-1" onClick={() => {
