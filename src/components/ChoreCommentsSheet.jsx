@@ -193,6 +193,7 @@ export default function ChoreCommentsSheet({ chore, open, onOpenChange }) {
   const commentRefs = useRef({});
   const fileInputRef = useRef(null);
   const inputFormRef = useRef(null);
+  const chatContainerRef = useRef(null);
 
   useEffect(() => {
     base44.auth.me().then(u => {
@@ -345,7 +346,7 @@ export default function ChoreCommentsSheet({ chore, open, onOpenChange }) {
         </div>
 
         {/* Chat messages */}
-        <div className="flex-1 overflow-y-auto mt-2 space-y-3 px-1">
+        <div ref={chatContainerRef} className="flex-1 overflow-y-auto mt-2 space-y-3 px-1">
           {comments.length === 0 ? (
             <p className="text-sm text-gray-400 text-center py-8">No updates yet. Be the first!</p>
           ) : (
@@ -542,7 +543,12 @@ export default function ChoreCommentsSheet({ chore, open, onOpenChange }) {
                  className="flex-1 resize-none"
                  style={{ fontSize: '16px' }}
                  onFocus={() => {
-                   setTimeout(() => inputFormRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 300);
+                   setTimeout(() => {
+                     if (chatContainerRef.current) {
+                       chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+                     }
+                     inputFormRef.current?.scrollIntoView({ behavior: 'instant', block: 'end' });
+                   }, 300);
                  }}
                  onKeyDown={(e) => {
                    if (e.key === 'Enter' && !e.shiftKey) {
