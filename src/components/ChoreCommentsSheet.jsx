@@ -43,10 +43,22 @@ function CommentAvatar({ authorName, email, familyMembers, currentUserEmail, cur
   );
 }
 
+// Per-member banner gradient colors (matches FamilyMemberPage MEMBER_CONFIG)
+const MEMBER_BANNER_COLORS = {
+  Bryan:   { solid: '#3B82F6', light: 'rgba(96,165,250,0.18)',  border: 'rgba(59,130,246,0.5)',  line: 'rgba(59,130,246,0.35)' },
+  Kate:    { solid: '#34D399', light: 'rgba(110,231,183,0.18)', border: 'rgba(52,211,153,0.5)',  line: 'rgba(52,211,153,0.35)' },
+  Phoenix: { solid: '#F97316', light: 'rgba(251,146,60,0.18)',  border: 'rgba(249,115,22,0.5)',  line: 'rgba(249,115,22,0.35)' },
+  Mara:    { solid: '#FFB6C1', light: 'rgba(255,182,193,0.18)', border: 'rgba(255,150,170,0.5)', line: 'rgba(255,150,170,0.35)' },
+};
+
+function getMemberBannerColor(familyMembers, authorName, email, currentUserEmail, currentUserMember) {
+  const member = getCommentAuthorMember(email, authorName, currentUserEmail, currentUserMember, familyMembers);
+  return member?.name ? (MEMBER_BANNER_COLORS[member.name] || null) : null;
+}
+
 // Convert a hex color to a very light tinted background (20% opacity approximation)
 function hexToLightBg(hex) {
   if (!hex) return '#f3f4f6';
-  // Parse hex
   const r = parseInt(hex.slice(1, 3), 16);
   const g = parseInt(hex.slice(3, 5), 16);
   const b = parseInt(hex.slice(5, 7), 16);
@@ -62,30 +74,33 @@ function hexToBorderColor(hex) {
 }
 
 // Progress timeline bar across the top
-function ProgressTimeline({ progressUpdates, onClickNode, familyMembers, currentUserEmail, currentUserMember }) {
-  const total = progressUpdates.length;
-  // Nodes: Incomplete (left), ...progress updates..., Complete (right)
-  // Most recent progress update is highlighted
-
+function ProgressTimeline({ progressUpdates, onClickNode, familyMembers, currentUserEmail, currentUserMember, assignedMemberName }) {
   const nodes = [
-    { type: 'start', label: 'Incomplete' },
+    { type: 'start' },
     ...progressUpdates.map((p, i) => ({ type: 'progress', index: i, comment: p })),
-    { type: 'end', label: 'Complete' },
+    { type: 'end' },
   ];
 
+  // Use the chore's assigned member banner color as the primary palette
+  const assignedColors = MEMBER_BANNER_COLORS[assignedMemberName] || null;
+
+  const lastProgressI = (() => {
+    for (let i = nodes.length - 1; i >= 0; i--) {
+      if (nodes[i].type === 'progress') return i;
+    }
+    return -1;
+  })();
+
   return (
-    <div className="w-full px-1 py-3">
-      <div className="flex items-center w-full">
+    <div className="w-full px-2 py-3">
+      <div className="flex items-start w-full">
         {nodes.map((node, i) => {
           const isLast = i === nodes.length - 1;
           const isFirst = i === 0;
-          // Most recent progress update = last progress node
-          const lastProgressIdx = nodes.slice().reverse().findIndex(n => n.type === 'progress');
-          const lastProgressI = lastProgressIdx === -1 ? -1 : nodes.length - 1 - lastProgressIdx;
           const isHighlighted = node.type === 'progress' && i === lastProgressI;
 
-          // Get member color for progress node
-          let memberColor = null;
+          // For progress nodes, get the author's banner color (fallback to assigned member color)
+          let nodeColors = assignedColors;
           if (node.type === 'progress' && node.comment) {
             const member = getCommentAuthorMember(
               node.comment.created_by,
@@ -94,45 +109,45 @@ function ProgressTimeline({ progressUpdates, onClickNode, familyMembers, current
               currentUserMember,
               familyMembers
             );
-            memberColor = member?.color || null;
+            if (member?.name && MEMBER_BANNER_COLORS[member.name]) {
+              nodeColors = MEMBER_BANNER_COLORS[member.name];
+            }
           }
+
+          const circleStyle = isFirst
+            ? { borderColor: assignedColors?.solid || '#9ca3af', backgroundColor: assignedColors?.solid || '#9ca3af' }
+            : isLast
+            ? { borderColor: '#d1d5db', backgroundColor: 'white' }
+            : isHighlighted
+            ? { borderColor: nodeColors?.solid || '#6b7280', backgroundColor: nodeColors?.solid || '#6b7280' }
+            : { borderColor: nodeColors?.border || '#d1d5db', backgroundColor: nodeColors?.light || '#f3f4f6' };
+
+          const labelStyle = isFirst
+            ? { color: assignedColors?.solid || '#6b7280' }
+            : isLast
+            ? { color: '#d1d5db' }
+            : isHighlighted
+            ? { color: nodeColors?.solid || '#6b7280', fontWeight: 600 }
+            : { color: '#9ca3af' };
 
           const circleEl = (
             <button
               key={`node-${i}`}
               onClick={() => node.type === 'progress' && onClickNode(node.comment.id)}
-              className={`flex flex-col items-center flex-shrink-0 ${node.type === 'progress' ? 'cursor-pointer' : 'cursor-default'}`}
-              style={{ minWidth: 0 }}
+              className={`flex flex-col items-center ${node.type === 'progress' ? 'cursor-pointer' : 'cursor-default'}`}
+              style={{ flexShrink: 0, width: 52 }}
             >
               <div
-                className={`rounded-full border-2 flex items-center justify-center transition-all
-                  ${isFirst ? 'w-5 h-5' : isLast ? 'w-5 h-5' : isHighlighted ? 'w-5 h-5' : 'w-4 h-4'}
-                `}
-                style={
-                  isFirst
-                    ? { borderColor: '#9ca3af', backgroundColor: '#9ca3af' }
-                    : isLast
-                    ? { borderColor: '#d1d5db', backgroundColor: 'white' }
-                    : isHighlighted
-                    ? { borderColor: memberColor || '#6b7280', backgroundColor: memberColor || '#6b7280' }
-                    : { borderColor: memberColor ? hexToBorderColor(memberColor) : '#d1d5db', backgroundColor: memberColor ? hexToLightBg(memberColor) : '#f3f4f6' }
-                }
+                className="rounded-full border-2 w-5 h-5 flex items-center justify-center transition-all"
+                style={circleStyle}
               >
                 {(isFirst || isHighlighted) && (
-                  <div className="w-2 h-2 rounded-full bg-white opacity-80" />
+                  <div className="w-2 h-2 rounded-full bg-white opacity-90" />
                 )}
               </div>
-              <span className={`text-center leading-tight mt-1
-                ${isFirst ? 'text-gray-500' : isLast ? 'text-gray-300' : isHighlighted ? 'font-semibold' : 'text-gray-400'}
-              `}
-                style={{
-                  fontSize: '9px',
-                  maxWidth: 44,
-                  color: isHighlighted && memberColor ? memberColor : undefined,
-                  whiteSpace: 'nowrap',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                }}
+              <span
+                className="text-center leading-tight mt-1 break-words"
+                style={{ fontSize: '9px', width: 52, ...labelStyle }}
               >
                 {isFirst ? 'Incomplete' : isLast ? 'Complete' : `Update ${node.index + 1}`}
               </span>
@@ -144,7 +159,15 @@ function ProgressTimeline({ progressUpdates, onClickNode, familyMembers, current
           return (
             <React.Fragment key={`frag-${i}`}>
               {circleEl}
-              <div className="flex-1 h-px bg-gray-200 mx-1" style={{ minWidth: 6 }} />
+              <div
+                className="flex-1 mt-2.5"
+                style={{
+                  height: 2,
+                  minWidth: 6,
+                  backgroundColor: assignedColors?.line || '#e5e7eb',
+                  borderRadius: 1,
+                }}
+              />
             </React.Fragment>
           );
         })}
@@ -255,6 +278,7 @@ export default function ChoreCommentsSheet({ chore, open, onOpenChange }) {
             familyMembers={familyMembers}
             currentUserEmail={currentUser?.email}
             currentUserMember={currentUserMember}
+            assignedMemberName={chore?.assigned_to_name}
           />
         </div>
 
