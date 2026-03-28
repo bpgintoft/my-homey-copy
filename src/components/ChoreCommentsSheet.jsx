@@ -339,7 +339,7 @@ export default function ChoreCommentsSheet({ chore, open, onOpenChange }) {
           <img 
             src={fullScreenImage} 
             alt="full screen" 
-            className="max-w-full max-h-full object-contain"
+            className="max-w-full max-h-full object-contain pointer-events-none"
           />
           <button
             onPointerDown={(e) => {
