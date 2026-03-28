@@ -88,22 +88,6 @@ export default function FamilyMemberPage({ memberName }) {
 
   const member = familyMembers.find(m => m.name === memberName);
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: cfg.pageBackground }}>
-        <div className="w-8 h-8 border-4 border-slate-200 border-t-slate-800 rounded-full animate-spin"></div>
-      </div>
-    );
-  }
-
-  if (!member) {
-    return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: cfg.pageBackground }}>
-        <div className="text-gray-500">Family member not found</div>
-      </div>
-    );
-  }
-
   useSwipe((direction) => {
     if (direction === 'left') navigate(createPageUrl(cfg.swipeLeft));
     else if (direction === 'right') navigate(createPageUrl(cfg.swipeRight));
