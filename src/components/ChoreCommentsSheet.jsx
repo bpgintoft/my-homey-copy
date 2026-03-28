@@ -192,6 +192,7 @@ export default function ChoreCommentsSheet({ chore, open, onOpenChange }) {
   const chatEndRef = useRef(null);
   const commentRefs = useRef({});
   const fileInputRef = useRef(null);
+  const inputFormRef = useRef(null);
 
   useEffect(() => {
     base44.auth.me().then(u => {
@@ -514,7 +515,7 @@ export default function ChoreCommentsSheet({ chore, open, onOpenChange }) {
         </div>
 
         {/* Input form */}
-         <div className="pt-3 border-t border-gray-100">
+         <div ref={inputFormRef} className="pt-3 border-t border-gray-100">
            <form onSubmit={handleSubmit} className="flex flex-col gap-2">
              {imagePreview && (
                <div className="relative">
@@ -540,8 +541,8 @@ export default function ChoreCommentsSheet({ chore, open, onOpenChange }) {
                  rows={2}
                  className="flex-1 resize-none"
                  style={{ fontSize: '16px' }}
-                 onFocus={(e) => {
-                   setTimeout(() => e.target.scrollIntoView({ behavior: 'smooth', block: 'center' }), 100);
+                 onFocus={() => {
+                   setTimeout(() => inputFormRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 300);
                  }}
                  onKeyDown={(e) => {
                    if (e.key === 'Enter' && !e.shiftKey) {
