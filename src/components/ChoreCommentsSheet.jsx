@@ -325,6 +325,27 @@ export default function ChoreCommentsSheet({ chore, open, onOpenChange }) {
 
   return (
     <>
+      {/* Full Screen Image Modal - outside Sheet for z-index */}
+      {fullScreenImage && createPortal(
+        <div 
+          className="fixed inset-0 z-[9999] bg-black/95 flex items-center justify-center"
+          onClick={() => setFullScreenImage(null)}
+        >
+          <img 
+            src={fullScreenImage} 
+            alt="full screen" 
+            className="max-w-full max-h-full object-contain"
+          />
+          <button
+            onClick={() => setFullScreenImage(null)}
+            className="absolute top-4 right-4 p-2 text-white hover:bg-white/20 rounded-full transition-colors"
+          >
+            <X className="w-6 h-6" />
+          </button>
+        </div>,
+        document.body
+      )}
+
       <Sheet open={open} onOpenChange={onOpenChange}>
         <SheetContent side="bottom" className="h-[85vh] rounded-t-2xl flex flex-col">
         <SheetHeader>
@@ -610,26 +631,6 @@ export default function ChoreCommentsSheet({ chore, open, onOpenChange }) {
          </div>
       </SheetContent>
     </Sheet>
-
-      {/* Full Screen Image Modal */}
-      {fullScreenImage && (
-        <div 
-          className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center"
-          onClick={() => setFullScreenImage(null)}
-        >
-          <img 
-            src={fullScreenImage} 
-            alt="full screen" 
-            className="max-w-full max-h-full object-contain"
-          />
-          <button
-            onClick={() => setFullScreenImage(null)}
-            className="absolute top-4 right-4 p-2 text-white hover:bg-white/20 rounded-full transition-colors"
-          >
-            <X className="w-6 h-6" />
-          </button>
-        </div>
-      )}
 
       {/* Date Picker Dialog (outside Sheet for proper z-index) */}
       <Dialog 
