@@ -1279,11 +1279,19 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                                     const choreProgress = chore.progress ?? 0;
                                     const showProgress = choreProgress > 0 && !chore.is_completed;
                                     const child = (
-                                      <div ref={provided.innerRef} {...provided.draggableProps} className={`relative rounded-lg overflow-hidden ${itemBg} ${snapshot.isDragging ? 'shadow-lg opacity-90' : ''}`}>
+                                      <div ref={provided.innerRef} {...provided.draggableProps} className={`relative rounded-lg overflow-hidden ${itemBg} ${snapshot.isDragging ? 'shadow-lg opacity-90' : ''}`} style={{ position: 'relative' }}>
                                           <div className="flex items-center gap-3 p-3">
                                           <div {...(!chore.maintenance_task_id ? provided.dragHandleProps : {})} className={`flex-shrink-0 cursor-grab active:cursor-grabbing ${chore.maintenance_task_id || !isReorderingChores ? 'opacity-0 w-0 overflow-hidden' : 'opacity-60 w-5'}`} style={{ touchAction: 'none' }}>
                                              <GripVertical className="w-4 h-4 text-gray-400" />
                                           </div>
+                                          {/* Invisible full-row drag handle for touch-hold drag without rearrange mode */}
+                                          {!chore.maintenance_task_id && !isReorderingChores && (
+                                            <div
+                                              {...provided.dragHandleProps}
+                                              className="absolute inset-0 z-0"
+                                              style={{ touchAction: 'none' }}
+                                            />
+                                          )}
                                           <button className="flex-shrink-0 -ml-1" onClick={() => {
                                             if (!chore.is_completed && chore.maintenance_task_id) {
                                               setRescheduleChore(chore);
