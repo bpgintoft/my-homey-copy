@@ -414,34 +414,32 @@ export default function ChoreCommentsSheet({ chore, open, onOpenChange }) {
         </div>
 
         {/* Due Date Section */}
-        <div className="pt-2 border-t border-gray-100">
+        <div className="pt-3 border-t border-gray-100 pb-2">
           <div className="flex items-center gap-2">
             <Calendar className="w-4 h-4 text-gray-500 flex-shrink-0" />
             <span className="text-xs font-medium text-gray-600">Due Date:</span>
-            <div className="relative flex-1">
-              {!editingDueDate && (
-                <div className="absolute inset-0 flex items-center text-gray-400 pointer-events-none pl-2 text-xs">
-                  Set a date
-                </div>
-              )}
-              <input
-                ref={dueDateInputRef}
-                type="date"
-                value={editingDueDate}
-                onChange={(e) => setEditingDueDate(e.target.value)}
-                onBlur={handleSaveDueDate}
-                min={new Date().toISOString().split('T')[0]}
-                className="relative w-full px-2 py-1.5 text-xs border border-gray-200 rounded bg-white text-gray-700 cursor-pointer"
-                style={{ colorScheme: 'light' }}
-              />
-            </div>
+            <button
+              onClick={() => dueDateInputRef.current?.showPicker?.()}
+              className="flex-1 px-3 py-1.5 text-xs border border-gray-200 rounded bg-white text-gray-700 hover:bg-gray-50 transition-colors text-left"
+            >
+              {editingDueDate ? new Date(editingDueDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Tap to set date'}
+            </button>
+            <input
+              ref={dueDateInputRef}
+              type="date"
+              value={editingDueDate}
+              onChange={(e) => setEditingDueDate(e.target.value)}
+              onBlur={handleSaveDueDate}
+              min={new Date().toISOString().split('T')[0]}
+              className="hidden"
+            />
             {editingDueDate && (
               <button
                 onClick={() => {
                   setEditingDueDate('');
                   handleSaveDueDate();
                 }}
-                className="text-xs text-gray-400 hover:text-gray-600 transition-colors"
+                className="text-xs text-gray-400 hover:text-gray-600 transition-colors flex-shrink-0"
               >
                 ✕
               </button>
