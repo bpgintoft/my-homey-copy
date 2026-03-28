@@ -1,0 +1,74 @@
+{
+  "name": "Chore",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Task or chore title"
+    },
+    "is_completed": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether the task is completed"
+    },
+    "timing": {
+      "type": "string",
+      "enum": [
+        "daily",
+        "short-term",
+        "mid-term",
+        "long-term",
+        "next-year"
+      ],
+      "default": "short-term",
+      "description": "When this task should be completed"
+    },
+    "sort_order": {
+      "type": "number",
+      "description": "Manual sort order within the timing group"
+    },
+    "assigned_to_member_id": {
+      "type": "string",
+      "description": "Family member ID this is assigned to"
+    },
+    "assigned_to_name": {
+      "type": "string",
+      "description": "Family member name for display"
+    },
+    "co_assigned_member_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Other family member IDs also assigned to this task (linked chore group)"
+    },
+    "linked_chore_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "IDs of sibling Chore records for co-assigned members"
+    },
+    "next_due": {
+      "type": "string",
+      "format": "date",
+      "description": "When this chore is next due"
+    },
+    "maintenance_task_id": {
+      "type": "string",
+      "description": "Linked MaintenanceTask ID if this chore was synced from a maintenance task"
+    },
+    "synced_google_calendar_id": {
+      "type": "string",
+      "description": "Google Calendar ID if auto-synced to Google Calendar"
+    },
+    "synced_google_event_id": {
+      "type": "string",
+      "description": "Google Calendar Event ID if auto-synced"
+    }
+  },
+  "required": [
+    "title",
+    "assigned_to_member_id"
+  ]
+}

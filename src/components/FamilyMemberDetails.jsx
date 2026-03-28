@@ -600,6 +600,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
       'short-term': sortChores(chores.filter(c => c.timing === 'short-term')),
       'mid-term': sortChores(chores.filter(c => c.timing === 'mid-term')),
       'long-term': sortChores(chores.filter(c => c.timing === 'long-term')),
+      'next-year': sortChores(chores.filter(c => c.timing === 'next-year')),
     };
     setLocalChores(grouped);
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -609,6 +610,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
     'short-term': sortChores(chores.filter(c => c.timing === 'short-term')),
     'mid-term': sortChores(chores.filter(c => c.timing === 'mid-term')),
     'long-term': sortChores(chores.filter(c => c.timing === 'long-term')),
+    'next-year': sortChores(chores.filter(c => c.timing === 'next-year')),
   };
 
   const linksByCategory = links.reduce((acc, link) => {
@@ -1192,6 +1194,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                         <SelectItem value="short-term">Short-term</SelectItem>
                         <SelectItem value="mid-term">Mid-term</SelectItem>
                         <SelectItem value="long-term">Long-term</SelectItem>
+                        <SelectItem value="next-year">Next Year</SelectItem>
                       </SelectContent>
                     </Select>
                     <div>
@@ -1244,12 +1247,12 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
             ) : (
               <DragDropContext onDragEnd={handleDragEnd}>
                 <div className="space-y-4">
-                  {['short-term', 'mid-term', 'long-term'].map((timing) => {
+                  {['short-term', 'mid-term', 'long-term', 'next-year'].map((timing) => {
                     const timingChores = choresByTiming[timing].filter(c => !c.is_completed);
                     return (
                       <div key={timing}>
                         <h4 className="font-medium text-sm text-gray-700 mb-2 capitalize">
-                          {timing === 'mid-term' ? 'Mid-term' : timing === 'short-term' ? 'Short-term' : 'Long-term'}
+                          {timing === 'short-term' ? 'Short-term' : timing === 'mid-term' ? 'Mid-term' : timing === 'long-term' ? 'Long-term' : 'Next Year'}
                         </h4>
                         <Droppable droppableId={timing}>
                           {(provided, snapshot) => (
