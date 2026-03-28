@@ -1537,26 +1537,24 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
           <DialogHeader>
             <DialogTitle>Completed Tasks</DialogTitle>
           </DialogHeader>
-          <div className="space-y-3">
+          <p className="text-xs text-gray-400 -mt-2">Uncheck an item to move it back to your to-do list</p>
+          <div className="space-y-2">
             {chores.filter(c => c.is_completed).length === 0 ? (
               <p className="text-sm text-gray-500">No completed tasks yet</p>
             ) : (
               chores.filter(c => c.is_completed).sort((a, b) => new Date(b.updated_date) - new Date(a.updated_date)).map((chore) => (
-                <div key={chore.id} className={`rounded-lg p-3 ${itemBg}`}>
-                  <div className="flex items-center justify-between">
-                    <div className="flex-1 min-w-0">
-                      <p className="font-medium text-gray-900 line-through">{chore.title}</p>
-                      <p className="text-xs text-gray-500 mt-1">
-                        Completed on {new Date(chore.updated_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-                      </p>
-                    </div>
-                    <button
-                      onClick={() => toggleChoreMutation.mutate({ id: chore.id, is_completed: false, maintenance_task_id: chore.maintenance_task_id, linked_chore_ids: chore.linked_chore_ids, chore_title: chore.title })}
-                      className="flex-shrink-0 ml-2 p-1 rounded hover:bg-blue-50 transition-colors"
-                      title="Restore task"
-                    >
-                      <CheckCircle2 className="w-4 h-4 text-green-500" />
-                    </button>
+                <div key={chore.id} className="flex items-center gap-3 px-3 py-2 rounded-lg bg-gray-100">
+                  <input
+                    type="checkbox"
+                    checked={true}
+                    onChange={() => toggleChoreMutation.mutate({ id: chore.id, is_completed: false, maintenance_task_id: chore.maintenance_task_id, linked_chore_ids: chore.linked_chore_ids, chore_title: chore.title })}
+                    className="w-5 h-5 rounded border-gray-300 cursor-pointer flex-shrink-0 accent-gray-400"
+                  />
+                  <div className="flex-1 min-w-0">
+                    <p className="font-medium text-gray-400 line-through">{chore.title}</p>
+                    <p className="text-xs text-gray-400 mt-0.5">
+                      Completed {new Date(chore.updated_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                    </p>
                   </div>
                 </div>
               ))
