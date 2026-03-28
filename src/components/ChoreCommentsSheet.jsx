@@ -213,6 +213,12 @@ export default function ChoreCommentsSheet({ chore, open, onOpenChange }) {
     }
   }, [chore?.id]);
 
+  useEffect(() => {
+    if (open && chatEndRef.current) {
+      setTimeout(() => chatEndRef.current?.scrollIntoView({ behavior: 'smooth' }), 100);
+    }
+  }, [open]);
+
   const { data: familyMembers = [] } = useQuery({
     queryKey: ['familyMembers'],
     queryFn: () => base44.entities.FamilyMember.list(),
