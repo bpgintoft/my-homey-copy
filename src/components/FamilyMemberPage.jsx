@@ -96,6 +96,14 @@ export default function FamilyMemberPage({ memberName }) {
     );
   }
 
+  if (!member) {
+    return (
+      <div className="min-h-screen flex items-center justify-center" style={{ background: cfg.pageBackground }}>
+        <div className="text-gray-500">Family member not found</div>
+      </div>
+    );
+  }
+
   useSwipe((direction) => {
     if (direction === 'left') navigate(createPageUrl(cfg.swipeLeft));
     else if (direction === 'right') navigate(createPageUrl(cfg.swipeRight));
