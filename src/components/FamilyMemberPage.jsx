@@ -180,14 +180,10 @@ export default function FamilyMemberPage({ memberName }) {
         </div>
       </div>
 
-      {member && (
-        <>
-          <ChoreNotificationsDialog memberId={member.id} />
-          <div className="max-w-2xl mx-auto px-4 sm:px-6 pt-2 pb-6 space-y-4">
-            <FamilyMemberDetails memberId={member.id} memberName={memberName} color={cfg.color} />
-          </div>
-        </>
-      )}
+      <ChoreNotificationsDialog memberId={member.id} />
+      <div className="max-w-2xl mx-auto px-4 sm:px-6 pt-2 pb-6 space-y-4">
+        <FamilyMemberDetails memberId={member.id} memberName={memberName} color={cfg.color} />
+      </div>
     </div>
   );
 }
