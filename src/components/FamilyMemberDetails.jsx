@@ -1187,7 +1187,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
 
       {/* Chores Dialog */}
       <Dialog open={expandedSection === 'chores'} onOpenChange={(open) => { if (!open) { setExpandedSection(null); setIsReorderingChores(false); } }}>
-        <DialogContent className={`max-w-3xl w-[95vw] top-4 translate-y-0 px-3 sm:px-6 ${isReorderingChores ? 'overflow-y-hidden max-h-[85vh]' : 'overflow-y-auto max-h-[85vh]'}`}>
+        <DialogContent className={`max-w-3xl w-[95vw] top-4 translate-y-0 px-3 sm:px-6 ${isReorderingChores ? 'overflow-y-hidden max-h-[85vh]' : 'overflow-y-auto max-h-[85vh]'}`} style={editingChoreId ? { top: '2rem', transform: 'translateX(-50%)' } : {}}>
           <DialogHeader>
             <DialogTitle className="flex items-center justify-between">
               <span>To-Do List</span>
@@ -1335,7 +1335,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                                           <div className="flex-1 min-w-0">
                                             {editingChoreId === chore.id ? (
                                               <div className="space-y-2">
-                                                <Input value={editingChoreTitle} onChange={(e) => setEditingChoreTitle(e.target.value)} onBlur={() => updateChoreMutation.mutate({ id: chore.id, title: editingChoreTitle, linked_chore_ids: chore.linked_chore_ids, chore: editingChoreRef })} onKeyDown={(e) => { if (e.key === 'Enter') updateChoreMutation.mutate({ id: chore.id, title: editingChoreTitle, linked_chore_ids: chore.linked_chore_ids, chore: editingChoreRef }); if (e.key === 'Escape') setEditingChoreId(null); }} autoFocus className="h-8" />
+                                                <Input value={editingChoreTitle} onChange={(e) => setEditingChoreTitle(e.target.value)} onBlur={() => updateChoreMutation.mutate({ id: chore.id, title: editingChoreTitle, linked_chore_ids: chore.linked_chore_ids, chore: editingChoreRef })} onKeyDown={(e) => { if (e.key === 'Enter') updateChoreMutation.mutate({ id: chore.id, title: editingChoreTitle, linked_chore_ids: chore.linked_chore_ids, chore: editingChoreRef }); if (e.key === 'Escape') setEditingChoreId(null); }} autoFocus className="h-8" onFocus={(e) => { setTimeout(() => e.target.scrollIntoView({ behavior: 'smooth', block: 'center' }), 300); }} />
                                                 <div className="flex items-center gap-2">
                                                   <span className="text-xs text-gray-500 shrink-0">Progress</span>
                                                   <Slider
