@@ -494,7 +494,10 @@ export default function ChoreCommentsSheet({ chore, open, onOpenChange }) {
           <div className="px-4 pb-4 flex flex-col gap-3">
             <CalendarComponent
               mode="single"
-              selected={editingDueDate ? new Date(editingDueDate) : undefined}
+              selected={editingDueDate ? (() => {
+                const [year, month, day] = editingDueDate.split('-').map(Number);
+                return new Date(year, month - 1, day);
+              })() : undefined}
               onSelect={async (date) => {
                 if (date) {
                   const year = date.getFullYear();
