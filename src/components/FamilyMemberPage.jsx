@@ -81,7 +81,7 @@ export default function FamilyMemberPage({ memberName }) {
   const bannerRef = useRef(null);
   const navigate = useNavigate();
 
-  const { data: familyMembers = [], isLoading } = useQuery({
+  const { data: familyMembers = [] } = useQuery({
     queryKey: ['familyMembers'],
     queryFn: () => base44.entities.FamilyMember.list(),
   });
@@ -94,24 +94,6 @@ export default function FamilyMemberPage({ memberName }) {
   }, bannerRef);
 
   const slug = memberName.toLowerCase();
-
-  if (isLoading) {
-    return (
-      <div className="fixed inset-0 flex items-center justify-center bg-white">
-        <div className="w-8 h-8 border-4 border-slate-200 border-t-slate-800 rounded-full animate-spin"></div>
-      </div>
-    );
-  }
-
-  if (!member) {
-    return (
-      <div className="fixed inset-0 flex items-center justify-center bg-white">
-        <div className="text-center">
-          <p className="text-gray-600 text-lg">Family member not found</p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen relative" style={{ background: cfg.pageBackground }}>
@@ -182,10 +164,14 @@ export default function FamilyMemberPage({ memberName }) {
         </div>
       </div>
 
-      <ChoreNotificationsDialog memberId={member.id} />
-      <div className="max-w-2xl mx-auto px-4 sm:px-6 pt-2 pb-6 space-y-4">
-        <FamilyMemberDetails memberId={member.id} memberName={memberName} color={cfg.color} />
-      </div>
+      {member && (
+        <>
+          <ChoreNotificationsDialog memberId={member.id} />
+          <div className="max-w-2xl mx-auto px-4 sm:px-6 pt-2 pb-6 space-y-4">
+            <FamilyMemberDetails memberId={member.id} memberName={memberName} color={cfg.color} />
+          </div>
+        </>
+      )}
     </div>
   );
 }
