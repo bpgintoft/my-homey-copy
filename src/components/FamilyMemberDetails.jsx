@@ -1259,7 +1259,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
             {chores.filter(c => !c.is_completed).length === 0 ? (
               <p className="text-sm text-gray-500">No tasks yet</p>
             ) : (
-              <DragDropContext onDragEnd={handleDragEnd}>
+              <DragDropContext onDragStart={() => setIsReorderingChores(true)} onDragEnd={handleDragEnd}>
                 <div className="space-y-4">
                   {['short-term', 'mid-term', 'long-term', 'next-year'].map((timing) => {
                     const timingChores = choresByTiming[timing].filter(c => !c.is_completed);
@@ -1282,9 +1282,11 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                                      <div
                                        ref={provided.innerRef}
                                        {...provided.draggableProps}
-                                       className={`relative rounded-lg ${itemBg} transition-shadow`}
+                                       {...(!chore.maintenance_task_id ? provided.dragHandleProps : {})}
+                                       className={`relative rounded-lg ${itemBg} transition-shadow select-none`}
                                        style={{
                                          ...provided.draggableProps.style,
+                                         touchAction: chore.maintenance_task_id ? undefined : 'none',
                                          ...(snapshot.isDragging ? {
                                            boxShadow: '0 8px 24px rgba(0,0,0,0.18)',
                                            transform: `${provided.draggableProps.style?.transform || ''} scale(1.02)`,
@@ -1294,12 +1296,8 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                                        }}
                                      >
                                          <div className="flex items-center gap-3 p-3">
-                                         {!chore.maintenance_task_id && isReorderingChores && (
-                                           <div
-                                             {...provided.dragHandleProps}
-                                             className="flex-shrink-0 w-5 opacity-60 cursor-grab active:cursor-grabbing"
-                                             style={{ touchAction: 'none' }}
-                                           >
+                                         {!chore.maintenance_task_id && (isReorderingChores || snapshot.isDragging) && (
+                                           <div className="flex-shrink-0 w-5 opacity-40">
                                              <GripVertical className="w-4 h-4 text-gray-400" />
                                            </div>
                                          )}
@@ -1402,7 +1400,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                                     return child;
                                   };
                                   return (
-                                    <Draggable key={chore.id} draggableId={chore.id} index={index} isDragDisabled={!!chore.maintenance_task_id || !isReorderingChores}>
+                                    <Draggable key={chore.id} draggableId={chore.id} index={index} isDragDisabled={!!chore.maintenance_task_id}>
                                       {choreEl}
                                     </Draggable>
                                   );
