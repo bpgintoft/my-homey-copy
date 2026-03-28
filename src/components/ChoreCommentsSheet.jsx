@@ -191,6 +191,7 @@ export default function ChoreCommentsSheet({ chore, open, onOpenChange }) {
   const [selectedImage, setSelectedImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [fullScreenImage, setFullScreenImage] = useState(null);
+  const [commentExpanded, setCommentExpanded] = useState(true);
   const chatEndRef = useRef(null);
   const commentRefs = useRef({});
   const fileInputRef = useRef(null);
@@ -205,6 +206,13 @@ export default function ChoreCommentsSheet({ chore, open, onOpenChange }) {
       }).catch(() => {});
     }).catch(() => {});
   }, []);
+
+  // Auto-scroll to last comment when dialog opens
+  useEffect(() => {
+    if (open && comments.length > 0) {
+      setTimeout(() => chatEndRef.current?.scrollIntoView({ behavior: 'smooth' }), 100);
+    }
+  }, [open, comments.length]);
 
   useEffect(() => {
     if (chore) {
@@ -359,7 +367,15 @@ export default function ChoreCommentsSheet({ chore, open, onOpenChange }) {
         </div>
 
         {/* Chat messages */}
-        <div ref={chatContainerRef} className="flex-1 overflow-y-auto mt-2 space-y-3 px-1">
+        <div ref={chatContainerRef} className={`transition-all ${commentExpanded ? 'flex-1 overflow-y-auto' : 'max-h-48 overflow-y-auto'} mt-2 space-y-3 px-1`}>
+          {/* Expandable header */}
+          {comments.length > 0 && (
+            <div className="sticky top-0 z-10 flex items-center justify-between mb-2 cursor-pointer select-none" onClick={() => setCommentExpanded(prev => !prev)}>
+              <p className="text-xs font-medium text-gray-500 uppercase">Comments & Updates</p>
+              <span className="text-gray-400 text-xs">{commentExpanded ? '↕ collapse' : '⤢ expand'}</span>
+            </div>
+          )}
+
           {comments.length === 0 ? (
             <p className="text-sm text-gray-400 text-center py-8">No updates yet. Be the first!</p>
           ) : (
