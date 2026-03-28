@@ -1255,7 +1255,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
               </div>
             </DialogTitle>
           </DialogHeader>
-          <div className={`overflow-y-auto max-h-[calc(85vh-8rem)]`} style={isReorderingChores ? { touchAction: 'none' } : {}}>
+          <div className="overflow-y-auto max-h-[calc(85vh-8rem)]" style={isReorderingChores ? { touchAction: 'none', overflowY: 'auto' } : {}}>
             {chores.filter(c => !c.is_completed).length === 0 ? (
               <p className="text-sm text-gray-500">No tasks yet</p>
             ) : (
@@ -1279,10 +1279,27 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                                    const choreProgress = chore.progress ?? 0;
                                    const showProgress = choreProgress > 0 && !chore.is_completed;
                                    const child = (
-                                     <div ref={provided.innerRef} {...provided.draggableProps} className={`relative rounded-lg overflow-hidden ${itemBg} ${snapshot.isDragging ? 'shadow-lg ring-2 ring-blue-300' : ''}`}>
+                                     <div
+                                       ref={provided.innerRef}
+                                       {...provided.draggableProps}
+                                       className={`relative rounded-lg ${itemBg} transition-shadow`}
+                                       style={{
+                                         ...provided.draggableProps.style,
+                                         ...(snapshot.isDragging ? {
+                                           boxShadow: '0 8px 24px rgba(0,0,0,0.18)',
+                                           transform: `${provided.draggableProps.style?.transform || ''} scale(1.02)`,
+                                           zIndex: 9999,
+                                           opacity: 1,
+                                         } : {}),
+                                       }}
+                                     >
                                          <div className="flex items-center gap-3 p-3">
                                          {!chore.maintenance_task_id && isReorderingChores && (
-                                           <div {...provided.dragHandleProps} className="flex-shrink-0 w-5 opacity-60 cursor-grab active:cursor-grabbing touch-none">
+                                           <div
+                                             {...provided.dragHandleProps}
+                                             className="flex-shrink-0 w-5 opacity-60 cursor-grab active:cursor-grabbing"
+                                             style={{ touchAction: 'none' }}
+                                           >
                                              <GripVertical className="w-4 h-4 text-gray-400" />
                                            </div>
                                          )}
@@ -1385,7 +1402,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                                     return child;
                                   };
                                   return (
-                                    <Draggable key={chore.id} draggableId={chore.id} index={index} isDragDisabled={!!chore.maintenance_task_id}>
+                                    <Draggable key={chore.id} draggableId={chore.id} index={index} isDragDisabled={!!chore.maintenance_task_id || !isReorderingChores}>
                                       {choreEl}
                                     </Draggable>
                                   );
