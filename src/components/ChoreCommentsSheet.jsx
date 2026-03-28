@@ -4,7 +4,7 @@ import { base44 } from '@/api/base44Client';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Trash2, Send, TrendingUp } from 'lucide-react';
+import { Trash2, Send, TrendingUp, Calendar } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { getCommentAuthorMember } from '@/lib/getCommentAuthorMember';
 
@@ -182,8 +182,10 @@ export default function ChoreCommentsSheet({ chore, open, onOpenChange }) {
   const [isProgressUpdate, setIsProgressUpdate] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
   const [currentUserMember, setCurrentUserMember] = useState(null);
+  const [editingDueDate, setEditingDueDate] = useState(null);
   const chatEndRef = useRef(null);
   const commentRefs = useRef({});
+  const dueDateInputRef = useRef(null);
 
   useEffect(() => {
     base44.auth.me().then(u => {
@@ -193,6 +195,10 @@ export default function ChoreCommentsSheet({ chore, open, onOpenChange }) {
       }).catch(() => {});
     }).catch(() => {});
   }, []);
+
+  useEffect(() => {
+    if (chore) setEditingDueDate(chore.next_due || '');
+  }, [chore?.id]);
 
   const { data: familyMembers = [] } = useQuery({
     queryKey: ['familyMembers'],
@@ -277,6 +283,15 @@ export default function ChoreCommentsSheet({ chore, open, onOpenChange }) {
       el.classList.add('ring-2', 'ring-offset-1');
       setTimeout(() => el.classList.remove('ring-2', 'ring-offset-1'), 1500);
     }
+  };
+
+  const handleSaveDueDate = async () => {
+    if (!chore?.id) return;
+    await base44.entities.Chore.update(chore.id, { next_due: editingDueDate || null });
+    if (chore.linked_chore_ids?.length) {
+      await Promise.all(chore.linked_chore_ids.map(id => base44.entities.Chore.update(id, { next_due: editingDueDate || null })));
+    }
+    queryClient.invalidateQueries(['chores']);
   };
 
   return (
@@ -396,6 +411,42 @@ export default function ChoreCommentsSheet({ chore, open, onOpenChange }) {
             })
           )}
           <div ref={chatEndRef} />
+        </div>
+
+        {/* Due Date Section */}
+        <div className="pt-2 border-t border-gray-100">
+          <div className="flex items-center gap-2">
+            <Calendar className="w-4 h-4 text-gray-500 flex-shrink-0" />
+            <span className="text-xs font-medium text-gray-600">Due Date:</span>
+            <div className="relative flex-1">
+              {!editingDueDate && (
+                <div className="absolute inset-0 flex items-center text-gray-400 pointer-events-none pl-2 text-xs">
+                  Set a date
+                </div>
+              )}
+              <input
+                ref={dueDateInputRef}
+                type="date"
+                value={editingDueDate}
+                onChange={(e) => setEditingDueDate(e.target.value)}
+                onBlur={handleSaveDueDate}
+                min={new Date().toISOString().split('T')[0]}
+                className="relative w-full px-2 py-1.5 text-xs border border-gray-200 rounded bg-white text-gray-700 cursor-pointer"
+                style={{ colorScheme: 'light' }}
+              />
+            </div>
+            {editingDueDate && (
+              <button
+                onClick={() => {
+                  setEditingDueDate('');
+                  handleSaveDueDate();
+                }}
+                className="text-xs text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                ✕
+              </button>
+            )}
+          </div>
         </div>
 
         {/* Input form */}
