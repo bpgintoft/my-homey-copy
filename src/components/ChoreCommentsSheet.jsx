@@ -215,6 +215,19 @@ export default function ChoreCommentsSheet({ chore, open, onOpenChange }) {
   // Separate progress updates (in chronological order)
   const progressUpdates = comments.filter(c => c.is_progress_update);
 
+  // n progress updates → progress = n/(n+1) * 100, rounded
+  const calcProgressFromUpdateCount = (n) => Math.round((n / (n + 1)) * 100);
+
+  const updateChoreProgress = async (newProgressUpdateCount) => {
+    if (!chore?.id) return;
+    const newProgress = calcProgressFromUpdateCount(newProgressUpdateCount);
+    await base44.entities.Chore.update(chore.id, { progress: newProgress });
+    if (chore.linked_chore_ids?.length) {
+      await Promise.all(chore.linked_chore_ids.map(id => base44.entities.Chore.update(id, { progress: newProgress })));
+    }
+    queryClient.invalidateQueries(['chores']);
+  };
+
   const addCommentMutation = useMutation({
     mutationFn: async ({ text, isProgress }) => {
       await base44.entities.ChoreComment.create({
@@ -223,20 +236,26 @@ export default function ChoreCommentsSheet({ chore, open, onOpenChange }) {
         author_name: currentUser?.full_name || '',
         is_progress_update: isProgress,
       });
+      if (isProgress) {
+        await updateChoreProgress(progressUpdates.length + 1);
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries(['choreComments', chore?.id]);
       queryClient.invalidateQueries(['choreCommentCounts']);
       setNewComment('');
       setIsProgressUpdate(false);
-      // Scroll to bottom after new comment
       setTimeout(() => chatEndRef.current?.scrollIntoView({ behavior: 'smooth' }), 100);
     },
   });
 
   const deleteCommentMutation = useMutation({
-    mutationFn: async (id) => {
+    mutationFn: async ({ id, isProgress }) => {
       await base44.entities.ChoreComment.delete(id);
+      if (isProgress) {
+        const newCount = Math.max(0, progressUpdates.length - 1);
+        await updateChoreProgress(newCount);
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries(['choreComments', chore?.id]);
@@ -332,7 +351,7 @@ export default function ChoreCommentsSheet({ chore, open, onOpenChange }) {
                           </p>
                         </div>
                         <button
-                          onClick={() => deleteCommentMutation.mutate(comment.id)}
+                          onClick={() => deleteCommentMutation.mutate({ id: comment.id, isProgress: true })}
                           className="text-gray-300 hover:text-red-400 transition-colors flex-shrink-0"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
@@ -365,7 +384,7 @@ export default function ChoreCommentsSheet({ chore, open, onOpenChange }) {
                         </p>
                       </div>
                       <button
-                        onClick={() => deleteCommentMutation.mutate(comment.id)}
+                        onClick={() => deleteCommentMutation.mutate({ id: comment.id, isProgress: false })}
                         className="text-gray-300 hover:text-red-400 transition-colors flex-shrink-0"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
