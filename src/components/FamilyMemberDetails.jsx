@@ -1255,7 +1255,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
               </div>
             </DialogTitle>
           </DialogHeader>
-          <div className={isReorderingChores ? 'overflow-y-auto max-h-[calc(85vh-8rem)]' : ''} style={isReorderingChores ? { touchAction: 'none' } : {}}>
+          <div className="overflow-y-auto max-h-[calc(85vh-8rem)]" style={{ touchAction: 'pan-y' }}>
             {chores.filter(c => !c.is_completed).length === 0 ? (
               <p className="text-sm text-gray-500">No tasks yet</p>
             ) : (
@@ -1281,7 +1281,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                                     const child = (
                                       <div ref={provided.innerRef} {...provided.draggableProps} className={`relative rounded-lg overflow-hidden ${itemBg} ${snapshot.isDragging ? 'shadow-lg opacity-90' : ''}`}>
                                           <div className="flex items-center gap-3 p-3">
-                                          <div {...(!chore.maintenance_task_id && isReorderingChores ? provided.dragHandleProps : {})} className={`flex-shrink-0 transition-all ${isReorderingChores && !chore.maintenance_task_id ? 'cursor-grab active:cursor-grabbing opacity-100 w-5' : 'opacity-0 w-0 overflow-hidden'}`} style={{ touchAction: 'none' }}>
+                                          <div {...(!chore.maintenance_task_id ? provided.dragHandleProps : {})} className={`flex-shrink-0 cursor-grab active:cursor-grabbing ${chore.maintenance_task_id ? 'opacity-0 w-0 overflow-hidden' : 'opacity-30 hover:opacity-60 w-5'}`} style={{ touchAction: 'none' }}>
                                              <GripVertical className="w-4 h-4 text-gray-400" />
                                           </div>
                                           <button className="flex-shrink-0 -ml-1" onClick={() => {
@@ -1383,7 +1383,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                                     return snapshot.isDragging ? createPortal(child, document.body) : child;
                                   };
                                   return (
-                                    <Draggable key={chore.id} draggableId={chore.id} index={index} isDragDisabled={!!chore.maintenance_task_id || !isReorderingChores}>
+                                    <Draggable key={chore.id} draggableId={chore.id} index={index} isDragDisabled={!!chore.maintenance_task_id}>
                                       {choreEl}
                                     </Draggable>
                                   );
