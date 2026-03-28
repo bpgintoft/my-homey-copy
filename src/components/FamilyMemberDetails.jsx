@@ -81,6 +81,8 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
   const [isReorderingChores, setIsReorderingChores] = useState(false);
   const [showArchive, setShowArchive] = useState(false);
 
+
+
   const DEFAULT_SECTIONS = [
     { key: 'chores', label: 'To-Do List' },
     { key: 'schoolProgram', label: 'School & Work' },
