@@ -69,7 +69,7 @@ export default function MaintenanceTaskCard({ task, onSync, onComplete, onEdit }
           {task.next_due && (
             <div className="text-xs text-gray-500 flex items-center gap-1">
               <Calendar className="w-3 h-3" />
-              {format(new Date(task.next_due), 'MMM d')}
+              {format(new Date(task.next_due + 'T12:00:00'), 'MMM d')}
             </div>
           )}
         </div>
@@ -108,7 +108,7 @@ export default function MaintenanceTaskCard({ task, onSync, onComplete, onEdit }
                   {task.next_due && (
                     <div className="flex items-center gap-2">
                       <Calendar className="w-4 h-4" />
-                      <span>Due: {format(new Date(task.next_due), 'MMM d, yyyy')}</span>
+                      <span>Due: {format(new Date(task.next_due + 'T12:00:00'), 'MMM d, yyyy')}</span>
                     </div>
                   )}
                   {task.assigned_name && (
