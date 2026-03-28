@@ -80,6 +80,21 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
   const [showFinancials, setShowFinancials] = useState(false);
   const [commentingChore, setCommentingChore] = useState(null);
   const [isReorderingChores, setIsReorderingChores] = useState(false);
+  const longPressTimer = React.useRef(null);
+
+  const handleRowTouchStart = (choreId) => {
+    if (chores.find(c => c.id === choreId)?.maintenance_task_id) return;
+    longPressTimer.current = setTimeout(() => {
+      setIsReorderingChores(true);
+    }, 150);
+  };
+
+  const handleRowTouchEnd = () => {
+    if (longPressTimer.current) {
+      clearTimeout(longPressTimer.current);
+      longPressTimer.current = null;
+    }
+  };
   const [showArchive, setShowArchive] = useState(false);
 
 
@@ -1282,11 +1297,12 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                                      <div
                                        ref={provided.innerRef}
                                        {...provided.draggableProps}
-                                       {...(!chore.maintenance_task_id ? provided.dragHandleProps : {})}
-                                       className={`relative rounded-lg ${itemBg} transition-shadow select-none`}
+                                       className={`relative rounded-lg ${itemBg} transition-shadow`}
+                                       onTouchStart={() => handleRowTouchStart(chore.id)}
+                                       onTouchEnd={handleRowTouchEnd}
+                                       onTouchMove={handleRowTouchEnd}
                                        style={{
                                          ...provided.draggableProps.style,
-                                         touchAction: chore.maintenance_task_id ? undefined : 'none',
                                          ...(snapshot.isDragging ? {
                                            boxShadow: '0 8px 24px rgba(0,0,0,0.18)',
                                            transform: `${provided.draggableProps.style?.transform || ''} scale(1.02)`,
@@ -1296,8 +1312,12 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                                        }}
                                      >
                                          <div className="flex items-center gap-3 p-3">
-                                         {!chore.maintenance_task_id && (isReorderingChores || snapshot.isDragging) && (
-                                           <div className="flex-shrink-0 w-5 opacity-40">
+                                         {!chore.maintenance_task_id && (
+                                           <div
+                                             {...provided.dragHandleProps}
+                                             className={`flex-shrink-0 w-5 cursor-grab active:cursor-grabbing transition-opacity ${isReorderingChores || snapshot.isDragging ? 'opacity-40' : 'opacity-0'}`}
+                                             style={{ touchAction: 'none' }}
+                                           >
                                              <GripVertical className="w-4 h-4 text-gray-400" />
                                            </div>
                                          )}
