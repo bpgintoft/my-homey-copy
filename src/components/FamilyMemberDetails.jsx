@@ -151,7 +151,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
     enabled: !!memberId,
   });
 
-  // Open chores section directly if ?chore=<id> param is present
+  // Open chores section directly if ?chore=<id> param is present (consumed once)
   React.useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const choreId = params.get('chore');
@@ -162,6 +162,9 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
         setEditingChoreId(choreId);
         setEditingChoreTitle(target.title);
         setEditingChoreRef(target);
+        // Clear the param so closing the dialog doesn't reopen it
+        const newUrl = window.location.pathname;
+        window.history.replaceState(null, '', newUrl);
       }
     }
   }, [chores]);
