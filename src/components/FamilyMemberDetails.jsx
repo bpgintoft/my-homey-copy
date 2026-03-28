@@ -698,6 +698,17 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
 
   return (
     <div className="space-y-4">
+      {/* Quick Categories Button (Always Visible) */}
+      <div className="flex justify-end">
+        <button
+          onClick={() => setCustomizingCategories(true)}
+          className="flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-full bg-purple-100 text-purple-700 hover:bg-purple-200 transition-colors font-medium"
+          title="Customize chore categories"
+        >
+          <Settings2 className="w-3 h-3" /> Categories
+        </button>
+      </div>
+
       {/* 2-Column Grid for Sections */}
       <div className="relative">
 
@@ -1219,13 +1230,6 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
             <DialogTitle className="flex items-center justify-between">
               <span>To-Do List</span>
               <div className="flex items-center gap-2 mr-10">
-                <button
-                  onClick={() => setCustomizingCategories(true)}
-                  className="flex items-center gap-1 text-xs px-2.5 py-1 rounded-full bg-purple-100 text-purple-700 hover:bg-purple-200 transition-colors font-medium"
-                  title="Customize categories"
-                >
-                  <Settings2 className="w-3 h-3" /> Categories
-                </button>
                 <button
                   onClick={() => setIsReorderingChores(prev => !prev)}
                   className={`flex items-center gap-1 text-xs px-2.5 py-1 rounded-full transition-colors font-medium ${isReorderingChores ? 'bg-green-100 text-green-700 hover:bg-green-200' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
