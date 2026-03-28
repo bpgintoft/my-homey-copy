@@ -38,6 +38,14 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
     orange: 'bg-orange-50 border-orange-100',
   };
 
+  const dialogBgMap = {
+    blue: 'bg-blue-50',
+    green: 'bg-green-50',
+    pink: 'bg-pink-50',
+    purple: 'bg-purple-50',
+    orange: 'bg-orange-50',
+  };
+
   const iconColorMap = {
     blue: 'text-blue-700',
     green: 'text-green-700',
@@ -47,6 +55,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
   };
 
   const itemBg = colorMap[color] || colorMap.blue;
+  const dialogBg = dialogBgMap[color] || dialogBgMap.blue;
   const iconColor = iconColorMap[color] || iconColorMap.blue;
   const [dialogOpen, setDialogOpen] = useState({ chore: false, milestone: false, contact: false, link: false });
   const [newChore, setNewChore] = useState({ title: '', timing: 'short-term', next_due: '' });
@@ -1273,7 +1282,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
               </div>
             </DialogTitle>
           </DialogHeader>
-          <div className="overflow-y-auto max-h-[calc(85vh-8rem)]">
+          <div className={`overflow-y-auto max-h-[calc(85vh-8rem)] rounded-lg p-2 -mx-2 ${dialogBg}`}>
             {chores.filter(c => !c.is_completed).length === 0 ? (
               <p className="text-sm text-gray-500">No tasks yet</p>
             ) : (
@@ -1301,7 +1310,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                                        ref={provided.innerRef}
                                        {...provided.draggableProps}
                                        {...(!chore.maintenance_task_id && isReorderingChores ? provided.dragHandleProps : {})}
-                                       className={`relative rounded-lg ${itemBg} transition-shadow`}
+                                       className={`relative rounded-lg bg-white border border-gray-100 shadow-sm transition-shadow`}
                                        style={{
                                          ...provided.draggableProps.style,
                                          touchAction: (!chore.maintenance_task_id && isReorderingChores && snapshot.isDragging) ? 'none' : undefined,
