@@ -180,6 +180,7 @@ function ProgressTimeline({ progressUpdates, onClickNode, familyMembers, current
 
 export default function ChoreCommentsSheet({ chore, open, onOpenChange }) {
   const queryClient = useQueryClient();
+  const savedQueryClient = queryClient;
   const [newComment, setNewComment] = useState('');
   const [isProgressUpdate, setIsProgressUpdate] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
@@ -483,13 +484,8 @@ export default function ChoreCommentsSheet({ chore, open, onOpenChange }) {
 
       {/* Date Picker Dialog (outside Sheet for proper z-index) */}
       <Dialog 
-        open={dueDateDialogOpen} 
-        onOpenChange={(isOpen) => {
-          if (!isOpen && editingDueDate !== chore.next_due) {
-            handleSaveDueDate();
-          }
-          setDueDateDialogOpen(isOpen);
-        }}
+       open={dueDateDialogOpen} 
+       onOpenChange={setDueDateDialogOpen}
       >
         <DialogContent className="w-auto p-0 border-0 shadow-lg">
           <DialogHeader className="px-4 pt-4 pb-2">
@@ -498,12 +494,19 @@ export default function ChoreCommentsSheet({ chore, open, onOpenChange }) {
           <div className="px-4 pb-4 flex flex-col gap-3">
             <CalendarComponent
               mode="single"
-              selected={editingDueDate ? new Date(editingDueDate) : undefined}
+              selected={editingDueDate ? new Date(editingDueDate + 'T00:00:00') : undefined}
               onSelect={(date) => {
                 if (date) {
-                  const isoDate = date.toISOString().split('T')[0];
+                  const year = date.getFullYear();
+                  const month = String(date.getMonth() + 1).padStart(2, '0');
+                  const day = String(date.getDate()).padStart(2, '0');
+                  const isoDate = `${year}-${month}-${day}`;
                   setEditingDueDate(isoDate);
-                  handleSaveDueDate();
+                  base44.entities.Chore.update(chore.id, { next_due: isoDate || null });
+                  if (chore.linked_chore_ids?.length) {
+                    Promise.all(chore.linked_chore_ids.map(id => base44.entities.Chore.update(id, { next_due: isoDate || null })));
+                  }
+                  savedQueryClient.invalidateQueries(['chores']);
                   setDueDateDialogOpen(false);
                 }
               }}
