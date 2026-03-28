@@ -336,9 +336,13 @@ export default function ChoreCommentsSheet({ chore, open, onOpenChange }) {
             src={fullScreenImage} 
             alt="full screen" 
             className="max-w-full max-h-full object-contain"
+            onClick={(e) => e.stopPropagation()}
           />
           <button
-            onClick={() => setFullScreenImage(null)}
+            onClick={(e) => {
+              e.stopPropagation();
+              setFullScreenImage(null);
+            }}
             className="absolute top-4 right-4 p-2 text-white hover:bg-white/20 rounded-full transition-colors"
           >
             <X className="w-6 h-6" />
