@@ -40,13 +40,21 @@ export default function RescheduleDialog({
             <Label className="mb-2 block text-sm font-medium text-gray-700">
               Schedule next due date for this task:
             </Label>
-            <input
-              type="date"
-              value={nextDueDate}
-              onChange={(e) => setNextDueDate(e.target.value)}
-              min={new Date().toISOString().split('T')[0]}
-              className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
-            />
+            <div className="relative">
+              <input
+                type="date"
+                value={nextDueDate}
+                onChange={(e) => setNextDueDate(e.target.value)}
+                min={new Date().toISOString().split('T')[0]}
+                className="absolute inset-0 opacity-0 w-full h-full cursor-pointer"
+              />
+              <div className="w-full border border-gray-300 rounded-md px-3 py-2.5 text-sm bg-gray-50 text-center text-gray-700 cursor-pointer">
+                {nextDueDate
+                  ? new Date(nextDueDate + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+                  : <span className="text-gray-400">Tap to select a date</span>
+                }
+              </div>
+            </div>
           </div>
 
           <div className="flex gap-2 justify-end pt-1">
