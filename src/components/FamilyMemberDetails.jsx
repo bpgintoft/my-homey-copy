@@ -1302,7 +1302,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
           <div className={`overflow-y-auto max-h-[calc(85vh-8rem)] rounded-lg p-2 -mx-2 relative ${dialogBg}`}>
             <button
               onClick={() => setCustomizingCategories(true)}
-              className="absolute top-3 right-3 p-1.5 rounded-full hover:bg-gray-200 transition-colors z-10"
+              className="absolute top-1 right-3 p-1.5 rounded-full hover:bg-gray-200 transition-colors z-10"
               title="Customize categories"
             >
               <Settings2 className="w-4 h-4 text-gray-600" />
