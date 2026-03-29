@@ -62,23 +62,23 @@ export default function FamilyMemberReorderDialog({ open, onOpenChange }) {
           <DialogTitle>Reorder Family Members</DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-2 max-h-96 overflow-y-auto">
+        <div className="space-y-2 max-h-96 overflow-y-auto pr-2">
           {members.map((member, index) => (
             <div
               key={member.id}
-              className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg border border-gray-200"
+              className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg border border-gray-200 min-w-0"
             >
               <GripVertical className="w-4 h-4 text-gray-400 flex-shrink-0" />
-              <div className="flex-1 flex items-center gap-2">
+              <div className="flex-1 flex items-center gap-2 min-w-0">
                 <div
                   className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold text-white flex-shrink-0"
                   style={{ backgroundColor: member.color || '#64748b' }}
                 >
                   {member.name?.charAt(0)}
                 </div>
-                <span className="font-medium text-gray-700">{member.name}</span>
+                <span className="font-medium text-gray-700 truncate">{member.name}</span>
               </div>
-              <div className="flex gap-1">
+              <div className="flex gap-1 flex-shrink-0">
                 <button
                   onClick={() => moveUp(index)}
                   disabled={index === 0}
