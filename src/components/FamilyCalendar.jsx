@@ -88,7 +88,7 @@ export default function FamilyCalendar({ activities, initialEventId }) {
     queryFn: () => base44.entities.CachedCalendarEvent.list('-start', 500),
     staleTime: 0,
     gcTime: 60 * 60 * 1000,
-    refetchOnMount: true,
+    refetchOnMount: 'stale',
   });
 
   // Real-time: invalidate whenever the webhook updates the cache
@@ -266,10 +266,10 @@ export default function FamilyCalendar({ activities, initialEventId }) {
       const { data } = await base44.functions.invoke('updateGoogleCalendarEvent', calendarEventData);
       return data;
     },
-    onSuccess: () => {
+    onSuccess: async () => {
       queryClient.invalidateQueries({ queryKey: ['googleCalendarEvents'] });
       queryClient.invalidateQueries({ queryKey: ['liveGoogleEvents'] });
-      queryClient.refetchQueries({ queryKey: ['cachedCalendarEvents'] });
+      await queryClient.refetchQueries({ queryKey: ['cachedCalendarEvents'] });
       setShowEditDialog(false);
       setEditingEvent(null);
       toast.success('Event updated successfully');
