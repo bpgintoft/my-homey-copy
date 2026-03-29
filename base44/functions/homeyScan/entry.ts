@@ -61,11 +61,11 @@ For personal_id, extract:
 - expiry_date: expiration/effective date in YYYY-MM-DD. For insurance cards, look for fields like "Effective Date", "Exp Date", "Valid Through", "Policy Period end date", or any date printed on the card. null if not found.
 - member_name: the full name or first name of the person(s) this ID belongs to. null if not found.
 - category: one of: identity, property, health, financial, travel, vehicles, education, other
-- license_number: the driver's license number if this is a driver's license. null otherwise.
+- license_number: ONLY for driver's licenses — extract the actual driver's license number (labeled "License #", "DL#", or similar on the front). Ignore 2D barcodes or OTA codes. null otherwise.
 - insurance_provider: the insurance company name (e.g. "State Farm", "Geico", "Blue Cross") if this is any kind of insurance card. null otherwise.
 - policy_number: the policy number, member ID, or group number on the card. null if not found.
 - insurance_type: "vehicle" if auto/vehicle insurance, "health" if health insurance, "dental" if dental, "vision" if vision, null otherwise.
-- card_number: for membership/library/ID cards, extract the card number, membership ID, or barcode number prominently displayed. null if not found.
+- card_number: for membership cards and library cards ONLY, extract the card/membership number prominently displayed. Do NOT use barcode numbers or OTA codes from driver's licenses. null if not found.
 
 For house_doc, extract:
 - title: document title or name
