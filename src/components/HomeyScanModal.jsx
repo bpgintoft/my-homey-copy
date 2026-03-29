@@ -207,6 +207,7 @@ export default function HomeyScanModal({ open, onClose, onSaved, contextHint }) 
         doc_label: result.doc_label || '',
         doc_type: result.doc_type || '',
         expiry_date: result.expiry_date || '',
+        issued_date: result.issued_date || '',
         member_name: result.member_name || '',
         id_category: result.category || 'identity',
         license_number: result.license_number || '',
@@ -387,13 +388,14 @@ export default function HomeyScanModal({ open, onClose, onSaved, contextHint }) 
       // Handle Driver's License
       else if (extracted.doc_type === 'drivers_license') {
         if (extracted.license_number) updatePayload.license_number = extracted.license_number;
+        if (extracted.issued_date) updatePayload.license_issue_date = extracted.issued_date;
         if (extracted.expiry_date) updatePayload.license_expiration_date = extracted.expiry_date;
         const newDoc = {
           id: `doc_${Date.now()}_${memberId}`,
           type: 'drivers_license',
           category: 'identity',
           label: extracted.doc_label || 'Driver\'s License',
-          value: extracted.card_number || '',
+          value: extracted.license_number || '',
           expiry_date: extracted.expiry_date || null,
           file_uri: fileUrl || null,
           created_at: new Date().toISOString(),

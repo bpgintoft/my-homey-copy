@@ -71,6 +71,19 @@ export default function VaultReviewForm({ extracted, setExtracted, docType, fami
             </div>
           </div>
 
+          {extracted.doc_type?.toLowerCase().includes('license') && (
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <Label className="text-xs text-gray-500">License Number</Label>
+                <Input value={extracted.license_number || ''} onChange={e => setExtracted({ ...extracted, license_number: e.target.value })} className="mt-1" placeholder="e.g. G531-0758-3176-09" />
+              </div>
+              <div>
+                <Label className="text-xs text-gray-500">Issued Date</Label>
+                <Input type="date" value={extracted.issued_date || ''} onChange={e => setExtracted({ ...extracted, issued_date: e.target.value })} className="mt-1" />
+              </div>
+            </div>
+          )}
+
           {extracted.card_number && (
             <div className="space-y-2 p-3 bg-blue-50 border border-blue-100 rounded-lg">
               <p className="text-xs font-semibold text-blue-700">Card Number (will be saved to member vault)</p>
