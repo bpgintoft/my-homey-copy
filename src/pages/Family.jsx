@@ -280,20 +280,23 @@ export default function Family() {
       </div>
 
       <div className="container mx-auto px-6 py-8">
-        <div className="flex justify-end gap-3 mb-6 -mt-12 relative z-10">
+        <div className="flex justify-end gap-2 mb-6 -mt-12 relative z-10">
           <Button 
             variant="outline" 
-            className="bg-white shadow-lg whitespace-nowrap"
+            className="bg-white shadow-lg whitespace-nowrap text-xs md:text-sm px-2 md:px-4 py-1 md:py-2"
             onClick={() => setIsReorderOpen(true)}
+            title="Reorder Members"
           >
-            <ArrowUpDown className="w-4 h-4 mr-2" />
-            Reorder Members
+            <ArrowUpDown className="w-4 h-4 md:mr-2" />
+            <span className="hidden md:inline">Reorder Members</span>
+            <span className="inline md:hidden">Reorder</span>
           </Button>
           <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
             <DialogTrigger asChild>
-              <Button className="bg-white text-teal-600 hover:bg-teal-50 shadow-lg whitespace-nowrap">
-                <Plus className="w-4 h-4 mr-2" />
-                Add Family Member
+              <Button className="bg-white text-teal-600 hover:bg-teal-50 shadow-lg whitespace-nowrap text-xs md:text-sm px-2 md:px-4 py-1 md:py-2">
+                <Plus className="w-4 h-4 md:mr-2" />
+                <span className="hidden md:inline">Add Family Member</span>
+                <span className="inline md:hidden">Add</span>
               </Button>
             </DialogTrigger>
             <DialogContent className="w-[calc(100vw-2rem)] max-w-lg overflow-y-auto max-h-[90vh]">
