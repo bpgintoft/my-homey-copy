@@ -40,6 +40,12 @@ export function useCommandCenterCount() {
     staleTime: 30 * 60 * 1000,
   });
 
+  const { data: decisions = [] } = useQuery({
+    queryKey: ['familyDecisions'],
+    queryFn: () => base44.entities.FamilyDecision.list('-updated_date', 100),
+    staleTime: 5 * 60 * 1000,
+  });
+
   const { data: familyMembers = [] } = useQuery({
     queryKey: ['familyMembers'],
     queryFn: () => base44.entities.FamilyMember.list(),
@@ -103,6 +109,27 @@ export function useCommandCenterCount() {
       return false;
     });
 
+    // 🤝 Family Decisions: needs_action status OR deadline past due/within 7 days
+    const dueDecisions = decisions
+      .filter(d => {
+        if (d.is_archived) return false;
+        if (d.status === 'needs_action') return true;
+        if (d.deadline) {
+          const deadlineDate = parseISO(d.deadline);
+          return deadlineDate <= in7Days; // includes past due
+        }
+        return false;
+      })
+      .sort((a, b) => {
+        // Sort by deadline (closer dates first), then by status (needs_action first)
+        const aDeadline = a.deadline ? parseISO(a.deadline) : new Date(8640000000000000); // far future
+        const bDeadline = b.deadline ? parseISO(b.deadline) : new Date(8640000000000000);
+        if (aDeadline !== bDeadline) return aDeadline - bDeadline;
+        if (a.status === 'needs_action' && b.status !== 'needs_action') return -1;
+        if (a.status !== 'needs_action' && b.status === 'needs_action') return 1;
+        return 0;
+      });
+
     // Deduplicate co-assigned chores: group by linked_chore_ids or id
     // Build a lookup of ALL chores (not just filtered) so we can show all assignee names
     const allChoresById = {};
@@ -129,14 +156,15 @@ export function useCommandCenterCount() {
     });
 
     return {
-      count: dueMaintenance.length + urgentChores.length + todayEvents.length,
+      count: dueMaintenance.length + urgentChores.length + todayEvents.length + dueDecisions.length,
       dueMaintenance,
       highPriorityChores: urgentChores,
       todayEvents,
+      dueDecisions,
       currentMember,
       allChoresById,
     };
-  }, [maintenanceTasks, chores, cachedEvents, familyMembers, currentUser]);
+  }, [maintenanceTasks, chores, cachedEvents, decisions, familyMembers, currentUser]);
 }
 
 function Section({ emoji, title, items, renderItem, emptyText, emojiIsDay }) {
@@ -177,7 +205,7 @@ function ItemRow({ label, sublabel, to, onClick }) {
 }
 
 export default function CommandCenter({ open, onClose }) {
-  const { dueMaintenance, highPriorityChores, todayEvents, currentMember, allChoresById } = useCommandCenterCount();
+  const { dueMaintenance, highPriorityChores, todayEvents, dueDecisions, currentMember, allChoresById } = useCommandCenterCount();
   const navigate = useNavigate();
 
   const { data: rooms = [] } = useQuery({
@@ -302,6 +330,31 @@ export default function CommandCenter({ open, onClose }) {
                     // Use navigate so React Router updates location and triggers useLocation-based effects
                     setTimeout(() => { navigate(to); }, 50);
                   }}
+                />
+              );
+            }}
+          />
+
+          <div className="border-t border-gray-100" />
+
+          {/* Family Decisions */}
+          <Section
+            emoji="🤝"
+            title="Family Decisions"
+            items={dueDecisions}
+            emptyText="All decisions are in good shape!"
+            renderItem={(decision) => {
+              const subtitle = [
+                decision.status === 'needs_action' ? 'Needs Action' : undefined,
+                decision.deadline ? `Due ${format(parseISO(decision.deadline), 'MMM d')}` : undefined
+              ].filter(Boolean).join(' · ') || undefined;
+              return (
+                <ItemRow
+                  key={decision.id}
+                  label={decision.title}
+                  sublabel={subtitle}
+                  to={createPageUrl(`Decisions?decisionId=${decision.id}`)}
+                  onClick={onClose}
                 />
               );
             }}
