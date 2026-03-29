@@ -99,6 +99,11 @@ export default function FamilyCalendar({ activities, initialEventId }) {
     return unsubscribe;
   }, [queryClient]);
 
+  // Sync cache on page load
+  React.useEffect(() => {
+    base44.functions.invoke('syncCalendarCache', {});
+  }, []);
+
   // Map cached events for the current week — shown immediately while live fetch is pending
   const cachedWeekEvents = React.useMemo(() => {
     const weekStart = currentWeekStart;
@@ -208,7 +213,7 @@ export default function FamilyCalendar({ activities, initialEventId }) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['googleCalendarEvents'] });
       queryClient.invalidateQueries({ queryKey: ['importantDates'] });
-      queryClient.refetchQueries({ queryKey: ['cachedCalendarEvents'] });
+      base44.functions.invoke('syncCalendarCache', {});
       setShowAddDialog(false);
       setNewEvent({
         summary: '',
@@ -267,12 +272,7 @@ export default function FamilyCalendar({ activities, initialEventId }) {
       return data;
     },
     onSuccess: () => {
-      // Clear cache and refetch fresh data from the database
-      queryClient.invalidateQueries({ queryKey: ['cachedCalendarEvents'] });
-      queryClient.invalidateQueries({ queryKey: ['googleCalendarEvents'] });
-      queryClient.invalidateQueries({ queryKey: ['liveGoogleEvents'] });
-      queryClient.refetchQueries({ queryKey: ['cachedCalendarEvents'] });
-      
+      base44.functions.invoke('syncCalendarCache', {});
       setShowEditDialog(false);
       setEditingEvent(null);
       toast.success('Event updated successfully');
@@ -289,8 +289,7 @@ export default function FamilyCalendar({ activities, initialEventId }) {
       return data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['googleCalendarEvents'] });
-      queryClient.refetchQueries({ queryKey: ['cachedCalendarEvents'] });
+      base44.functions.invoke('syncCalendarCache', {});
       setShowEditDialog(false);
       setEditingEvent(null);
       toast.success('Event deleted successfully');
