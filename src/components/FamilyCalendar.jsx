@@ -266,10 +266,27 @@ export default function FamilyCalendar({ activities, initialEventId }) {
       const { data } = await base44.functions.invoke('updateGoogleCalendarEvent', calendarEventData);
       return data;
     },
-    onSuccess: async () => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['googleCalendarEvents'] });
       queryClient.invalidateQueries({ queryKey: ['liveGoogleEvents'] });
-      await queryClient.refetchQueries({ queryKey: ['cachedCalendarEvents'] });
+      
+      // Update the cached event immediately in local cache
+      queryClient.setQueryData(['cachedCalendarEvents'], (old) => {
+        if (!old) return old;
+        return old.map(e => 
+          e.google_event_id === editingEvent.id 
+            ? {
+                ...e,
+                title: editingEvent.summary,
+                description: editingEvent.description,
+                location: editingEvent.location,
+                start: editingEvent.isAllDay ? editingEvent.start : editingEvent.start + (editingEvent.start.includes('T') ? '' : 'T00:00:00'),
+                end: editingEvent.isAllDay ? editingEvent.end : editingEvent.end + (editingEvent.end.includes('T') ? '' : 'T00:00:00'),
+              }
+            : e
+        );
+      });
+      
       setShowEditDialog(false);
       setEditingEvent(null);
       toast.success('Event updated successfully');
