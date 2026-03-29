@@ -54,6 +54,8 @@ export default function DecisionDialog({ decision, currentUserEmail, familyMembe
   const [lightboxUrl, setLightboxUrl] = useState(null);
   const [commentCollapsed, setCommentCollapsed] = useState(false);
   const [focusChat, setFocusChat] = useState(false);
+  const [editingTitle, setEditingTitle] = useState(false);
+  const [titleText, setTitleText] = useState(decision.title || '');
   const commentsEndRef = useRef(null);
   const fileInputRef = useRef(null);
   const commentDragStartY = useRef(null);
@@ -115,7 +117,7 @@ export default function DecisionDialog({ decision, currentUserEmail, familyMembe
     const currentUnread = decision.unread_by || [];
     const newUnread = [...new Set([...currentUnread, ...otherEmails])];
 
-    const updates = { ...allVotes, status: finalStatus, deadline: deadline || null, is_archived: isArchived, last_updated_by_email: currentUserEmail, unread_by: newUnread };
+    const updates = { ...allVotes, status: finalStatus, deadline: deadline || null, is_archived: isArchived, last_updated_by_email: currentUserEmail, unread_by: newUnread, title: titleText };
 
     let updatedComments = [...localComments];
     if (newComment.trim() || pendingImages.length > 0) {
@@ -156,7 +158,33 @@ export default function DecisionDialog({ decision, currentUserEmail, familyMembe
         {/* Header — hidden in focus mode */}
         {!focusChat && (
           <DialogHeader className="px-5 pt-5 pb-3">
-            <DialogTitle className="text-base leading-snug text-white pr-6">{decision.title}</DialogTitle>
+            {editingTitle ? (
+              <div className="flex items-center gap-2">
+                <input
+                  type="text"
+                  value={titleText}
+                  onChange={(e) => setTitleText(e.target.value)}
+                  className="flex-1 text-base font-semibold leading-snug text-white bg-transparent border-b border-indigo-400 outline-none"
+                  autoFocus
+                />
+                <button
+                  onClick={() => setEditingTitle(false)}
+                  className="text-indigo-300 hover:text-white"
+                >
+                  <Check className="w-4 h-4" />
+                </button>
+              </div>
+            ) : (
+              <div className="flex items-start justify-between gap-2">
+                <DialogTitle className="text-base leading-snug text-white flex-1">{titleText}</DialogTitle>
+                <button
+                  onClick={() => setEditingTitle(true)}
+                  className="text-indigo-300 hover:text-white flex-shrink-0 p-1"
+                >
+                  <Pencil className="w-4 h-4" />
+                </button>
+              </div>
+            )}
             {decision.description && (
               <p className="text-sm text-indigo-200 mt-0.5">{decision.description}</p>
             )}
