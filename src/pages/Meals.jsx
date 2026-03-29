@@ -39,7 +39,7 @@ export default function Meals() {
     const [editingMeal, setEditingMeal] = useState(null);
     const [selectedMealForPlan, setSelectedMealForPlan] = useState(null);
     const [planDialog, setPlanDialog] = useState(false);
-    const [planSelection, setPlanSelection] = useState({ day: '', mealType: '' });
+    const [planSelection, setPlanSelection] = useState({ day: '', mealType: '', memberIds: [] });
     const [expandedMealId, setExpandedMealId] = useState(null);
     const [pastedMealText, setPastedMealText] = useState('');
     const [isParsing, setIsParsing] = useState(false);
@@ -81,6 +81,14 @@ export default function Meals() {
     queryKey: ['groceries'],
     queryFn: () => base44.entities.GroceryItem.list(),
   });
+
+  const { data: familyMembers = [] } = useQuery({
+    queryKey: ['familyMembers'],
+    queryFn: () => base44.entities.FamilyMember.list(),
+    staleTime: 10 * 60 * 1000,
+  });
+
+  const [selectedMembers, setSelectedMembers] = useState([]);
 
   const staples = [
     // Basic seasonings
@@ -211,19 +219,23 @@ export default function Meals() {
       const weekStart = new Date();
       weekStart.setDate(weekStart.getDate() - weekStart.getDay());
       
+      // Use selected members if any, otherwise create with empty array
+      const memberIds = planSelection.memberIds.length > 0 ? planSelection.memberIds : [];
+      
       await base44.entities.MealPlan.create({
         week_start_date: weekStart.toISOString().split('T')[0],
         day_of_week: planSelection.day,
         meal_type: planSelection.mealType,
         meal_id: selectedMealForPlan.id,
         meal_name: selectedMealForPlan.name,
+        assigned_to_member_ids: memberIds,
       });
     },
     onSuccess: () => {
       queryClient.invalidateQueries(['mealPlans']);
       setPlanDialog(false);
       setSelectedMealForPlan(null);
-      setPlanSelection({ day: '', mealType: '' });
+      setPlanSelection({ day: '', mealType: '', memberIds: [] });
     },
   });
 
@@ -1145,6 +1157,40 @@ export default function Meals() {
 
           <TabsContent value="plan">
                     <div className="space-y-4">
+                      {/* Family Member Selector */}
+                      <div className="bg-white rounded-lg shadow-sm p-4 border-b-2 border-pink-200">
+                        <label className="text-sm font-medium text-gray-700 mb-3 block">Filter by Child</label>
+                        <div className="flex flex-wrap gap-2">
+                          <button
+                            onClick={() => setSelectedMembers([])}
+                            className={`px-3 py-2 rounded-full text-sm font-medium transition-all ${
+                              selectedMembers.length === 0
+                                ? 'bg-pink-600 text-white'
+                                : 'bg-white text-gray-700 border border-gray-200 hover:bg-gray-50'
+                            }`}
+                          >
+                            All
+                          </button>
+                          {familyMembers.map(member => (
+                            <button
+                              key={member.id}
+                              onClick={() => setSelectedMembers(prev =>
+                                prev.includes(member.id)
+                                  ? prev.filter(id => id !== member.id)
+                                  : [...prev, member.id]
+                              )}
+                              className={`px-3 py-2 rounded-full text-sm font-medium transition-all ${
+                                selectedMembers.includes(member.id)
+                                  ? 'bg-pink-600 text-white'
+                                  : 'bg-white text-gray-700 border border-gray-200 hover:bg-gray-50'
+                              }`}
+                            >
+                              {member.name}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
                       <div className="space-y-2">
                         <div className="flex gap-2">
                           <Button
@@ -1175,7 +1221,14 @@ export default function Meals() {
                         </Button>
                       </div>
               {['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].map(day => {
-                const dayMeals = mealPlans.filter(plan => plan.day_of_week === day);
+                // Filter meals by selected members if any are selected
+                let dayMeals = mealPlans.filter(plan => plan.day_of_week === day);
+                if (selectedMembers.length > 0) {
+                  dayMeals = dayMeals.filter(plan => 
+                    plan.assigned_to_member_ids && 
+                    plan.assigned_to_member_ids.some(id => selectedMembers.includes(id))
+                  );
+                }
                 const dailyNutrients = calculateDailyNutrients(dayMeals);
                 return (
                   <Card key={day} className="bg-white border-0 shadow-sm">
@@ -1752,52 +1805,78 @@ export default function Meals() {
       />
 
       <Dialog open={planDialog} onOpenChange={setPlanDialog}>
-        <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle>Add {selectedMealForPlan?.name} to Weekly Plan</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4">
-            <Select
-              value={planSelection.day}
-              onValueChange={(value) => setPlanSelection({ ...planSelection, day: value })}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select day" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="monday">Monday</SelectItem>
-                <SelectItem value="tuesday">Tuesday</SelectItem>
-                <SelectItem value="wednesday">Wednesday</SelectItem>
-                <SelectItem value="thursday">Thursday</SelectItem>
-                <SelectItem value="friday">Friday</SelectItem>
-                <SelectItem value="saturday">Saturday</SelectItem>
-                <SelectItem value="sunday">Sunday</SelectItem>
-              </SelectContent>
-            </Select>
-            <Select
-              value={planSelection.mealType}
-              onValueChange={(value) => setPlanSelection({ ...planSelection, mealType: value })}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select meal type" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="breakfast">Breakfast</SelectItem>
-                <SelectItem value="lunch">Lunch</SelectItem>
-                <SelectItem value="dinner">Dinner</SelectItem>
-                <SelectItem value="snack">Snack</SelectItem>
-              </SelectContent>
-            </Select>
-            <Button
-              onClick={() => addToMealPlanMutation.mutate()}
-              disabled={!planSelection.day || !planSelection.mealType || addToMealPlanMutation.isPending}
-              className="w-full bg-gradient-to-r from-[#E91E8C] to-[#D01576] text-white"
-            >
-              {addToMealPlanMutation.isPending ? 'Adding...' : 'Add to Plan'}
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
+         <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
+           <DialogHeader>
+             <DialogTitle>Add {selectedMealForPlan?.name} to Weekly Plan</DialogTitle>
+           </DialogHeader>
+           <div className="space-y-4">
+             <Select
+               value={planSelection.day}
+               onValueChange={(value) => setPlanSelection({ ...planSelection, day: value })}
+             >
+               <SelectTrigger>
+                 <SelectValue placeholder="Select day" />
+               </SelectTrigger>
+               <SelectContent>
+                 <SelectItem value="monday">Monday</SelectItem>
+                 <SelectItem value="tuesday">Tuesday</SelectItem>
+                 <SelectItem value="wednesday">Wednesday</SelectItem>
+                 <SelectItem value="thursday">Thursday</SelectItem>
+                 <SelectItem value="friday">Friday</SelectItem>
+                 <SelectItem value="saturday">Saturday</SelectItem>
+                 <SelectItem value="sunday">Sunday</SelectItem>
+               </SelectContent>
+             </Select>
+             <Select
+               value={planSelection.mealType}
+               onValueChange={(value) => setPlanSelection({ ...planSelection, mealType: value })}
+             >
+               <SelectTrigger>
+                 <SelectValue placeholder="Select meal type" />
+               </SelectTrigger>
+               <SelectContent>
+                 <SelectItem value="breakfast">Breakfast</SelectItem>
+                 <SelectItem value="lunch">Lunch</SelectItem>
+                 <SelectItem value="dinner">Dinner</SelectItem>
+                 <SelectItem value="snack">Snack</SelectItem>
+               </SelectContent>
+             </Select>
+             <div>
+               <label className="text-sm font-medium text-gray-700 mb-2 block">Assign to Children (optional)</label>
+               <div className="space-y-2 p-3 bg-gray-50 rounded-lg max-h-40 overflow-y-auto">
+                 {familyMembers.length > 0 ? (
+                   familyMembers.map(member => (
+                     <label key={member.id} className="flex items-center gap-2 cursor-pointer">
+                       <input
+                         type="checkbox"
+                         checked={planSelection.memberIds.includes(member.id)}
+                         onChange={(e) => {
+                           if (e.target.checked) {
+                             setPlanSelection(prev => ({ ...prev, memberIds: [...prev.memberIds, member.id] }));
+                           } else {
+                             setPlanSelection(prev => ({ ...prev, memberIds: prev.memberIds.filter(id => id !== member.id) }));
+                           }
+                         }}
+                         className="w-4 h-4 rounded"
+                       />
+                       <span className="text-sm text-gray-700">{member.name}</span>
+                     </label>
+                   ))
+                 ) : (
+                   <p className="text-xs text-gray-500">No family members found</p>
+                 )}
+               </div>
+             </div>
+             <Button
+               onClick={() => addToMealPlanMutation.mutate()}
+               disabled={!planSelection.day || !planSelection.mealType || addToMealPlanMutation.isPending}
+               className="w-full bg-gradient-to-r from-[#E91E8C] to-[#D01576] text-white"
+             >
+               {addToMealPlanMutation.isPending ? 'Adding...' : 'Add to Plan'}
+             </Button>
+           </div>
+         </DialogContent>
+       </Dialog>
     </div>
   );
 }
