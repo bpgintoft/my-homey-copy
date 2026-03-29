@@ -40,7 +40,21 @@ export function useCommandCenterCount() {
     staleTime: 30 * 60 * 1000,
   });
 
+  const { data: familyMembers = [] } = useQuery({
+    queryKey: ['familyMembers'],
+    queryFn: () => base44.entities.FamilyMember.list(),
+    staleTime: 10 * 60 * 1000,
+  });
+
+  const { data: currentUser } = useQuery({
+    queryKey: ['currentUser'],
+    queryFn: () => base44.auth.me(),
+    staleTime: 10 * 60 * 1000,
+  });
+
   return useMemo(() => {
+    // Find the family member record matching the logged-in user's email
+    const currentMember = familyMembers.find(m => m.email === currentUser?.email);
     const todayStart = toZonedTime(new Date(), TZ);
     todayStart.setHours(0, 0, 0, 0);
     const todayEnd = addDays(todayStart, 1);
@@ -71,9 +85,16 @@ export function useCommandCenterCount() {
 
     // ✅ Priority Chores: past due, due within 7 days, OR marked urgent
     // Exclude chores synced from maintenance tasks (those appear in House Health)
+    // Only show chores assigned or co-assigned to the currently logged-in family member
     const filteredChores = chores.filter(c => {
       if (c.is_completed) return false;
       if (c.maintenance_task_id) return false;
+      // If we know the current member, only show their chores (assigned or co-assigned)
+      if (currentMember) {
+        const isAssigned = c.assigned_to_member_id === currentMember.id;
+        const isCoAssigned = c.co_assigned_member_ids?.includes(currentMember.id);
+        if (!isAssigned && !isCoAssigned) return false;
+      }
       if (c.priority === 'urgent') return true;
       if (c.next_due) {
         const d = parseISO(c.next_due);
@@ -109,7 +130,7 @@ export function useCommandCenterCount() {
       highPriorityChores: urgentChores,
       todayEvents,
     };
-  }, [maintenanceTasks, chores, cachedEvents]);
+  }, [maintenanceTasks, chores, cachedEvents, familyMembers, currentUser]);
 }
 
 function Section({ emoji, title, items, renderItem, emptyText, emojiIsDay }) {
