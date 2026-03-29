@@ -133,6 +133,8 @@ export function useCommandCenterCount() {
       dueMaintenance,
       highPriorityChores: urgentChores,
       todayEvents,
+      currentMember,
+      allChoresById,
     };
   }, [maintenanceTasks, chores, cachedEvents, familyMembers, currentUser]);
 }
@@ -175,7 +177,7 @@ function ItemRow({ label, sublabel, to, onClick }) {
 }
 
 export default function CommandCenter({ open, onClose }) {
-  const { dueMaintenance, highPriorityChores, todayEvents } = useCommandCenterCount();
+  const { dueMaintenance, highPriorityChores, todayEvents, currentMember, allChoresById } = useCommandCenterCount();
 
   const { data: rooms = [] } = useQuery({
     queryKey: ['rooms'],
@@ -264,10 +266,30 @@ export default function CommandCenter({ open, onClose }) {
             items={highPriorityChores}
             emptyText="Nothing urgent today. Enjoy the peace!"
             renderItem={(chore) => {
-              const memberPage = chore.assigned_to_name;
               const knownPages = ['Bryan', 'Kate', 'Phoenix', 'Mara'];
-              const to = memberPage && knownPages.includes(memberPage)
-                ? createPageUrl(`${memberPage}?chore=${chore.id}`)
+              // Find the chore ID that belongs to the current member
+              // (for co-assigned chores, chore.id may belong to a different member)
+              let targetChoreId = chore.id;
+              let targetMemberName = chore.assigned_to_name;
+              if (currentMember) {
+                if (chore.assigned_to_member_id === currentMember.id) {
+                  targetChoreId = chore.id;
+                  targetMemberName = currentMember.name;
+                } else {
+                  // Look through siblings for the one assigned to the current member
+                  const siblingIds = chore.linked_chore_ids || [];
+                  for (const sibId of siblingIds) {
+                    const sib = allChoresById[sibId];
+                    if (sib && sib.assigned_to_member_id === currentMember.id) {
+                      targetChoreId = sib.id;
+                      targetMemberName = currentMember.name;
+                      break;
+                    }
+                  }
+                }
+              }
+              const to = targetMemberName && knownPages.includes(targetMemberName)
+                ? createPageUrl(`${targetMemberName}?chore=${targetChoreId}`)
                 : createPageUrl('House');
               return (
                 <ItemRow
