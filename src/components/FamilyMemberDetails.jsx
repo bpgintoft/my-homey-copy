@@ -710,7 +710,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
             schoolProgram: member?.person_type !== 'adult' ? <span className="text-lg flex-shrink-0">🎓</span> : <img src="https://media.base44.com/images/public/6990e4185e2b18f4d04a1ac8/4d5e603a6_briefcase.png" alt="Work" className="w-7 h-7 flex-shrink-0 object-contain" />,
             links: <img src="https://media.base44.com/images/public/6990e4185e2b18f4d04a1ac8/2338d2772_links.png" alt="Links" className="w-7 h-7 flex-shrink-0 object-contain" />,
             contacts: <img src="https://media.base44.com/images/public/6990e4185e2b18f4d04a1ac8/80a1d630f_contacts.png" alt="Contacts" className="w-7 h-7 flex-shrink-0 object-contain" />,
-            notes: <span className="text-lg flex-shrink-0">💡</span>,
+            notes: <img src="https://media.base44.com/images/public/6990e4185e2b18f4d04a1ac8/e4bcc257e_notes.png" alt="Notes" className="w-7 h-7 flex-shrink-0 object-contain" />,
             milestones: <img src="https://media.base44.com/images/public/6990e4185e2b18f4d04a1ac8/c1a626e77_goals.png" alt="Goals" className="w-7 h-7 flex-shrink-0 object-contain" />,
             health: <img src="https://media.base44.com/images/public/6990e4185e2b18f4d04a1ac8/1aa15bd0b_personal.png" alt="Health" className="w-7 h-7 flex-shrink-0 object-contain" />,
             documents: <span className="text-lg flex-shrink-0">📁</span>,
