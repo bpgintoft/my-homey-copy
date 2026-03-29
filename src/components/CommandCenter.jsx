@@ -296,8 +296,12 @@ export default function CommandCenter({ open, onClose }) {
                   key={chore.id}
                   label={chore.title}
                   sublabel={[(chore._allAssignees?.length > 0 ? chore._allAssignees.join(', ') : chore.assigned_to_name), chore.next_due ? `Due ${format(parseISO(chore.next_due), 'MMM d')}` : (chore.priority === 'urgent' ? 'Urgent' : undefined)].filter(Boolean).join(' · ') || undefined}
-                  to={to}
-                  onClick={onClose}
+                  onClick={() => {
+                    onClose();
+                    // Use window.location.href to force a full navigation so the
+                    // ?chore= param is always picked up even if already on that page
+                    setTimeout(() => { window.location.href = to; }, 50);
+                  }}
                 />
               );
             }}
