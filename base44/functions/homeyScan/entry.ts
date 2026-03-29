@@ -21,7 +21,7 @@ Deno.serve(async (req) => {
     console.log('Private URI:', file_uri, '| Signed URL for LLM:', file_url);
 
     const result = await base44.asServiceRole.integrations.Core.InvokeLLM({
-      prompt: `You are Homey, a smart family document assistant. Carefully analyze this image or document and do TWO things:
+      prompt: `You are Homey, a smart family document assistant. Carefully analyze this image or document and do THREE things:
 
 STEP 1 - CLASSIFY: Determine which of these four categories best describes this document:
 - "calendar_event": School flyers, sports schedules, event posters, activity sign-ups, appointment cards
@@ -75,6 +75,28 @@ For house_doc, extract:
 - purchase_price: numeric price if mentioned. null if not found.
 - notes: any other relevant notes. null if not found.
 
+STEP 3 - EXTRACT METADATA: Always scan the document for structured data items and return them in an extracted_metadata array. Pay special attention to:
+- Barcodes: Extract the barcode number below any barcode image
+- Card numbers: Extract membership, card, or ID numbers prominently displayed
+- Account/reference numbers: Any ID-like numbers not already captured in main fields
+
+For each piece of metadata found, determine its type from:
+- person_name: Any person's full name or first name found
+- company_name: Any company or organization name
+- phone_number: Phone numbers in any format
+- email: Email addresses
+- membership_id: Membership numbers, card IDs, library card numbers, or barcode numbers (e.g., "25252 00215 6485" from a library card barcode)
+- issued_date: Date the document/card was issued in YYYY-MM-DD
+- expiration_date: Date when something expires (separate from field expiry_date if already extracted)
+- group_number: Group, batch, or team numbers
+- account_number: Account, customer, or member account numbers
+- website: Any website or URL found
+- barcode_number: The numeric value below a barcode image
+
+Return extracted_metadata as an array of objects with "type" and "value" fields. Example: [{"type": "person_name", "value": "John Smith"}, {"type": "membership_id", "value": "25252 00215 6485"}]. Return empty array [] if nothing found.
+
+IMPORTANT: Do NOT skip card numbers or barcodes. These are critical for library cards, memberships, and ID cards.
+
 Also return:
 - confidence: "high", "medium", or "low" — your confidence in the classification and extraction.`,
       file_urls: [file_url],
@@ -118,8 +140,19 @@ Also return:
           purchase_date: { type: ["string", "null"] },
           purchase_price: { type: ["number", "null"] },
           notes: { type: ["string", "null"] },
-        }
-      }
+          // extracted metadata
+          extracted_metadata: {
+            type: "array",
+            items: {
+              type: "object",
+              properties: {
+                type: { type: "string" },
+                value: { type: "string" }
+              }
+            }
+          }
+          }
+          }
     });
 
     return Response.json({ result, file_url: file_uri });
