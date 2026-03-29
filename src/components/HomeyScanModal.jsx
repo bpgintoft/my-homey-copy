@@ -213,6 +213,7 @@ export default function HomeyScanModal({ open, onClose, onSaved, contextHint }) 
         insurance_provider: result.insurance_provider || '',
         policy_number: result.policy_number || '',
         insurance_type: result.insurance_type || '',
+        card_number: result.card_number || '',
         // house_doc
         doc_category: result.doc_category || 'other',
         related_item_name: result.related_item_name || '',
@@ -369,7 +370,7 @@ export default function HomeyScanModal({ open, onClose, onSaved, contextHint }) 
         type: extracted.doc_type || 'other',
         category: extracted.id_category || 'identity',
         label: extracted.doc_label || 'Document',
-        value: '',
+        value: extracted.card_number || '',
         expiry_date: extracted.expiry_date || null,
         file_uri: fileUrl || null,
         created_at: new Date().toISOString(),

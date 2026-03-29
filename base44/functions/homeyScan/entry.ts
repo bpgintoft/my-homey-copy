@@ -56,8 +56,8 @@ For maintenance_task, extract:
 - category: one of: hvac, plumbing, electrical, exterior, interior, appliances, safety, seasonal, landscaping
 
 For personal_id, extract:
-- doc_label: name or title of the document (e.g. "Passport", "Driver's License", "Insurance Card")
-- doc_type: short type identifier (e.g. "passport", "drivers_license", "insurance_card", "health_insurance_card", "birth_certificate", "ssn")
+- doc_label: name or title of the document (e.g. "Passport", "Driver's License", "Insurance Card", "Library Card")
+- doc_type: short type identifier (e.g. "passport", "drivers_license", "insurance_card", "health_insurance_card", "birth_certificate", "ssn", "library_card")
 - expiry_date: expiration/effective date in YYYY-MM-DD. For insurance cards, look for fields like "Effective Date", "Exp Date", "Valid Through", "Policy Period end date", or any date printed on the card. null if not found.
 - member_name: the full name or first name of the person(s) this ID belongs to. null if not found.
 - category: one of: identity, property, health, financial, travel, vehicles, education, other
@@ -65,6 +65,7 @@ For personal_id, extract:
 - insurance_provider: the insurance company name (e.g. "State Farm", "Geico", "Blue Cross") if this is any kind of insurance card. null otherwise.
 - policy_number: the policy number, member ID, or group number on the card. null if not found.
 - insurance_type: "vehicle" if auto/vehicle insurance, "health" if health insurance, "dental" if dental, "vision" if vision, null otherwise.
+- card_number: for membership/library/ID cards, extract the card number, membership ID, or barcode number prominently displayed. null if not found.
 
 For house_doc, extract:
 - title: document title or name
@@ -132,6 +133,7 @@ Also return:
           insurance_provider: { type: ["string", "null"] },
           policy_number: { type: ["string", "null"] },
           insurance_type: { type: ["string", "null"] },
+          card_number: { type: ["string", "null"] },
           // house_doc fields
           title: { type: ["string", "null"] },
           doc_category: { type: ["string", "null"] },

@@ -58,6 +58,13 @@ export default function VaultReviewForm({ extracted, setExtracted, docType, fami
             </div>
           </div>
 
+          {extracted.card_number && (
+            <div className="space-y-2 p-3 bg-blue-50 border border-blue-100 rounded-lg">
+              <p className="text-xs font-semibold text-blue-700">Card Number (will be saved to member vault)</p>
+              <Input value={extracted.card_number || ''} onChange={e => setExtracted({ ...extracted, card_number: e.target.value })} className="mt-1 bg-white font-mono" placeholder="e.g. 25252 00215 6485" />
+            </div>
+          )}
+
           {extracted.insurance_provider && (
             <div className="space-y-2 p-3 bg-blue-50 border border-blue-100 rounded-lg">
               <p className="text-xs font-semibold text-blue-700">Insurance Details (will be saved to member profile)</p>
