@@ -28,11 +28,20 @@ Deno.serve(async (req) => {
 
   const sleep = (ms) => new Promise(r => setTimeout(r, ms));
 
+  // Parse request body for optional custom time range
+  let bodyTimeMin = null;
+  let bodyTimeMax = null;
+  try {
+    const body = await req.json();
+    if (body.timeMin) bodyTimeMin = new Date(body.timeMin);
+    if (body.timeMax) bodyTimeMax = new Date(body.timeMax);
+  } catch (_) {
+    // No body or invalid JSON — use defaults
+  }
+
   const now = new Date();
-  const timeMin = new Date(now);
-  timeMin.setDate(timeMin.getDate() - 7);
-  const timeMax = new Date(now);
-  timeMax.setDate(timeMax.getDate() + 21);
+  const timeMin = bodyTimeMin || new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+  const timeMax = bodyTimeMax || new Date(now.getTime() + 21 * 24 * 60 * 60 * 1000);
 
   // Delta: only fetch events updated in the last 16 minutes (slightly more than interval)
   const updatedMin = new Date(now.getTime() - 16 * 60 * 1000);

@@ -455,18 +455,26 @@ export default function FamilyCalendar({ activities, initialEventId }) {
   }, [showSearch]);
 
   const goToPreviousWeek = () => {
-    setCurrentWeekStart(addDays(currentWeekStart, -7));
+    const newWeekStart = addDays(currentWeekStart, -7);
+    setCurrentWeekStart(newWeekStart);
     setHasNavigated(true);
     setHasScrolledUp(false);
-    base44.functions.invoke('syncCalendarCache', {}).then(() => {
+    base44.functions.invoke('syncCalendarCache', {
+      timeMin: newWeekStart.toISOString(),
+      timeMax: addDays(newWeekStart, 7).toISOString()
+    }).then(() => {
       queryClient.invalidateQueries({ queryKey: ['cachedCalendarEvents'] });
     });
   };
 
   const goToNextWeek = () => {
-    setCurrentWeekStart(addDays(currentWeekStart, 7));
+    const newWeekStart = addDays(currentWeekStart, 7);
+    setCurrentWeekStart(newWeekStart);
     setHasScrolledUp(false);
-    base44.functions.invoke('syncCalendarCache', {}).then(() => {
+    base44.functions.invoke('syncCalendarCache', {
+      timeMin: newWeekStart.toISOString(),
+      timeMax: addDays(newWeekStart, 7).toISOString()
+    }).then(() => {
       queryClient.invalidateQueries({ queryKey: ['cachedCalendarEvents'] });
     });
   };
