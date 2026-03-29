@@ -1,0 +1,60 @@
+{
+  "name": "MealPlan",
+  "type": "object",
+  "properties": {
+    "week_start_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Start of the week"
+    },
+    "day_of_week": {
+      "type": "string",
+      "enum": [
+        "monday",
+        "tuesday",
+        "wednesday",
+        "thursday",
+        "friday",
+        "saturday",
+        "sunday"
+      ]
+    },
+    "meal_type": {
+      "type": "string",
+      "enum": [
+        "breakfast",
+        "lunch",
+        "dinner",
+        "snack"
+      ]
+    },
+    "meal_id": {
+      "type": "string",
+      "description": "Reference to Meal"
+    },
+    "meal_name": {
+      "type": "string",
+      "description": "Meal name for display"
+    },
+    "notes": {
+      "type": "string"
+    },
+    "assigned_to_member_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Family member IDs this meal plan applies to"
+    },
+    "daily_nutrition_plan_id": {
+      "type": "string",
+      "description": "Reference to DailyNutritionPlan if this is a custom daily plan"
+    }
+  },
+  "required": [
+    "week_start_date",
+    "day_of_week",
+    "meal_type",
+    "assigned_to_member_ids"
+  ]
+}

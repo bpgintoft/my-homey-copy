@@ -51,11 +51,18 @@ export default function DailyNutritionTab() {
   const [mealDayOfWeek, setMealDayOfWeek] = useState('');
   const [showAddGroceryDialog, setShowAddGroceryDialog] = useState(false);
   const [groceryWeekStart, setGroceryWeekStart] = useState('');
+  const [selectedMemberIds, setSelectedMemberIds] = useState([]);
 
   // Persist items to localStorage whenever they change
   React.useEffect(() => {
     localStorage.setItem('dailyNutritionItems', JSON.stringify(items));
   }, [items]);
+
+  const { data: familyMembers = [] } = useQuery({
+    queryKey: ['familyMembers'],
+    queryFn: () => base44.entities.FamilyMember.list(),
+    staleTime: 10 * 60 * 1000,
+  });
 
   const { data: savedPlans = [] } = useQuery({
     queryKey: ['dailyNutritionPlans'],
@@ -96,6 +103,33 @@ export default function DailyNutritionTab() {
       setShowAddMealDialog(false);
       setMealWeekStart('');
       setMealDayOfWeek('');
+      setSelectedMemberIds([]);
+    },
+  });
+
+  const saveDailyPlanMutation = useMutation({
+    mutationFn: async (data) => {
+      const plan = await base44.entities.DailyNutritionPlan.create(data);
+      // Create MealPlan entries for each selected member
+      if (selectedMemberIds.length > 0 && data.mealWeekStart && data.mealDayOfWeek && data.mealType) {
+        await base44.entities.MealPlan.create({
+          week_start_date: data.mealWeekStart,
+          day_of_week: data.mealDayOfWeek,
+          meal_type: data.mealType,
+          meal_name: data.name,
+          assigned_to_member_ids: selectedMemberIds,
+          daily_nutrition_plan_id: plan.id,
+        });
+      }
+      return plan;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(['dailyNutritionPlans']);
+      queryClient.invalidateQueries(['mealPlans']);
+      setShowSaveDialog(false);
+      setSaveName('');
+      setSaveDate('');
+      setSelectedMemberIds([]);
     },
   });
 
@@ -194,12 +228,17 @@ export default function DailyNutritionTab() {
       meal_type: mealType,
       meal_id: mealId,
       meal_name: mealName,
+      assigned_to_member_ids: selectedMemberIds.length > 0 ? selectedMemberIds : [],
     });
   };
 
   const handleCreateMealAndAdd = async () => {
     if (!mealName.trim() || !mealType || !mealWeekStart || !mealDayOfWeek) {
       alert('Please fill in all fields');
+      return;
+    }
+    if (selectedMemberIds.length === 0) {
+      alert('Please select at least one child');
       return;
     }
     createMealMutation.mutate({
@@ -225,13 +264,28 @@ export default function DailyNutritionTab() {
     addToGroceryMutation.mutate(groceryItems);
   };
 
-  const handleSave = () => {
-    savePlanMutation.mutate({
-      name: saveName || `Plan ${new Date().toLocaleDateString()}`,
-      date: saveDate || null,
-      items,
-      total_nutrition: totals,
-    });
+  const handleSave = async () => {
+    // If assigning to members and dates, save as daily plan
+    if (selectedMemberIds.length > 0 && saveName && saveDate && mealType && mealWeekStart && mealDayOfWeek) {
+      saveDailyPlanMutation.mutate({
+        name: saveName,
+        date: saveDate,
+        items,
+        total_nutrition: totals,
+        assigned_to_member_ids: selectedMemberIds,
+        mealWeekStart,
+        mealDayOfWeek,
+        mealType,
+      });
+    } else {
+      // Otherwise just save as a template plan
+      savePlanMutation.mutate({
+        name: saveName || `Plan ${new Date().toLocaleDateString()}`,
+        date: saveDate || null,
+        items,
+        total_nutrition: totals,
+      });
+    }
   };
 
   const recomputeTotals = (itemsList) => {
@@ -447,33 +501,102 @@ export default function DailyNutritionTab() {
 
       {/* Save dialog */}
       <Dialog open={showSaveDialog} onOpenChange={setShowSaveDialog}>
-        <DialogContent className="max-w-sm">
-          <DialogHeader>
-            <DialogTitle>Save Plan</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4">
-            <Input
-              placeholder="Plan name (e.g. Healthy Monday)"
-              value={saveName}
-              onChange={(e) => setSaveName(e.target.value)}
-            />
-            <div>
-              <label className="text-sm text-gray-600 mb-1 block">Assign to a date (optional)</label>
-              <Input
-                type="date"
-                value={saveDate}
-                onChange={(e) => setSaveDate(e.target.value)}
-              />
-            </div>
-            <Button
-              onClick={handleSave}
-              disabled={savePlanMutation.isPending}
-              className="w-full bg-gradient-to-r from-[#E91E8C] to-[#D01576] text-white"
-            >
-              {savePlanMutation.isPending ? 'Saving...' : 'Save Plan'}
-            </Button>
-          </div>
-        </DialogContent>
+       <DialogContent className="max-w-sm max-h-[90vh] overflow-y-auto">
+         <DialogHeader>
+           <DialogTitle>Save Plan</DialogTitle>
+         </DialogHeader>
+         <div className="space-y-4">
+           <Input
+             placeholder="Plan name (e.g. Healthy Monday)"
+             value={saveName}
+             onChange={(e) => setSaveName(e.target.value)}
+           />
+           <div>
+             <label className="text-sm text-gray-600 mb-1 block">Date (optional)</label>
+             <Input
+               type="date"
+               value={saveDate}
+               onChange={(e) => setSaveDate(e.target.value)}
+             />
+           </div>
+           <div>
+             <label className="text-sm font-medium text-gray-700 mb-2 block">Assign to Children</label>
+             <div className="space-y-2 p-3 bg-gray-50 rounded-lg max-h-48 overflow-y-auto">
+               {familyMembers.length > 0 ? (
+                 familyMembers.map(member => (
+                   <label key={member.id} className="flex items-center gap-2 cursor-pointer">
+                     <input
+                       type="checkbox"
+                       checked={selectedMemberIds.includes(member.id)}
+                       onChange={(e) => {
+                         if (e.target.checked) {
+                           setSelectedMemberIds(prev => [...prev, member.id]);
+                         } else {
+                           setSelectedMemberIds(prev => prev.filter(id => id !== member.id));
+                         }
+                       }}
+                       className="w-4 h-4 rounded"
+                     />
+                     <span className="text-sm text-gray-700">{member.name}</span>
+                   </label>
+                 ))
+               ) : (
+                 <p className="text-xs text-gray-500">No family members found</p>
+               )}
+             </div>
+           </div>
+           {selectedMemberIds.length > 0 && (
+             <>
+               <div>
+                 <label className="text-sm text-gray-600 mb-1 block">Week Starting (to add to meal plan)</label>
+                 <Input
+                   type="date"
+                   value={mealWeekStart}
+                   onChange={(e) => setMealWeekStart(e.target.value)}
+                 />
+               </div>
+               <div>
+                 <label className="text-sm text-gray-600 mb-1 block">Meal Type</label>
+                 <select
+                   value={mealType}
+                   onChange={(e) => setMealType(e.target.value)}
+                   className="w-full px-3 py-2 border border-gray-200 rounded-md text-sm"
+                 >
+                   <option value="">Select type</option>
+                   <option value="breakfast">Breakfast</option>
+                   <option value="lunch">Lunch</option>
+                   <option value="dinner">Dinner</option>
+                   <option value="snack">Snack</option>
+                 </select>
+               </div>
+               <div>
+                 <label className="text-sm text-gray-600 mb-1 block">Day of Week</label>
+                 <select
+                   value={mealDayOfWeek}
+                   onChange={(e) => setMealDayOfWeek(e.target.value)}
+                   className="w-full px-3 py-2 border border-gray-200 rounded-md text-sm"
+                 >
+                   <option value="">Select day</option>
+                   <option value="monday">Monday</option>
+                   <option value="tuesday">Tuesday</option>
+                   <option value="wednesday">Wednesday</option>
+                   <option value="thursday">Thursday</option>
+                   <option value="friday">Friday</option>
+                   <option value="saturday">Saturday</option>
+                   <option value="sunday">Sunday</option>
+                 </select>
+               </div>
+             </>
+           )}
+           <Button
+             onClick={handleSave}
+             disabled={savePlanMutation.isPending || saveDailyPlanMutation.isPending}
+             className="w-full bg-gradient-to-r from-[#E91E8C] to-[#D01576] text-white"
+           >
+             {savePlanMutation.isPending || saveDailyPlanMutation.isPending ? 'Saving...' : 'Save Plan'}
+           </Button>
+         </div>
+       </DialogContent>
       </Dialog>
 
       {/* Load dialog */}
@@ -508,67 +631,93 @@ export default function DailyNutritionTab() {
 
       {/* Add as meal dialog */}
       <Dialog open={showAddMealDialog} onOpenChange={setShowAddMealDialog}>
-        <DialogContent className="max-w-sm">
-          <DialogHeader>
-            <DialogTitle>Add as Meal to Week</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4">
-            <div>
-              <label className="text-sm text-gray-600 mb-1 block">Meal Name</label>
-              <Input
-                placeholder="e.g. Healthy Monday Lunch"
-                value={mealName}
-                onChange={(e) => setMealName(e.target.value)}
-              />
-            </div>
-            <div>
-              <label className="text-sm text-gray-600 mb-1 block">Meal Type</label>
-              <select
-                value={mealType}
-                onChange={(e) => setMealType(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-200 rounded-md text-sm"
-              >
-                <option value="">Select type</option>
-                <option value="breakfast">Breakfast</option>
-                <option value="lunch">Lunch</option>
-                <option value="dinner">Dinner</option>
-                <option value="snack">Snack</option>
-              </select>
-            </div>
-            <div>
-              <label className="text-sm text-gray-600 mb-1 block">Week Starting</label>
-              <Input
-                type="date"
-                value={mealWeekStart}
-                onChange={(e) => setMealWeekStart(e.target.value)}
-              />
-            </div>
-            <div>
-              <label className="text-sm text-gray-600 mb-1 block">Day of Week</label>
-              <select
-                value={mealDayOfWeek}
-                onChange={(e) => setMealDayOfWeek(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-200 rounded-md text-sm"
-              >
-                <option value="">Select day</option>
-                <option value="monday">Monday</option>
-                <option value="tuesday">Tuesday</option>
-                <option value="wednesday">Wednesday</option>
-                <option value="thursday">Thursday</option>
-                <option value="friday">Friday</option>
-                <option value="saturday">Saturday</option>
-                <option value="sunday">Sunday</option>
-              </select>
-            </div>
-            <Button
-              onClick={handleCreateMealAndAdd}
-              disabled={createMealMutation.isPending}
-              className="w-full bg-gradient-to-r from-[#E91E8C] to-[#D01576] text-white"
-            >
-              {createMealMutation.isPending ? 'Adding...' : 'Add Meal'}
-            </Button>
-          </div>
-        </DialogContent>
+       <DialogContent className="max-w-sm max-h-[90vh] overflow-y-auto">
+         <DialogHeader>
+           <DialogTitle>Add as Meal to Week</DialogTitle>
+         </DialogHeader>
+         <div className="space-y-4">
+           <div>
+             <label className="text-sm text-gray-600 mb-1 block">Meal Name</label>
+             <Input
+               placeholder="e.g. Healthy Monday Lunch"
+               value={mealName}
+               onChange={(e) => setMealName(e.target.value)}
+             />
+           </div>
+           <div>
+             <label className="text-sm text-gray-600 mb-1 block">Meal Type</label>
+             <select
+               value={mealType}
+               onChange={(e) => setMealType(e.target.value)}
+               className="w-full px-3 py-2 border border-gray-200 rounded-md text-sm"
+             >
+               <option value="">Select type</option>
+               <option value="breakfast">Breakfast</option>
+               <option value="lunch">Lunch</option>
+               <option value="dinner">Dinner</option>
+               <option value="snack">Snack</option>
+             </select>
+           </div>
+           <div>
+             <label className="text-sm font-medium text-gray-700 mb-2 block">Assign to Children</label>
+             <div className="space-y-2 p-3 bg-gray-50 rounded-lg max-h-40 overflow-y-auto">
+               {familyMembers.length > 0 ? (
+                 familyMembers.map(member => (
+                   <label key={member.id} className="flex items-center gap-2 cursor-pointer">
+                     <input
+                       type="checkbox"
+                       checked={selectedMemberIds.includes(member.id)}
+                       onChange={(e) => {
+                         if (e.target.checked) {
+                           setSelectedMemberIds(prev => [...prev, member.id]);
+                         } else {
+                           setSelectedMemberIds(prev => prev.filter(id => id !== member.id));
+                         }
+                       }}
+                       className="w-4 h-4 rounded"
+                     />
+                     <span className="text-sm text-gray-700">{member.name}</span>
+                   </label>
+                 ))
+               ) : (
+                 <p className="text-xs text-gray-500">No family members found</p>
+               )}
+             </div>
+           </div>
+           <div>
+             <label className="text-sm text-gray-600 mb-1 block">Week Starting</label>
+             <Input
+               type="date"
+               value={mealWeekStart}
+               onChange={(e) => setMealWeekStart(e.target.value)}
+             />
+           </div>
+           <div>
+             <label className="text-sm text-gray-600 mb-1 block">Day of Week</label>
+             <select
+               value={mealDayOfWeek}
+               onChange={(e) => setMealDayOfWeek(e.target.value)}
+               className="w-full px-3 py-2 border border-gray-200 rounded-md text-sm"
+             >
+               <option value="">Select day</option>
+               <option value="monday">Monday</option>
+               <option value="tuesday">Tuesday</option>
+               <option value="wednesday">Wednesday</option>
+               <option value="thursday">Thursday</option>
+               <option value="friday">Friday</option>
+               <option value="saturday">Saturday</option>
+               <option value="sunday">Sunday</option>
+             </select>
+           </div>
+           <Button
+             onClick={handleCreateMealAndAdd}
+             disabled={createMealMutation.isPending}
+             className="w-full bg-gradient-to-r from-[#E91E8C] to-[#D01576] text-white"
+           >
+             {createMealMutation.isPending ? 'Adding...' : 'Add Meal'}
+           </Button>
+         </div>
+       </DialogContent>
       </Dialog>
 
       {/* Add to grocery dialog */}

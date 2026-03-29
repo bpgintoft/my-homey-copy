@@ -74,6 +74,13 @@
           "type": "number"
         }
       }
+    },
+    "assigned_to_member_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Family member IDs this daily nutrition plan applies to"
     }
   },
   "required": []
