@@ -86,9 +86,17 @@ export default function FamilyCalendar({ activities, initialEventId }) {
   const { data: cachedEvents = [] } = useQuery({
     queryKey: ['cachedCalendarEvents'],
     queryFn: () => base44.entities.CachedCalendarEvent.list('-start', 500),
-    staleTime: 30 * 60 * 1000,
+    staleTime: 0,
     gcTime: 60 * 60 * 1000,
   });
+
+  // Real-time: invalidate whenever the webhook updates the cache
+  React.useEffect(() => {
+    const unsubscribe = base44.entities.CachedCalendarEvent.subscribe(() => {
+      queryClient.invalidateQueries({ queryKey: ['cachedCalendarEvents'] });
+    });
+    return unsubscribe;
+  }, [queryClient]);
 
   // Map cached events for the current week — shown immediately while live fetch is pending
   const cachedWeekEvents = React.useMemo(() => {
