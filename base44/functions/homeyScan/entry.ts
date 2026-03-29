@@ -24,11 +24,11 @@ Deno.serve(async (req) => {
       prompt: `You are Homey, a smart family document assistant. Carefully analyze this image or document and do THREE things:
 
 STEP 1 - CLASSIFY: Determine which of these five categories best describes this document:
-- "calendar_event": School flyers, sports schedules, event posters, activity sign-ups, appointment cards
+- "calendar_event": Events WITH SPECIFIC DATES/TIMES like school flyers, sports schedules, event posters, activity sign-ups, appointment cards, class schedules. Must have or ask for a date/time to be a calendar event.
 - "maintenance_task": HVAC invoices, appliance receipts, service records, repair quotes, home maintenance reminders
 - "personal_id": Passports, driver's licenses, insurance cards, birth certificates, social security cards, any government-issued personal ID
 - "house_doc": Warranties, product manuals, home contracts, deeds, permits, receipts for purchases (not personal IDs)
-- "business_card": Business cards with contact information (name, company, phone, email, address, website)
+- "business_card": Professional business cards or contact records with a person's NAME, job TITLE, COMPANY, and contact details (phone/email/address). NOT about an event or time-bound activity. These are professional networking documents meant to share contact information.
 
 STEP 2 - EXTRACT: Based on the category, extract the relevant fields below. Return null for any field you cannot find.
 
