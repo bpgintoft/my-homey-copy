@@ -266,8 +266,7 @@ export default function FamilyCalendar({ activities, initialEventId }) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['googleCalendarEvents'] });
-      queryClient.invalidateQueries({ queryKey: ['cachedCalendarEvents'] });
-      queryClient.refetchQueries({ queryKey: ['googleCalendarEvents', currentWeekStart.toISOString()] });
+      queryClient.refetchQueries({ queryKey: ['cachedCalendarEvents'] });
       setShowEditDialog(false);
       setEditingEvent(null);
       toast.success('Event updated successfully');
