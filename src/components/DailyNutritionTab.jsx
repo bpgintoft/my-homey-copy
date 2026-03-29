@@ -26,10 +26,17 @@ function NutritionBar({ label, value, max, color }) {
 
 export default function DailyNutritionTab() {
   const queryClient = useQueryClient();
-  const [items, setItems] = useState([]);
+  const [items, setItems] = useState(() => {
+    try {
+      const saved = localStorage.getItem('dailyNutritionItems');
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
   const [newFood, setNewFood] = useState('');
   const [newServings, setNewServings] = useState(1);
-  const [calculatingFor, setCalculatingFor] = useState(null); // item id being calculated
+  const [calculatingFor, setCalculatingFor] = useState(null);
   const [calculatingAll, setCalculatingAll] = useState(false);
   const [totals, setTotals] = useState(null);
   const [showSaveDialog, setShowSaveDialog] = useState(false);
@@ -37,6 +44,11 @@ export default function DailyNutritionTab() {
   const [saveDate, setSaveDate] = useState('');
   const [loadDialogOpen, setLoadDialogOpen] = useState(false);
   const [expandedTotals, setExpandedTotals] = useState(true);
+
+  // Persist items to localStorage whenever they change
+  React.useEffect(() => {
+    localStorage.setItem('dailyNutritionItems', JSON.stringify(items));
+  }, [items]);
 
   const { data: savedPlans = [] } = useQuery({
     queryKey: ['dailyNutritionPlans'],
@@ -194,7 +206,11 @@ export default function DailyNutritionTab() {
               variant="outline"
               size="sm"
               className="border-pink-200 text-pink-600 hover:bg-pink-50 text-xs"
-              onClick={() => { setItems([]); setTotals(null); }}
+              onClick={() => {
+                setItems([]);
+                setTotals(null);
+                localStorage.removeItem('dailyNutritionItems');
+              }}
             >
               <RotateCcw className="w-3 h-3 mr-1" /> Clear
             </Button>
