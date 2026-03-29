@@ -802,7 +802,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
                   className="relative flex items-center gap-2 p-3 rounded-lg border bg-white hover:shadow-md transition-shadow text-left w-full overflow-hidden"
                 >
 
-                  <span className="text-lg flex-shrink-0">📊</span>
+                  <img src="https://media.base44.com/images/public/6990e4185e2b18f4d04a1ac8/099477dbf_activites.png" alt="Activities" className="w-7 h-7 flex-shrink-0 object-contain" />
                   <span className="font-semibold text-sm text-gray-800 leading-tight">Activities</span>
                 </button>
                 {!isChildUser && (
