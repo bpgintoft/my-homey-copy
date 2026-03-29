@@ -458,13 +458,17 @@ export default function FamilyCalendar({ activities, initialEventId }) {
     setCurrentWeekStart(addDays(currentWeekStart, -7));
     setHasNavigated(true);
     setHasScrolledUp(false);
-    base44.functions.invoke('syncCalendarCache', {});
+    base44.functions.invoke('syncCalendarCache', {}).then(() => {
+      queryClient.invalidateQueries({ queryKey: ['cachedCalendarEvents'] });
+    });
   };
 
   const goToNextWeek = () => {
     setCurrentWeekStart(addDays(currentWeekStart, 7));
     setHasScrolledUp(false);
-    base44.functions.invoke('syncCalendarCache', {});
+    base44.functions.invoke('syncCalendarCache', {}).then(() => {
+      queryClient.invalidateQueries({ queryKey: ['cachedCalendarEvents'] });
+    });
   };
 
   const goToToday = () => {
