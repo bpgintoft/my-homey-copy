@@ -268,6 +268,7 @@ export default function FamilyCalendar({ activities, initialEventId }) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['googleCalendarEvents'] });
+      queryClient.invalidateQueries({ queryKey: ['liveGoogleEvents'] });
       queryClient.refetchQueries({ queryKey: ['cachedCalendarEvents'] });
       setShowEditDialog(false);
       setEditingEvent(null);
