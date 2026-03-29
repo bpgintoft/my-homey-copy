@@ -440,7 +440,7 @@ export default function HomeyScanModal({ open, onClose, onSaved, contextHint }) 
         const newDoc = {
           id: `doc_${Date.now()}_${memberId}`,
           type: extracted.doc_type || 'other',
-          category: extracted.id_category || extracted.cardCategory || 'identity',
+          category: extracted.id_category || 'other',
           label: label,
           value: extracted.card_number,
           expiry_date: extracted.expiry_date || null,
