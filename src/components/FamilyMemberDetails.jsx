@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -170,9 +171,11 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
     enabled: !!memberId,
   });
 
-  // Open chores section directly if ?chore=<id> param is present (consumed once)
+  const location = useLocation();
+
+  // Open chores section directly if ?chore=<id> param is present
   React.useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
+    const params = new URLSearchParams(location.search);
     const choreId = params.get('chore');
     if (choreId && chores.length > 0) {
       const target = chores.find(c => c.id === choreId);
@@ -182,11 +185,10 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
         setEditingChoreTitle(target.title);
         setEditingChoreRef(target);
         // Clear the param so closing the dialog doesn't reopen it
-        const newUrl = window.location.pathname;
-        window.history.replaceState(null, '', newUrl);
+        window.history.replaceState(null, '', window.location.pathname);
       }
     }
-  }, [chores]);
+  }, [location.search, chores]);
 
   const { data: milestones = [] } = useQuery({
     queryKey: ['milestones', memberId],

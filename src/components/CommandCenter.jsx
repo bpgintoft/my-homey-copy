@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { toZonedTime, formatInTimeZone } from 'date-fns-tz';
 import { parseISO, isSameDay, addDays, format } from 'date-fns';
 import { createPageUrl } from '@/utils';
@@ -178,6 +178,7 @@ function ItemRow({ label, sublabel, to, onClick }) {
 
 export default function CommandCenter({ open, onClose }) {
   const { dueMaintenance, highPriorityChores, todayEvents, currentMember, allChoresById } = useCommandCenterCount();
+  const navigate = useNavigate();
 
   const { data: rooms = [] } = useQuery({
     queryKey: ['rooms'],
@@ -298,9 +299,8 @@ export default function CommandCenter({ open, onClose }) {
                   sublabel={[(chore._allAssignees?.length > 0 ? chore._allAssignees.join(', ') : chore.assigned_to_name), chore.next_due ? `Due ${format(parseISO(chore.next_due), 'MMM d')}` : (chore.priority === 'urgent' ? 'Urgent' : undefined)].filter(Boolean).join(' · ') || undefined}
                   onClick={() => {
                     onClose();
-                    // Use window.location.href to force a full navigation so the
-                    // ?chore= param is always picked up even if already on that page
-                    setTimeout(() => { window.location.href = to; }, 50);
+                    // Use navigate so React Router updates location and triggers useLocation-based effects
+                    setTimeout(() => { navigate(to); }, 50);
                   }}
                 />
               );
