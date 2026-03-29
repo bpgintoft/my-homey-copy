@@ -283,7 +283,7 @@ export default function Family() {
         <div className="flex justify-end gap-3 mb-6 -mt-12 relative z-10">
           <Button 
             variant="outline" 
-            className="bg-white shadow-lg"
+            className="bg-white shadow-lg whitespace-nowrap"
             onClick={() => setIsReorderOpen(true)}
           >
             <ArrowUpDown className="w-4 h-4 mr-2" />
@@ -291,7 +291,7 @@ export default function Family() {
           </Button>
           <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
             <DialogTrigger asChild>
-              <Button className="bg-white text-teal-600 hover:bg-teal-50 shadow-lg">
+              <Button className="bg-white text-teal-600 hover:bg-teal-50 shadow-lg whitespace-nowrap">
                 <Plus className="w-4 h-4 mr-2" />
                 Add Family Member
               </Button>
