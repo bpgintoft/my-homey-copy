@@ -709,7 +709,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
             chores: <img src="https://media.base44.com/images/public/6990e4185e2b18f4d04a1ac8/f073545eb_todolist.png" alt="To-Do List" className="w-7 h-7 flex-shrink-0 object-contain" />,
             schoolProgram: member?.person_type !== 'adult' ? <span className="text-lg flex-shrink-0">🎓</span> : <img src="https://media.base44.com/images/public/6990e4185e2b18f4d04a1ac8/25730819a_ChatGPTImageMar28202610_48_14PM.png" alt="Work" className="w-7 h-7 flex-shrink-0 object-contain" />,
             links: <span className="text-lg flex-shrink-0">🔗</span>,
-            contacts: <span className="text-lg flex-shrink-0">👥</span>,
+            contacts: <img src="https://media.base44.com/images/public/6990e4185e2b18f4d04a1ac8/80a1d630f_contacts.png" alt="Contacts" className="w-7 h-7 flex-shrink-0 object-contain" />,
             notes: <span className="text-lg flex-shrink-0">💡</span>,
             milestones: <span className="text-lg flex-shrink-0">🎯</span>,
             health: <span className="text-lg flex-shrink-0">❤️</span>,
