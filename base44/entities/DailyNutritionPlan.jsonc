@@ -1,0 +1,80 @@
+{
+  "name": "DailyNutritionPlan",
+  "type": "object",
+  "properties": {
+    "date": {
+      "type": "string",
+      "format": "date",
+      "description": "The date this plan is for (optional)"
+    },
+    "name": {
+      "type": "string",
+      "description": "Template name if saving as a reusable template"
+    },
+    "items": {
+      "type": "array",
+      "description": "Food items in this plan",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "food_name": {
+            "type": "string"
+          },
+          "servings": {
+            "type": "number"
+          },
+          "nutrition_per_serving": {
+            "type": "object",
+            "properties": {
+              "calories": {
+                "type": "number"
+              },
+              "protein_g": {
+                "type": "number"
+              },
+              "carbs_g": {
+                "type": "number"
+              },
+              "fat_g": {
+                "type": "number"
+              },
+              "fiber_g": {
+                "type": "number"
+              },
+              "sugar_g": {
+                "type": "number"
+              }
+            }
+          }
+        }
+      }
+    },
+    "total_nutrition": {
+      "type": "object",
+      "properties": {
+        "calories": {
+          "type": "number"
+        },
+        "protein_g": {
+          "type": "number"
+        },
+        "carbs_g": {
+          "type": "number"
+        },
+        "fat_g": {
+          "type": "number"
+        },
+        "fiber_g": {
+          "type": "number"
+        },
+        "sugar_g": {
+          "type": "number"
+        }
+      }
+    }
+  },
+  "required": []
+}
