@@ -1159,7 +1159,7 @@ export default function Meals() {
                     <div className="space-y-4">
                       {/* Family Member Selector */}
                       <div className="bg-white rounded-lg shadow-sm p-4 border-b-2 border-pink-200">
-                        <label className="text-sm font-medium text-gray-700 mb-3 block">Filter by Child</label>
+                        <label className="text-sm font-medium text-gray-700 mb-3 block">Filter by Family Members</label>
                         <div className="flex flex-wrap gap-2">
                           <button
                             onClick={() => setSelectedMembers([])}
