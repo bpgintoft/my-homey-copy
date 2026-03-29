@@ -458,11 +458,13 @@ export default function FamilyCalendar({ activities, initialEventId }) {
     setCurrentWeekStart(addDays(currentWeekStart, -7));
     setHasNavigated(true);
     setHasScrolledUp(false);
+    base44.functions.invoke('syncCalendarCache', {});
   };
 
   const goToNextWeek = () => {
     setCurrentWeekStart(addDays(currentWeekStart, 7));
     setHasScrolledUp(false);
+    base44.functions.invoke('syncCalendarCache', {});
   };
 
   const goToToday = () => {
