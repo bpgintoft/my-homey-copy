@@ -1850,7 +1850,7 @@ export default function Meals() {
                </SelectContent>
              </Select>
              <div>
-               <label className="text-sm font-medium text-gray-700 mb-2 block">Assign to Children (optional)</label>
+               <label className="text-sm font-medium text-gray-700 mb-2 block">Assign to Family Members (optional)</label>
                <div className="space-y-2 p-3 bg-gray-50 rounded-lg max-h-40 overflow-y-auto">
                  {familyMembers.length > 0 ? (
                    familyMembers.map(member => (
