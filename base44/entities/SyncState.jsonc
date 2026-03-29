@@ -1,0 +1,15 @@
+{
+  "name": "SyncState",
+  "type": "object",
+  "properties": {
+    "sync_token": {
+      "type": "string",
+      "description": "Google Calendar incremental sync token"
+    },
+    "calendar_id": {
+      "type": "string",
+      "description": "Which calendar this sync token belongs to"
+    }
+  },
+  "required": []
+}
