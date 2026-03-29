@@ -713,7 +713,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
             notes: <img src="https://media.base44.com/images/public/6990e4185e2b18f4d04a1ac8/e4bcc257e_notes.png" alt="Notes" className="w-7 h-7 flex-shrink-0 object-contain" />,
             milestones: <img src="https://media.base44.com/images/public/6990e4185e2b18f4d04a1ac8/c1a626e77_goals.png" alt="Goals" className="w-7 h-7 flex-shrink-0 object-contain" />,
             health: <img src="https://media.base44.com/images/public/6990e4185e2b18f4d04a1ac8/1aa15bd0b_personal.png" alt="Health" className="w-7 h-7 flex-shrink-0 object-contain" />,
-            documents: <span className="text-lg flex-shrink-0">📁</span>,
+            documents: <img src="https://media.base44.com/images/public/6990e4185e2b18f4d04a1ac8/c9df0e3be_documents.png" alt="Documents" className="w-7 h-7 flex-shrink-0 object-contain" />,
             vehicles: <img src="https://media.base44.com/images/public/6990e4185e2b18f4d04a1ac8/c2e3b5877_vehicle.png" alt="Vehicles" className="w-7 h-7 flex-shrink-0 object-contain" />,
             personalInfo: <img src="https://media.base44.com/images/public/6990e4185e2b18f4d04a1ac8/141e4195b_license.png" alt="Personal Info" className="w-7 h-7 flex-shrink-0 object-contain" />,
           };
