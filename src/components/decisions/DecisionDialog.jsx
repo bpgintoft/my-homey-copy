@@ -184,12 +184,13 @@ export default function DecisionDialog({ decision, currentUserEmail, familyMembe
                 <DialogTitle className="text-base leading-snug text-white flex-1">{titleText}</DialogTitle>
                 <button
                   type="button"
-                  onClick={(e) => {
+                  onClick={() => setEditingTitle(true)}
+                  onTouchEnd={(e) => {
                     e.preventDefault();
-                    e.stopPropagation();
                     setEditingTitle(true);
                   }}
-                  className="text-indigo-300 hover:text-white flex-shrink-0 p-1"
+                  className="text-indigo-300 hover:text-white flex-shrink-0 p-2 active:scale-90"
+                  style={{ cursor: 'pointer' }}
                 >
                   <Pencil className="w-4 h-4" />
                 </button>
