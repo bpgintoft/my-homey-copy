@@ -51,6 +51,9 @@ export default function HomeyScanModal({ open, onClose, onSaved, contextHint }) 
   // Vault-specific state (personal_id)
   const [selectedMemberIds, setSelectedMemberIds] = useState([]);
 
+  // Business card-specific state
+  const [selectedBusinessCardMemberIds, setSelectedBusinessCardMemberIds] = useState([]);
+
   const { data: familyMembers = [] } = useQuery({
     queryKey: ['familyMembers'],
     queryFn: () => base44.entities.FamilyMember.list(),
@@ -77,6 +80,7 @@ export default function HomeyScanModal({ open, onClose, onSaved, contextHint }) 
     setSelectedCalendarId('');
     setMissingDate(false);
     setSelectedMemberIds([]);
+    setSelectedBusinessCardMemberIds([]);
   };
 
   const handleClose = () => { reset(); onClose(); };
@@ -514,6 +518,7 @@ export default function HomeyScanModal({ open, onClose, onSaved, contextHint }) 
       website: extracted.website || null,
       notes: combinedNotes,
       is_emergency: false,
+      linked_to_member_ids: selectedBusinessCardMemberIds.length > 0 ? selectedBusinessCardMemberIds : [],
     });
     queryClient.invalidateQueries({ queryKey: ['importantContacts'] });
   };
@@ -700,7 +705,13 @@ export default function HomeyScanModal({ open, onClose, onSaved, contextHint }) 
             )}
 
             {docType === 'business_card' && (
-              <BusinessCardReviewForm extracted={extracted} setExtracted={setExtracted} />
+              <BusinessCardReviewForm
+                extracted={extracted}
+                setExtracted={setExtracted}
+                familyMembers={familyMembers}
+                selectedMemberIds={selectedBusinessCardMemberIds}
+                setSelectedMemberIds={setSelectedBusinessCardMemberIds}
+              />
             )}
 
             <div className="flex gap-3 pt-1">

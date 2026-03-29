@@ -2,10 +2,15 @@ import React from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { Checkbox } from '@/components/ui/checkbox';
 
-export default function BusinessCardReviewForm({ extracted, setExtracted }) {
+export default function BusinessCardReviewForm({ extracted, setExtracted, familyMembers, selectedMemberIds, setSelectedMemberIds }) {
   const handleChange = (field, value) => {
     setExtracted(prev => ({ ...prev, [field]: value }));
+  };
+
+  const toggleMemberId = (id) => {
+    setSelectedMemberIds(prev => prev.includes(id) ? prev.filter(m => m !== id) : [...prev, id]);
   };
 
   return (
@@ -108,6 +113,28 @@ export default function BusinessCardReviewForm({ extracted, setExtracted }) {
           placeholder="Additional notes, social media handles, etc."
           className="mt-1 h-20"
         />
+      </div>
+
+      <div>
+        <Label className="text-xs font-semibold text-gray-700 block mb-2">Link to Family Members</Label>
+        <div className="space-y-2 p-3 bg-gray-50 rounded-lg border border-gray-200">
+          {familyMembers && familyMembers.length > 0 ? (
+            familyMembers.map(member => (
+              <div key={member.id} className="flex items-center gap-2">
+                <Checkbox
+                  id={`member-${member.id}`}
+                  checked={selectedMemberIds.includes(member.id)}
+                  onCheckedChange={() => toggleMemberId(member.id)}
+                />
+                <label htmlFor={`member-${member.id}`} className="text-sm text-gray-700 cursor-pointer">
+                  {member.name}
+                </label>
+              </div>
+            ))
+          ) : (
+            <p className="text-xs text-gray-500">No family members found</p>
+          )}
+        </div>
       </div>
     </div>
   );
