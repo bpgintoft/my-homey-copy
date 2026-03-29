@@ -213,14 +213,7 @@ export default function ChoreCommentsSheet({ chore, open, onOpenChange }) {
     }
   }, [chore?.id]);
 
-  // Scroll to bottom when sheet opens or comments load
-  useEffect(() => {
-    if (open && comments.length > 0) {
-      setTimeout(() => {
-        chatEndRef.current?.scrollIntoView({ behavior: 'instant' });
-      }, 50);
-    }
-  }, [open, comments.length]);
+
 
   const { data: familyMembers = [] } = useQuery({
     queryKey: ['familyMembers'],
@@ -239,6 +232,15 @@ export default function ChoreCommentsSheet({ chore, open, onOpenChange }) {
     },
     enabled: !!chore?.id && open,
   });
+
+  // Scroll to bottom when sheet opens or comments load
+  useEffect(() => {
+    if (open && comments.length > 0) {
+      setTimeout(() => {
+        chatEndRef.current?.scrollIntoView({ behavior: 'instant' });
+      }, 50);
+    }
+  }, [open, comments.length]);
 
   // Separate progress updates (in chronological order)
   const progressUpdates = comments.filter(c => c.is_progress_update);
