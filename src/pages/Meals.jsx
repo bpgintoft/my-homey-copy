@@ -1159,14 +1159,14 @@ export default function Meals() {
                     <div className="space-y-4">
                       {/* Family Member Selector */}
                       <div className="bg-white rounded-lg shadow-sm p-4 border-b-2 border-pink-200">
-                        <label className="text-sm font-medium text-gray-700 mb-3 block">Filter by Family Members</label>
-                        <div className="flex flex-wrap gap-2">
+                        <label className="text-sm font-medium text-gray-700 mb-3 block">Filter by:</label>
+                        <div className="flex flex-wrap gap-4">
                           <button
                             onClick={() => setSelectedMembers([])}
-                            className={`px-3 py-2 rounded-full text-sm font-medium transition-all ${
+                            className={`w-12 h-12 rounded-full flex items-center justify-center font-semibold text-sm transition-all ${
                               selectedMembers.length === 0
-                                ? 'bg-pink-600 text-white'
-                                : 'bg-white text-gray-700 border border-gray-200 hover:bg-gray-50'
+                                ? 'bg-pink-600 text-white ring-2 ring-pink-300'
+                                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                             }`}
                           >
                             All
@@ -1179,13 +1179,19 @@ export default function Meals() {
                                   ? prev.filter(id => id !== member.id)
                                   : [...prev, member.id]
                               )}
-                              className={`px-3 py-2 rounded-full text-sm font-medium transition-all ${
+                              className={`w-12 h-12 rounded-full flex-shrink-0 overflow-hidden transition-all ${
                                 selectedMembers.includes(member.id)
-                                  ? 'bg-pink-600 text-white'
-                                  : 'bg-white text-gray-700 border border-gray-200 hover:bg-gray-50'
+                                  ? 'ring-2 ring-pink-500 ring-offset-2'
+                                  : 'hover:opacity-80'
                               }`}
                             >
-                              {member.name}
+                              {member.photo_url ? (
+                                <img src={member.photo_url} alt={member.name} className="w-full h-full object-cover" />
+                              ) : (
+                                <div className="w-full h-full bg-gray-300 flex items-center justify-center text-xs font-bold text-gray-700">
+                                  {member.name.charAt(0)}
+                                </div>
+                              )}
                             </button>
                           ))}
                         </div>
