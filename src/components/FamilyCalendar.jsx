@@ -286,6 +286,7 @@ export default function FamilyCalendar({ activities, initialEventId }) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['googleCalendarEvents'] });
+      queryClient.refetchQueries({ queryKey: ['cachedCalendarEvents'] });
       setShowEditDialog(false);
       setEditingEvent(null);
       toast.success('Event deleted successfully');
