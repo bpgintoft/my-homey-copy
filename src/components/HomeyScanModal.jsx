@@ -437,17 +437,29 @@ export default function HomeyScanModal({ open, onClose, onSaved, contextHint }) 
         const category = extracted.cardCategory === 'other' ? extracted.cardCategoryLabel || 'Other' : extracted.cardCategory || 'other';
         const label = extracted.doc_label || `${category} Card`;
 
-        const newDoc = {
-          id: `doc_${Date.now()}_${memberId}`,
-          type: extracted.doc_type || 'other',
-          category: extracted.id_category || 'other',
-          label: label,
-          value: extracted.card_number,
-          expiry_date: extracted.expiry_date || null,
-          file_uri: fileUrl || null,
-          created_at: new Date().toISOString(),
-        };
-        updatePayload.documents_ids.push(newDoc);
+        // If id_category is 'other', save as custom_info item in Personal Info Hub
+        if (extracted.id_category === 'other') {
+          const customItems = Array.isArray(updatePayload.custom_info) ? updatePayload.custom_info : [];
+          customItems.push({
+            category: category,
+            label: label,
+            value: extracted.card_number,
+          });
+          updatePayload.custom_info = customItems;
+        } else {
+          // Otherwise save as vault document
+          const newDoc = {
+            id: `doc_${Date.now()}_${memberId}`,
+            type: extracted.doc_type || 'other',
+            category: extracted.id_category || 'other',
+            label: label,
+            value: extracted.card_number,
+            expiry_date: extracted.expiry_date || null,
+            file_uri: fileUrl || null,
+            created_at: new Date().toISOString(),
+          };
+          updatePayload.documents_ids.push(newDoc);
+        }
       }
 
       await base44.entities.FamilyMember.update(memberId, updatePayload);
