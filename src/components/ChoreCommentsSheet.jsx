@@ -351,7 +351,7 @@ export default function ChoreCommentsSheet({ chore, open, onOpenChange }) {
       </Dialog>
 
       <Sheet open={open} onOpenChange={onOpenChange}>
-        <SheetContent side="bottom" className="h-[85vh] rounded-t-2xl flex flex-col" style={{ top: '16px' }}>
+        <SheetContent side="bottom" className="h-[85vh] rounded-t-2xl flex flex-col" style={{ top: 'calc(env(safe-area-inset-top, 0px) + 16px)' }}>
         <SheetHeader>
           <SheetTitle className="flex items-center gap-2">
             📋 Progress & Updates
