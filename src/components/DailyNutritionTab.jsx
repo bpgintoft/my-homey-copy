@@ -44,6 +44,13 @@ export default function DailyNutritionTab() {
   const [saveDate, setSaveDate] = useState('');
   const [loadDialogOpen, setLoadDialogOpen] = useState(false);
   const [expandedTotals, setExpandedTotals] = useState(true);
+  const [showAddMealDialog, setShowAddMealDialog] = useState(false);
+  const [mealName, setMealName] = useState('');
+  const [mealType, setMealType] = useState('');
+  const [mealWeekStart, setMealWeekStart] = useState('');
+  const [mealDayOfWeek, setMealDayOfWeek] = useState('');
+  const [showAddGroceryDialog, setShowAddGroceryDialog] = useState(false);
+  const [groceryWeekStart, setGroceryWeekStart] = useState('');
 
   // Persist items to localStorage whenever they change
   React.useEffect(() => {
@@ -69,6 +76,35 @@ export default function DailyNutritionTab() {
   const deletePlanMutation = useMutation({
     mutationFn: (id) => base44.entities.DailyNutritionPlan.delete(id),
     onSuccess: () => queryClient.invalidateQueries(['dailyNutritionPlans']),
+  });
+
+  const createMealMutation = useMutation({
+    mutationFn: (data) => base44.entities.Meal.create(data),
+    onSuccess: (meal) => {
+      queryClient.invalidateQueries(['meals']);
+      // Auto-add to the selected week/day
+      if (mealWeekStart && mealDayOfWeek) {
+        addMealToWeek(meal.id);
+      }
+    },
+  });
+
+  const addMealToWeekMutation = useMutation({
+    mutationFn: (data) => base44.entities.MealPlan.create(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['mealPlans']);
+      setShowAddMealDialog(false);
+      setMealWeekStart('');
+      setMealDayOfWeek('');
+    },
+  });
+
+  const addToGroceryMutation = useMutation({
+    mutationFn: (groceryItems) => base44.entities.GroceryItem.bulkCreate(groceryItems),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['groceryItems']);
+      setShowAddGroceryDialog(false);
+    },
   });
 
   const addItem = () => {
@@ -149,6 +185,44 @@ export default function DailyNutritionTab() {
     setItems((plan.items || []).map(i => ({ ...i, id: `item_${Date.now()}_${Math.random()}` })));
     setTotals(plan.total_nutrition || null);
     setLoadDialogOpen(false);
+  };
+
+  const addMealToWeek = (mealId) => {
+    addMealToWeekMutation.mutate({
+      week_start_date: mealWeekStart,
+      day_of_week: mealDayOfWeek,
+      meal_type: mealType,
+      meal_id: mealId,
+      meal_name: mealName,
+    });
+  };
+
+  const handleCreateMealAndAdd = async () => {
+    if (!mealName.trim() || !mealType || !mealWeekStart || !mealDayOfWeek) {
+      alert('Please fill in all fields');
+      return;
+    }
+    createMealMutation.mutate({
+      name: mealName.trim(),
+      type: mealType,
+      kid_friendly: true,
+      ingredients: items.map(i => i.food_name),
+      nutrition: totals || EMPTY_NUTRITION,
+    });
+  };
+
+  const handleAddToGrocery = () => {
+    if (!groceryWeekStart) {
+      alert('Please select a week');
+      return;
+    }
+    const groceryItems = items.map(item => ({
+      name: item.food_name,
+      category: 'other',
+      quantity: `${item.servings} serving${item.servings > 1 ? 's' : ''}`,
+      week_start_date: groceryWeekStart,
+    }));
+    addToGroceryMutation.mutate(groceryItems);
   };
 
   const handleSave = () => {
@@ -307,6 +381,28 @@ export default function DailyNutritionTab() {
         </Button>
       )}
 
+      {/* Add meal & grocery buttons */}
+      {items.length > 0 && (
+        <div className="grid grid-cols-2 gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setShowAddMealDialog(true)}
+            className="text-xs border-pink-200 text-pink-600 hover:bg-pink-50"
+          >
+            + Add as Meal to Week
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setShowAddGroceryDialog(true)}
+            className="text-xs border-blue-200 text-blue-600 hover:bg-blue-50"
+          >
+            + Add to Grocery List
+          </Button>
+        </div>
+      )}
+
       {/* Totals summary */}
       {totals && (
         <Card className="bg-gradient-to-br from-pink-50 to-purple-50 border border-pink-100 shadow-sm">
@@ -406,6 +502,105 @@ export default function DailyNutritionTab() {
                 </button>
               </div>
             ))}
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Add as meal dialog */}
+      <Dialog open={showAddMealDialog} onOpenChange={setShowAddMealDialog}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle>Add as Meal to Week</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <label className="text-sm text-gray-600 mb-1 block">Meal Name</label>
+              <Input
+                placeholder="e.g. Healthy Monday Lunch"
+                value={mealName}
+                onChange={(e) => setMealName(e.target.value)}
+              />
+            </div>
+            <div>
+              <label className="text-sm text-gray-600 mb-1 block">Meal Type</label>
+              <select
+                value={mealType}
+                onChange={(e) => setMealType(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-200 rounded-md text-sm"
+              >
+                <option value="">Select type</option>
+                <option value="breakfast">Breakfast</option>
+                <option value="lunch">Lunch</option>
+                <option value="dinner">Dinner</option>
+                <option value="snack">Snack</option>
+              </select>
+            </div>
+            <div>
+              <label className="text-sm text-gray-600 mb-1 block">Week Starting</label>
+              <Input
+                type="date"
+                value={mealWeekStart}
+                onChange={(e) => setMealWeekStart(e.target.value)}
+              />
+            </div>
+            <div>
+              <label className="text-sm text-gray-600 mb-1 block">Day of Week</label>
+              <select
+                value={mealDayOfWeek}
+                onChange={(e) => setMealDayOfWeek(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-200 rounded-md text-sm"
+              >
+                <option value="">Select day</option>
+                <option value="monday">Monday</option>
+                <option value="tuesday">Tuesday</option>
+                <option value="wednesday">Wednesday</option>
+                <option value="thursday">Thursday</option>
+                <option value="friday">Friday</option>
+                <option value="saturday">Saturday</option>
+                <option value="sunday">Sunday</option>
+              </select>
+            </div>
+            <Button
+              onClick={handleCreateMealAndAdd}
+              disabled={createMealMutation.isPending}
+              className="w-full bg-gradient-to-r from-[#E91E8C] to-[#D01576] text-white"
+            >
+              {createMealMutation.isPending ? 'Adding...' : 'Add Meal'}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Add to grocery dialog */}
+      <Dialog open={showAddGroceryDialog} onOpenChange={setShowAddGroceryDialog}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle>Add to Grocery List</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <label className="text-sm text-gray-600 mb-1 block">Week Starting</label>
+              <Input
+                type="date"
+                value={groceryWeekStart}
+                onChange={(e) => setGroceryWeekStart(e.target.value)}
+              />
+            </div>
+            <div className="bg-blue-50 p-3 rounded-lg">
+              <p className="text-xs text-gray-600 font-medium mb-2">Items to add:</p>
+              <ul className="text-xs space-y-1">
+                {items.map(item => (
+                  <li key={item.id} className="text-gray-700">• {item.food_name} ({item.servings} serving{item.servings > 1 ? 's' : ''})</li>
+                ))}
+              </ul>
+            </div>
+            <Button
+              onClick={handleAddToGrocery}
+              disabled={addToGroceryMutation.isPending}
+              className="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white"
+            >
+              {addToGroceryMutation.isPending ? 'Adding...' : 'Add to Grocery List'}
+            </Button>
           </div>
         </DialogContent>
       </Dialog>
