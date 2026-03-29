@@ -711,7 +711,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
             links: <span className="text-lg flex-shrink-0">🔗</span>,
             contacts: <img src="https://media.base44.com/images/public/6990e4185e2b18f4d04a1ac8/80a1d630f_contacts.png" alt="Contacts" className="w-7 h-7 flex-shrink-0 object-contain" />,
             notes: <span className="text-lg flex-shrink-0">💡</span>,
-            milestones: <span className="text-lg flex-shrink-0">🎯</span>,
+            milestones: <img src="https://media.base44.com/images/public/6990e4185e2b18f4d04a1ac8/c1a626e77_goals.png" alt="Goals" className="w-7 h-7 flex-shrink-0 object-contain" />,
             health: <span className="text-lg flex-shrink-0">❤️</span>,
             documents: <span className="text-lg flex-shrink-0">📁</span>,
             vehicles: <span className="text-lg flex-shrink-0">🚗</span>,
