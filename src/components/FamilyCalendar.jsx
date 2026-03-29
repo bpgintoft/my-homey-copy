@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { Button } from "@/components/ui/button";
@@ -88,6 +88,7 @@ export default function FamilyCalendar({ activities, initialEventId }) {
     queryFn: () => base44.entities.CachedCalendarEvent.list('-start', 500),
     staleTime: 0,
     gcTime: 60 * 60 * 1000,
+    refetchOnMount: true,
   });
 
   // Real-time: invalidate whenever the webhook updates the cache
@@ -207,6 +208,7 @@ export default function FamilyCalendar({ activities, initialEventId }) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['googleCalendarEvents'] });
       queryClient.invalidateQueries({ queryKey: ['importantDates'] });
+      queryClient.refetchQueries({ queryKey: ['cachedCalendarEvents'] });
       setShowAddDialog(false);
       setNewEvent({
         summary: '',

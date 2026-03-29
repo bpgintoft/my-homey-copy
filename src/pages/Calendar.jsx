@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
@@ -23,6 +23,12 @@ export default function Calendar() {
   const navigate = useNavigate();
   const bannerRef = useRef(null);
   const touchStartY = useRef(0);
+  const queryClient = useQueryClient();
+  
+  // Fetch Google Calendar events on page load
+  React.useEffect(() => {
+    queryClient.refetchQueries({ queryKey: ['cachedCalendarEvents'] });
+  }, [queryClient]);
   
   useSwipe((direction) => {
     if (direction === 'left') {
@@ -37,7 +43,6 @@ export default function Calendar() {
   const [newActivity, setNewActivity] = useState({});
   const [editingActivity, setEditingActivity] = useState(null);
   const [currentDate, setCurrentDate] = useState(new Date());
-  const queryClient = useQueryClient();
 
 
 
