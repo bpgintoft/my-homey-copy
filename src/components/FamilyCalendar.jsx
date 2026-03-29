@@ -464,6 +464,8 @@ export default function FamilyCalendar({ activities, initialEventId }) {
       timeMax: addDays(newWeekStart, 7).toISOString()
     }).then(() => {
       queryClient.invalidateQueries({ queryKey: ['cachedCalendarEvents'] });
+    }).catch(err => {
+      console.error('Failed to sync calendar:', err);
     });
   };
 
@@ -476,6 +478,8 @@ export default function FamilyCalendar({ activities, initialEventId }) {
       timeMax: addDays(newWeekStart, 7).toISOString()
     }).then(() => {
       queryClient.invalidateQueries({ queryKey: ['cachedCalendarEvents'] });
+    }).catch(err => {
+      console.error('Failed to sync calendar:', err);
     });
   };
 
