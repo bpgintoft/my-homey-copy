@@ -249,6 +249,31 @@ export default function CommandCenter({ open, onClose }) {
         </div>
 
         <div className="px-4 py-5 space-y-6">
+          {/* Family Decisions */}
+          <Section
+            emoji="🤝"
+            title="Family Decisions"
+            items={dueDecisions}
+            emptyText="All decisions are in good shape!"
+            renderItem={(decision) => {
+              const subtitle = [
+                decision.status === 'needs_action' ? 'Needs Action' : undefined,
+                decision.deadline ? `Due ${format(parseISO(decision.deadline), 'MMM d')}` : undefined
+              ].filter(Boolean).join(' · ') || undefined;
+              return (
+                <ItemRow
+                  key={decision.id}
+                  label={decision.title}
+                  sublabel={subtitle}
+                  to={createPageUrl(`Decisions?decisionId=${decision.id}`)}
+                  onClick={onClose}
+                />
+              );
+            }}
+          />
+
+          <div className="border-t border-gray-100" />
+
           {/* House Health */}
           <Section
             emoji="🏠"
@@ -335,30 +360,6 @@ export default function CommandCenter({ open, onClose }) {
             }}
           />
 
-          <div className="border-t border-gray-100" />
-
-          {/* Family Decisions */}
-          <Section
-            emoji="🤝"
-            title="Family Decisions"
-            items={dueDecisions}
-            emptyText="All decisions are in good shape!"
-            renderItem={(decision) => {
-              const subtitle = [
-                decision.status === 'needs_action' ? 'Needs Action' : undefined,
-                decision.deadline ? `Due ${format(parseISO(decision.deadline), 'MMM d')}` : undefined
-              ].filter(Boolean).join(' · ') || undefined;
-              return (
-                <ItemRow
-                  key={decision.id}
-                  label={decision.title}
-                  sublabel={subtitle}
-                  to={createPageUrl(`Decisions?decisionId=${decision.id}`)}
-                  onClick={onClose}
-                />
-              );
-            }}
-          />
         </div>
       </DialogContent>
     </Dialog>
