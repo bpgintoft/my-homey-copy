@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Shield, FileText } from 'lucide-react';
 
 const ID_CATEGORIES = [
-  { value: 'identity', label: 'Identity' },
+  { value: 'identity', label: 'Personal Info Hub' },
   { value: 'travel', label: 'Travel' },
   { value: 'health', label: 'Health' },
   { value: 'financial', label: 'Financial' },
