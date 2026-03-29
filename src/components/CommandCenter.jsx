@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -22,29 +22,6 @@ export function CommandCenterBadge({ count }) {
 
 // Hook that computes the badge count from cached query data (no extra DB calls)
 export function useCommandCenterCount() {
-  const [currentUserEmail, setCurrentUserEmail] = React.useState(null);
-  const [currentUserMemberId, setCurrentUserMemberId] = React.useState(null);
-
-  React.useEffect(() => {
-    base44.auth.me().then(u => {
-      setCurrentUserEmail(u?.email || null);
-    }).catch(() => {});
-  }, []);
-
-  const { data: familyMembers = [] } = useQuery({
-    queryKey: ['familyMembers'],
-    queryFn: () => base44.entities.FamilyMember.list(),
-    staleTime: 10 * 60 * 1000,
-    enabled: !!currentUserEmail,
-  });
-
-  React.useEffect(() => {
-    if (currentUserEmail && familyMembers.length > 0) {
-      const match = familyMembers.find(m => m.email === currentUserEmail);
-      setCurrentUserMemberId(match?.id || null);
-    }
-  }, [currentUserEmail, familyMembers]);
-
   const { data: maintenanceTasks = [] } = useQuery({
     queryKey: ['maintenanceTasks'],
     queryFn: () => base44.entities.MaintenanceTask.list('-next_due', 200),
@@ -94,9 +71,7 @@ export function useCommandCenterCount() {
 
     // ✅ Priority Chores: past due, due within 7 days, OR marked urgent
     // Exclude chores synced from maintenance tasks (those appear in House Health)
-    // Only show chores for the currently logged-in user's family member
     const filteredChores = chores.filter(c => {
-      if (currentUserMemberId && c.assigned_to_member_id !== currentUserMemberId) return false;
       if (c.is_completed) return false;
       if (c.maintenance_task_id) return false;
       if (c.priority === 'urgent') return true;
@@ -134,7 +109,7 @@ export function useCommandCenterCount() {
       highPriorityChores: urgentChores,
       todayEvents,
     };
-  }, [maintenanceTasks, chores, cachedEvents, currentUserMemberId]);
+  }, [maintenanceTasks, chores, cachedEvents]);
 }
 
 function Section({ emoji, title, items, renderItem, emptyText, emojiIsDay }) {
