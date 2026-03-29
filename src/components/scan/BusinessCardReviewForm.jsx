@@ -16,7 +16,18 @@ export default function BusinessCardReviewForm({ extracted, setExtracted }) {
           id="name"
           value={extracted.contact_name || ''}
           onChange={(e) => handleChange('contact_name', e.target.value)}
-          placeholder="e.g., Oliver Smith"
+          placeholder="e.g., John Couch"
+          className="mt-1"
+        />
+      </div>
+
+      <div>
+        <Label htmlFor="title" className="text-xs font-semibold text-gray-700">Job Title</Label>
+        <Input
+          id="title"
+          value={extracted.title || ''}
+          onChange={(e) => handleChange('title', e.target.value)}
+          placeholder="e.g., Vice President, Sales Manager"
           className="mt-1"
         />
       </div>
@@ -38,7 +49,18 @@ export default function BusinessCardReviewForm({ extracted, setExtracted }) {
           id="phone"
           value={extracted.phone || ''}
           onChange={(e) => handleChange('phone', e.target.value)}
-          placeholder="e.g., 123-456-7890"
+          placeholder="e.g., 408 974-6117"
+          className="mt-1"
+        />
+      </div>
+
+      <div>
+        <Label htmlFor="phone_secondary" className="text-xs font-semibold text-gray-700">Phone (Secondary)</Label>
+        <Input
+          id="phone_secondary"
+          value={extracted.phone_secondary || ''}
+          onChange={(e) => handleChange('phone_secondary', e.target.value)}
+          placeholder="e.g., 408 974-0121 (fax)"
           className="mt-1"
         />
       </div>

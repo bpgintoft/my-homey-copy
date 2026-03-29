@@ -79,13 +79,15 @@ For house_doc, extract:
 - notes: any other relevant notes. null if not found.
 
 For business_card, extract:
-- contact_name: full name of the person on the card
-- company: company or organization name
-- phone: phone number. null if not found.
+- contact_name: full name of the person on the card. This is the person's name, NOT the company name. null if not found.
+- title: job title or role (e.g., "Vice President", "Manager", "Sales Director"). null if not found.
+- company: company or organization name. This is the business/organization name, NOT the person's name. null if not found.
+- phone: primary phone number. null if not found.
+- phone_secondary: secondary phone, fax, or mobile number. null if not found.
 - email: email address. null if not found.
-- address: street address and location. null if not found.
-- website: website URL. null if not found.
-- notes: social media handles, job title, or other details. null if not found.
+- address: full street address, city, state, ZIP (e.g., "1 Infinite Loop, MS: 81-3ED, Cupertino, California 95014"). null if not found.
+- website: website URL or domain. null if not found.
+- notes: any other details like social media handles, department, or miscellaneous info. null if not found.
 
 STEP 3 - EXTRACT METADATA: Always scan the document for structured data items and return them in an extracted_metadata array. Pay special attention to:
 - Barcodes: Extract the barcode number below any barcode image
@@ -156,9 +158,12 @@ Also return:
           notes: { type: ["string", "null"] },
           // business_card fields
           contact_name: { type: ["string", "null"] },
+          title: { type: ["string", "null"] },
           company: { type: ["string", "null"] },
           phone: { type: ["string", "null"] },
+          phone_secondary: { type: ["string", "null"] },
           email: { type: ["string", "null"] },
+          address: { type: ["string", "null"] },
           website: { type: ["string", "null"] },
           // extracted metadata
           extracted_metadata: {

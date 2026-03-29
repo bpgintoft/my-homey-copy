@@ -228,9 +228,12 @@ export default function HomeyScanModal({ open, onClose, onSaved, contextHint }) 
         purchase_price: result.purchase_price || null,
         // business_card
         contact_name: result.contact_name || '',
+        title: result.title || '',
         company: result.company || '',
         phone: result.phone || '',
+        phone_secondary: result.phone_secondary || '',
         email: result.email || '',
+        address: result.address || '',
         website: result.website || '',
         notes: result.notes || '',
       });
@@ -496,14 +499,20 @@ export default function HomeyScanModal({ open, onClose, onSaved, contextHint }) 
   };
 
   const saveBusinessCard = async () => {
+    let notesParts = [];
+    if (extracted.title) notesParts.push(`Title: ${extracted.title}`);
+    if (extracted.notes) notesParts.push(extracted.notes);
+    const combinedNotes = notesParts.length > 0 ? notesParts.join('\n') : null;
+
     await base44.entities.ImportantContact.create({
       name: extracted.contact_name,
       type: extracted.company || 'Business Contact',
       phone: extracted.phone || null,
+      phone_secondary: extracted.phone_secondary || null,
       email: extracted.email || null,
       address: extracted.address || null,
       website: extracted.website || null,
-      notes: extracted.notes || null,
+      notes: combinedNotes,
       is_emergency: false,
     });
     queryClient.invalidateQueries({ queryKey: ['importantContacts'] });
