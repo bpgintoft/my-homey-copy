@@ -180,8 +180,8 @@ export default function DecisionDialog({ decision, currentUserEmail, familyMembe
                 </button>
               </div>
             ) : (
-              <div className="flex items-start justify-between gap-2">
-                <DialogTitle className="text-base leading-snug text-white flex-1">{titleText}</DialogTitle>
+              <div className="flex items-center justify-between gap-2">
+                <DialogTitle className="text-base font-semibold leading-snug text-white flex-1">{titleText}</DialogTitle>
                 <button
                   type="button"
                   onClick={() => setEditingTitle(true)}
