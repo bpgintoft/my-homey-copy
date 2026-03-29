@@ -104,6 +104,10 @@ export function useCommandCenterCount() {
     });
 
     // Deduplicate co-assigned chores: group by linked_chore_ids or id
+    // Build a lookup of ALL chores (not just filtered) so we can show all assignee names
+    const allChoresById = {};
+    chores.forEach(c => { allChoresById[c.id] = c; });
+
     const seenIds = new Set();
     const deduped = [];
     for (const c of filteredChores) {
@@ -111,9 +115,9 @@ export function useCommandCenterCount() {
       // Collect all sibling chore IDs (this chore + linked siblings)
       const siblingIds = new Set([c.id, ...(c.linked_chore_ids || [])]);
       siblingIds.forEach(id => seenIds.add(id));
-      // Find all sibling chores that also passed the filter
-      const siblings = filteredChores.filter(s => siblingIds.has(s.id));
-      const names = [...new Set(siblings.map(s => s.assigned_to_name).filter(Boolean))];
+      // Look up ALL siblings from the full chores list to get every assignee name
+      const allSiblings = [...siblingIds].map(id => allChoresById[id]).filter(Boolean);
+      const names = [...new Set(allSiblings.map(s => s.assigned_to_name).filter(Boolean))];
       deduped.push({ ...c, _allAssignees: names });
     }
 
