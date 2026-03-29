@@ -273,12 +273,15 @@ export default function FamilyCalendar({ activities, initialEventId }) {
       // Update the cached event immediately in local cache
       queryClient.setQueryData(['cachedCalendarEvents'], (old) => {
         if (!old) return old;
-        // Convert datetime-local to ISO format
-        const toISO = (dateStr) => {
+        
+        // Convert datetime-local format to ISO format with timezone
+        const toISO = (dateStr, isAllDay) => {
           if (!dateStr) return dateStr;
-          if (editingEvent.isAllDay) return dateStr; // Date-only stays as-is
-          return dateStr.replace('T', 'T') + (dateStr.includes('T') && !dateStr.includes(':00Z') ? ':00Z' : 'Z');
+          if (isAllDay) return dateStr; // Date-only format stays as-is
+          // datetime-local is "YYYY-MM-DDTHH:MM", convert to ISO "YYYY-MM-DDTHH:MM:00Z"
+          return dateStr + ':00Z';
         };
+        
         return old.map(e => 
           e.google_event_id === editingEvent.id 
             ? {
@@ -286,8 +289,8 @@ export default function FamilyCalendar({ activities, initialEventId }) {
                 title: editingEvent.summary,
                 description: editingEvent.description,
                 location: editingEvent.location,
-                start: editingEvent.start,
-                end: editingEvent.end,
+                start: toISO(editingEvent.start, editingEvent.isAllDay),
+                end: toISO(editingEvent.end, editingEvent.isAllDay),
               }
             : e
         );
