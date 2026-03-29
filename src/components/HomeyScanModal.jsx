@@ -7,8 +7,9 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
   ScanLine, Loader2, CheckCircle2, AlertTriangle,
-  Sparkles, ImageIcon, FileText, X, Shield,
+  Sparkles, ImageIcon, FileText, X, Shield, Plus, GripVertical,
 } from 'lucide-react';
+import jsPDF from 'jspdf';
 import EventReviewForm from './scan/EventReviewForm';
 import MaintenanceReviewForm from './scan/MaintenanceReviewForm';
 import VaultReviewForm from './scan/VaultReviewForm';
@@ -34,8 +35,7 @@ export default function HomeyScanModal({ open, onClose, onSaved, contextHint }) 
   const queryClient = useQueryClient();
 
   const [step, setStep] = useState(STEPS.UPLOAD);
-  const [file, setFile] = useState(null);
-  const [preview, setPreview] = useState(null);
+  const [files, setFiles] = useState([]);
   const [scanError, setScanError] = useState(null);
   const [extracted, setExtracted] = useState(null);
   const [docType, setDocType] = useState(null);
@@ -66,8 +66,7 @@ export default function HomeyScanModal({ open, onClose, onSaved, contextHint }) 
 
   const reset = () => {
     setStep(STEPS.UPLOAD);
-    setFile(null);
-    setPreview(null);
+    setFiles([]);
     setScanError(null);
     setExtracted(null);
     setDocType(null);
@@ -82,8 +81,41 @@ export default function HomeyScanModal({ open, onClose, onSaved, contextHint }) 
 
   const handleFileSelect = (f) => {
     if (!f) return;
-    setFile(f);
-    setPreview(f.type.startsWith('image/') ? URL.createObjectURL(f) : null);
+    setFiles(prev => [...prev, { id: Date.now() + Math.random(), file: f, preview: f.type.startsWith('image/') ? URL.createObjectURL(f) : null }]);
+  };
+
+  const removeFile = (id) => {
+    setFiles(prev => prev.filter(item => item.id !== id));
+  };
+
+  const compileToPdf = async () => {
+    const imageFiles = files.filter(item => item.file.type.startsWith('image/'));
+    if (imageFiles.length === 0) return null;
+
+    const pdf = new jsPDF('p', 'mm', 'a4');
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const pageHeight = pdf.internal.pageSize.getHeight();
+    let isFirst = true;
+
+    for (const item of imageFiles) {
+      const img = new Image();
+      await new Promise((resolve, reject) => {
+        img.onload = () => {
+          if (!isFirst) pdf.addPage();
+          const imgWidth = pageWidth;
+          const imgHeight = (img.height / img.width) * pageWidth;
+          const yPos = imgHeight > pageHeight ? 0 : (pageHeight - imgHeight) / 2;
+          pdf.addImage(img, 'JPEG', 0, yPos, imgWidth, Math.min(imgHeight, pageHeight));
+          isFirst = false;
+          resolve();
+        };
+        img.onerror = reject;
+        img.src = item.preview;
+      });
+    }
+
+    const pdfBlob = pdf.output('blob');
+    return new File([pdfBlob], 'scan.pdf', { type: 'application/pdf' });
   };
 
   const compressImage = (f) => new Promise((resolve, reject) => {
@@ -108,20 +140,31 @@ export default function HomeyScanModal({ open, onClose, onSaved, contextHint }) 
   });
 
   const handleScan = async () => {
-    if (!file) return;
+    if (files.length === 0) return;
     setStep(STEPS.SCANNING);
     setScanError(null);
 
     try {
       let uploadFile;
-      if (file.type.startsWith('image/')) {
-        const compressed = await compressImage(file);
-        const byteChars = atob(compressed.base64);
-        const byteArr = new Uint8Array(byteChars.length);
-        for (let i = 0; i < byteChars.length; i++) byteArr[i] = byteChars.charCodeAt(i);
-        uploadFile = new File([byteArr], 'scan.jpg', { type: 'image/jpeg' });
+      
+      if (files.length === 1) {
+        const f = files[0].file;
+        if (f.type.startsWith('image/')) {
+          const compressed = await compressImage(f);
+          const byteChars = atob(compressed.base64);
+          const byteArr = new Uint8Array(byteChars.length);
+          for (let i = 0; i < byteChars.length; i++) byteArr[i] = byteChars.charCodeAt(i);
+          uploadFile = new File([byteArr], 'scan.jpg', { type: 'image/jpeg' });
+        } else {
+          uploadFile = f;
+        }
       } else {
-        uploadFile = file;
+        uploadFile = await compileToPdf();
+        if (!uploadFile) {
+          setScanError('No images found to compile. Please add image files.');
+          setStep(STEPS.UPLOAD);
+          return;
+        }
       }
 
       const response = await base44.functions.invoke('homeyScan', { file: uploadFile });
@@ -418,7 +461,7 @@ export default function HomeyScanModal({ open, onClose, onSaved, contextHint }) 
         {/* UPLOAD */}
         {step === STEPS.UPLOAD && (
           <div className="space-y-4">
-            <p className="text-sm text-gray-500">Upload a school flyer, service invoice, ID card, warranty, or any home document. Homey will figure out what it is automatically.</p>
+            <p className="text-sm text-gray-500">Upload one or multiple photos. They'll be compiled into a single file. Homey will figure out what it is automatically.</p>
 
             {scanError && (
               <div className="flex items-center gap-2 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">
@@ -431,39 +474,53 @@ export default function HomeyScanModal({ open, onClose, onSaved, contextHint }) 
               className="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center cursor-pointer hover:border-[#0AACFF] hover:bg-blue-50 transition-colors"
               onClick={() => fileRef.current?.click()}
               onDragOver={(e) => e.preventDefault()}
-              onDrop={(e) => { e.preventDefault(); handleFileSelect(e.dataTransfer.files[0]); }}
+              onDrop={(e) => {
+                e.preventDefault();
+                Array.from(e.dataTransfer.files).forEach(f => handleFileSelect(f));
+              }}
             >
-              {file ? (
-                <div className="space-y-2">
-                  {preview ? (
-                    <img src={preview} alt="Preview" className="max-h-48 mx-auto rounded-lg object-contain" />
-                  ) : (
-                    <div className="flex items-center justify-center gap-2 text-gray-600">
-                      <FileText className="w-8 h-8 text-blue-400" />
-                      <span className="font-medium">{file.name}</span>
-                    </div>
-                  )}
-                  <button onClick={(e) => { e.stopPropagation(); setFile(null); setPreview(null); }} className="text-xs text-gray-400 hover:text-red-500 flex items-center gap-1 mx-auto">
-                    <X className="w-3 h-3" /> Remove
-                  </button>
-                </div>
-              ) : (
+              {files.length === 0 ? (
                 <div className="space-y-3">
                   <div className="flex justify-center gap-4">
                     <ImageIcon className="w-8 h-8 text-gray-300" />
                     <FileText className="w-8 h-8 text-gray-300" />
                   </div>
                   <div>
-                    <p className="font-medium text-gray-700">Drop a file here or click to browse</p>
-                    <p className="text-xs text-gray-400 mt-1">Supports JPG, PNG, PDF</p>
+                    <p className="font-medium text-gray-700">Drop files here or click to browse</p>
+                    <p className="text-xs text-gray-400 mt-1">Supports JPG, PNG, PDF — add multiple photos to compile</p>
                   </div>
+                </div>
+              ) : (
+                <div className="text-left space-y-2">
+                  <p className="text-sm font-medium text-gray-700 mb-2">{files.length} file{files.length > 1 ? 's' : ''} selected:</p>
+                  {files.map((item) => (
+                    <div key={item.id} className="flex items-center gap-2 p-2 bg-blue-50 rounded-lg">
+                      {item.preview ? (
+                        <img src={item.preview} alt="Preview" className="w-10 h-10 rounded object-cover flex-shrink-0" />
+                      ) : (
+                        <FileText className="w-5 h-5 text-blue-400 flex-shrink-0" />
+                      )}
+                      <span className="text-sm text-gray-700 flex-1 truncate">{item.file.name}</span>
+                      <button
+                        onClick={(e) => { e.stopPropagation(); removeFile(item.id); }}
+                        className="text-gray-300 hover:text-red-500 transition-colors flex-shrink-0"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+                  ))}
                 </div>
               )}
             </div>
 
-            <input ref={fileRef} type="file" accept="image/*,.pdf" className="hidden" onChange={(e) => handleFileSelect(e.target.files?.[0])} />
+            <input ref={fileRef} type="file" accept="image/*,.pdf" multiple className="hidden" onChange={(e) => Array.from(e.target.files || []).forEach(f => handleFileSelect(f))} />
 
-            <Button onClick={handleScan} disabled={!file} className="w-full bg-gradient-to-r from-[#E91E8C] to-[#0AACFF] text-white font-semibold">
+            <Button onClick={() => fileRef.current?.click()} variant="outline" className="w-full border-gray-200">
+              <Plus className="w-4 h-4 mr-2" />
+              Add More Files
+            </Button>
+
+            <Button onClick={handleScan} disabled={files.length === 0} className="w-full bg-gradient-to-r from-[#E91E8C] to-[#0AACFF] text-white font-semibold">
               <Sparkles className="w-4 h-4 mr-2" />
               Scan with Homey
             </Button>
