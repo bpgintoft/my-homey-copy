@@ -743,7 +743,7 @@ export default function Meals() {
 
       <div className="container mx-auto px-6 py-8">
         <Tabs defaultValue="meals" className="space-y-6">
-          <TabsList className="bg-white shadow-sm border-b-2 border-gray-200 rounded-none">
+          <TabsList className="bg-white shadow-sm border-b-2 border-gray-200 rounded-none w-full">
             <TabsTrigger value="meals" className="border-b-2 border-transparent data-[state=active]:border-pink-500 data-[state=active]:bg-transparent rounded-none text-xs sm:text-sm">Meals</TabsTrigger>
             <TabsTrigger value="daily" className="border-b-2 border-transparent data-[state=active]:border-pink-500 data-[state=active]:bg-transparent rounded-none text-xs sm:text-sm">Daily</TabsTrigger>
             <TabsTrigger value="plan" className="border-b-2 border-transparent data-[state=active]:border-pink-500 data-[state=active]:bg-transparent rounded-none text-xs sm:text-sm">Weekly</TabsTrigger>
