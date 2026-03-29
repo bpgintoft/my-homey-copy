@@ -178,7 +178,12 @@ export default function DecisionDialog({ decision, currentUserEmail, familyMembe
               <div className="flex items-start justify-between gap-2">
                 <DialogTitle className="text-base leading-snug text-white flex-1">{titleText}</DialogTitle>
                 <button
-                  onClick={() => setEditingTitle(true)}
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setEditingTitle(true);
+                  }}
                   className="text-indigo-300 hover:text-white flex-shrink-0 p-1"
                 >
                   <Pencil className="w-4 h-4" />
