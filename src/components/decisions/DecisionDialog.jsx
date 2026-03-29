@@ -168,8 +168,13 @@ export default function DecisionDialog({ decision, currentUserEmail, familyMembe
                   autoFocus
                 />
                 <button
-                  onClick={() => setEditingTitle(false)}
-                  className="text-indigo-300 hover:text-white"
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setEditingTitle(false);
+                  }}
+                  className="text-indigo-300 hover:text-white flex-shrink-0 p-1"
                 >
                   <Check className="w-4 h-4" />
                 </button>
