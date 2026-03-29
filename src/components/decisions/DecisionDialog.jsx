@@ -157,7 +157,7 @@ export default function DecisionDialog({ decision, currentUserEmail, familyMembe
 
         {/* Header — hidden in focus mode */}
         {!focusChat && (
-          <DialogHeader className="px-5 pt-5 pb-3">
+          <DialogHeader className="px-5 pt-5 pb-3 pr-12">
             {editingTitle ? (
               <div className="flex items-center gap-2">
                 <input
