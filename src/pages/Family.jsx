@@ -2,8 +2,9 @@ import React, { useState, useRef } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { 
-  Users, Plus, Phone, Mail, Pencil, Trash2, CheckCircle2, Upload, Loader2, AlertTriangle
+  Users, Plus, Phone, Mail, Pencil, Trash2, CheckCircle2, Upload, Loader2, AlertTriangle, ArrowUpDown
 } from 'lucide-react';
+import FamilyMemberReorderDialog from '@/components/FamilyMemberReorderDialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -21,6 +22,7 @@ const COLORS = [
 
 export default function Family() {
   const [isAddOpen, setIsAddOpen] = useState(false);
+  const [isReorderOpen, setIsReorderOpen] = useState(false);
   const [editingMember, setEditingMember] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [responsibilityInput, setResponsibilityInput] = useState('');
@@ -278,7 +280,15 @@ export default function Family() {
       </div>
 
       <div className="container mx-auto px-6 py-8">
-        <div className="flex justify-end mb-6 -mt-12 relative z-10">
+        <div className="flex justify-end gap-3 mb-6 -mt-12 relative z-10">
+          <Button 
+            variant="outline" 
+            className="bg-white shadow-lg"
+            onClick={() => setIsReorderOpen(true)}
+          >
+            <ArrowUpDown className="w-4 h-4 mr-2" />
+            Reorder Members
+          </Button>
           <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
             <DialogTrigger asChild>
               <Button className="bg-white text-teal-600 hover:bg-teal-50 shadow-lg">
@@ -473,6 +483,8 @@ export default function Family() {
           )}
         </DialogContent>
       </Dialog>
+
+      <FamilyMemberReorderDialog open={isReorderOpen} onOpenChange={setIsReorderOpen} />
     </div>
   );
 }

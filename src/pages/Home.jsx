@@ -61,10 +61,7 @@ export default function Home() {
     queryFn: () => base44.auth.me(),
   });
 
-  const bryanMember = familyMembers.find(m => m.name === 'Bryan') || { name: 'Bryan' };
-  const kateMember = familyMembers.find(m => m.name === 'Kate') || { name: 'Kate' };
-  const phoenixMember = familyMembers.find(m => m.name === 'Phoenix') || { name: 'Phoenix' };
-  const maraMember = familyMembers.find(m => m.name === 'Mara') || { name: 'Mara' };
+  const sortedMembers = [...familyMembers].sort((a, b) => (a.display_order || 0) - (b.display_order || 0));
 
   const todayEvents = googleEvents?.length || 0;
 
@@ -156,58 +153,22 @@ export default function Home() {
       {/* Family Member Cards */}
       <div className="container mx-auto px-6 -mt-6 relative z-10">
         <div className="grid grid-cols-4 gap-2 mb-6">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-          >
-            <Link to={createPageUrl('Bryan')}>
-              <Card className="border-0 shadow-lg bg-white hover:shadow-xl transition-shadow cursor-pointer">
-                <CardContent className="py-2 px-2 text-center">
-                  <div className="text-sm font-bold text-gray-900">{bryanMember.name}</div>
-                </CardContent>
-              </Card>
-            </Link>
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-          >
-            <Link to={createPageUrl('Kate')}>
-              <Card className="border-0 shadow-lg bg-white hover:shadow-xl transition-shadow cursor-pointer">
-                <CardContent className="py-2 px-2 text-center">
-                  <div className="text-sm font-bold text-gray-900">{kateMember.name}</div>
-                </CardContent>
-              </Card>
-            </Link>
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-          >
-            <Link to={createPageUrl('Phoenix')}>
-              <Card className="border-0 shadow-lg bg-white hover:shadow-xl transition-shadow cursor-pointer">
-                <CardContent className="py-2 px-2 text-center">
-                  <div className="text-sm font-bold text-gray-900">{phoenixMember.name}</div>
-                </CardContent>
-              </Card>
-            </Link>
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5 }}
-          >
-            <Link to={createPageUrl('Mara')}>
-              <Card className="border-0 shadow-lg bg-white hover:shadow-xl transition-shadow cursor-pointer">
-                <CardContent className="py-2 px-2 text-center">
-                  <div className="text-sm font-bold text-gray-900">{maraMember.name}</div>
-                </CardContent>
-              </Card>
-            </Link>
-          </motion.div>
+          {sortedMembers.map((member, index) => (
+            <motion.div
+              key={member.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 + index * 0.1 }}
+            >
+              <Link to={createPageUrl(member.name)}>
+                <Card className="border-0 shadow-lg bg-white hover:shadow-xl transition-shadow cursor-pointer">
+                  <CardContent className="py-2 px-2 text-center">
+                    <div className="text-sm font-bold text-gray-900">{member.name}</div>
+                  </CardContent>
+                </Card>
+              </Link>
+            </motion.div>
+          ))}
         </div>
 
         {/* Main Sections - Roundabout Layout */}

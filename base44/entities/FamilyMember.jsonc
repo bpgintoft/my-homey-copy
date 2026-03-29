@@ -6,6 +6,11 @@
       "type": "string",
       "description": "Family member's name"
     },
+    "display_order": {
+      "type": "number",
+      "description": "Display order for family member buttons (lower numbers appear first)",
+      "default": 0
+    },
     "person_type": {
       "type": "string",
       "enum": [
