@@ -12,7 +12,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Plus, Calendar as CalendarIcon, MapPin, DollarSign, Clock, Sparkles, Users, Trash2, ExternalLink, UserPlus, Edit2, ScanLine } from 'lucide-react';
+import { Plus, Calendar as CalendarIcon, MapPin, DollarSign, Clock, Sparkles, Users, Trash2, ExternalLink, UserPlus, Edit2, ScanLine, RefreshCw } from 'lucide-react';
 import HomeyScanModal from '../components/HomeyScanModal';
 import { motion } from 'framer-motion';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, parseISO } from 'date-fns';
@@ -199,7 +199,19 @@ export default function Calendar() {
           </TabsList>
 
           <TabsContent value="calendar">
-            <div className="flex justify-end pb-2">
+            <div className="flex justify-end gap-2 pb-2">
+              <Button
+                onClick={async () => {
+                  await base44.functions.invoke('syncCalendarCache', {});
+                  queryClient.invalidateQueries({ queryKey: ['cachedCalendarEvents'] });
+                }}
+                variant="outline"
+                size="sm"
+                className="border-blue-200 text-blue-600 hover:bg-blue-50"
+              >
+                <RefreshCw className="w-4 h-4 mr-1" />
+                Sync Now
+              </Button>
               <Button
                 onClick={() => setShowScanModal(true)}
                 className="bg-gradient-to-r from-[#E91E8C] to-[#0AACFF] text-white font-semibold shadow-md"
