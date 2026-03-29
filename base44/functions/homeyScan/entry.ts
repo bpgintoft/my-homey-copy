@@ -23,11 +23,12 @@ Deno.serve(async (req) => {
     const result = await base44.asServiceRole.integrations.Core.InvokeLLM({
       prompt: `You are Homey, a smart family document assistant. Carefully analyze this image or document and do THREE things:
 
-STEP 1 - CLASSIFY: Determine which of these four categories best describes this document:
+STEP 1 - CLASSIFY: Determine which of these five categories best describes this document:
 - "calendar_event": School flyers, sports schedules, event posters, activity sign-ups, appointment cards
 - "maintenance_task": HVAC invoices, appliance receipts, service records, repair quotes, home maintenance reminders
 - "personal_id": Passports, driver's licenses, insurance cards, birth certificates, social security cards, any government-issued personal ID
 - "house_doc": Warranties, product manuals, home contracts, deeds, permits, receipts for purchases (not personal IDs)
+- "business_card": Business cards with contact information (name, company, phone, email, address, website)
 
 STEP 2 - EXTRACT: Based on the category, extract the relevant fields below. Return null for any field you cannot find.
 
@@ -76,6 +77,15 @@ For house_doc, extract:
 - purchase_date: purchase date in YYYY-MM-DD if applicable. null if not found.
 - purchase_price: numeric price if mentioned. null if not found.
 - notes: any other relevant notes. null if not found.
+
+For business_card, extract:
+- contact_name: full name of the person on the card
+- company: company or organization name
+- phone: phone number. null if not found.
+- email: email address. null if not found.
+- address: street address and location. null if not found.
+- website: website URL. null if not found.
+- notes: social media handles, job title, or other details. null if not found.
 
 STEP 3 - EXTRACT METADATA: Always scan the document for structured data items and return them in an extracted_metadata array. Pay special attention to:
 - Barcodes: Extract the barcode number below any barcode image
@@ -144,6 +154,12 @@ Also return:
           purchase_date: { type: ["string", "null"] },
           purchase_price: { type: ["number", "null"] },
           notes: { type: ["string", "null"] },
+          // business_card fields
+          contact_name: { type: ["string", "null"] },
+          company: { type: ["string", "null"] },
+          phone: { type: ["string", "null"] },
+          email: { type: ["string", "null"] },
+          website: { type: ["string", "null"] },
           // extracted metadata
           extracted_metadata: {
             type: "array",

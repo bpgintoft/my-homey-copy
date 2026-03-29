@@ -13,6 +13,7 @@ import jsPDF from 'jspdf';
 import EventReviewForm from './scan/EventReviewForm';
 import MaintenanceReviewForm from './scan/MaintenanceReviewForm';
 import VaultReviewForm from './scan/VaultReviewForm';
+import BusinessCardReviewForm from './scan/BusinessCardReviewForm';
 
 const STEPS = {
   UPLOAD: 'upload',
@@ -28,6 +29,7 @@ const HINT_LABELS = {
   personal_id: 'Personal ID / Vault',
   house_doc: 'House Document',
   calendar_event: 'Calendar Event',
+  business_card: 'Business Card / Contact',
 };
 
 export default function HomeyScanModal({ open, onClose, onSaved, contextHint }) {
@@ -224,6 +226,12 @@ export default function HomeyScanModal({ open, onClose, onSaved, contextHint }) 
         expiration_date: result.expiration_date || '',
         purchase_date: result.purchase_date || '',
         purchase_price: result.purchase_price || null,
+        // business_card
+        contact_name: result.contact_name || '',
+        company: result.company || '',
+        phone: result.phone || '',
+        email: result.email || '',
+        website: result.website || '',
         notes: result.notes || '',
       });
 
@@ -279,6 +287,8 @@ export default function HomeyScanModal({ open, onClose, onSaved, contextHint }) 
         await savePersonalId();
       } else if (docType === 'house_doc') {
         await saveHouseDoc();
+      } else if (docType === 'business_card') {
+        await saveBusinessCard();
       }
     } catch (err) {
       console.error('Save error:', err);
@@ -485,12 +495,27 @@ export default function HomeyScanModal({ open, onClose, onSaved, contextHint }) 
     queryClient.invalidateQueries({ queryKey: ['documents'] });
   };
 
+  const saveBusinessCard = async () => {
+    await base44.entities.ImportantContact.create({
+      name: extracted.contact_name,
+      type: extracted.company || 'Business Contact',
+      phone: extracted.phone || null,
+      email: extracted.email || null,
+      address: extracted.address || null,
+      website: extracted.website || null,
+      notes: extracted.notes || null,
+      is_emergency: false,
+    });
+    queryClient.invalidateQueries({ queryKey: ['importantContacts'] });
+  };
+
   const isSaveDisabled = () => {
     if (!extracted) return true;
     if (docType === 'calendar_event') return !extracted.title || (missingDate && !extracted.date);
     if (docType === 'maintenance_task') return !extracted.task_title;
     if (docType === 'personal_id') return !extracted.doc_label || selectedMemberIds.length === 0;
     if (docType === 'house_doc') return !extracted.title;
+    if (docType === 'business_card') return !extracted.contact_name;
     return true;
   };
 
@@ -617,6 +642,7 @@ export default function HomeyScanModal({ open, onClose, onSaved, contextHint }) 
                     <SelectItem value="maintenance_task">🔧 Maintenance / Service</SelectItem>
                     <SelectItem value="personal_id">🔒 Personal ID / Vault</SelectItem>
                     <SelectItem value="house_doc">🏠 House Document</SelectItem>
+                    <SelectItem value="business_card">💼 Business Card</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -662,6 +688,10 @@ export default function HomeyScanModal({ open, onClose, onSaved, contextHint }) 
                 selectedMemberIds={selectedMemberIds}
                 setSelectedMemberIds={setSelectedMemberIds}
               />
+            )}
+
+            {docType === 'business_card' && (
+              <BusinessCardReviewForm extracted={extracted} setExtracted={setExtracted} />
             )}
 
             <div className="flex gap-3 pt-1">
