@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -172,6 +172,7 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
   });
 
   const location = useLocation();
+  const navigate = useNavigate();
 
   // Open chores section directly if ?chore=<id> param is present
   React.useEffect(() => {
@@ -184,8 +185,8 @@ export default function FamilyMemberDetails({ memberId, memberName, color = 'blu
         setEditingChoreId(choreId);
         setEditingChoreTitle(target.title);
         setEditingChoreRef(target);
-        // Clear the param so closing the dialog doesn't reopen it
-        window.history.replaceState(null, '', window.location.pathname);
+        // Clear the param via React Router so location.search updates and this effect won't re-fire
+        navigate(window.location.pathname, { replace: true });
       }
     }
   }, [location.search, chores]);
