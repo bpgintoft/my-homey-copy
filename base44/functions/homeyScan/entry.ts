@@ -59,10 +59,10 @@ For personal_id, extract:
 - doc_label: name or title of the document (e.g. "Passport", "Driver's License", "Insurance Card", "Library Card")
 - doc_type: short type identifier (e.g. "passport", "drivers_license", "insurance_card", "health_insurance_card", "birth_certificate", "ssn", "library_card")
 - expiry_date: expiration/effective date in YYYY-MM-DD. For insurance cards, look for fields like "Effective Date", "Exp Date", "Valid Through", "Policy Period end date", or any date printed on the card. null if not found.
-- issued_date: ONLY for driver's licenses — extract the issued/issue date in YYYY-MM-DD format. Look for labels like "ISS", "Issued", "Issue Date", or field code "4d ISS". null if not found or not a driver's license.
+- issued_date: ONLY for driver's licenses — extract the issued/issue date in YYYY-MM-DD format. On Wisconsin and other US DLs, look for the "ISS" or "4d ISS" field label on the left side of the card, which shows a date like "06/19/2020". Convert MM/DD/YYYY or similar formats to YYYY-MM-DD. null if not found or not a driver's license.
 - member_name: the full name or first name of the person(s) this ID belongs to. null if not found.
 - category: one of: identity, property, health, financial, travel, vehicles, education, other
-- license_number: ONLY for driver's licenses — extract the actual driver's license number. Look for labels like "License #", "DL#", "Driver's License #", or field code "4a". Ignore 2D barcodes or OTA codes. null otherwise.
+- license_number: ONLY for driver's licenses — extract the actual DL number printed prominently on the front. On Wisconsin DLs, this appears with field code "4a" (e.g., "G531-0758-3176-09"). Look for alphanumeric strings that appear near the top left. This is NOT the barcode at the bottom. Ignore 2D OTA codes. null otherwise.
 - insurance_provider: the insurance company name (e.g. "State Farm", "Geico", "Blue Cross") if this is any kind of insurance card. null otherwise.
 - policy_number: the policy number, member ID, or group number on the card. null if not found.
 - insurance_type: "vehicle" if auto/vehicle insurance, "health" if health insurance, "dental" if dental, "vision" if vision, null otherwise.
