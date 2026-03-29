@@ -1159,41 +1159,43 @@ export default function Meals() {
                     <div className="space-y-4">
                       {/* Family Member Selector */}
                       <div className="bg-white rounded-lg shadow-sm p-4 border-b-2 border-pink-200">
-                        <label className="text-sm font-medium text-gray-700 mb-3 block">Filter by:</label>
-                        <div className="flex flex-wrap gap-4">
-                          <button
-                            onClick={() => setSelectedMembers([])}
-                            className={`w-12 h-12 rounded-full flex items-center justify-center font-semibold text-sm transition-all ${
-                              selectedMembers.length === 0
-                                ? 'bg-pink-600 text-white ring-2 ring-pink-300'
-                                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                            }`}
-                          >
-                            All
-                          </button>
-                          {familyMembers.map(member => (
+                        <div className="flex items-center gap-3 flex-wrap">
+                          <label className="text-sm font-medium text-gray-700">Filter by:</label>
+                          <div className="flex gap-2">
                             <button
-                              key={member.id}
-                              onClick={() => setSelectedMembers(prev =>
-                                prev.includes(member.id)
-                                  ? prev.filter(id => id !== member.id)
-                                  : [...prev, member.id]
-                              )}
-                              className={`w-12 h-12 rounded-full flex-shrink-0 overflow-hidden transition-all ${
-                                selectedMembers.includes(member.id)
-                                  ? 'ring-2 ring-pink-500 ring-offset-2'
-                                  : 'hover:opacity-80'
+                              onClick={() => setSelectedMembers([])}
+                              className={`w-8 h-8 rounded-full flex items-center justify-center font-semibold text-xs transition-all ${
+                                selectedMembers.length === 0
+                                  ? 'bg-pink-600 text-white ring-2 ring-pink-300'
+                                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                               }`}
                             >
-                              {member.photo_url ? (
-                                <img src={member.photo_url} alt={member.name} className="w-full h-full object-cover" />
-                              ) : (
-                                <div className="w-full h-full bg-gray-300 flex items-center justify-center text-xs font-bold text-gray-700">
-                                  {member.name.charAt(0)}
-                                </div>
-                              )}
+                              All
                             </button>
-                          ))}
+                            {familyMembers.map(member => (
+                              <button
+                                key={member.id}
+                                onClick={() => setSelectedMembers(prev =>
+                                  prev.includes(member.id)
+                                    ? prev.filter(id => id !== member.id)
+                                    : [...prev, member.id]
+                                )}
+                                className={`w-8 h-8 rounded-full flex-shrink-0 overflow-hidden transition-all ${
+                                  selectedMembers.includes(member.id)
+                                    ? 'ring-2 ring-pink-500 ring-offset-1'
+                                    : 'hover:opacity-80'
+                                }`}
+                              >
+                                {member.photo_url ? (
+                                  <img src={member.photo_url} alt={member.name} className="w-full h-full object-cover" />
+                                ) : (
+                                  <div className="w-full h-full bg-gray-300 flex items-center justify-center text-xs font-bold text-gray-700">
+                                    {member.name.charAt(0)}
+                                  </div>
+                                )}
+                              </button>
+                            ))}
+                          </div>
                         </div>
                       </div>
 
