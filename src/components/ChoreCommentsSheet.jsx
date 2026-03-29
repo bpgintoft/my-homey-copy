@@ -237,8 +237,10 @@ export default function ChoreCommentsSheet({ chore, open, onOpenChange }) {
   useEffect(() => {
     if (open && comments.length > 0) {
       setTimeout(() => {
-        chatEndRef.current?.scrollIntoView({ behavior: 'instant' });
-      }, 50);
+        if (chatContainerRef.current) {
+          chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+        }
+      }, 300);
     }
   }, [open, comments.length]);
 
