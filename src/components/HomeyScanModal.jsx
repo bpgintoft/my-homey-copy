@@ -214,6 +214,9 @@ export default function HomeyScanModal({ open, onClose, onSaved, contextHint }) 
         policy_number: result.policy_number || '',
         insurance_type: result.insurance_type || '',
         card_number: result.card_number || '',
+        cardDestination: 'health',
+        cardCategory: 'other',
+        cardCategoryLabel: '',
         // house_doc
         doc_category: result.doc_category || 'other',
         related_item_name: result.related_item_name || '',
@@ -364,44 +367,87 @@ export default function HomeyScanModal({ open, onClose, onSaved, contextHint }) 
       if (!current) continue;
 
       const existingDocs = Array.isArray(current.documents_ids) ? current.documents_ids : [];
+      const updatePayload = { documents_ids: [...existingDocs] };
 
-      const newDoc = {
-        id: `doc_${Date.now()}_${memberId}`,
-        type: extracted.doc_type || 'other',
-        category: extracted.id_category || 'identity',
-        label: extracted.doc_label || 'Document',
-        value: extracted.card_number || '',
-        expiry_date: extracted.expiry_date || null,
-        file_uri: fileUrl || null,
-        created_at: new Date().toISOString(),
-      };
-
-      const updatePayload = { documents_ids: [...existingDocs, newDoc] };
-
-      if (extracted.doc_type === 'drivers_license') {
+      // Handle Student ID - auto-save to student_number field
+      if (extracted.doc_type === 'student_id' && extracted.card_number) {
+        if (extracted.card_number) updatePayload.student_number = extracted.card_number;
+        const newDoc = {
+          id: `doc_${Date.now()}_${memberId}`,
+          type: 'student_id',
+          category: 'education',
+          label: 'Student ID Number',
+          value: extracted.card_number,
+          expiry_date: extracted.expiry_date || null,
+          file_uri: fileUrl || null,
+          created_at: new Date().toISOString(),
+        };
+        updatePayload.documents_ids.push(newDoc);
+      }
+      // Handle Driver's License
+      else if (extracted.doc_type === 'drivers_license') {
         if (extracted.license_number) updatePayload.license_number = extracted.license_number;
         if (extracted.expiry_date) updatePayload.license_expiration_date = extracted.expiry_date;
+        const newDoc = {
+          id: `doc_${Date.now()}_${memberId}`,
+          type: 'drivers_license',
+          category: 'identity',
+          label: extracted.doc_label || 'Driver\'s License',
+          value: extracted.card_number || '',
+          expiry_date: extracted.expiry_date || null,
+          file_uri: fileUrl || null,
+          created_at: new Date().toISOString(),
+        };
+        updatePayload.documents_ids.push(newDoc);
       }
+      // Handle Insurance Cards with destination selection
+      else if (extracted.insurance_provider && extracted.card_number) {
+        const destination = extracted.cardDestination || 'health';
 
-      if (extracted.insurance_provider && extracted.insurance_type === 'vehicle') {
-        if (extracted.insurance_provider) updatePayload.vehicle_insurance_provider = extracted.insurance_provider;
-        if (extracted.policy_number) updatePayload.vehicle_insurance_policy_number = extracted.policy_number;
-        if (extracted.expiry_date) updatePayload.vehicle_insurance_expiration = extracted.expiry_date;
+        if (destination === 'health' && extracted.insurance_type === 'health') {
+          updatePayload.insurance_provider = extracted.insurance_provider;
+          updatePayload.insurance_member_id = extracted.card_number;
+          if (extracted.policy_number) updatePayload.insurance_member_id = extracted.policy_number;
+        } else if (destination === 'vehicles' && extracted.insurance_type === 'vehicle') {
+          updatePayload.vehicle_insurance_provider = extracted.insurance_provider;
+          updatePayload.vehicle_insurance_policy_number = extracted.card_number;
+          if (extracted.policy_number) updatePayload.vehicle_insurance_policy_number = extracted.policy_number;
+          if (extracted.expiry_date) updatePayload.vehicle_insurance_expiration = extracted.expiry_date;
+        } else if (destination === 'health') {
+          // Default health insurance fields
+          updatePayload.insurance_provider = extracted.insurance_provider;
+          updatePayload.insurance_member_id = extracted.card_number;
+          if (extracted.policy_number) updatePayload.insurance_member_id = extracted.policy_number;
+        }
+
+        const newDoc = {
+          id: `doc_${Date.now()}_${memberId}`,
+          type: extracted.doc_type || 'insurance_card',
+          category: destination === 'vehicles' ? 'vehicles' : 'health',
+          label: extracted.doc_label || `${extracted.insurance_provider} Card`,
+          value: extracted.card_number,
+          expiry_date: extracted.expiry_date || null,
+          file_uri: fileUrl || null,
+          created_at: new Date().toISOString(),
+        };
+        updatePayload.documents_ids.push(newDoc);
       }
+      // Handle Library Cards and Generic IDs
+      else if (extracted.card_number) {
+        const category = extracted.cardCategory === 'other' ? extracted.cardCategoryLabel || 'Other' : extracted.cardCategory || 'other';
+        const label = extracted.doc_label || `${category} Card`;
 
-      if (extracted.insurance_provider && extracted.insurance_type === 'health') {
-        if (extracted.insurance_provider) updatePayload.insurance_provider = extracted.insurance_provider;
-        if (extracted.policy_number) updatePayload.insurance_member_id = extracted.policy_number;
-      }
-
-      if (extracted.insurance_provider && extracted.insurance_type === 'dental') {
-        if (extracted.insurance_provider) updatePayload.dental_insurance_provider = extracted.insurance_provider;
-        if (extracted.policy_number) updatePayload.dental_insurance_member_id = extracted.policy_number;
-      }
-
-      if (extracted.insurance_provider && extracted.insurance_type === 'vision') {
-        if (extracted.insurance_provider) updatePayload.vision_insurance_provider = extracted.insurance_provider;
-        if (extracted.policy_number) updatePayload.vision_insurance_member_id = extracted.policy_number;
+        const newDoc = {
+          id: `doc_${Date.now()}_${memberId}`,
+          type: extracted.doc_type || 'other',
+          category: extracted.cardCategory || 'other',
+          label: label,
+          value: extracted.card_number,
+          expiry_date: extracted.expiry_date || null,
+          file_uri: fileUrl || null,
+          created_at: new Date().toISOString(),
+        };
+        updatePayload.documents_ids.push(newDoc);
       }
 
       await base44.entities.FamilyMember.update(memberId, updatePayload);

@@ -26,11 +26,24 @@ const DOC_CATEGORIES = [
   { value: 'other', label: 'Other' },
 ];
 
+const INSURANCE_DESTINATIONS = [
+  { value: 'health', label: 'Health & Medical' },
+  { value: 'vehicles', label: 'Vehicles & Travel' },
+  { value: 'personal', label: 'Personal Info Hub (Custom)' },
+];
+
 export default function VaultReviewForm({ extracted, setExtracted, docType, familyMembers, selectedMemberIds, setSelectedMemberIds }) {
   const toggleMember = (id) => setSelectedMemberIds(prev =>
     prev.includes(id) ? prev.filter(m => m !== id) : [...prev, id]
   );
   const isPersonalId = docType === 'personal_id';
+
+  // Determine if we need to show insurance destination selector
+  const isInsuranceCard = extracted.doc_type?.toLowerCase().includes('insurance') || extracted.insurance_provider;
+  const showInsuranceDestination = isPersonalId && extracted.card_number && isInsuranceCard;
+
+  // Determine if we need to show custom category input
+  const showCustomCategory = isPersonalId && extracted.card_number && !extracted.doc_type?.includes('student_id') && !isInsuranceCard;
 
   return (
     <div className="space-y-3">
@@ -62,6 +75,38 @@ export default function VaultReviewForm({ extracted, setExtracted, docType, fami
             <div className="space-y-2 p-3 bg-blue-50 border border-blue-100 rounded-lg">
               <p className="text-xs font-semibold text-blue-700">Card Number (will be saved to member vault)</p>
               <Input value={extracted.card_number || ''} onChange={e => setExtracted({ ...extracted, card_number: e.target.value })} className="mt-1 bg-white font-mono" placeholder="e.g. 25252 00215 6485" />
+            </div>
+          )}
+
+          {showInsuranceDestination && (
+            <div className="space-y-2 p-3 bg-amber-50 border border-amber-100 rounded-lg">
+              <p className="text-xs font-semibold text-amber-700">Where should this insurance info go?</p>
+              <Select value={extracted.cardDestination || 'health'} onValueChange={v => setExtracted({ ...extracted, cardDestination: v })}>
+                <SelectTrigger className="mt-1 bg-white"><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  {INSURANCE_DESTINATIONS.map(d => <SelectItem key={d.value} value={d.value}>{d.label}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
+
+          {showCustomCategory && (
+            <div className="space-y-2 p-3 bg-amber-50 border border-amber-100 rounded-lg">
+              <p className="text-xs font-semibold text-amber-700">Custom Category</p>
+              <p className="text-xs text-amber-600 mb-2">Choose an existing category or create a new one:</p>
+              <Select value={extracted.cardCategory || 'other'} onValueChange={v => setExtracted({ ...extracted, cardCategory: v })}>
+                <SelectTrigger className="mt-1 bg-white"><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="identity">Identity</SelectItem>
+                  <SelectItem value="education">Education / School</SelectItem>
+                  <SelectItem value="health">Health / Medical</SelectItem>
+                  <SelectItem value="financial">Financial / Membership</SelectItem>
+                  <SelectItem value="other">Other / Custom</SelectItem>
+                </SelectContent>
+              </Select>
+              {extracted.cardCategory === 'other' && (
+                <Input value={extracted.cardCategoryLabel || ''} onChange={e => setExtracted({ ...extracted, cardCategoryLabel: e.target.value })} className="mt-2 bg-white" placeholder="e.g. Library Cards, Club Memberships" />
+              )}
             </div>
           )}
 
