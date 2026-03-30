@@ -234,7 +234,7 @@ export default function QuickMealBuilder() {
     setCategoryLabels(updated);
     localStorage.setItem('mealBuilderCategoryLabels', JSON.stringify(updated));
 
-    const newCustom = survivingCustom;
+    const newCustom = dialogCustomCategoriesRef.current.filter(c => !deletedKeys.includes(c.key));
     setCustomCategories(newCustom);
     localStorage.setItem('mealBuilderCustomCategories', JSON.stringify(newCustom));
 
