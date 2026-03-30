@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { Card, CardContent } from '@/components/ui/card';
@@ -77,7 +77,8 @@ export default function QuickMealBuilder() {
   const [deletedKeys, setDeletedKeys] = useState([]);
   const [newCatName, setNewCatName] = useState('');
   const [assigningEmojis, setAssigningEmojis] = useState(false);
-  // Tracks custom categories within the dialog session (avoids stale closure bug)
+  // Ref-based dialog custom categories to avoid stale closures entirely
+  const dialogCustomCategoriesRef = useRef([]);
   const [dialogCustomCategories, setDialogCustomCategories] = useState([]);
 
   const { data: goToFoods = [] } = useQuery({
@@ -187,7 +188,8 @@ export default function QuickMealBuilder() {
   };
 
   const openRenameDialog = () => {
-    setDialogCustomCategories(customCategories);
+    dialogCustomCategoriesRef.current = [...customCategories];
+    setDialogCustomCategories([...customCategories]);
     setRenameForm(Object.fromEntries(
       allCategories.map(c => [c.key, categoryLabels[c.key]?.label || c.label])
     ));
@@ -201,7 +203,8 @@ export default function QuickMealBuilder() {
     if (!name) return;
     const key = 'custom_' + Date.now();
     const newCat = { key, label: name, emoji: '🍽️' };
-    setDialogCustomCategories(prev => [...prev, newCat]);
+    dialogCustomCategoriesRef.current = [...dialogCustomCategoriesRef.current, newCat];
+    setDialogCustomCategories(dialogCustomCategoriesRef.current);
     setRenameForm(prev => ({ ...prev, [key]: name }));
     setNewCatName('');
   };
@@ -209,7 +212,7 @@ export default function QuickMealBuilder() {
   const handleSaveRenames = async () => {
     // Build surviving categories (not deleted) — use dialogCustomCategories to avoid stale closure
     const survivingBuiltIn = CATEGORIES.filter(c => !deletedKeys.includes(c.key));
-    const survivingCustom = dialogCustomCategories.filter(c => !deletedKeys.includes(c.key));
+    const survivingCustom = dialogCustomCategoriesRef.current.filter(c => !deletedKeys.includes(c.key));
     const allSurviving = [...survivingBuiltIn, ...survivingCustom];
 
     setAssigningEmojis(true);
