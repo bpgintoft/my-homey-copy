@@ -44,6 +44,9 @@ export default function QuickMealBuilder() {
   const [newFood, setNewFood] = useState({ name: '', estimated_serving_size: '', category: 'proteins' });
   const [calculatingNutrition, setCalculatingNutrition] = useState(false);
   const [showTotals, setShowTotals] = useState(true);
+  const [showPlanDialog, setShowPlanDialog] = useState(false);
+  const [planForm, setPlanForm] = useState({ mealName: '', day: '', mealType: '', memberIds: [], saveToMeals: false });
+  const [addingToPlan, setAddingToPlan] = useState(false);
 
   const { data: goToFoods = [] } = useQuery({
     queryKey: ['goToFoods'],
@@ -63,6 +66,46 @@ export default function QuickMealBuilder() {
     mutationFn: (id) => base44.entities.GoToFood.delete(id),
     onSuccess: () => queryClient.invalidateQueries(['goToFoods']),
   });
+
+  const { data: familyMembers = [] } = useQuery({
+    queryKey: ['familyMembers'],
+    queryFn: () => base44.entities.FamilyMember.list(),
+    staleTime: 10 * 60 * 1000,
+  });
+
+  const handleAddToPlan = async () => {
+    if (!planForm.mealName.trim() || !planForm.day || !planForm.mealType) return;
+    setAddingToPlan(true);
+    const weekStart = new Date();
+    weekStart.setDate(weekStart.getDate() - weekStart.getDay());
+    const weekStartStr = weekStart.toISOString().split('T')[0];
+
+    let mealId = null;
+    if (planForm.saveToMeals) {
+      const meal = await base44.entities.Meal.create({
+        name: planForm.mealName.trim(),
+        type: planForm.mealType,
+        kid_friendly: true,
+        ingredients: selectedItems.map(i => i.name),
+        nutrition: totals,
+      });
+      mealId = meal.id;
+      queryClient.invalidateQueries(['meals']);
+    }
+
+    await base44.entities.MealPlan.create({
+      week_start_date: weekStartStr,
+      day_of_week: planForm.day,
+      meal_type: planForm.mealType,
+      meal_id: mealId || '',
+      meal_name: planForm.mealName.trim(),
+      assigned_to_member_ids: planForm.memberIds,
+    });
+    queryClient.invalidateQueries(['mealPlans']);
+    setAddingToPlan(false);
+    setShowPlanDialog(false);
+    setPlanForm({ mealName: '', day: '', mealType: '', memberIds: [], saveToMeals: false });
+  };
 
 
 
@@ -141,7 +184,14 @@ export default function QuickMealBuilder() {
                   {Math.round(totals.calories)} <span className="text-sm font-normal text-gray-500">cal</span>
                 </p>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 flex-wrap justify-end">
+                <Button
+                  size="sm"
+                  className="bg-gradient-to-r from-[#E91E8C] to-[#D01576] text-white text-xs"
+                  onClick={() => setShowPlanDialog(true)}
+                >
+                  Add to Plan
+                </Button>
                 <Popover>
                   <PopoverTrigger asChild>
                     <Button variant="outline" size="sm" className="border-pink-200 text-pink-600 hover:bg-pink-100 text-xs">
@@ -274,6 +324,89 @@ export default function QuickMealBuilder() {
           </Card>
         );
       })}
+
+      {/* Add to Plan dialog */}
+      <Dialog open={showPlanDialog} onOpenChange={setShowPlanDialog}>
+        <DialogContent className="max-w-sm max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Add to Weekly Plan</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <label className="text-sm font-medium text-gray-700 mb-1 block">Meal Name</label>
+              <Input
+                placeholder="e.g. Healthy Lunch Bowl"
+                value={planForm.mealName}
+                onChange={(e) => setPlanForm(p => ({ ...p, mealName: e.target.value }))}
+              />
+            </div>
+            <div>
+              <label className="text-sm font-medium text-gray-700 mb-1 block">Day of Week</label>
+              <select
+                value={planForm.day}
+                onChange={(e) => setPlanForm(p => ({ ...p, day: e.target.value }))}
+                className="w-full px-3 py-2 border border-gray-200 rounded-md text-sm"
+              >
+                <option value="">Select day</option>
+                {['monday','tuesday','wednesday','thursday','friday','saturday','sunday'].map(d => (
+                  <option key={d} value={d}>{d.charAt(0).toUpperCase() + d.slice(1)}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="text-sm font-medium text-gray-700 mb-1 block">Meal Type</label>
+              <select
+                value={planForm.mealType}
+                onChange={(e) => setPlanForm(p => ({ ...p, mealType: e.target.value }))}
+                className="w-full px-3 py-2 border border-gray-200 rounded-md text-sm"
+              >
+                <option value="">Select type</option>
+                <option value="breakfast">Breakfast</option>
+                <option value="lunch">Lunch</option>
+                <option value="dinner">Dinner</option>
+                <option value="snack">Snack</option>
+              </select>
+            </div>
+            <div>
+              <label className="text-sm font-medium text-gray-700 mb-2 block">Assign to Family Members</label>
+              <div className="space-y-2 p-3 bg-gray-50 rounded-lg max-h-40 overflow-y-auto">
+                {familyMembers.length > 0 ? familyMembers.map(member => (
+                  <label key={member.id} className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={planForm.memberIds.includes(member.id)}
+                      onChange={(e) => setPlanForm(p => ({
+                        ...p,
+                        memberIds: e.target.checked
+                          ? [...p.memberIds, member.id]
+                          : p.memberIds.filter(id => id !== member.id)
+                      }))}
+                      className="w-4 h-4 rounded"
+                    />
+                    <span className="text-sm text-gray-700">{member.name}</span>
+                  </label>
+                )) : <p className="text-xs text-gray-500">No family members found</p>}
+              </div>
+            </div>
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={planForm.saveToMeals}
+                onChange={(e) => setPlanForm(p => ({ ...p, saveToMeals: e.target.checked }))}
+                className="w-4 h-4 rounded"
+              />
+              <span className="text-sm text-gray-700">Also save to Meals list</span>
+            </label>
+            <Button
+              onClick={handleAddToPlan}
+              disabled={!planForm.mealName.trim() || !planForm.day || !planForm.mealType || addingToPlan}
+              className="w-full bg-gradient-to-r from-[#E91E8C] to-[#D01576] text-white"
+            >
+              {addingToPlan ? 'Adding...' : 'Add to Plan'}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* Add food dialog */}
       <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
