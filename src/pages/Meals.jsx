@@ -40,6 +40,9 @@ export default function Meals() {
     const [selectedMealForPlan, setSelectedMealForPlan] = useState(null);
     const [planDialog, setPlanDialog] = useState(false);
     const [planSelection, setPlanSelection] = useState({ day: '', mealType: '', memberIds: [] });
+    const [editPlanDialog, setEditPlanDialog] = useState(false);
+    const [editingPlan, setEditingPlan] = useState(null);
+    const [editPlanSelection, setEditPlanSelection] = useState({ day: '', mealType: '', memberIds: [] });
     const [expandedMealId, setExpandedMealId] = useState(null);
     const [pastedMealText, setPastedMealText] = useState('');
     const [isParsing, setIsParsing] = useState(false);
@@ -245,6 +248,26 @@ export default function Meals() {
       queryClient.invalidateQueries(['mealPlans']);
     },
   });
+
+  const updateMealPlanMutation = useMutation({
+    mutationFn: ({ id, data }) => base44.entities.MealPlan.update(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['mealPlans']);
+      setEditPlanDialog(false);
+      setEditingPlan(null);
+    },
+  });
+
+  const openEditPlan = (plan, e) => {
+    e.stopPropagation();
+    setEditingPlan(plan);
+    setEditPlanSelection({
+      day: plan.day_of_week,
+      mealType: plan.meal_type,
+      memberIds: plan.assigned_to_member_ids || [],
+    });
+    setEditPlanDialog(true);
+  };
 
   const deleteMealMutation = useMutation({
     mutationFn: (mealId) => base44.entities.Meal.delete(mealId),
@@ -1438,6 +1461,14 @@ export default function Meals() {
                                         {addToGroceryListMutation.isPending ? 'Adding...' : 'Add Ingredients to Grocery'}
                                       </Button>
                                     )}
+                                    <Button
+                                      onClick={(e) => openEditPlan(plan, e)}
+                                      size="sm"
+                                      variant="outline"
+                                      className="w-full border-pink-200 text-pink-600 hover:bg-pink-50"
+                                    >
+                                      Edit Assignment
+                                    </Button>
                                   </div>
                                 )}
                               </div>
@@ -1811,6 +1842,76 @@ export default function Meals() {
         calculating={calculatingWeeklyNutrition}
         data={weeklyNutrition}
       />
+
+      <Dialog open={editPlanDialog} onOpenChange={setEditPlanDialog}>
+        <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Edit Assignment — {editingPlan?.meal_name}</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <Select
+              value={editPlanSelection.day}
+              onValueChange={(value) => setEditPlanSelection({ ...editPlanSelection, day: value })}
+            >
+              <SelectTrigger><SelectValue placeholder="Select day" /></SelectTrigger>
+              <SelectContent>
+                {['monday','tuesday','wednesday','thursday','friday','saturday','sunday'].map(d => (
+                  <SelectItem key={d} value={d}>{d.charAt(0).toUpperCase() + d.slice(1)}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Select
+              value={editPlanSelection.mealType}
+              onValueChange={(value) => setEditPlanSelection({ ...editPlanSelection, mealType: value })}
+            >
+              <SelectTrigger><SelectValue placeholder="Select meal type" /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="breakfast">Breakfast</SelectItem>
+                <SelectItem value="lunch">Lunch</SelectItem>
+                <SelectItem value="dinner">Dinner</SelectItem>
+                <SelectItem value="snack">Snack</SelectItem>
+              </SelectContent>
+            </Select>
+            <div>
+              <label className="text-sm font-medium text-gray-700 mb-2 block">Assign to Family Members (optional)</label>
+              <div className="space-y-2 p-3 bg-gray-50 rounded-lg max-h-48 overflow-y-auto">
+                {familyMembers.length > 0 ? familyMembers.map(member => (
+                  <label key={member.id} className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={editPlanSelection.memberIds.includes(member.id)}
+                      onChange={(e) => {
+                        setEditPlanSelection(prev => ({
+                          ...prev,
+                          memberIds: e.target.checked
+                            ? [...prev.memberIds, member.id]
+                            : prev.memberIds.filter(id => id !== member.id)
+                        }));
+                      }}
+                      className="w-4 h-4 rounded"
+                    />
+                    <span className="text-sm text-gray-700">{member.name}</span>
+                  </label>
+                )) : <p className="text-xs text-gray-500">No family members found</p>}
+              </div>
+            </div>
+            <Button
+              onClick={() => updateMealPlanMutation.mutate({
+                id: editingPlan.id,
+                data: {
+                  day_of_week: editPlanSelection.day,
+                  meal_type: editPlanSelection.mealType,
+                  assigned_to_member_ids: editPlanSelection.memberIds,
+                }
+              })}
+              disabled={!editPlanSelection.day || !editPlanSelection.mealType || updateMealPlanMutation.isPending}
+              className="w-full bg-gradient-to-r from-[#E91E8C] to-[#D01576] text-white"
+            >
+              {updateMealPlanMutation.isPending ? 'Saving...' : 'Save Changes'}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       <Dialog open={planDialog} onOpenChange={setPlanDialog}>
          <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
