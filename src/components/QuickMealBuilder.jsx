@@ -182,9 +182,14 @@ export default function QuickMealBuilder() {
                             }`}
                           >
                             {food.name}
+                            {food.estimated_serving_size && (
+                              <span className={`ml-1 text-xs ${isSelected ? 'text-pink-200' : 'text-gray-400'}`}>
+                                {food.estimated_serving_size}
+                              </span>
+                            )}
                             {food.nutrition?.calories ? (
                               <span className={`ml-1 text-xs ${isSelected ? 'text-pink-200' : 'text-gray-400'}`}>
-                                {food.nutrition.calories} cal
+                                · {food.nutrition.calories} cal
                               </span>
                             ) : null}
                           </button>
