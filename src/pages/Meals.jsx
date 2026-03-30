@@ -21,6 +21,7 @@ import MealQuickSelector from '../components/MealQuickSelector';
 import WeeklyNutritionDialog from '../components/WeeklyNutritionDialog';
 import GroceryTabContent from '../components/GroceryTabContent';
 import DailyNutritionTab from '../components/DailyNutritionTab';
+import QuickMealBuilder from '../components/QuickMealBuilder';
 
 export default function Meals() {
   const navigate = useNavigate();
@@ -779,10 +780,11 @@ export default function Meals() {
       <div className="container mx-auto px-6 py-8">
         <Tabs defaultValue="meals" className="space-y-6">
           <TabsList className="bg-white shadow-sm border-b-2 border-gray-200 rounded-none w-full">
-            <TabsTrigger value="meals" className="border-b-2 border-transparent data-[state=active]:border-pink-500 data-[state=active]:bg-transparent rounded-none text-xs sm:text-sm">Meals</TabsTrigger>
-            <TabsTrigger value="daily" className="border-b-2 border-transparent data-[state=active]:border-pink-500 data-[state=active]:bg-transparent rounded-none text-xs sm:text-sm">Daily</TabsTrigger>
-            <TabsTrigger value="plan" className="border-b-2 border-transparent data-[state=active]:border-pink-500 data-[state=active]:bg-transparent rounded-none text-xs sm:text-sm">Weekly</TabsTrigger>
-            <TabsTrigger value="grocery" className="border-b-2 border-transparent data-[state=active]:border-pink-500 data-[state=active]:bg-transparent rounded-none text-xs sm:text-sm">Grocery List</TabsTrigger>
+            <TabsTrigger value="meals" className="border-b-2 border-transparent data-[state=active]:border-pink-500 data-[state=active]:bg-transparent rounded-none text-xs sm:text-sm px-2">Meals</TabsTrigger>
+            <TabsTrigger value="builder" className="border-b-2 border-transparent data-[state=active]:border-pink-500 data-[state=active]:bg-transparent rounded-none text-xs sm:text-sm px-2">Builder</TabsTrigger>
+            <TabsTrigger value="daily" className="border-b-2 border-transparent data-[state=active]:border-pink-500 data-[state=active]:bg-transparent rounded-none text-xs sm:text-sm px-2">Nutrition</TabsTrigger>
+            <TabsTrigger value="plan" className="border-b-2 border-transparent data-[state=active]:border-pink-500 data-[state=active]:bg-transparent rounded-none text-xs sm:text-sm px-2">Weekly</TabsTrigger>
+            <TabsTrigger value="grocery" className="border-b-2 border-transparent data-[state=active]:border-pink-500 data-[state=active]:bg-transparent rounded-none text-xs sm:text-sm px-2">Groceries</TabsTrigger>
           </TabsList>
 
           <TabsContent value="meals" className="space-y-6">
@@ -1172,6 +1174,10 @@ export default function Meals() {
                 </Button>
               </Card>
             )}
+          </TabsContent>
+
+          <TabsContent value="builder">
+            <QuickMealBuilder />
           </TabsContent>
 
           <TabsContent value="daily">
