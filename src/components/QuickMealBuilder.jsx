@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Plus, Trash2, Sparkles, ChevronDown, ChevronUp, X } from 'lucide-react';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 
 const CATEGORIES = [
   { key: 'proteins', label: 'Proteins', emoji: '🥩' },
@@ -132,60 +133,63 @@ export default function QuickMealBuilder() {
       {/* Meal summary — sticky at top, above categories */}
       {selectedItems.length > 0 && (
         <Card className="bg-gradient-to-br from-pink-50 to-purple-50 border border-pink-100 shadow-sm sticky top-0 z-20">
-          <CardContent className="p-4">
-            <button
-              className="flex items-center justify-between w-full mb-2"
-              onClick={() => setShowTotals(p => !p)}
-            >
+          <CardContent className="p-3">
+            <div className="flex items-center justify-between gap-2">
               <div>
-                <h3 className="font-semibold text-gray-900">Your Meal ({selectedItems.length} items)</h3>
-                <p className="text-2xl font-bold text-pink-600">
-                  {Math.round(totals.calories)} <span className="text-base font-normal text-gray-500">calories</span>
+                <h3 className="font-semibold text-gray-900 text-sm">Your Meal ({selectedItems.length} items)</h3>
+                <p className="text-xl font-bold text-pink-600">
+                  {Math.round(totals.calories)} <span className="text-sm font-normal text-gray-500">cal</span>
                 </p>
               </div>
-              {showTotals ? <ChevronUp className="w-5 h-5 text-gray-400" /> : <ChevronDown className="w-5 h-5 text-gray-400" />}
-            </button>
-
-            <div className="flex flex-wrap gap-1 mb-3">
+              <div className="flex items-center gap-2">
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button variant="outline" size="sm" className="border-pink-200 text-pink-600 hover:bg-pink-100 text-xs">
+                      Nutrients
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-72 p-4" align="end">
+                    <h4 className="font-semibold text-gray-900 mb-3">Nutrition Facts</h4>
+                    <div className="space-y-3">
+                      <NutritionBar label="Protein" value={totals.protein_g} max={150} color="bg-blue-500" />
+                      <NutritionBar label="Carbs" value={totals.carbs_g} max={300} color="bg-yellow-500" />
+                      <NutritionBar label="Fat" value={totals.fat_g} max={100} color="bg-orange-500" />
+                      <NutritionBar label="Fiber" value={totals.fiber_g} max={38} color="bg-green-500" />
+                      <NutritionBar label="Sugar" value={totals.sugar_g} max={50} color="bg-red-400" />
+                    </div>
+                    <div className="grid grid-cols-3 gap-2 pt-3 mt-3 border-t border-gray-100 text-center">
+                      <div>
+                        <div className="text-base font-bold text-gray-900">{Math.round(totals.protein_g)}g</div>
+                        <div className="text-xs text-gray-500">Protein</div>
+                      </div>
+                      <div>
+                        <div className="text-base font-bold text-gray-900">{Math.round(totals.carbs_g)}g</div>
+                        <div className="text-xs text-gray-500">Carbs</div>
+                      </div>
+                      <div>
+                        <div className="text-base font-bold text-gray-900">{Math.round(totals.fat_g)}g</div>
+                        <div className="text-xs text-gray-500">Fat</div>
+                      </div>
+                    </div>
+                  </PopoverContent>
+                </Popover>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="border-pink-200 text-pink-600 hover:bg-pink-100 text-xs"
+                  onClick={() => setSelectedItems([])}
+                >
+                  Clear
+                </Button>
+              </div>
+            </div>
+            <div className="flex flex-wrap gap-1 mt-2">
               {selectedItems.map(item => (
-                <span key={item.id} className="bg-white text-gray-700 text-xs px-2 py-1 rounded-full border border-pink-200">
+                <span key={item.id} className="bg-white text-gray-700 text-xs px-2 py-0.5 rounded-full border border-pink-200">
                   {item.name}
                 </span>
               ))}
             </div>
-
-            {showTotals && (
-              <div className="space-y-3 mb-4">
-                <NutritionBar label="Protein" value={totals.protein_g} max={150} color="bg-blue-500" />
-                <NutritionBar label="Carbs" value={totals.carbs_g} max={300} color="bg-yellow-500" />
-                <NutritionBar label="Fat" value={totals.fat_g} max={100} color="bg-orange-500" />
-                <NutritionBar label="Fiber" value={totals.fiber_g} max={38} color="bg-green-500" />
-                <NutritionBar label="Sugar" value={totals.sugar_g} max={50} color="bg-red-400" />
-                <div className="grid grid-cols-3 gap-2 pt-2 border-t border-pink-100 text-center">
-                  <div>
-                    <div className="text-lg font-bold text-gray-900">{Math.round(totals.protein_g)}g</div>
-                    <div className="text-xs text-gray-500">Protein</div>
-                  </div>
-                  <div>
-                    <div className="text-lg font-bold text-gray-900">{Math.round(totals.carbs_g)}g</div>
-                    <div className="text-xs text-gray-500">Carbs</div>
-                  </div>
-                  <div>
-                    <div className="text-lg font-bold text-gray-900">{Math.round(totals.fat_g)}g</div>
-                    <div className="text-xs text-gray-500">Fat</div>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            <Button
-              variant="outline"
-              size="sm"
-              className="w-full border-pink-200 text-pink-600 hover:bg-pink-100"
-              onClick={() => setSelectedItems([])}
-            >
-              Clear Selection
-            </Button>
           </CardContent>
         </Card>
       )}
