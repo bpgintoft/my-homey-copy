@@ -123,7 +123,7 @@ export default function QuickMealBuilder() {
   }, { ...EMPTY_NUTRITION });
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 pb-4">
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-semibold text-gray-900">Quick Meal Builder</h2>
         <p className="text-sm text-gray-500">Tap items to build a meal</p>
@@ -210,9 +210,9 @@ export default function QuickMealBuilder() {
         );
       })}
 
-      {/* Meal summary */}
+      {/* Meal summary — sticky at top */}
       {selectedItems.length > 0 && (
-        <Card className="bg-gradient-to-br from-pink-50 to-purple-50 border border-pink-100 shadow-sm">
+        <Card className="bg-gradient-to-br from-pink-50 to-purple-50 border border-pink-100 shadow-sm sticky top-0 z-20">
           <CardContent className="p-4">
             <button
               className="flex items-center justify-between w-full mb-3"
