@@ -42,7 +42,7 @@ export default function QuickMealBuilder() {
   const [addingCategory, setAddingCategory] = useState('proteins');
   const [newFood, setNewFood] = useState({ name: '', estimated_serving_size: '', category: 'proteins' });
   const [calculatingNutrition, setCalculatingNutrition] = useState(false);
-  const [showTotals, setShowTotals] = useState(false);
+  const [showTotals, setShowTotals] = useState(true);
 
   const { data: goToFoods = [] } = useQuery({
     queryKey: ['goToFoods'],
@@ -134,7 +134,7 @@ export default function QuickMealBuilder() {
         <Card className="bg-gradient-to-br from-pink-50 to-purple-50 border border-pink-100 shadow-sm sticky top-0 z-20">
           <CardContent className="p-4">
             <button
-              className="flex items-center justify-between w-full mb-3"
+              className="flex items-center justify-between w-full mb-2"
               onClick={() => setShowTotals(p => !p)}
             >
               <div>
@@ -156,11 +156,25 @@ export default function QuickMealBuilder() {
 
             {showTotals && (
               <div className="space-y-3 mb-4">
-                <NutritionBar label="Protein" value={totals.protein_g} max={60} color="bg-blue-500" />
-                <NutritionBar label="Carbs" value={totals.carbs_g} max={100} color="bg-yellow-500" />
-                <NutritionBar label="Fat" value={totals.fat_g} max={50} color="bg-orange-500" />
-                <NutritionBar label="Fiber" value={totals.fiber_g} max={15} color="bg-green-500" />
-                <NutritionBar label="Sugar" value={totals.sugar_g} max={25} color="bg-red-400" />
+                <NutritionBar label="Protein" value={totals.protein_g} max={150} color="bg-blue-500" />
+                <NutritionBar label="Carbs" value={totals.carbs_g} max={300} color="bg-yellow-500" />
+                <NutritionBar label="Fat" value={totals.fat_g} max={100} color="bg-orange-500" />
+                <NutritionBar label="Fiber" value={totals.fiber_g} max={38} color="bg-green-500" />
+                <NutritionBar label="Sugar" value={totals.sugar_g} max={50} color="bg-red-400" />
+                <div className="grid grid-cols-3 gap-2 pt-2 border-t border-pink-100 text-center">
+                  <div>
+                    <div className="text-lg font-bold text-gray-900">{Math.round(totals.protein_g)}g</div>
+                    <div className="text-xs text-gray-500">Protein</div>
+                  </div>
+                  <div>
+                    <div className="text-lg font-bold text-gray-900">{Math.round(totals.carbs_g)}g</div>
+                    <div className="text-xs text-gray-500">Carbs</div>
+                  </div>
+                  <div>
+                    <div className="text-lg font-bold text-gray-900">{Math.round(totals.fat_g)}g</div>
+                    <div className="text-xs text-gray-500">Fat</div>
+                  </div>
+                </div>
               </div>
             )}
 
