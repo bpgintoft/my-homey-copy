@@ -179,12 +179,12 @@ export default function QuickMealBuilder() {
           <CardContent className="p-3">
             <div className="flex items-center justify-between gap-2">
               <div>
-                <h3 className="font-semibold text-gray-900 text-sm">Your Meal ({selectedItems.length} items)</h3>
+                <h3 className="font-semibold text-gray-900 text-sm">Your Meal</h3>
                 <p className="text-xl font-bold text-pink-600">
                   {Math.round(totals.calories)} <span className="text-sm font-normal text-gray-500">cal</span>
                 </p>
               </div>
-              <div className="flex items-center gap-2 flex-wrap justify-end">
+              <div className="flex items-center gap-2 justify-end">
                 <Button
                   size="sm"
                   className="bg-gradient-to-r from-[#E91E8C] to-[#D01576] text-white text-xs"
@@ -234,6 +234,7 @@ export default function QuickMealBuilder() {
               </div>
             </div>
             <div className="flex flex-wrap gap-1 mt-2">
+              <span className="text-xs text-gray-500 font-medium w-full mb-0.5">{selectedItems.length} items</span>
               {selectedItems.map(item => (
                 <span key={item.id} className="bg-white text-gray-700 text-xs px-2 py-0.5 rounded-full border border-pink-200">
                   {item.name}
