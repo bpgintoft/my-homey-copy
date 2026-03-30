@@ -210,35 +210,47 @@ export default function QuickMealBuilder() {
   };
 
   const handleSaveRenames = async () => {
-    // Build surviving categories (not deleted) — use dialogCustomCategories to avoid stale closure
     const survivingBuiltIn = CATEGORIES.filter(c => !deletedKeys.includes(c.key));
     const survivingCustom = dialogCustomCategoriesRef.current.filter(c => !deletedKeys.includes(c.key));
     const allSurviving = [...survivingBuiltIn, ...survivingCustom];
 
-    setAssigningEmojis(true);
-    const result = await base44.integrations.Core.InvokeLLM({
-      prompt: `For each of these food category names, pick the single most fitting food emoji. Return a JSON object mapping each key to its emoji.\n\nCategories:\n${allSurviving.map(c => `${c.key}: "${renameForm[c.key] || c.label}"`).join('\n')}`,
-      response_json_schema: {
-        type: 'object',
-        properties: Object.fromEntries(allSurviving.map(c => [c.key, { type: 'string' }])),
-      },
-    });
-    setAssigningEmojis(false);
-
+    // Save immediately with current emojis (don't block on AI)
     const updated = Object.fromEntries(
       allSurviving.map(c => [c.key, {
         label: renameForm[c.key] || c.label,
-        emoji: result[c.key] || categoryLabels[c.key]?.emoji || c.emoji,
+        emoji: categoryLabels[c.key]?.emoji || c.emoji || '🍽️',
       }])
     );
     setCategoryLabels(updated);
     localStorage.setItem('mealBuilderCategoryLabels', JSON.stringify(updated));
 
-    const newCustom = dialogCustomCategoriesRef.current.filter(c => !deletedKeys.includes(c.key));
+    const newCustom = survivingCustom;
     setCustomCategories(newCustom);
     localStorage.setItem('mealBuilderCustomCategories', JSON.stringify(newCustom));
 
     setShowRenameDialog(false);
+
+    // Update emojis in the background
+    setAssigningEmojis(true);
+    try {
+      const result = await base44.integrations.Core.InvokeLLM({
+        prompt: `For each of these food category names, pick the single most fitting food emoji. Return a JSON object mapping each key to its emoji.\n\nCategories:\n${allSurviving.map(c => `${c.key}: "${renameForm[c.key] || c.label}"`).join('\n')}`,
+        response_json_schema: {
+          type: 'object',
+          properties: Object.fromEntries(allSurviving.map(c => [c.key, { type: 'string' }])),
+        },
+      });
+      const withEmojis = Object.fromEntries(
+        allSurviving.map(c => [c.key, {
+          label: renameForm[c.key] || c.label,
+          emoji: result[c.key] || updated[c.key]?.emoji,
+        }])
+      );
+      setCategoryLabels(withEmojis);
+      localStorage.setItem('mealBuilderCategoryLabels', JSON.stringify(withEmojis));
+    } finally {
+      setAssigningEmojis(false);
+    }
   };
 
   const allCategories = [...CATEGORIES, ...customCategories];
