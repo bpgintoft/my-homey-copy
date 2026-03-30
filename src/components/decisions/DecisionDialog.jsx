@@ -237,7 +237,7 @@ export default function DecisionDialog({ decision, currentUserEmail, familyMembe
                   {['yes', 'no', 'maybe'].map(v => (
                     <button
                       key={v}
-                      onClick={() => setMyVote(v)}
+                      onClick={() => setMyVote(myVote === v ? '' : v)}
                       className={`flex-1 py-2 rounded-full text-sm font-medium transition-all border ${
                        myVote === v
                          ? 'text-[#3d2a8a] border-transparent shadow-lg scale-105'
