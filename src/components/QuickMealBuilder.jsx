@@ -77,9 +77,8 @@ export default function QuickMealBuilder() {
   const [deletedKeys, setDeletedKeys] = useState([]);
   const [newCatName, setNewCatName] = useState('');
   const [assigningEmojis, setAssigningEmojis] = useState(false);
-  // Ref-based dialog custom categories to avoid stale closures entirely
-  const dialogCustomCategoriesRef = useRef([]);
   const [dialogCustomCategories, setDialogCustomCategories] = useState([]);
+  const dialogCustomCategoriesRef = useRef([]);
 
   const { data: goToFoods = [] } = useQuery({
     queryKey: ['goToFoods'],
@@ -224,9 +223,9 @@ export default function QuickMealBuilder() {
     setCategoryLabels(updated);
     localStorage.setItem('mealBuilderCategoryLabels', JSON.stringify(updated));
 
-    const newCustom = survivingCustom;
-    setCustomCategories(newCustom);
-    localStorage.setItem('mealBuilderCustomCategories', JSON.stringify(newCustom));
+    setCustomCategories(survivingCustom);
+    localStorage.setItem('mealBuilderCustomCategories', JSON.stringify(survivingCustom));
+    console.log('Saving custom categories:', survivingCustom);
 
     setShowRenameDialog(false);
 
