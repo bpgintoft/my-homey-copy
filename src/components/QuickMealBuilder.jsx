@@ -5,7 +5,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Plus, Trash2, Sparkles, ChevronDown, ChevronUp, X } from 'lucide-react';
+import { Plus, Trash2, Sparkles, ChevronDown, ChevronUp, X, Pencil } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 
 const CATEGORIES = [
@@ -35,6 +35,19 @@ function NutritionBar({ label, value, max, color }) {
   );
 }
 
+const DEFAULT_CATEGORY_LABELS = Object.fromEntries(
+  CATEGORIES.map(c => [c.key, { label: c.label, emoji: c.emoji }])
+);
+
+function loadCategoryLabels() {
+  try {
+    const saved = localStorage.getItem('mealBuilderCategoryLabels');
+    return saved ? { ...DEFAULT_CATEGORY_LABELS, ...JSON.parse(saved) } : { ...DEFAULT_CATEGORY_LABELS };
+  } catch {
+    return { ...DEFAULT_CATEGORY_LABELS };
+  }
+}
+
 export default function QuickMealBuilder() {
   const queryClient = useQueryClient();
   const [selectedItems, setSelectedItems] = useState([]);
@@ -47,6 +60,10 @@ export default function QuickMealBuilder() {
   const [showPlanDialog, setShowPlanDialog] = useState(false);
   const [planForm, setPlanForm] = useState({ mealName: '', day: '', mealType: '', memberIds: [], saveToMeals: false });
   const [addingToPlan, setAddingToPlan] = useState(false);
+  const [categoryLabels, setCategoryLabels] = useState(loadCategoryLabels);
+  const [showRenameDialog, setShowRenameDialog] = useState(false);
+  const [renameForm, setRenameForm] = useState({});
+  const [assigningEmojis, setAssigningEmojis] = useState(false);
 
   const { data: goToFoods = [] } = useQuery({
     queryKey: ['goToFoods'],
@@ -154,6 +171,31 @@ export default function QuickMealBuilder() {
     setShowAddDialog(true);
   };
 
+  const openRenameDialog = () => {
+    setRenameForm(Object.fromEntries(
+      CATEGORIES.map(c => [c.key, categoryLabels[c.key]?.label || c.label])
+    ));
+    setShowRenameDialog(true);
+  };
+
+  const handleSaveRenames = async () => {
+    setAssigningEmojis(true);
+    const result = await base44.integrations.Core.InvokeLLM({
+      prompt: `For each of these food category names, pick the single most fitting food emoji. Return a JSON object mapping each key to its emoji.\n\nCategories:\n${CATEGORIES.map(c => `${c.key}: "${renameForm[c.key]}"`).join('\n')}`,
+      response_json_schema: {
+        type: 'object',
+        properties: Object.fromEntries(CATEGORIES.map(c => [c.key, { type: 'string' }])),
+      },
+    });
+    setAssigningEmojis(false);
+    const updated = Object.fromEntries(
+      CATEGORIES.map(c => [c.key, { label: renameForm[c.key] || c.label, emoji: result[c.key] || categoryLabels[c.key]?.emoji || c.emoji }])
+    );
+    setCategoryLabels(updated);
+    localStorage.setItem('mealBuilderCategoryLabels', JSON.stringify(updated));
+    setShowRenameDialog(false);
+  };
+
   const totals = selectedItems.reduce((acc, food) => {
     const n = food.nutrition || EMPTY_NUTRITION;
     return {
@@ -170,7 +212,12 @@ export default function QuickMealBuilder() {
     <div className="space-y-4 pb-4">
       <div className="flex items-baseline justify-between">
         <h2 className="text-base font-semibold text-gray-900 whitespace-nowrap">Quick Meal Builder</h2>
-        <p className="text-xs text-gray-500 whitespace-nowrap ml-2">Tap items to build a meal</p>
+        <div className="flex items-center gap-1.5 ml-2">
+          <p className="text-xs text-gray-500 whitespace-nowrap">Tap items to build a meal</p>
+          <button onClick={openRenameDialog} className="text-gray-400 hover:text-gray-600 transition-colors flex-shrink-0">
+            <Pencil className="w-3 h-3" />
+          </button>
+        </div>
       </div>
 
       {/* Meal summary — sticky at top, above categories */}
@@ -246,6 +293,8 @@ export default function QuickMealBuilder() {
         const foods = goToFoods.filter(f => f.category === cat.key);
         const isExpanded = expandedCategories[cat.key];
         const selectedInCat = selectedItems.filter(i => i.category === cat.key);
+        const catLabel = categoryLabels[cat.key]?.label || cat.label;
+        const catEmoji = categoryLabels[cat.key]?.emoji || cat.emoji;
 
         return (
           <Card key={cat.key} className="bg-white border-0 shadow-sm overflow-hidden">
@@ -254,8 +303,8 @@ export default function QuickMealBuilder() {
               onClick={() => toggleCategory(cat.key)}
             >
               <div className="flex items-center gap-2">
-                <span className="text-xl">{cat.emoji}</span>
-                <span className="font-medium text-gray-900">{cat.label}</span>
+                <span className="text-xl">{catEmoji}</span>
+                <span className="font-medium text-gray-900">{catLabel}</span>
                 {selectedInCat.length > 0 && (
                   <span className="bg-pink-100 text-pink-700 text-xs font-semibold px-2 py-0.5 rounded-full">
                     {selectedInCat.length} selected
@@ -277,7 +326,7 @@ export default function QuickMealBuilder() {
               <CardContent className="px-4 pb-4 pt-0">
                 {foods.length === 0 ? (
                   <p className="text-sm text-gray-400 text-center py-3">
-                    No items yet — tap <strong>+</strong> to add your go-to {cat.label.toLowerCase()}
+                    No items yet — tap <strong>+</strong> to add your go-to {catLabel.toLowerCase()}
                   </p>
                 ) : (
                   <div className="flex flex-wrap gap-2">
@@ -405,12 +454,42 @@ export default function QuickMealBuilder() {
         </DialogContent>
       </Dialog>
 
+      {/* Rename categories dialog */}
+      <Dialog open={showRenameDialog} onOpenChange={setShowRenameDialog}>
+        <DialogContent className="max-w-sm max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Rename Categories</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3">
+            <p className="text-xs text-gray-500">Edit any category name — AI will auto-assign an emoji when you save.</p>
+            {CATEGORIES.map(c => (
+              <div key={c.key} className="flex items-center gap-2">
+                <span className="text-lg w-7 text-center flex-shrink-0">{categoryLabels[c.key]?.emoji || c.emoji}</span>
+                <Input
+                  value={renameForm[c.key] ?? categoryLabels[c.key]?.label ?? c.label}
+                  onChange={(e) => setRenameForm(p => ({ ...p, [c.key]: e.target.value }))}
+                  className="flex-1"
+                />
+              </div>
+            ))}
+            <Button
+              onClick={handleSaveRenames}
+              disabled={assigningEmojis}
+              className="w-full bg-gradient-to-r from-[#E91E8C] to-[#D01576] text-white"
+            >
+              <Sparkles className="w-4 h-4 mr-2" />
+              {assigningEmojis ? 'Assigning emojis...' : 'Save & Auto-assign Emojis'}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
       {/* Add food dialog */}
       <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
         <DialogContent className="max-w-sm">
           <DialogHeader>
             <DialogTitle>
-              Add to {CATEGORIES.find(c => c.key === addingCategory)?.label}
+              Add to {categoryLabels[addingCategory]?.label || CATEGORIES.find(c => c.key === addingCategory)?.label}
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
