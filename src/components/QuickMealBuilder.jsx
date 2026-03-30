@@ -178,9 +178,8 @@ export default function QuickMealBuilder() {
         <Card className="bg-gradient-to-br from-pink-50 to-purple-50 border border-pink-100 shadow-sm sticky top-0 z-20">
           <CardContent className="p-3">
             <div className="flex items-center gap-2">
-              <span className="whitespace-nowrap flex-shrink-0 mr-1">
-                <span className="text-sm font-bold text-pink-600">{Math.round(totals.calories)}</span>
-                <span className="text-xs text-gray-500 ml-0.5">cal</span>
+              <span className="text-base font-bold text-pink-600 mr-1">
+                {Math.round(totals.calories)} <span className="text-xs font-normal text-gray-500">cal</span>
               </span>
               <Button
                 size="sm"
