@@ -168,7 +168,7 @@ export default function QuickMealBuilder() {
 
   return (
     <div className="space-y-4 pb-4">
-      <div className="flex items-center justify-between">
+      <div className="flex items-baseline justify-between">
         <h2 className="text-base font-semibold text-gray-900 whitespace-nowrap">Quick Meal Builder</h2>
         <p className="text-xs text-gray-500 whitespace-nowrap ml-2">Tap items to build a meal</p>
       </div>
