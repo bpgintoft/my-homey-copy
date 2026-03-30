@@ -129,6 +129,53 @@ export default function QuickMealBuilder() {
         <p className="text-sm text-gray-500">Tap items to build a meal</p>
       </div>
 
+      {/* Meal summary — sticky at top, above categories */}
+      {selectedItems.length > 0 && (
+        <Card className="bg-gradient-to-br from-pink-50 to-purple-50 border border-pink-100 shadow-sm sticky top-0 z-20">
+          <CardContent className="p-4">
+            <button
+              className="flex items-center justify-between w-full mb-3"
+              onClick={() => setShowTotals(p => !p)}
+            >
+              <div>
+                <h3 className="font-semibold text-gray-900">Your Meal ({selectedItems.length} items)</h3>
+                <p className="text-2xl font-bold text-pink-600">
+                  {Math.round(totals.calories)} <span className="text-base font-normal text-gray-500">calories</span>
+                </p>
+              </div>
+              {showTotals ? <ChevronUp className="w-5 h-5 text-gray-400" /> : <ChevronDown className="w-5 h-5 text-gray-400" />}
+            </button>
+
+            <div className="flex flex-wrap gap-1 mb-3">
+              {selectedItems.map(item => (
+                <span key={item.id} className="bg-white text-gray-700 text-xs px-2 py-1 rounded-full border border-pink-200">
+                  {item.name}
+                </span>
+              ))}
+            </div>
+
+            {showTotals && (
+              <div className="space-y-3 mb-4">
+                <NutritionBar label="Protein" value={totals.protein_g} max={60} color="bg-blue-500" />
+                <NutritionBar label="Carbs" value={totals.carbs_g} max={100} color="bg-yellow-500" />
+                <NutritionBar label="Fat" value={totals.fat_g} max={50} color="bg-orange-500" />
+                <NutritionBar label="Fiber" value={totals.fiber_g} max={15} color="bg-green-500" />
+                <NutritionBar label="Sugar" value={totals.sugar_g} max={25} color="bg-red-400" />
+              </div>
+            )}
+
+            <Button
+              variant="outline"
+              size="sm"
+              className="w-full border-pink-200 text-pink-600 hover:bg-pink-100"
+              onClick={() => setSelectedItems([])}
+            >
+              Clear Selection
+            </Button>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Category sections */}
       {CATEGORIES.map(cat => {
         const foods = goToFoods.filter(f => f.category === cat.key);
@@ -209,53 +256,6 @@ export default function QuickMealBuilder() {
           </Card>
         );
       })}
-
-      {/* Meal summary — sticky at top */}
-      {selectedItems.length > 0 && (
-        <Card className="bg-gradient-to-br from-pink-50 to-purple-50 border border-pink-100 shadow-sm sticky top-0 z-20">
-          <CardContent className="p-4">
-            <button
-              className="flex items-center justify-between w-full mb-3"
-              onClick={() => setShowTotals(p => !p)}
-            >
-              <div>
-                <h3 className="font-semibold text-gray-900">Your Meal ({selectedItems.length} items)</h3>
-                <p className="text-2xl font-bold text-pink-600">
-                  {Math.round(totals.calories)} <span className="text-base font-normal text-gray-500">calories</span>
-                </p>
-              </div>
-              {showTotals ? <ChevronUp className="w-5 h-5 text-gray-400" /> : <ChevronDown className="w-5 h-5 text-gray-400" />}
-            </button>
-
-            <div className="flex flex-wrap gap-1 mb-3">
-              {selectedItems.map(item => (
-                <span key={item.id} className="bg-white text-gray-700 text-xs px-2 py-1 rounded-full border border-pink-200">
-                  {item.name}
-                </span>
-              ))}
-            </div>
-
-            {showTotals && (
-              <div className="space-y-3 mb-4">
-                <NutritionBar label="Protein" value={totals.protein_g} max={60} color="bg-blue-500" />
-                <NutritionBar label="Carbs" value={totals.carbs_g} max={100} color="bg-yellow-500" />
-                <NutritionBar label="Fat" value={totals.fat_g} max={50} color="bg-orange-500" />
-                <NutritionBar label="Fiber" value={totals.fiber_g} max={15} color="bg-green-500" />
-                <NutritionBar label="Sugar" value={totals.sugar_g} max={25} color="bg-red-400" />
-              </div>
-            )}
-
-            <Button
-              variant="outline"
-              size="sm"
-              className="w-full border-pink-200 text-pink-600 hover:bg-pink-100"
-              onClick={() => setSelectedItems([])}
-            >
-              Clear Selection
-            </Button>
-          </CardContent>
-        </Card>
-      )}
 
       {/* Add food dialog */}
       <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
