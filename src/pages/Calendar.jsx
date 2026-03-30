@@ -12,8 +12,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Plus, Calendar as CalendarIcon, MapPin, DollarSign, Clock, Sparkles, Users, Trash2, ExternalLink, UserPlus, Edit2, ScanLine } from 'lucide-react';
-import HomeyScanModal from '../components/HomeyScanModal';
+import { Plus, Calendar as CalendarIcon, MapPin, DollarSign, Clock, Sparkles, Users, Trash2, ExternalLink, UserPlus, Edit2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, parseISO } from 'date-fns';
 import FamilyCalendar from '../components/FamilyCalendar';
@@ -39,7 +38,6 @@ export default function Calendar() {
   }, bannerRef);
 
   const [showDialog, setShowDialog] = useState(false);
-  const [showScanModal, setShowScanModal] = useState(false);
   const [newActivity, setNewActivity] = useState({});
   const [editingActivity, setEditingActivity] = useState(null);
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -204,16 +202,6 @@ export default function Calendar() {
           </TabsList>
 
           <TabsContent value="calendar">
-            <div className="flex justify-end gap-2 pb-2">
-              <Button
-                onClick={() => setShowScanModal(true)}
-                className="bg-gradient-to-r from-[#E91E8C] to-[#0AACFF] text-white font-semibold shadow-md"
-                size="sm"
-              >
-                <ScanLine className="w-4 h-4 mr-2" />
-                Scan to Homey
-              </Button>
-            </div>
             <FamilyCalendar activities={activities} initialEventId={new URLSearchParams(window.location.search).get('eventId')} />
           </TabsContent>
 
@@ -223,13 +211,6 @@ export default function Calendar() {
             </h2>
 
             <div className="flex flex-col sm:flex-row gap-3">
-              <Button
-                onClick={() => setShowScanModal(true)}
-                className="bg-gradient-to-r from-[#E91E8C] to-[#0AACFF] text-white font-semibold w-full sm:w-auto shadow-md"
-              >
-                <ScanLine className="w-4 h-4 mr-2" />
-                Scan to Homey
-              </Button>
               <Button
                 onClick={() => generateActivitiesMutation.mutate()}
                 disabled={generateActivitiesMutation.isPending}
@@ -362,12 +343,6 @@ export default function Calendar() {
           </TabsContent>
         </Tabs>
       </div>
-
-      <HomeyScanModal
-        open={showScanModal}
-        onClose={() => setShowScanModal(false)}
-        onSaved={() => queryClient.invalidateQueries(['kidsActivities'])}
-      />
 
       <Dialog open={showDialog} onOpenChange={(open) => {
         setShowDialog(open);
