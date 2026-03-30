@@ -77,6 +77,8 @@ export default function QuickMealBuilder() {
   const [deletedKeys, setDeletedKeys] = useState([]);
   const [newCatName, setNewCatName] = useState('');
   const [assigningEmojis, setAssigningEmojis] = useState(false);
+  // Tracks custom categories within the dialog session (avoids stale closure bug)
+  const [dialogCustomCategories, setDialogCustomCategories] = useState([]);
 
   const { data: goToFoods = [] } = useQuery({
     queryKey: ['goToFoods'],
@@ -185,6 +187,7 @@ export default function QuickMealBuilder() {
   };
 
   const openRenameDialog = () => {
+    setDialogCustomCategories(customCategories);
     setRenameForm(Object.fromEntries(
       allCategories.map(c => [c.key, categoryLabels[c.key]?.label || c.label])
     ));
@@ -198,15 +201,15 @@ export default function QuickMealBuilder() {
     if (!name) return;
     const key = 'custom_' + Date.now();
     const newCat = { key, label: name, emoji: '🍽️' };
-    setCustomCategories(prev => [...prev, newCat]);
+    setDialogCustomCategories(prev => [...prev, newCat]);
     setRenameForm(prev => ({ ...prev, [key]: name }));
     setNewCatName('');
   };
 
   const handleSaveRenames = async () => {
-    // Build surviving categories (not deleted)
+    // Build surviving categories (not deleted) — use dialogCustomCategories to avoid stale closure
     const survivingBuiltIn = CATEGORIES.filter(c => !deletedKeys.includes(c.key));
-    const survivingCustom = customCategories.filter(c => !deletedKeys.includes(c.key));
+    const survivingCustom = dialogCustomCategories.filter(c => !deletedKeys.includes(c.key));
     const allSurviving = [...survivingBuiltIn, ...survivingCustom];
 
     setAssigningEmojis(true);
@@ -505,7 +508,7 @@ export default function QuickMealBuilder() {
             <p className="text-xs text-gray-500">Rename, add, or delete categories. AI will auto-assign emojis on save.</p>
 
             {/* Existing categories */}
-            {allCategories.map(c => {
+            {[...CATEGORIES, ...dialogCustomCategories].map(c => {
               const isDeleted = deletedKeys.includes(c.key);
               return (
                 <div key={c.key} className={`flex items-center gap-2 transition-opacity ${isDeleted ? 'opacity-40' : ''}`}>
