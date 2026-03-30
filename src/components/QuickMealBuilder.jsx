@@ -63,32 +63,33 @@ export default function QuickMealBuilder() {
     onSuccess: () => queryClient.invalidateQueries(['goToFoods']),
   });
 
-  const calculateNutritionMutation = useMutation({
-    mutationFn: async (food) => {
-      const result = await base44.integrations.Core.InvokeLLM({
-        prompt: `Estimate the nutrition facts for 1 serving of "${food.name}" (serving size: ${food.estimated_serving_size || 'standard serving'}). Return per-serving values.`,
-        response_json_schema: {
-          type: 'object',
-          properties: {
-            calories: { type: 'number' },
-            protein_g: { type: 'number' },
-            carbs_g: { type: 'number' },
-            fat_g: { type: 'number' },
-            fiber_g: { type: 'number' },
-            sugar_g: { type: 'number' },
-          },
-        },
-      });
-      return result;
-    },
-  });
+
 
   const handleAddFood = async () => {
     if (!newFood.name.trim()) return;
     setCalculatingNutrition(true);
-    const nutrition = await calculateNutritionMutation.mutateAsync(newFood);
+    const result = await base44.integrations.Core.InvokeLLM({
+      prompt: `For the food item "${newFood.name}", provide a standard healthy serving size and its nutrition facts per that serving. If a serving size is already provided ("${newFood.estimated_serving_size}"), use that, otherwise determine the most common/standard serving size.`,
+      response_json_schema: {
+        type: 'object',
+        properties: {
+          estimated_serving_size: { type: 'string', description: 'e.g. "1 cup", "3 oz", "1 medium"' },
+          calories: { type: 'number' },
+          protein_g: { type: 'number' },
+          carbs_g: { type: 'number' },
+          fat_g: { type: 'number' },
+          fiber_g: { type: 'number' },
+          sugar_g: { type: 'number' },
+        },
+      },
+    });
     setCalculatingNutrition(false);
-    createFoodMutation.mutate({ ...newFood, nutrition });
+    const { estimated_serving_size, ...nutritionFields } = result;
+    createFoodMutation.mutate({
+      ...newFood,
+      estimated_serving_size: newFood.estimated_serving_size || estimated_serving_size,
+      nutrition: nutritionFields,
+    });
   };
 
   const toggleItem = (food) => {
@@ -266,12 +267,12 @@ export default function QuickMealBuilder() {
               onChange={(e) => setNewFood(p => ({ ...p, name: e.target.value }))}
             />
             <Input
-              placeholder="Serving size (e.g. 3 oz, 1 cup)"
+              placeholder="Serving size (optional — AI will determine if blank)"
               value={newFood.estimated_serving_size}
               onChange={(e) => setNewFood(p => ({ ...p, estimated_serving_size: e.target.value }))}
             />
             <p className="text-xs text-gray-500">
-              Nutrition facts will be auto-calculated with AI when you save.
+              Serving size and nutrition facts will be auto-calculated with AI.
             </p>
             <Button
               onClick={handleAddFood}
