@@ -48,6 +48,16 @@ function loadCategoryLabels() {
   }
 }
 
+// Load custom (user-added) categories from localStorage
+function loadCustomCategories() {
+  try {
+    const saved = localStorage.getItem('mealBuilderCustomCategories');
+    return saved ? JSON.parse(saved) : [];
+  } catch {
+    return [];
+  }
+}
+
 export default function QuickMealBuilder() {
   const queryClient = useQueryClient();
   const [selectedItems, setSelectedItems] = useState([]);
@@ -61,8 +71,11 @@ export default function QuickMealBuilder() {
   const [planForm, setPlanForm] = useState({ mealName: '', day: '', mealType: '', memberIds: [], saveToMeals: false });
   const [addingToPlan, setAddingToPlan] = useState(false);
   const [categoryLabels, setCategoryLabels] = useState(loadCategoryLabels);
+  const [customCategories, setCustomCategories] = useState(loadCustomCategories);
   const [showRenameDialog, setShowRenameDialog] = useState(false);
   const [renameForm, setRenameForm] = useState({});
+  const [deletedKeys, setDeletedKeys] = useState([]);
+  const [newCatName, setNewCatName] = useState('');
   const [assigningEmojis, setAssigningEmojis] = useState(false);
 
   const { data: goToFoods = [] } = useQuery({
@@ -173,28 +186,56 @@ export default function QuickMealBuilder() {
 
   const openRenameDialog = () => {
     setRenameForm(Object.fromEntries(
-      CATEGORIES.map(c => [c.key, categoryLabels[c.key]?.label || c.label])
+      allCategories.map(c => [c.key, categoryLabels[c.key]?.label || c.label])
     ));
+    setDeletedKeys([]);
+    setNewCatName('');
     setShowRenameDialog(true);
   };
 
+  const handleAddNewCategory = () => {
+    const name = newCatName.trim();
+    if (!name) return;
+    const key = 'custom_' + Date.now();
+    const newCat = { key, label: name, emoji: '🍽️' };
+    setCustomCategories(prev => [...prev, newCat]);
+    setRenameForm(prev => ({ ...prev, [key]: name }));
+    setNewCatName('');
+  };
+
   const handleSaveRenames = async () => {
+    // Build surviving categories (not deleted)
+    const survivingBuiltIn = CATEGORIES.filter(c => !deletedKeys.includes(c.key));
+    const survivingCustom = customCategories.filter(c => !deletedKeys.includes(c.key));
+    const allSurviving = [...survivingBuiltIn, ...survivingCustom];
+
     setAssigningEmojis(true);
     const result = await base44.integrations.Core.InvokeLLM({
-      prompt: `For each of these food category names, pick the single most fitting food emoji. Return a JSON object mapping each key to its emoji.\n\nCategories:\n${CATEGORIES.map(c => `${c.key}: "${renameForm[c.key]}"`).join('\n')}`,
+      prompt: `For each of these food category names, pick the single most fitting food emoji. Return a JSON object mapping each key to its emoji.\n\nCategories:\n${allSurviving.map(c => `${c.key}: "${renameForm[c.key] || c.label}"`).join('\n')}`,
       response_json_schema: {
         type: 'object',
-        properties: Object.fromEntries(CATEGORIES.map(c => [c.key, { type: 'string' }])),
+        properties: Object.fromEntries(allSurviving.map(c => [c.key, { type: 'string' }])),
       },
     });
     setAssigningEmojis(false);
+
     const updated = Object.fromEntries(
-      CATEGORIES.map(c => [c.key, { label: renameForm[c.key] || c.label, emoji: result[c.key] || categoryLabels[c.key]?.emoji || c.emoji }])
+      allSurviving.map(c => [c.key, {
+        label: renameForm[c.key] || c.label,
+        emoji: result[c.key] || categoryLabels[c.key]?.emoji || c.emoji,
+      }])
     );
     setCategoryLabels(updated);
     localStorage.setItem('mealBuilderCategoryLabels', JSON.stringify(updated));
+
+    const newCustom = survivingCustom;
+    setCustomCategories(newCustom);
+    localStorage.setItem('mealBuilderCustomCategories', JSON.stringify(newCustom));
+
     setShowRenameDialog(false);
   };
+
+  const allCategories = [...CATEGORIES, ...customCategories];
 
   const totals = selectedItems.reduce((acc, food) => {
     const n = food.nutrition || EMPTY_NUTRITION;
@@ -215,7 +256,7 @@ export default function QuickMealBuilder() {
         <div className="flex items-center gap-1.5 ml-2">
           <p className="text-xs text-gray-500 whitespace-nowrap">Tap items to build a meal</p>
           <button onClick={openRenameDialog} className="text-gray-400 hover:text-gray-600 transition-colors flex-shrink-0">
-            <Pencil className="w-3 h-3" />
+            <Pencil className="w-4 h-4" />
           </button>
         </div>
       </div>
@@ -289,7 +330,7 @@ export default function QuickMealBuilder() {
       )}
 
       {/* Category sections */}
-      {CATEGORIES.map(cat => {
+      {allCategories.map(cat => {
         const foods = goToFoods.filter(f => f.category === cat.key);
         const isExpanded = expandedCategories[cat.key];
         const selectedInCat = selectedItems.filter(i => i.category === cat.key);
@@ -454,24 +495,64 @@ export default function QuickMealBuilder() {
         </DialogContent>
       </Dialog>
 
-      {/* Rename categories dialog */}
+      {/* Manage categories dialog */}
       <Dialog open={showRenameDialog} onOpenChange={setShowRenameDialog}>
         <DialogContent className="max-w-sm max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Rename Categories</DialogTitle>
+            <DialogTitle>Manage Categories</DialogTitle>
           </DialogHeader>
           <div className="space-y-3">
-            <p className="text-xs text-gray-500">Edit any category name — AI will auto-assign an emoji when you save.</p>
-            {CATEGORIES.map(c => (
-              <div key={c.key} className="flex items-center gap-2">
-                <span className="text-lg w-7 text-center flex-shrink-0">{categoryLabels[c.key]?.emoji || c.emoji}</span>
-                <Input
-                  value={renameForm[c.key] ?? categoryLabels[c.key]?.label ?? c.label}
-                  onChange={(e) => setRenameForm(p => ({ ...p, [c.key]: e.target.value }))}
-                  className="flex-1"
-                />
-              </div>
-            ))}
+            <p className="text-xs text-gray-500">Rename, add, or delete categories. AI will auto-assign emojis on save.</p>
+
+            {/* Existing categories */}
+            {allCategories.map(c => {
+              const isDeleted = deletedKeys.includes(c.key);
+              return (
+                <div key={c.key} className={`flex items-center gap-2 transition-opacity ${isDeleted ? 'opacity-40' : ''}`}>
+                  <span className="text-lg w-7 text-center flex-shrink-0">{categoryLabels[c.key]?.emoji || c.emoji}</span>
+                  <Input
+                    value={renameForm[c.key] ?? categoryLabels[c.key]?.label ?? c.label}
+                    onChange={(e) => setRenameForm(p => ({ ...p, [c.key]: e.target.value }))}
+                    className="flex-1"
+                    disabled={isDeleted}
+                  />
+                  <button
+                    onClick={() => setDeletedKeys(prev =>
+                      isDeleted ? prev.filter(k => k !== c.key) : [...prev, c.key]
+                    )}
+                    className={`p-1.5 rounded-full transition-colors flex-shrink-0 ${
+                      isDeleted
+                        ? 'text-green-500 hover:bg-green-50'
+                        : 'text-gray-300 hover:text-red-400 hover:bg-red-50'
+                    }`}
+                    title={isDeleted ? 'Restore' : 'Delete'}
+                  >
+                    {isDeleted ? <Plus className="w-4 h-4" /> : <Trash2 className="w-4 h-4" />}
+                  </button>
+                </div>
+              );
+            })}
+
+            {/* Add new category */}
+            <div className="flex items-center gap-2 pt-2 border-t border-gray-100">
+              <span className="text-lg w-7 text-center flex-shrink-0">🍽️</span>
+              <Input
+                placeholder="New category name..."
+                value={newCatName}
+                onChange={(e) => setNewCatName(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleAddNewCategory()}
+                className="flex-1"
+              />
+              <button
+                onClick={handleAddNewCategory}
+                disabled={!newCatName.trim()}
+                className="p-1.5 rounded-full text-pink-500 hover:text-pink-700 hover:bg-pink-50 transition-colors disabled:opacity-30 flex-shrink-0"
+                title="Add category"
+              >
+                <Plus className="w-4 h-4" />
+              </button>
+            </div>
+
             <Button
               onClick={handleSaveRenames}
               disabled={assigningEmojis}
