@@ -77,20 +77,6 @@
 
 
 
-@keyframes laserSweep {
-  0%   { background-position: 200% 0; opacity: 0; }
-  10%  { opacity: 1; }
-  60%  { background-position: -200% 0; opacity: 1; }
-  75%  { opacity: 0; }
-  100% { background-position: -200% 0; opacity: 0; }
-}
-
-@keyframes laserPulse {
-  0%, 100% { opacity: 0.3; transform: scale(0.8); }
-  10%, 60%  { opacity: 1;   transform: scale(1.2); }
-  75%       { opacity: 0.4; transform: scale(0.9); }
-}
-
 @layer base {
   * {
     @apply border-border outline-ring/50;
