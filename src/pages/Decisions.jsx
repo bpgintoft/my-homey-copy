@@ -115,7 +115,7 @@ export default function Decisions() {
         }} />
         {/* Fade to page background at the bottom */}
         <div className="absolute bottom-0 left-0 right-0 h-64 pointer-events-none" style={{
-          background: 'linear-gradient(to bottom, transparent 0%, transparent 55%, rgba(237,232,255,0.2) 68%, rgba(237,232,255,0.6) 80%, #ede8ff 100%)',
+          background: 'linear-gradient(to bottom, transparent 0%, transparent 45%, rgba(237,232,255,0.1) 58%, rgba(237,232,255,0.4) 72%, rgba(237,232,255,0.75) 85%, #ede8ff 100%)',
         }} />
 
         {/* Title row */}
