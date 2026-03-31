@@ -103,27 +103,51 @@ export default function Decisions() {
   ];
 
   return (
-    <div className="min-h-screen flex flex-col pb-32 lg:pb-8" style={{background: 'linear-gradient(160deg, #f0edff 0%, #e8e2ff 40%, #ede8ff 70%, #f5f0ff 100%)'}}>
+    <div className="min-h-screen flex flex-col pb-32 lg:pb-8" style={{background: 'linear-gradient(to bottom, #f3f0ff 0%, #ede8ff 40%, #f5f2ff 70%, #faf8ff 100%)'}}>
+
+      <style>{`
+        .decisions-header-bg {
+          background: linear-gradient(to bottom, #4c1d95 0%, #7c3aed 50%, #c4b5fd 100%);
+          position: relative;
+        }
+        .decisions-header-bg::before {
+          content: '';
+          position: absolute;
+          inset: 0;
+          background:
+            repeating-linear-gradient(
+              45deg,
+              rgba(167, 139, 250, 0.5) 0px, rgba(167, 139, 250, 0.5) 10px,
+              rgba(109, 40, 217, 0.3) 10px, rgba(109, 40, 217, 0.3) 20px,
+              rgba(167, 139, 250, 0.5) 20px, rgba(167, 139, 250, 0.5) 25px,
+              rgba(196, 181, 253, 0.25) 25px, rgba(196, 181, 253, 0.25) 30px
+            );
+          background-size: 100% 100%;
+          background-position: 0 0;
+        }
+      `}</style>
 
       {/* Hero Header */}
-      <div className="px-6 pt-8 pb-4 flex items-center justify-between max-w-2xl mx-auto w-full">
+      <div className="decisions-header-bg px-6 pt-10 pb-8">
+      <div className="relative z-10 flex items-center justify-between max-w-2xl mx-auto w-full">
         <div>
           <h1 className="text-3xl font-extrabold leading-tight">
-            <span className="text-gray-800">Family </span>
-            <span style={{color: '#7c3aed'}}>Decisions</span>
+            <span className="text-white">Family </span>
+            <span style={{color: '#e9d5ff'}}>Decisions</span>
           </h1>
-          <p className="text-violet-400 text-xs mt-0.5">Proposals, votes &amp; follow-ups</p>
+          <p className="text-purple-200 text-xs mt-0.5">Proposals, votes &amp; follow-ups</p>
         </div>
         {!isChildUser && (
           <button
             onClick={() => setShowNew(true)}
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full font-semibold text-white text-sm transition-all hover:scale-105 hover:brightness-110 flex-shrink-0"
-            style={{background: 'linear-gradient(135deg, #7c3aed, #a855f7)', boxShadow: '0 2px 12px rgba(124,58,237,0.3)'}}
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full font-semibold text-purple-900 text-sm transition-all hover:scale-105 hover:brightness-110 flex-shrink-0"
+            style={{background: 'rgba(255,255,255,0.85)', boxShadow: '0 2px 12px rgba(0,0,0,0.15)'}}
           >
             <Plus className="w-4 h-4" />
             Propose
           </button>
         )}
+      </div>
       </div>
 
       {/* Filter tabs */}
