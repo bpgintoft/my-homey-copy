@@ -10,6 +10,24 @@ import { Home, CalendarDays, CheckSquare, ChevronRight } from 'lucide-react';
 
 const TZ = 'America/Chicago';
 
+// Avatar mapping for family members (same as in FamilyCalendar)
+const calendarAvatars = {
+  'Bryan': 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/b093cc037_Bryan.png',
+  'Kate': 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/d14194fd4_Kate.png',
+  'Mara': 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/08e4782d7_Mara.png',
+  'Phoenix': 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/ef00eaae1_Phoenix.png',
+  'Family': 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/c17d012b5_image.png'
+};
+
+const getCalendarAvatar = (calendarName) => {
+  for (const [name, url] of Object.entries(calendarAvatars)) {
+    if (calendarName?.toLowerCase().includes(name.toLowerCase())) {
+      return url;
+    }
+  }
+  return null;
+};
+
 // Badge shown on the bell icon
 export function CommandCenterBadge({ count }) {
   if (!count) return null;
@@ -189,9 +207,16 @@ function Section({ emoji, title, items, renderItem, emptyText, emojiIsDay }) {
   );
 }
 
-function ItemRow({ label, sublabel, to, onClick }) {
+function ItemRow({ label, sublabel, to, onClick, avatarUrl }) {
   const inner = (
     <div className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-50 active:bg-gray-100 transition-colors cursor-pointer group">
+      {avatarUrl && (
+        <img 
+          src={avatarUrl} 
+          alt="Calendar"
+          className="w-6 h-6 rounded-full object-cover flex-shrink-0"
+        />
+      )}
       <div className="flex-1 min-w-0">
         <div className="text-sm font-medium text-gray-800 truncate">{label}</div>
         {sublabel && <div className="text-xs text-gray-500 truncate">{sublabel}</div>}
@@ -294,22 +319,26 @@ export default function CommandCenter({ open, onClose }) {
           <div className="border-t border-gray-100" />
 
           {/* Family Pulse */}
-          <Section
-            emoji={new Date().getDate().toString()}
-            emojiIsDay={true}
-            title="Family Pulse"
-            items={todayEvents}
-            emptyText="Nothing urgent today. Enjoy the peace!"
-            renderItem={(event) => (
-              <ItemRow
-                key={event.id || event.google_event_id}
-                label={event.title}
-                sublabel={getEventTime(event)}
-                to={createPageUrl(`Calendar?eventId=${event.google_event_id || event.id}`)}
-                onClick={onClose}
-              />
-            )}
-          />
+           <Section
+             emoji={new Date().getDate().toString()}
+             emojiIsDay={true}
+             title="Family Pulse"
+             items={todayEvents}
+             emptyText="Nothing urgent today. Enjoy the peace!"
+             renderItem={(event) => {
+               const avatarUrl = event.calendar_name ? getCalendarAvatar(event.calendar_name) : null;
+               return (
+                 <ItemRow
+                   key={event.id || event.google_event_id}
+                   label={event.title}
+                   sublabel={getEventTime(event)}
+                   to={createPageUrl(`Calendar?eventId=${event.google_event_id || event.id}`)}
+                   onClick={onClose}
+                   avatarUrl={avatarUrl}
+                 />
+               );
+             }}
+           />
 
           <div className="border-t border-gray-100" />
 
