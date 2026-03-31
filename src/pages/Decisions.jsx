@@ -103,32 +103,31 @@ export default function Decisions() {
   ];
 
   return (
-    <div className="min-h-screen flex flex-col pb-32 lg:pb-8" style={{background: 'linear-gradient(to bottom, #f3f0ff 0%, #ede8ff 40%, #f5f2ff 70%, #faf8ff 100%)'}}>
+    <div className="min-h-screen flex flex-col pb-32 lg:pb-8 relative" style={{background: 'linear-gradient(to bottom, #3b0764 0%, #6d28d9 15%, #a78bfa 35%, #ddd6fe 55%, #ede8ff 70%, #f5f2ff 100%)'}}>
 
       <style>{`
-        .decisions-header-bg {
-          background: linear-gradient(to bottom, #4c1d95 0%, #7c3aed 50%, #c4b5fd 100%);
-          position: relative;
-        }
-        .decisions-header-bg::before {
-          content: '';
+        .decisions-stripes {
           position: absolute;
           inset: 0;
+          pointer-events: none;
+          z-index: 0;
           background:
             repeating-linear-gradient(
               45deg,
-              rgba(167, 139, 250, 0.5) 0px, rgba(167, 139, 250, 0.5) 10px,
-              rgba(109, 40, 217, 0.3) 10px, rgba(109, 40, 217, 0.3) 20px,
-              rgba(167, 139, 250, 0.5) 20px, rgba(167, 139, 250, 0.5) 25px,
+              rgba(167, 139, 250, 0.55) 0px, rgba(167, 139, 250, 0.55) 10px,
+              rgba(109, 40, 217, 0.35) 10px, rgba(109, 40, 217, 0.35) 20px,
+              rgba(167, 139, 250, 0.55) 20px, rgba(167, 139, 250, 0.55) 25px,
               rgba(196, 181, 253, 0.25) 25px, rgba(196, 181, 253, 0.25) 30px
             );
-          background-size: 100% 100%;
-          background-position: 0 0;
+          -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.7) 25%, rgba(0,0,0,0.2) 45%, rgba(0,0,0,0) 60%);
+          mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.7) 25%, rgba(0,0,0,0.2) 45%, rgba(0,0,0,0) 60%);
         }
       `}</style>
 
+      <div className="decisions-stripes" />
+
       {/* Hero Header */}
-      <div className="decisions-header-bg px-6 pt-10 pb-8">
+      <div className="px-6 pt-10 pb-8 relative">
       <div className="relative z-10 flex items-center justify-between max-w-2xl mx-auto w-full">
         <div>
           <h1 className="text-3xl font-extrabold leading-tight">
@@ -151,7 +150,7 @@ export default function Decisions() {
       </div>
 
       {/* Filter tabs */}
-      <div className="max-w-2xl mx-auto w-full px-4 mb-4">
+      <div className="max-w-2xl mx-auto w-full px-4 mb-4 relative z-10">
         <div className="grid grid-cols-3 gap-2">
           {filters.map(f => (
             <button
@@ -175,7 +174,7 @@ export default function Decisions() {
       </div>
 
       {/* Cards */}
-      <div className="max-w-2xl mx-auto w-full px-4 flex-1">
+      <div className="max-w-2xl mx-auto w-full px-4 flex-1 relative z-10">
         {decisions.length === 0 && (
           <div className="text-center py-20 text-violet-400">
             <div className="text-4xl mb-3">🤝</div>
