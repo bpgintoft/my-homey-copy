@@ -114,7 +114,7 @@ export default function Decisions() {
           backgroundImage: 'repeating-linear-gradient(45deg, rgba(255,255,255,0.07) 0px, rgba(255,255,255,0.07) 10px, rgba(167,139,250,0.15) 10px, rgba(167,139,250,0.15) 20px, rgba(255,255,255,0.07) 20px, rgba(255,255,255,0.07) 25px, rgba(124,58,237,0.1) 25px, rgba(124,58,237,0.1) 30px)',
         }} />
         {/* Fade to page background at the bottom */}
-        <div className="absolute bottom-0 left-0 right-0 pointer-events-none" style={{height: '30rem'}} style={{
+        <div className="absolute bottom-0 left-0 right-0 h-64 pointer-events-none" style={{
           background: 'linear-gradient(to bottom, transparent 0%, transparent 60%, rgba(237,232,255,0.6) 84%, #ede8ff 100%)',
         }} />
 
