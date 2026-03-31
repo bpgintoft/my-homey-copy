@@ -130,11 +130,12 @@ export default function Decisions() {
           {!isChildUser && (
             <div className="relative flex-shrink-0 flex flex-col items-center justify-end" style={{height: '120px'}}>
               {/* Characters popping out from behind the button */}
-              <div className="absolute left-1/2 -translate-x-1/2 pointer-events-none" style={{top: '-10px', bottom: '28px', zIndex: 0}}>
+              <div className="absolute left-1/2 -translate-x-1/2 w-36 overflow-hidden pointer-events-none" style={{top: '-20px', bottom: '28px', zIndex: 0}}>
                 <img
                   src="https://media.base44.com/images/public/6990e4185e2b18f4d04a1ac8/15e500d03_8604E257-C2A1-49BB-966C-3F4D31DD33C1.png"
                   alt=""
-                  style={{height: '90px', width: 'auto'}}
+                  className="w-full object-cover object-top"
+                  style={{height: '180px'}}
                 />
               </div>
               <button
