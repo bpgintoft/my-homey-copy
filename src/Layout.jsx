@@ -194,10 +194,20 @@ export default function Layout({ children, currentPageName }) {
         <div className="p-4 border-t border-gray-100 space-y-1">
           <button
             onClick={() => setScanOpen(true)}
-            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-white bg-gradient-to-r from-[#E91E8C] to-[#0AACFF] hover:opacity-90 transition-all font-medium"
+            className="relative w-full flex items-center gap-3 px-4 py-3 rounded-xl text-white bg-gradient-to-r from-[#E91E8C] to-[#0AACFF] hover:opacity-90 transition-all font-medium overflow-hidden"
           >
-            <ScanLine className="w-5 h-5" />
-            <span>Scan to Homey</span>
+            <ScanLine className="w-5 h-5 relative z-10" />
+            <span className="relative z-10">Scan to Homey</span>
+            {/* Laser shine sweep */}
+            <span className="absolute inset-0 pointer-events-none" style={{
+              background: 'linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.55) 50%, rgba(0,220,255,0.35) 55%, transparent 65%)',
+              backgroundSize: '200% 100%',
+              animation: 'laserSweep 2.4s ease-in-out infinite',
+            }} />
+            {/* Corner laser dot */}
+            <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-cyan-300 shadow-[0_0_6px_2px_rgba(0,220,255,0.9)]" style={{
+              animation: 'laserPulse 2.4s ease-in-out infinite',
+            }} />
           </button>
           <button
             onClick={() => setCommandCenterOpen(true)}
@@ -223,10 +233,14 @@ export default function Layout({ children, currentPageName }) {
         <div className="flex items-center gap-1">
           <button
             onClick={() => setScanOpen(true)}
-            className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
+            className="relative p-2 rounded-lg hover:bg-gray-100 transition-colors overflow-hidden"
             title="Scan to Homey"
           >
-            <ScanLine className="w-5 h-5 text-[#E91E8C]" />
+            <ScanLine className="w-5 h-5 text-[#E91E8C] relative z-10" />
+            {/* Corner laser dot */}
+            <span className="absolute top-0.5 right-0.5 w-1.5 h-1.5 rounded-full bg-cyan-400 shadow-[0_0_5px_2px_rgba(0,220,255,0.85)]" style={{
+              animation: 'laserPulse 2.4s ease-in-out infinite',
+            }} />
           </button>
           <button
             onClick={() => setCommandCenterOpen(true)}
