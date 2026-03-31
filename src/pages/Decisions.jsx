@@ -135,7 +135,7 @@ export default function Decisions() {
                   src="https://media.base44.com/images/public/6990e4185e2b18f4d04a1ac8/15e500d03_8604E257-C2A1-49BB-966C-3F4D31DD33C1.png"
                   alt=""
                   className="w-full object-cover object-top"
-                  style={{height: '180px'}}
+                  style={{height: '162px'}}
                 />
               </div>
               <button
