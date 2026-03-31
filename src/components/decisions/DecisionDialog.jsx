@@ -23,7 +23,7 @@ function renderTextWithLinks(text, isMe) {
           href={part}
           target="_blank"
           rel="noopener noreferrer"
-          className={`underline block truncate text-sm ${isMe ? 'text-indigo-600' : 'text-indigo-200'}`}
+          className={`underline block truncate text-sm ${isMe ? 'text-violet-200' : 'text-violet-600'}`}
         >
           {part}
         </a>
@@ -153,7 +153,7 @@ export default function DecisionDialog({ decision, currentUserEmail, familyMembe
   return (
     <>
     <Dialog open onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md max-h-[90vh] flex flex-col overflow-hidden p-0 border-0 rounded-3xl" style={{background: 'linear-gradient(160deg, #2d1b69 0%, #4a3fb5 60%, #5B4FCF 100%)'}}>
+      <DialogContent className="sm:max-w-md max-h-[90vh] flex flex-col overflow-hidden p-0 border-0 rounded-3xl" style={{background: 'linear-gradient(160deg, #f5f0ff 0%, #ede8ff 60%, #f0edff 100%)', border: '1px solid rgba(167,139,250,0.25)'}}>
 
         {/* Header — hidden in focus mode */}
         {!focusChat && (
@@ -164,7 +164,7 @@ export default function DecisionDialog({ decision, currentUserEmail, familyMembe
                   type="text"
                   value={titleText}
                   onChange={(e) => setTitleText(e.target.value)}
-                  className="flex-1 text-base font-semibold leading-snug text-white bg-transparent border-b border-indigo-400 outline-none"
+                  className="flex-1 text-base font-semibold leading-snug text-gray-800 bg-transparent border-b border-violet-400 outline-none"
                   autoFocus
                 />
                 <button
@@ -174,14 +174,14 @@ export default function DecisionDialog({ decision, currentUserEmail, familyMembe
                     e.stopPropagation();
                     setEditingTitle(false);
                   }}
-                  className="text-indigo-300 hover:text-white flex-shrink-0 p-1"
+                  className="text-violet-500 hover:text-violet-700 flex-shrink-0 p-1"
                 >
                   <Check className="w-4 h-4" />
                 </button>
               </div>
             ) : (
               <div className="flex items-center justify-between gap-2">
-                <DialogTitle className="text-base font-semibold leading-snug text-white flex-1">{titleText}</DialogTitle>
+                <DialogTitle className="text-base font-semibold leading-snug text-gray-800 flex-1">{titleText}</DialogTitle>
                 <button
                   type="button"
                   onClick={() => setEditingTitle(true)}
@@ -189,7 +189,7 @@ export default function DecisionDialog({ decision, currentUserEmail, familyMembe
                     e.preventDefault();
                     setEditingTitle(true);
                   }}
-                  className="text-indigo-300 hover:text-white flex-shrink-0 p-2 active:scale-90"
+                  className="text-violet-400 hover:text-violet-600 flex-shrink-0 p-2 active:scale-90"
                   style={{ cursor: 'pointer' }}
                 >
                   <Pencil className="w-4 h-4" />
@@ -197,10 +197,10 @@ export default function DecisionDialog({ decision, currentUserEmail, familyMembe
               </div>
             )}
             {decision.description && (
-              <p className="text-sm text-indigo-200 mt-0.5">{decision.description}</p>
+              <p className="text-sm text-gray-500 mt-0.5">{decision.description}</p>
             )}
             {deadline && (
-              <p className="text-xs text-indigo-300 mt-2 flex items-center gap-1">
+              <p className="text-xs text-violet-500 mt-2 flex items-center gap-1">
                 <Calendar className="w-3 h-3" />
                 Due: {format(new Date(deadline + 'T00:00:00'), 'MMM d, yyyy')}
               </p>
@@ -218,21 +218,21 @@ export default function DecisionDialog({ decision, currentUserEmail, familyMembe
                   const voteKey = `${m.name.toLowerCase()}_vote`;
                   const vote = decision[voteKey];
                   return (
-                    <div key={m.id} className="flex-1 rounded-2xl p-3 flex flex-row items-center gap-3" style={{background: 'rgba(180,140,255,0.25)', border: '1px solid rgba(200,170,255,0.3)'}}>
+                    <div key={m.id} className="flex-1 rounded-2xl p-3 flex flex-row items-center gap-3 bg-white" style={{border: '1px solid rgba(167,139,250,0.25)'}}>
                       {m.photo_url
                         ? <img src={m.photo_url} alt={m.name} className="w-9 h-9 rounded-full object-cover flex-shrink-0" />
-                        : <div className="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center text-white font-bold flex-shrink-0">{m.name[0]}</div>
+                        : <div className="w-9 h-9 rounded-full bg-violet-100 flex items-center justify-center text-violet-600 font-bold flex-shrink-0">{m.name[0]}</div>
                       }
                       <div>
-                        <p className="text-xs text-indigo-200">{m.name}</p>
-                        <p className="text-sm font-medium text-white">{vote ? voteEmoji[vote] : '—'}</p>
+                        <p className="text-xs text-gray-400">{m.name}</p>
+                        <p className="text-sm font-medium text-gray-700">{vote ? voteEmoji[vote] : '—'}</p>
                       </div>
                     </div>
                   );
                 })}
               </div>
               <div className="space-y-2">
-                <p className="text-xs font-semibold text-indigo-200 uppercase tracking-wide">Your Vote</p>
+                <p className="text-xs font-semibold text-violet-400 uppercase tracking-wide">Your Vote</p>
                 <div className="flex gap-2">
                   {['yes', 'no', 'maybe'].map(v => (
                     <button
@@ -240,10 +240,9 @@ export default function DecisionDialog({ decision, currentUserEmail, familyMembe
                       onClick={() => setMyVote(myVote === v ? '' : v)}
                       className={`flex-1 py-2 rounded-full text-sm font-medium transition-all border ${
                        myVote === v
-                         ? 'text-[#3d2a8a] border-transparent shadow-lg scale-105'
-                         : 'text-white/70 border-white/20 hover:border-white/40 hover:text-white'
+                         ? 'bg-violet-600 text-white border-transparent shadow-md scale-105'
+                         : 'text-violet-500 border-violet-200 hover:border-violet-400 hover:bg-violet-50 bg-white'
                       }`}
-                      style={myVote === v ? {background: 'rgba(200,170,255,0.9)'} : {background: 'rgba(180,140,255,0.15)'}}
                     >
                       {voteEmoji[v]}
                     </button>
@@ -257,8 +256,8 @@ export default function DecisionDialog({ decision, currentUserEmail, familyMembe
           {localComments.length > 0 && (
             <div className="space-y-2">
               <div className="flex items-center justify-between select-none cursor-pointer" onClick={() => setFocusChat(f => !f)}>
-                <p className="text-xs font-semibold text-indigo-200 uppercase tracking-wide">Discussion</p>
-                <span className="text-indigo-300 text-xs">{focusChat ? '↕ collapse' : '⤢ expand'}</span>
+                <p className="text-xs font-semibold text-violet-400 uppercase tracking-wide">Discussion</p>
+                <span className="text-violet-400 text-xs">{focusChat ? '↕ collapse' : '⤢ expand'}</span>
               </div>
               <div
                 className={`space-y-2 overflow-y-auto transition-all ${focusChat ? 'max-h-[65vh] cursor-pointer' : 'max-h-48 cursor-pointer'}`}
@@ -270,7 +269,6 @@ export default function DecisionDialog({ decision, currentUserEmail, familyMembe
                   return (
                     <div key={i} className={`flex items-end gap-1.5 ${isMe ? 'flex-row-reverse' : 'flex-row'}`}>
                       {(() => {
-                         // For current user, use myMember with fallback to lookup
                          const commenterMember = isMe 
                            ? (myMember || getCommentAuthorMember(c.commenter_email, c.commenter_name, currentUserEmail, myMember, familyMembers))
                            : getCommentAuthorMember(c.commenter_email, c.commenter_name, currentUserEmail, myMember, familyMembers);
@@ -278,10 +276,10 @@ export default function DecisionDialog({ decision, currentUserEmail, familyMembe
                          const displayName = commenterMember?.name || c.commenter_name || '?';
                          return photoUrl
                            ? <img src={photoUrl} alt={displayName} className="w-6 h-6 rounded-full object-cover flex-shrink-0 mb-5" />
-                           : <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center text-white text-xs font-bold flex-shrink-0 mb-5">{displayName[0]}</div>;
+                           : <div className="w-6 h-6 rounded-full bg-violet-100 flex items-center justify-center text-violet-600 text-xs font-bold flex-shrink-0 mb-5">{displayName[0]}</div>;
                        })()}
                       <div className={`flex flex-col max-w-[80%] min-w-0 overflow-hidden ${isMe ? 'items-end' : 'items-start'}`}>
-                        <div className="rounded-2xl px-3 py-2 w-full overflow-hidden" style={isMe ? {background: 'rgba(220,200,255,0.9)', color: '#3d2a8a'} : {background: 'rgba(180,140,255,0.3)', color: 'white', border: '1px solid rgba(200,170,255,0.3)'}}>
+                        <div className="rounded-2xl px-3 py-2 w-full overflow-hidden" style={isMe ? {background: '#7c3aed', color: 'white'} : {background: 'white', color: '#374151', border: '1px solid rgba(167,139,250,0.3)'}}>
                           {isEditing ? (
                             <div className="space-y-1">
                               <Textarea
@@ -295,7 +293,7 @@ export default function DecisionDialog({ decision, currentUserEmail, familyMembe
                                 <Button size="sm" variant="ghost" className="h-6 px-2 text-xs text-gray-500" onClick={() => { setEditingIndex(null); setEditingText(''); }}>
                                   <X className="w-3 h-3" />
                                 </Button>
-                                <Button size="sm" className="h-6 px-2 text-xs bg-[#5B4FCF] text-white" onClick={() => handleEditSave(i)}>
+                                <Button size="sm" className="h-6 px-2 text-xs bg-violet-600 text-white" onClick={() => handleEditSave(i)}>
                                   <Check className="w-3 h-3" />
                                 </Button>
                               </div>
@@ -314,13 +312,13 @@ export default function DecisionDialog({ decision, currentUserEmail, familyMembe
                           )}
                         </div>
                         <div className="flex items-center gap-2 mt-0.5 px-1">
-                          <p className="text-xs text-indigo-300">
+                          <p className="text-xs text-violet-400">
                             {c.timestamp ? format(new Date(c.timestamp), 'MMM d, h:mm a') : ''}
                           </p>
                           {isMe && !isEditing && (
                             <>
-                              <button onClick={() => { setEditingIndex(i); setEditingText(c.text); }} className="text-xs text-indigo-300 hover:text-white">Edit</button>
-                              <button onClick={() => handleDeleteComment(i)} className="text-xs text-indigo-300 hover:text-red-300">Delete</button>
+                              <button onClick={() => { setEditingIndex(i); setEditingText(c.text); }} className="text-xs text-violet-400 hover:text-violet-600">Edit</button>
+                              <button onClick={() => handleDeleteComment(i)} className="text-xs text-violet-400 hover:text-red-400">Delete</button>
                             </>
                           )}
                         </div>
@@ -348,20 +346,20 @@ export default function DecisionDialog({ decision, currentUserEmail, familyMembe
               }}
               onClick={() => setCommentCollapsed(c => !c)}
             >
-              <p className="text-xs font-semibold text-indigo-200 uppercase tracking-wide">
+              <p className="text-xs font-semibold text-violet-400 uppercase tracking-wide">
                 {localComments.length > 0 ? 'Add a comment' : 'Comment (optional)'}
               </p>
-              <span className="text-indigo-300 text-xs">{commentCollapsed ? '▲ expand' : '▼ minimize'}</span>
+              <span className="text-violet-400 text-xs">{commentCollapsed ? '▲ expand' : '▼ minimize'}</span>
             </div>
             {!commentCollapsed && (
-              <div className="rounded-2xl overflow-hidden" style={{background: 'rgba(180,140,255,0.2)', border: '1px solid rgba(200,170,255,0.25)'}}>
+              <div className="rounded-2xl overflow-hidden bg-white" style={{border: '1px solid rgba(167,139,250,0.3)'}}>
                 <Textarea
                   value={newComment}
                   onChange={e => setNewComment(e.target.value)}
                   onPaste={handlePaste}
                   placeholder="Add context, conditions, thoughts... (paste images directly)"
                   rows={2}
-                  className="border-0 text-white placeholder:text-indigo-300 bg-transparent rounded-none resize-none"
+                  className="border-0 text-gray-700 placeholder:text-gray-400 bg-transparent rounded-none resize-none"
                   style={{ fontSize: '16px' }}
                 />
                 {pendingImages.length > 0 && (
@@ -384,7 +382,7 @@ export default function DecisionDialog({ decision, currentUserEmail, familyMembe
                   <button
                     onClick={() => fileInputRef.current?.click()}
                     disabled={uploadingImage}
-                    className="flex items-center gap-1.5 text-xs text-indigo-300 hover:text-white transition-colors"
+                    className="flex items-center gap-1.5 text-xs text-violet-400 hover:text-violet-600 transition-colors"
                   >
                     <ImagePlus className="w-4 h-4" />
                     {uploadingImage ? 'Uploading...' : 'Add photo'}
@@ -396,9 +394,9 @@ export default function DecisionDialog({ decision, currentUserEmail, familyMembe
 
           {/* Status + Deadline — always visible */}
           <div className="space-y-2">
-            <p className="text-xs font-semibold text-indigo-200 uppercase tracking-wide">Status</p>
+            <p className="text-xs font-semibold text-violet-400 uppercase tracking-wide">Status</p>
             <Select value={status} onValueChange={setStatus}>
-              <SelectTrigger className="border-0 text-white rounded-2xl" style={{background: 'rgba(180,140,255,0.2)', border: '1px solid rgba(200,170,255,0.25)'}}>
+              <SelectTrigger className="rounded-2xl bg-white text-gray-700" style={{border: '1px solid rgba(167,139,250,0.3)'}}>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -409,27 +407,25 @@ export default function DecisionDialog({ decision, currentUserEmail, familyMembe
             </Select>
           </div>
           <div className="space-y-2">
-            <p className="text-xs font-semibold text-indigo-200 uppercase tracking-wide">Deadline (optional)</p>
+            <p className="text-xs font-semibold text-violet-400 uppercase tracking-wide">Deadline (optional)</p>
             <div className="relative">
               <input
                 type="date"
                 value={deadline}
                 onChange={e => setDeadline(e.target.value)}
-                className="w-full px-3 py-2.5 rounded-2xl border-0 text-white bg-transparent text-sm appearance-none"
-                style={{background: 'rgba(180,140,255,0.2)', border: '1px solid rgba(200,170,255,0.25)', color: 'white'}}
-                onFocus={(e) => e.target.style.backgroundColor = 'rgba(180,140,255,0.3)'}
-                onBlur={(e) => e.target.style.backgroundColor = 'rgba(180,140,255,0.2)'}
+                className="w-full px-3 py-2.5 rounded-2xl text-gray-700 text-sm appearance-none bg-white"
+                style={{border: '1px solid rgba(167,139,250,0.3)'}}
               />
             </div>
           </div>
           <div className="flex gap-2 pt-2 pb-4">
-            <button onClick={handleSave} disabled={uploadingImage} className="flex-1 flex items-center justify-center gap-1.5 bg-white text-[#5B4FCF] font-semibold py-2.5 rounded-full hover:bg-indigo-50 transition-colors disabled:opacity-60">
+            <button onClick={handleSave} disabled={uploadingImage} className="flex-1 flex items-center justify-center gap-1.5 font-semibold py-2.5 rounded-full text-white transition-colors disabled:opacity-60" style={{background: 'linear-gradient(135deg, #7c3aed, #a855f7)'}}>
               <Send className="w-4 h-4" />
               Save
             </button>
-            <button onClick={onClose} className="px-4 py-2.5 rounded-full text-white font-medium transition-colors text-sm" style={{background: 'rgba(180,140,255,0.25)', border: '1px solid rgba(200,170,255,0.3)'}}>Cancel</button>
+            <button onClick={onClose} className="px-4 py-2.5 rounded-full text-violet-600 font-medium transition-colors text-sm bg-white" style={{border: '1px solid rgba(167,139,250,0.4)'}}>Cancel</button>
             {decision.proposer_email === currentUserEmail && (
-              <button onClick={() => onDelete(decision.id)} className="p-2.5 rounded-full bg-red-400/30 text-red-200 hover:bg-red-400/50 transition-colors">
+              <button onClick={() => onDelete(decision.id)} className="p-2.5 rounded-full bg-red-50 text-red-400 hover:bg-red-100 transition-colors" style={{border: '1px solid rgba(248,113,113,0.3)'}}>
                 <Trash2 className="w-4 h-4" />
               </button>
             )}
