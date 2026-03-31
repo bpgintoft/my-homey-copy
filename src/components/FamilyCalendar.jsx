@@ -288,7 +288,11 @@ export default function FamilyCalendar({ activities, initialEventId }) {
       const { data } = await base44.functions.invoke('deleteGoogleCalendarEvent', { calendarId, eventId });
       return data;
     },
-    onSuccess: () => {
+    onSuccess: (data, variables) => {
+      // Immediately remove deleted event from cache so daily view updates instantly
+      queryClient.setQueryData(['cachedCalendarEvents'], (old) => 
+        old ? old.filter(e => e.google_event_id !== variables.eventId && e.id !== variables.eventId) : []
+      );
       base44.functions.invoke('syncCalendarCache', {});
       setShowEditDialog(false);
       setEditingEvent(null);
