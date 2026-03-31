@@ -110,17 +110,13 @@ export default function Decisions() {
       <div className="absolute inset-0 pointer-events-none" style={{
         backgroundImage: 'repeating-linear-gradient(45deg, rgba(255,255,255,0.07) 0px, rgba(255,255,255,0.07) 10px, rgba(167,139,250,0.15) 10px, rgba(167,139,250,0.15) 20px, rgba(255,255,255,0.07) 20px, rgba(255,255,255,0.07) 25px, rgba(124,58,237,0.1) 25px, rgba(124,58,237,0.1) 30px)',
       }} />
-      {/* Lavender overlay that fades in below the banner, stays semi-transparent so stripes show through */}
+      {/* Lavender overlay — single smooth gradient from transparent to semi-opaque, stripes visible throughout */}
       <div className="absolute inset-0 pointer-events-none" style={{
-        background: 'linear-gradient(to bottom, transparent 0%, transparent 35%, rgba(237,232,255,0.55) 55%, rgba(237,232,255,0.75) 70%, rgba(237,232,255,0.85) 100%)',
+        background: 'linear-gradient(to bottom, transparent 0%, rgba(237,232,255,0.08) 20%, rgba(237,232,255,0.2) 35%, rgba(237,232,255,0.45) 55%, rgba(237,232,255,0.65) 75%, rgba(237,232,255,0.78) 100%)',
       }} />
 
       {/* Hero Banner */}
       <div className="relative">
-        {/* Fade the banner's vivid purple into the softer overlay below */}
-        <div className="absolute bottom-0 left-0 right-0 h-32 pointer-events-none" style={{
-          background: 'linear-gradient(to bottom, transparent 0%, rgba(237,232,255,0.0) 50%, rgba(237,232,255,0.3) 100%)',
-        }} />
 
         {/* Title row */}
         <div className="relative z-20 flex items-center justify-between px-6 pt-8 pb-4 max-w-2xl mx-auto h-36 md:h-44">
