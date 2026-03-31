@@ -116,6 +116,7 @@ export default function Decisions() {
             content: '';
             position: absolute;
             inset: 0;
+            z-index: 1;
             background: repeating-linear-gradient(
               45deg,
               rgba(255,255,255,0.07) 0px,
@@ -135,11 +136,12 @@ export default function Decisions() {
             left: 0;
             right: 0;
             height: 80px;
-            background: linear-gradient(to bottom, transparent 0%, #ede8ff 100%);
+            background: linear-gradient(to bottom, rgba(237,232,255,0) 0%, rgba(237,232,255,1) 100%);
+            z-index: 2;
           }
         `}</style>
         <div className="decisions-banner relative h-36 md:h-44">
-          <div className="relative z-10 flex items-center justify-between px-6 h-full max-w-2xl mx-auto">
+          <div className="relative z-20 flex items-center justify-between px-6 h-full max-w-2xl mx-auto">
             <div>
               <h1 className="text-3xl font-extrabold leading-tight">
                 <span className="text-white">Family </span>
