@@ -119,7 +119,7 @@ export default function Decisions() {
       <div className="relative">
 
         {/* Title row */}
-        <div className="relative z-20 flex items-center justify-between px-6 pt-8 pb-4 max-w-2xl mx-auto h-36 md:h-44">
+        <div className="relative z-20 flex items-center justify-between px-4 pt-8 pb-4 max-w-2xl mx-auto h-36 md:h-44">
           <div>
             <h1 className="text-3xl font-extrabold leading-tight">
               <span className="text-white">Family </span>
