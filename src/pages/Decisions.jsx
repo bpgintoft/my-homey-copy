@@ -103,54 +103,31 @@ export default function Decisions() {
   ];
 
   return (
-    <div className="min-h-screen flex flex-col pb-32 lg:pb-8 relative" style={{background: 'linear-gradient(to bottom, #3b0764 0%, #6d28d9 15%, #a78bfa 35%, #ddd6fe 55%, #ede8ff 70%, #f5f2ff 100%)'}}>
-
-      <style>{`
-        .decisions-stripes {
-          position: absolute;
-          inset: 0;
-          pointer-events: none;
-          z-index: 0;
-          background:
-            repeating-linear-gradient(
-              45deg,
-              rgba(167, 139, 250, 0.55) 0px, rgba(167, 139, 250, 0.55) 10px,
-              rgba(109, 40, 217, 0.35) 10px, rgba(109, 40, 217, 0.35) 20px,
-              rgba(167, 139, 250, 0.55) 20px, rgba(167, 139, 250, 0.55) 25px,
-              rgba(196, 181, 253, 0.25) 25px, rgba(196, 181, 253, 0.25) 30px
-            );
-          -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.7) 25%, rgba(0,0,0,0.2) 45%, rgba(0,0,0,0) 60%);
-          mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.7) 25%, rgba(0,0,0,0.2) 45%, rgba(0,0,0,0) 60%);
-        }
-      `}</style>
-
-      <div className="decisions-stripes" />
+    <div className="min-h-screen flex flex-col pb-32 lg:pb-8" style={{background: 'linear-gradient(160deg, #f0edff 0%, #e8e2ff 40%, #ede8ff 70%, #f5f0ff 100%)'}}>
 
       {/* Hero Header */}
-      <div className="px-6 pt-10 pb-8 relative">
-      <div className="relative z-10 flex items-center justify-between max-w-2xl mx-auto w-full">
+      <div className="px-6 pt-8 pb-4 flex items-center justify-between max-w-2xl mx-auto w-full">
         <div>
           <h1 className="text-3xl font-extrabold leading-tight">
-            <span className="text-white">Family </span>
-            <span style={{color: '#e9d5ff'}}>Decisions</span>
+            <span className="text-gray-800">Family </span>
+            <span style={{color: '#7c3aed'}}>Decisions</span>
           </h1>
-          <p className="text-purple-200 text-xs mt-0.5">Proposals, votes &amp; follow-ups</p>
+          <p className="text-violet-400 text-xs mt-0.5">Proposals, votes &amp; follow-ups</p>
         </div>
         {!isChildUser && (
           <button
             onClick={() => setShowNew(true)}
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full font-semibold text-purple-900 text-sm transition-all hover:scale-105 hover:brightness-110 flex-shrink-0"
-            style={{background: 'rgba(255,255,255,0.85)', boxShadow: '0 2px 12px rgba(0,0,0,0.15)'}}
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full font-semibold text-white text-sm transition-all hover:scale-105 hover:brightness-110 flex-shrink-0"
+            style={{background: 'linear-gradient(135deg, #7c3aed, #a855f7)', boxShadow: '0 2px 12px rgba(124,58,237,0.3)'}}
           >
             <Plus className="w-4 h-4" />
             Propose
           </button>
         )}
       </div>
-      </div>
 
       {/* Filter tabs */}
-      <div className="max-w-2xl mx-auto w-full px-4 mb-4 relative z-10">
+      <div className="max-w-2xl mx-auto w-full px-4 mb-4">
         <div className="grid grid-cols-3 gap-2">
           {filters.map(f => (
             <button
@@ -174,7 +151,7 @@ export default function Decisions() {
       </div>
 
       {/* Cards */}
-      <div className="max-w-2xl mx-auto w-full px-4 flex-1 relative z-10">
+      <div className="max-w-2xl mx-auto w-full px-4 flex-1">
         {decisions.length === 0 && (
           <div className="text-center py-20 text-violet-400">
             <div className="text-4xl mb-3">🤝</div>
