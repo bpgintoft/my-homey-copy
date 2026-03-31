@@ -103,22 +103,22 @@ export default function Decisions() {
   ];
 
   return (
-    <div className="min-h-screen flex flex-col pb-32 lg:pb-8" style={{background: 'linear-gradient(160deg, #1a1040 0%, #2d1b69 40%, #3d2a8a 70%, #4a3fb5 100%)'}}>
+    <div className="min-h-screen flex flex-col pb-32 lg:pb-8" style={{background: 'linear-gradient(160deg, #f0edff 0%, #e8e2ff 40%, #ede8ff 70%, #f5f0ff 100%)'}}>
 
       {/* Hero Header */}
       <div className="px-6 pt-8 pb-4 flex items-center justify-between max-w-2xl mx-auto w-full">
         <div>
           <h1 className="text-3xl font-extrabold leading-tight">
-            <span className="text-white">Family </span>
-            <span style={{color: '#c4b5fd'}}>Decisions</span>
+            <span className="text-gray-800">Family </span>
+            <span style={{color: '#7c3aed'}}>Decisions</span>
           </h1>
-          <p className="text-indigo-300 text-xs mt-0.5">Proposals, votes &amp; follow-ups</p>
+          <p className="text-violet-400 text-xs mt-0.5">Proposals, votes &amp; follow-ups</p>
         </div>
         {!isChildUser && (
           <button
             onClick={() => setShowNew(true)}
             className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full font-semibold text-white text-sm transition-all hover:scale-105 hover:brightness-110 flex-shrink-0"
-            style={{background: 'rgba(180, 140, 255, 0.55)', border: '1px solid rgba(200, 170, 255, 0.5)', backdropFilter: 'blur(10px)'}}
+            style={{background: 'linear-gradient(135deg, #7c3aed, #a855f7)', boxShadow: '0 2px 12px rgba(124,58,237,0.3)'}}
           >
             <Plus className="w-4 h-4" />
             Propose
@@ -135,8 +135,8 @@ export default function Decisions() {
               onClick={() => setFilter(f.key)}
               className={`relative px-4 py-2.5 rounded-full transition-all font-semibold text-sm ${
                 filter === f.key
-                  ? 'bg-white/20 text-white border border-white/30'
-                  : 'text-indigo-300 hover:text-white hover:bg-white/10 border border-white/10'
+                  ? 'bg-violet-600 text-white shadow-md'
+                  : 'text-violet-500 hover:text-violet-700 bg-white/70 border border-violet-200 hover:bg-white'
               }`}
             >
               {f.label}
@@ -153,16 +153,16 @@ export default function Decisions() {
       {/* Cards */}
       <div className="max-w-2xl mx-auto w-full px-4 flex-1">
         {decisions.length === 0 && (
-          <div className="text-center py-20 text-indigo-300">
+          <div className="text-center py-20 text-violet-400">
             <div className="text-4xl mb-3">🤝</div>
-            <p className="font-medium text-white">No decisions yet</p>
-            <p className="text-sm mt-1">Tap "Propose Decision" to get started</p>
+            <p className="font-medium text-gray-700">No decisions yet</p>
+            <p className="text-sm mt-1">Tap "Propose" to get started</p>
           </div>
         )}
 
         {filtered.length === 0 && decisions.length > 0 && (
-          <div className="text-center py-12 text-indigo-300">
-            <p className="font-medium text-white">No {filter} decisions</p>
+          <div className="text-center py-12 text-violet-400">
+            <p className="font-medium text-gray-700">No {filter} decisions</p>
           </div>
         )}
 

@@ -22,10 +22,10 @@ const voteEmoji = { yes: '✅', no: '❌', maybe: '🤔', '': '—' };
 export default function DecisionCard({ decision, onClick, hasUnread, familyMembers = [] }) {
   return (
     <div
-      className="relative cursor-pointer transition-all duration-200 rounded-3xl px-5 py-4"
-      style={{background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.12)', backdropFilter: 'blur(10px)'}}
-      onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.13)'}
-      onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,255,255,0.08)'}
+      className="relative cursor-pointer transition-all duration-200 rounded-3xl px-5 py-4 bg-white shadow-sm hover:shadow-md"
+      style={{border: '1px solid rgba(167,139,250,0.25)'}}
+      onMouseEnter={e => e.currentTarget.style.borderColor = 'rgba(124,58,237,0.35)'}
+      onMouseLeave={e => e.currentTarget.style.borderColor = 'rgba(167,139,250,0.25)'}
       onClick={() => onClick(decision)}
     >
       {hasUnread && (
@@ -34,26 +34,26 @@ export default function DecisionCard({ decision, onClick, hasUnread, familyMembe
         </span>
       )}
       <div className="flex items-start justify-between gap-2 mb-1">
-        <h3 className="font-semibold text-white text-sm leading-snug flex-1">{decision.title}</h3>
+        <h3 className="font-semibold text-gray-800 text-sm leading-snug flex-1">{decision.title}</h3>
         <span className={`text-xs px-2.5 py-0.5 rounded-full font-medium flex-shrink-0 ${statusColors[decision.status] || statusColors.pending}`}>
           {statusLabels[decision.status] || 'Pending'}
         </span>
       </div>
       {decision.description && (
-        <p className="text-xs text-indigo-200 mb-3 line-clamp-2">{decision.description}</p>
+        <p className="text-xs text-gray-500 mb-3 line-clamp-2">{decision.description}</p>
       )}
       <div className="flex items-center justify-between mt-2">
         <div className="flex items-center gap-2">
           {familyMembers.map(m => {
             const vote = decision[`${m.name.toLowerCase()}_vote`] || '';
             return (
-              <span key={m.id} className="inline-flex items-center gap-1 bg-white/15 rounded-full px-2.5 py-1 text-xs text-white">
+              <span key={m.id} className="inline-flex items-center gap-1 bg-violet-50 border border-violet-100 rounded-full px-2.5 py-1 text-xs text-violet-700">
                 {m.name} {voteEmoji[vote] || '—'}
               </span>
             );
           })}
         </div>
-        <div className="flex items-center gap-2 text-indigo-200 text-xs">
+        <div className="flex items-center gap-2 text-gray-400 text-xs">
           {decision.comments?.length > 0 && <span>💬 {decision.comments.length}</span>}
           <span>{decision.created_date ? format(new Date(decision.created_date), 'MMM d') : ''}</span>
         </div>
