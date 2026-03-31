@@ -128,14 +128,28 @@ export default function Decisions() {
             <p className="text-violet-300 text-xs mt-0.5">Proposals, votes &amp; follow-ups</p>
           </div>
           {!isChildUser && (
-            <button
-              onClick={() => setShowNew(true)}
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full font-semibold text-violet-700 text-sm transition-all hover:scale-105 bg-white flex-shrink-0"
-              style={{boxShadow: '0 2px 12px rgba(0,0,0,0.15)'}}
-            >
-              <Plus className="w-4 h-4" />
-              Propose
-            </button>
+            <div className="relative flex-shrink-0">
+              {/* Family peeking behind the button */}
+              <img
+                src="https://media.base44.com/images/public/6990e4185e2b18f4d04a1ac8/8ea7e8d58_generated_image.png"
+                alt=""
+                className="absolute pointer-events-none"
+                style={{
+                  width: '110px',
+                  bottom: '-8px',
+                  right: '-10px',
+                  zIndex: 0,
+                }}
+              />
+              <button
+                onClick={() => setShowNew(true)}
+                className="relative z-10 inline-flex items-center gap-2 px-5 py-2.5 rounded-full font-semibold text-violet-700 text-sm transition-all hover:scale-105 bg-white"
+                style={{boxShadow: '0 2px 12px rgba(0,0,0,0.15)'}}
+              >
+                <Plus className="w-4 h-4" />
+                Propose
+              </button>
+            </div>
           )}
         </div>
 
