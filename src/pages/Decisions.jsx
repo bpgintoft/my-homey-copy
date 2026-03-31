@@ -128,7 +128,7 @@ export default function Decisions() {
             <p className="text-violet-300 text-xs mt-0.5">Proposals, votes &amp; follow-ups</p>
           </div>
           {!isChildUser && (
-            <div className="relative flex-shrink-0 flex flex-col items-center justify-end" style={{height: '120px'}}>
+            <div className="relative flex-shrink-0 flex flex-col items-end justify-end" style={{height: '120px'}}>
               {/* Characters popping out from behind the button */}
               <div className="absolute left-1/2 -translate-x-1/2 w-36 overflow-hidden pointer-events-none" style={{top: '-20px', bottom: '28px', zIndex: 0}}>
                 <img
