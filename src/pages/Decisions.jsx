@@ -105,59 +105,42 @@ export default function Decisions() {
   return (
     <div className="min-h-screen flex flex-col pb-32 lg:pb-8" style={{background: 'linear-gradient(160deg, #f0edff 0%, #e8e2ff 40%, #ede8ff 70%, #f5f0ff 100%)'}}>
 
-      {/* Hero Banner with diagonal lines */}
-      <div className="relative">
-        <style>{`
-          .decisions-banner {
-            background: linear-gradient(135deg, #7c3aed 0%, #9333ea 50%, #a855f7 100%);
-            position: relative;
-            overflow: hidden;
-          }
-          .decisions-banner::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            z-index: 1;
-            background: repeating-linear-gradient(
-              45deg,
-              rgba(255,255,255,0.07) 0px,
-              rgba(255,255,255,0.07) 10px,
-              rgba(167,139,250,0.15) 10px,
-              rgba(167,139,250,0.15) 20px,
-              rgba(255,255,255,0.07) 20px,
-              rgba(255,255,255,0.07) 25px,
-              rgba(124,58,237,0.1) 25px,
-              rgba(124,58,237,0.1) 30px
-            );
-          }
-        `}</style>
-        <div className="decisions-banner h-36 md:h-44">
-          <div className="relative z-10 flex items-center justify-between px-6 h-full max-w-2xl mx-auto">
-            <div>
-              <h1 className="text-3xl font-extrabold leading-tight">
-                <span className="text-white">Family </span>
-                <span className="text-violet-200">Decisions</span>
-              </h1>
-              <p className="text-violet-300 text-xs mt-0.5">Proposals, votes &amp; follow-ups</p>
-            </div>
-            {!isChildUser && (
-              <button
-                onClick={() => setShowNew(true)}
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full font-semibold text-violet-700 text-sm transition-all hover:scale-105 bg-white flex-shrink-0"
-                style={{boxShadow: '0 2px 12px rgba(0,0,0,0.15)'}}
-              >
-                <Plus className="w-4 h-4" />
-                Propose
-              </button>
-            )}
-          </div>
-        </div>
-      </div>
+      {/* Hero Banner — stripes + fade all in one container, no overflow:hidden */}
+      <div className="relative" style={{
+        background: 'linear-gradient(135deg, #7c3aed 0%, #9333ea 50%, #a855f7 100%)',
+      }}>
+        {/* Diagonal stripes */}
+        <div className="absolute inset-0 pointer-events-none" style={{
+          backgroundImage: 'repeating-linear-gradient(45deg, rgba(255,255,255,0.07) 0px, rgba(255,255,255,0.07) 10px, rgba(167,139,250,0.15) 10px, rgba(167,139,250,0.15) 20px, rgba(255,255,255,0.07) 20px, rgba(255,255,255,0.07) 25px, rgba(124,58,237,0.1) 25px, rgba(124,58,237,0.1) 30px)',
+        }} />
+        {/* Fade to page background at the bottom */}
+        <div className="absolute bottom-0 left-0 right-0 h-32 pointer-events-none" style={{
+          background: 'linear-gradient(to bottom, transparent 0%, #ede8ff 100%)',
+        }} />
 
-      {/* Filter tabs — with fade blending banner into background */}
-      <div className="relative">
-        <div className="absolute -top-16 left-0 right-0 h-24 pointer-events-none" style={{background: 'linear-gradient(to bottom, rgba(237,232,255,0) 0%, rgba(237,232,255,1) 100%)'}} />
-        <div className="max-w-2xl mx-auto w-full px-4 mb-4 relative z-10">
+        {/* Title row */}
+        <div className="relative z-10 flex items-center justify-between px-6 pt-8 pb-4 max-w-2xl mx-auto h-36 md:h-44">
+          <div>
+            <h1 className="text-3xl font-extrabold leading-tight">
+              <span className="text-white">Family </span>
+              <span className="text-violet-200">Decisions</span>
+            </h1>
+            <p className="text-violet-300 text-xs mt-0.5">Proposals, votes &amp; follow-ups</p>
+          </div>
+          {!isChildUser && (
+            <button
+              onClick={() => setShowNew(true)}
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full font-semibold text-violet-700 text-sm transition-all hover:scale-105 bg-white flex-shrink-0"
+              style={{boxShadow: '0 2px 12px rgba(0,0,0,0.15)'}}
+            >
+              <Plus className="w-4 h-4" />
+              Propose
+            </button>
+          )}
+        </div>
+
+        {/* Filter tabs sit inside the banner so stripes fade behind them */}
+        <div className="relative z-10 max-w-2xl mx-auto w-full px-4 pb-6">
           <div className="grid grid-cols-3 gap-2">
             {filters.map(f => (
               <button
@@ -179,7 +162,7 @@ export default function Decisions() {
             ))}
           </div>
         </div>
-        </div>
+      </div>
 
       {/* Cards */}
       <div className="max-w-2xl mx-auto w-full px-4 flex-1">
