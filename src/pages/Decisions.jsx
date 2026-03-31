@@ -131,10 +131,10 @@ export default function Decisions() {
           .decisions-banner::after {
             content: '';
             position: absolute;
-            bottom: 0;
+            bottom: -30px;
             left: 0;
             right: 0;
-            height: 60px;
+            height: 80px;
             background: linear-gradient(to bottom, transparent 0%, #ede8ff 100%);
           }
         `}</style>
