@@ -131,13 +131,13 @@ export default function Decisions() {
             <div className="relative flex-shrink-0">
               {/* Family peeking behind the button */}
               <img
-                src="https://media.base44.com/images/public/6990e4185e2b18f4d04a1ac8/8ea7e8d58_generated_image.png"
+                src="https://media.base44.com/images/public/6990e4185e2b18f4d04a1ac8/10c4ce955_generated_image.png"
                 alt=""
                 className="absolute pointer-events-none"
                 style={{
-                  width: '110px',
-                  bottom: '-8px',
-                  right: '-10px',
+                  width: '130px',
+                  bottom: '28px',
+                  right: '-14px',
                   zIndex: 0,
                 }}
               />
