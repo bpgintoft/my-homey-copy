@@ -128,20 +128,20 @@ export default function Decisions() {
             <p className="text-violet-300 text-xs mt-0.5">Proposals, votes &amp; follow-ups</p>
           </div>
           {!isChildUser && (
-            <div className="relative flex-shrink-0 flex flex-col items-center">
+            <div className="relative flex-shrink-0 flex flex-col items-center justify-end" style={{height: '120px'}}>
               {/* Characters popping out from behind the button */}
-              <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-36 overflow-hidden pointer-events-none" style={{height: '110px', zIndex: -1}}>
+              <div className="absolute top-4 left-1/2 -translate-x-1/2 w-36 overflow-hidden pointer-events-none" style={{bottom: '28px', zIndex: 0}}>
                 <img
                   src="https://media.base44.com/images/public/6990e4185e2b18f4d04a1ac8/15e500d03_8604E257-C2A1-49BB-966C-3F4D31DD33C1.png"
                   alt=""
                   className="w-full object-cover object-top"
-                  style={{height: '160px'}}
+                  style={{height: '180px'}}
                 />
               </div>
               <button
                 onClick={() => setShowNew(true)}
                 className="relative inline-flex items-center gap-2 px-5 py-2.5 rounded-full font-semibold text-violet-700 text-sm transition-all hover:scale-105 bg-white"
-                style={{boxShadow: '0 2px 12px rgba(0,0,0,0.15)', zIndex: 1}}
+                style={{boxShadow: '0 2px 12px rgba(0,0,0,0.15)', zIndex: 1, marginBottom: '8px'}}
               >
                 <Plus className="w-4 h-4" />
                 Propose
