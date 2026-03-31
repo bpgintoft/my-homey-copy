@@ -106,11 +106,12 @@ export default function Decisions() {
     <div className="min-h-screen flex flex-col pb-32 lg:pb-8" style={{background: 'linear-gradient(160deg, #f0edff 0%, #e8e2ff 40%, #ede8ff 70%, #f5f0ff 100%)'}}>
 
       {/* Hero Banner with diagonal lines */}
-      <div className="relative overflow-hidden">
+      <div className="relative">
         <style>{`
           .decisions-banner {
             background: linear-gradient(135deg, #7c3aed 0%, #9333ea 50%, #a855f7 100%);
             position: relative;
+            overflow: hidden;
           }
           .decisions-banner::before {
             content: '';
@@ -129,19 +130,9 @@ export default function Decisions() {
               rgba(124,58,237,0.1) 30px
             );
           }
-          .decisions-banner::after {
-            content: '';
-            position: absolute;
-            bottom: -30px;
-            left: 0;
-            right: 0;
-            height: 80px;
-            background: linear-gradient(to bottom, rgba(237,232,255,0) 0%, rgba(237,232,255,1) 100%);
-            z-index: 2;
-          }
         `}</style>
-        <div className="decisions-banner relative h-36 md:h-44">
-          <div className="relative z-20 flex items-center justify-between px-6 h-full max-w-2xl mx-auto">
+        <div className="decisions-banner h-36 md:h-44">
+          <div className="relative z-10 flex items-center justify-between px-6 h-full max-w-2xl mx-auto">
             <div>
               <h1 className="text-3xl font-extrabold leading-tight">
                 <span className="text-white">Family </span>
@@ -161,10 +152,12 @@ export default function Decisions() {
             )}
           </div>
         </div>
+        {/* Fade overlay — sits outside overflow:hidden banner, overlaps into filter area */}
+        <div className="absolute bottom-0 left-0 right-0 h-16 pointer-events-none" style={{background: 'linear-gradient(to bottom, transparent 0%, #ede8ff 100%)', transform: 'translateY(50%)'}} />
       </div>
 
       {/* Filter tabs */}
-      <div className="max-w-2xl mx-auto w-full px-4 mb-4">
+      <div className="max-w-2xl mx-auto w-full px-4 mb-4 relative z-10">
         <div className="grid grid-cols-3 gap-2">
           {filters.map(f => (
             <button
