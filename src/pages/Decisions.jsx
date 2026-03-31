@@ -152,33 +152,34 @@ export default function Decisions() {
             )}
           </div>
         </div>
-        {/* Fade overlay — sits outside overflow:hidden banner, overlaps into filter area */}
-        <div className="absolute bottom-0 left-0 right-0 h-16 pointer-events-none" style={{background: 'linear-gradient(to bottom, transparent 0%, #ede8ff 100%)', transform: 'translateY(50%)'}} />
       </div>
 
-      {/* Filter tabs */}
-      <div className="max-w-2xl mx-auto w-full px-4 mb-4 relative z-10">
-        <div className="grid grid-cols-3 gap-2">
-          {filters.map(f => (
-            <button
-              key={f.key}
-              onClick={() => setFilter(f.key)}
-              className={`relative px-4 py-2.5 rounded-full transition-all font-semibold text-sm ${
-                filter === f.key
-                  ? 'bg-violet-600 text-white shadow-md'
-                  : 'text-violet-500 hover:text-violet-700 bg-white/70 border border-violet-200 hover:bg-white'
-              }`}
-            >
-              {f.label}
-              {f.count > 0 && (
-                <span className="absolute -top-1.5 -right-1.5 bg-red-500 text-white text-xs font-bold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1 shadow">
-                  {f.count}
-                </span>
-              )}
-            </button>
-          ))}
+      {/* Filter tabs — with fade blending banner into background */}
+      <div className="relative">
+        <div className="absolute -top-16 left-0 right-0 h-24 pointer-events-none" style={{background: 'linear-gradient(to bottom, rgba(237,232,255,0) 0%, rgba(237,232,255,1) 100%)'}} />
+        <div className="max-w-2xl mx-auto w-full px-4 mb-4 relative z-10">
+          <div className="grid grid-cols-3 gap-2">
+            {filters.map(f => (
+              <button
+                key={f.key}
+                onClick={() => setFilter(f.key)}
+                className={`relative px-4 py-2.5 rounded-full transition-all font-semibold text-sm ${
+                  filter === f.key
+                    ? 'bg-violet-600 text-white shadow-md'
+                    : 'text-violet-500 hover:text-violet-700 bg-white/70 border border-violet-200 hover:bg-white'
+                }`}
+              >
+                {f.label}
+                {f.count > 0 && (
+                  <span className="absolute -top-1.5 -right-1.5 bg-red-500 text-white text-xs font-bold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1 shadow">
+                    {f.count}
+                  </span>
+                )}
+              </button>
+            ))}
+          </div>
         </div>
-      </div>
+        </div>
 
       {/* Cards */}
       <div className="max-w-2xl mx-auto w-full px-4 flex-1">
