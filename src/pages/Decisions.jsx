@@ -158,9 +158,9 @@ export default function Decisions() {
                 key={f.key}
                 onClick={() => setFilter(f.key)}
                 className={`relative px-4 py-2.5 rounded-full transition-all font-semibold text-sm ${
-                  filter === f.key
-                    ? 'bg-violet-600 text-white shadow-md'
-                    : 'text-violet-500 hover:text-violet-700 bg-white/70 border border-violet-200 hover:bg-white'
+                filter === f.key
+                  ? 'bg-violet-600 text-white shadow-md ring-2 ring-violet-300 ring-offset-1 ring-offset-violet-700'
+                  : 'text-violet-500 hover:text-violet-700 bg-white/70 border border-violet-200 hover:bg-white'
                 }`}
               >
                 {f.label}
