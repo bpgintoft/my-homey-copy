@@ -32,7 +32,7 @@ export default function Family() {
 
   const [newMember, setNewMember] = useState({
     name: '', role: '', email: '', phone: '', person_type: 'adult',
-    color: COLORS[0], responsibilities: []
+    age_range: '18+', color: COLORS[0], responsibilities: []
   });
 
   const queryClient = useQueryClient();
@@ -40,6 +40,12 @@ export default function Family() {
   const { data: members, isLoading } = useQuery({
     queryKey: ['familyMembers'],
     queryFn: () => base44.entities.FamilyMember.list(),
+  });
+
+  const { data: currentUser } = useQuery({
+    queryKey: ['currentUser'],
+    queryFn: () => base44.auth.me(),
+    staleTime: 5 * 60 * 1000,
   });
 
   const { data: tasks } = useQuery({
@@ -77,7 +83,7 @@ export default function Family() {
   };
 
   const resetForm = () => {
-    setNewMember({ name: '', role: '', email: '', phone: '', person_type: 'adult', color: COLORS[0], responsibilities: [] });
+    setNewMember({ name: '', role: '', email: '', phone: '', person_type: 'adult', age_range: '18+', color: COLORS[0], responsibilities: [] });
     setResponsibilityInput('');
   };
 
@@ -86,7 +92,18 @@ export default function Family() {
     if (isEdit) {
       await updateMemberMutation.mutateAsync({ id: editingMember.id, data });
     } else {
-      await createMemberMutation.mutateAsync(data);
+      // Ensure a Family record exists
+      let familyId = currentUser?.family_id;
+      if (!familyId) {
+        const existing = await base44.entities.Family.list();
+        if (existing.length > 0) {
+          familyId = existing[0].id;
+        } else {
+          const created = await base44.entities.Family.create({ name: 'Our Family' });
+          familyId = created.id;
+        }
+      }
+      await createMemberMutation.mutateAsync({ ...data, family_id: familyId });
     }
     setIsSubmitting(false);
   };
@@ -183,6 +200,19 @@ export default function Family() {
               <SelectContent>
                 <SelectItem value="kid">Kid</SelectItem>
                 <SelectItem value="adult">Adult</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            <Label>Age Range</Label>
+            <Select value={formData.age_range || '18+'} onValueChange={(value) => setFormData({...formData, age_range: value})}>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Under 13">Under 13</SelectItem>
+                <SelectItem value="13-17">13–17</SelectItem>
+                <SelectItem value="18+">18+</SelectItem>
               </SelectContent>
             </Select>
           </div>
