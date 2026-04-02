@@ -1,0 +1,13 @@
+{
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "The name of the household (e.g., 'The Miller Manor')"
+    }
+  },
+  "required": [
+    "name"
+  ],
+  "name": "Family"
+}
