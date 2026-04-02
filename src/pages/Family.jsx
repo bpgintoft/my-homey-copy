@@ -233,7 +233,7 @@ export default function Family() {
             <Sparkles className="w-4 h-4 text-sage-600 mt-0.5 flex-shrink-0" />
             <div>
               <p className="text-sm font-semibold text-sage-800">
-                Upload a clear, front-facing photo of {formData.name ? `${formData.name}'s` : "this member's"} face.
+                {`Upload a clear, front-facing photo of ${formData.name ? `${formData.name}'s` : "this member's"} face.`}
               </p>
               <p className="text-xs text-sage-600 mt-0.5">
                 Homey's AI uses this photo to create a unique "My Homey" circular cartoon avatar.
