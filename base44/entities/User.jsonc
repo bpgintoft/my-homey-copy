@@ -1,48 +1,19 @@
 {
-  "name": "User",
   "type": "object",
   "properties": {
-    "role": {
+    "household_role": {
       "type": "string",
       "enum": [
-        "admin",
-        "user",
-        "adult",
-        "child"
+        "Admin",
+        "Member",
+        "Restricted"
       ],
-      "default": "user"
+      "description": "Permission level: Admin = full access/co-pilot, Member = standard access, Restricted = view-only/child"
     },
-    "family_member_page_layouts": {
-      "type": "object",
-      "description": "Per-user custom section order for each family member page. Keys are memberId, values are arrays of section keys in order."
-    },
-    "age_range": {
+    "family_id": {
       "type": "string",
-      "enum": [
-        "under_13",
-        "13_17",
-        "18_plus",
-        "unknown"
-      ],
-      "default": "unknown",
-      "description": "Declared age range for iOS 26 Age Assurance API compliance. Used to gate parental consent flows for child users."
-    },
-    "parental_consent_status": {
-      "type": "string",
-      "enum": [
-        "not_required",
-        "pending",
-        "granted",
-        "denied"
-      ],
-      "default": "not_required",
-      "description": "Tracks parental consent state for child users (iOS 26 compliance hook)."
-    },
-    "parental_consent_date": {
-      "type": "string",
-      "format": "date",
-      "description": "Date parental consent was granted or denied."
+      "description": "ID of the Family this user belongs to. Set automatically when they create or join a family."
     }
   },
-  "required": []
+  "name": "User"
 }
