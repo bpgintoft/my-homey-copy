@@ -1,7 +1,7 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
 
-const AVATAR_STYLE_PROMPT = (headshotUrl, color) =>
-  `Using this reference photo, create a cute cartoon avatar portrait in the style of a modern children's educational app — think bold outlines, simple flat 2D vector illustration, large expressive eyes, smooth skin tones, friendly smile. The result should be ONLY the person's face and top of shoulders, centered inside a perfect circle. The circle background must be a solid flat color: ${color || '#3b82f6'}. Add a thick dark brown or dark colored circular border around the circle. No background outside the circle — the area outside the circle must be fully transparent. The cartoon face should closely resemble the person in the reference photo (hair color, skin tone, face shape, any glasses). Style reference: similar to Nickelodeon or PBS Kids cartoon character portraits — clean, colorful, child-friendly. Output as a square PNG with a transparent outer background.`;
+const AVATAR_STYLE_PROMPT = (color) =>
+  `Create a cute cartoon avatar portrait in the style of a modern children's educational app (Nickelodeon / PBS Kids style). Bold dark outlines, flat 2D vector illustration, large expressive eyes, smooth skin tones, friendly smile. COMPOSITION: The cartoon head and top of shoulders only, cropped tightly, centered inside a perfect filled circle. The circle is filled with solid flat color ${color || '#3b82f6'} as the background. Add a thick dark (near-black) circular border ring around the circle edge. Everything outside the circle must be fully transparent. The cartoon character must closely match the person in the reference photo: same hair color, hair style, skin tone, face shape, eye color, and any notable features like glasses or freckles. Output: square image, transparent background outside the circle.`;
 
 Deno.serve(async (req) => {
   try {
@@ -34,7 +34,7 @@ Deno.serve(async (req) => {
 
       // Generate the avatar using the strict style prompt
       const { url: generatedUrl } = await base44.asServiceRole.integrations.Core.GenerateImage({
-        prompt: AVATAR_STYLE_PROMPT(member.original_headshot_url, member.color),
+        prompt: AVATAR_STYLE_PROMPT(member.color),
         existing_image_urls: [member.original_headshot_url],
       });
 
