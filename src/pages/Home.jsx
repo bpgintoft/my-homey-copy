@@ -31,24 +31,27 @@ export default function Home() {
   const { data: googleEvents = [] } = useQuery({
     queryKey: ['todayGoogleEvents'],
     queryFn: async () => {
-      const now = new Date();
-      const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-      const endOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59);
-      
-      const { data } = await base44.functions.invoke('getGoogleCalendarEvents', { 
-        timeMin: startOfDay.toISOString(), 
-        timeMax: endOfDay.toISOString() 
-      });
-      
-      // Filter to only events that haven't ended yet
-      const events = data.events || [];
-      return events.filter(event => {
-        if (!event.end) return true;
-        const eventEnd = new Date(event.end);
-        return eventEnd >= now;
-      });
+      try {
+        const now = new Date();
+        const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        const endOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59);
+        
+        const { data } = await base44.functions.invoke('getGoogleCalendarEvents', { 
+          timeMin: startOfDay.toISOString(), 
+          timeMax: endOfDay.toISOString() 
+        });
+        
+        const events = data.events || [];
+        return events.filter(event => {
+          if (!event.end) return true;
+          const eventEnd = new Date(event.end);
+          return eventEnd >= now;
+        });
+      } catch {
+        return [];
+      }
     },
-    staleTime: 5 * 60 * 1000, // cache for 5 min — avoid re-fetching on every home visit
+    staleTime: 5 * 60 * 1000,
   });
 
   const { data: appliances } = useQuery({
