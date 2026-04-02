@@ -6,6 +6,8 @@ import React from 'react';
  * 2. original_headshot_url (uploaded photo)
  * 3. Colored initial circle (legacy)
  * 4. Generic gray placeholder
+ *
+ * Shows a gold pulse animation when pending_avatar_generation is true.
  */
 export default function MemberAvatar({ member, size = 'md', className = '' }) {
   const sizeClasses = {
@@ -17,7 +19,37 @@ export default function MemberAvatar({ member, size = 'md', className = '' }) {
   };
   const base = `rounded-full object-cover flex-shrink-0 ${sizeClasses[size] || sizeClasses.md} ${className}`;
 
+  const isPending = member?.pending_avatar_generation && !member?.generated_avatar_url;
   const avatarUrl = member?.generated_avatar_url || member?.original_headshot_url || member?.photo_url;
+
+  // Pending state: show headshot (or initials) with a gold pulse ring + label
+  if (isPending) {
+    return (
+      <div className="relative flex-shrink-0 inline-flex">
+        {/* Pulsing gold ring */}
+        <span
+          className={`absolute inset-0 rounded-full animate-ping opacity-60`}
+          style={{ backgroundColor: '#C5A059' }}
+        />
+        {avatarUrl ? (
+          <img src={avatarUrl} alt={member?.name || 'Member'} className={base} />
+        ) : (
+          <div
+            className={`${base} flex items-center justify-center text-white font-bold relative z-10`}
+            style={{ backgroundColor: member?.color || '#C5A059' }}
+          >
+            {member?.name?.charAt(0) || '?'}
+          </div>
+        )}
+        {/* "Generating" label — only on md+ */}
+        {(size === 'md' || size === 'lg' || size === 'xl') && (
+          <span className="absolute -bottom-5 left-1/2 -translate-x-1/2 whitespace-nowrap text-[10px] font-semibold text-amber-600">
+            Generating…
+          </span>
+        )}
+      </div>
+    );
+  }
 
   if (avatarUrl) {
     return <img src={avatarUrl} alt={member?.name || 'Member'} className={`${base} object-cover`} />;
