@@ -2,8 +2,9 @@ import React, { useState, useRef } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { 
-  Users, Plus, Phone, Mail, Pencil, Trash2, CheckCircle2, Upload, Loader2, AlertTriangle, ArrowUpDown
+  Users, Plus, Phone, Mail, Pencil, Trash2, CheckCircle2, Upload, Loader2, AlertTriangle, ArrowUpDown, Sparkles
 } from 'lucide-react';
+import MemberAvatar from '@/components/MemberAvatar';
 import FamilyMemberReorderDialog from '@/components/FamilyMemberReorderDialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -98,7 +99,9 @@ export default function Family() {
     const [formData, setFormData] = useState(member);
     const [respInput, setRespInput] = useState('');
     const [uploading, setUploading] = useState(false);
+    const [uploadingHeadshot, setUploadingHeadshot] = useState(false);
     const fileInputRef = useRef(null);
+    const headshotInputRef = useRef(null);
 
     const handlePhotoUpload = async (e) => {
       const file = e.target.files[0];
@@ -107,6 +110,17 @@ export default function Family() {
       const { file_url } = await base44.integrations.Core.UploadFile({ file });
       setFormData(f => ({ ...f, photo_url: file_url }));
       setUploading(false);
+    };
+
+    const handleHeadshotUpload = async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      setUploadingHeadshot(true);
+      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      setFormData(f => ({ ...f, original_headshot_url: file_url }));
+      // Flag the user for pending AI avatar generation
+      try { await base44.auth.updateMe({ pending_avatar_generation: true }); } catch {}
+      setUploadingHeadshot(false);
     };
 
     const addResponsibility = () => {
@@ -213,6 +227,60 @@ export default function Family() {
             ))}
           </div>
         </div>
+        {/* AI Avatar Headshot Uploader */}
+        <div className="rounded-xl border border-sage-200 bg-sage-50 p-4 space-y-3">
+          <div className="flex items-start gap-2">
+            <Sparkles className="w-4 h-4 text-sage-600 mt-0.5 flex-shrink-0" />
+            <div>
+              <p className="text-sm font-semibold text-sage-800">
+                Upload a clear, front-facing photo of {formData.name ? `${formData.name}'s` : "this member's"} face.
+              </p>
+              <p className="text-xs text-sage-600 mt-0.5">
+                Homey's AI uses this photo to create a unique "My Homey" circular cartoon avatar.
+              </p>
+            </div>
+          </div>
+
+          <div
+            className="flex items-center gap-4 cursor-pointer"
+            onClick={() => headshotInputRef.current?.click()}
+          >
+            {formData.original_headshot_url ? (
+              <img
+                src={formData.original_headshot_url}
+                alt="Headshot"
+                className="w-16 h-16 rounded-full object-cover border-2 border-sage-300"
+              />
+            ) : (
+              <div className="w-16 h-16 rounded-full bg-sage-100 border-2 border-dashed border-sage-300 flex flex-col items-center justify-center text-sage-400">
+                {uploadingHeadshot ? <Loader2 className="w-5 h-5 animate-spin" /> : <Upload className="w-5 h-5" />}
+              </div>
+            )}
+            <div>
+              <p className="text-sm font-medium text-sage-700">
+                {formData.original_headshot_url ? 'Headshot uploaded ✓' : 'Upload headshot'}
+              </p>
+              <p className="text-xs text-sage-500">JPG or PNG, clear face photo</p>
+            </div>
+          </div>
+          <input
+            ref={headshotInputRef}
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            className="hidden"
+            onChange={handleHeadshotUpload}
+          />
+          {formData.original_headshot_url && (
+            <button
+              type="button"
+              className="text-xs text-red-400 hover:text-red-600"
+              onClick={() => setFormData(f => ({ ...f, original_headshot_url: '' }))}
+            >
+              Remove headshot
+            </button>
+          )}
+        </div>
+
         <div>
           <Label>Responsibilities</Label>
           <div className="flex gap-2 mt-2">
@@ -344,16 +412,14 @@ export default function Family() {
                       <CardContent className="p-6">
                         <div className="flex items-start justify-between mb-4">
                           <div className="flex items-center gap-4">
-                            {member.photo_url ? (
-                              <img src={member.photo_url} alt={member.name} className="w-16 h-16 rounded-full object-cover flex-shrink-0" />
-                            ) : (
-                              <div
-                                className="w-16 h-16 rounded-full flex items-center justify-center text-white text-2xl font-bold flex-shrink-0"
-                                style={{ backgroundColor: member.color || '#64748b' }}
-                              >
-                                {member.name?.charAt(0)}
-                              </div>
-                            )}
+                            <div className="relative">
+                              <MemberAvatar member={member} size="md" />
+                              {member.generated_avatar_url && (
+                                <span title="AI avatar" className="absolute -bottom-1 -right-1 bg-white rounded-full p-0.5 shadow">
+                                  <Sparkles className="w-3 h-3 text-gold-500" />
+                                </span>
+                              )}
+                            </div>
                             <div>
                               <h3 className="font-semibold text-lg text-slate-800">{member.name}</h3>
                               {member.role && <p className="text-slate-500">{member.role}</p>}

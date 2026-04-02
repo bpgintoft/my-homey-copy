@@ -1,5 +1,6 @@
 {
   "type": "object",
+  "name": "User",
   "properties": {
     "household_role": {
       "type": "string",
@@ -13,7 +14,15 @@
     "family_id": {
       "type": "string",
       "description": "ID of the Family this user belongs to. Set automatically when they create or join a family."
+    },
+    "pending_avatar_generation": {
+      "type": "boolean",
+      "default": false,
+      "description": "Flag set to true when a new headshot is uploaded, triggering AI avatar generation"
     }
   },
-  "name": "User"
+  "required": [
+    "household_role",
+    "family_id"
+  ]
 }

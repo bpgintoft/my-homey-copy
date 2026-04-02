@@ -8,6 +8,7 @@ import { motion } from 'framer-motion';
 import { Loader2 } from 'lucide-react';
 import ChoreNotificationsDialog from '../components/ChoreNotificationsDialog';
 import RoundaboutGrid from '../components/RoundaboutGrid';
+import MemberAvatar from '@/components/MemberAvatar';
 
 export default function Home() {
   const [imageUrls] = useState({
@@ -174,8 +175,9 @@ export default function Home() {
             >
               <Link to={createPageUrl(member.name)}>
                 <Card className="border-0 shadow-lg bg-white hover:shadow-xl transition-shadow cursor-pointer">
-                  <CardContent className="py-2 px-2 text-center">
-                    <div className="text-sm font-bold text-gray-900">{member.name}</div>
+                  <CardContent className="py-2 px-2 text-center flex flex-col items-center gap-1">
+                    <MemberAvatar member={member} size="sm" />
+                    <div className="text-xs font-bold text-gray-900 truncate w-full">{member.name}</div>
                   </CardContent>
                 </Card>
               </Link>

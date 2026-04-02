@@ -1,5 +1,6 @@
 {
   "type": "object",
+  "name": "FamilyMember",
   "properties": {
     "family_id": {
       "type": "string",
@@ -30,6 +31,14 @@
     "user_id": {
       "type": "string",
       "description": "Optional: ID of the Base44 User if this member has a login"
+    },
+    "original_headshot_url": {
+      "type": "string",
+      "description": "Original uploaded headshot photo \u2014 retained so AI avatar can be re-generated"
+    },
+    "generated_avatar_url": {
+      "type": "string",
+      "description": "AI-generated circular cartoon avatar in the My Homey style"
     }
   },
   "required": [
@@ -37,6 +46,5 @@
     "name",
     "role",
     "age_range"
-  ],
-  "name": "FamilyMember"
+  ]
 }
