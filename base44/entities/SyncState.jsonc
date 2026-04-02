@@ -9,6 +9,10 @@
     "calendar_id": {
       "type": "string",
       "description": "Which calendar this sync token belongs to"
+    },
+    "last_synced_at": {
+      "type": "string",
+      "description": "ISO timestamp of the last successful sync run"
     }
   },
   "required": []
