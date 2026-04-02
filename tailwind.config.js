@@ -50,7 +50,31 @@ module.exports = {
   				'4': 'hsl(var(--chart-4))',
   				'5': 'hsl(var(--chart-5))'
   			},
-  			sidebar: {
+  			sage: {
+				50:  '#f4f8f4',
+				100: '#e6f0e7',
+				200: '#cce0ce',
+				300: '#a8c9ab',
+				400: '#7daa82',
+				500: '#5a8f60',
+				600: '#47744d',
+				700: '#385c3c',
+				800: '#2d4a30',
+				900: '#243d27',
+			},
+			gold: {
+				50:  '#fdf9ed',
+				100: '#faf0d0',
+				200: '#f4df9e',
+				300: '#edc96b',
+				400: '#e6b344',
+				500: '#d4962a',
+				600: '#b87820',
+				700: '#925d1c',
+				800: '#784b1c',
+				900: '#653f1b',
+			},
+			sidebar: {
   				DEFAULT: 'hsl(var(--sidebar-background))',
   				foreground: 'hsl(var(--sidebar-foreground))',
   				primary: 'hsl(var(--sidebar-primary))',
