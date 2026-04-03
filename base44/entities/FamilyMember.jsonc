@@ -30,6 +30,37 @@
     "user_id": {
       "type": "string",
       "description": "Optional: ID of the Base44 User if this member has a login"
+    },
+    "gender": {
+      "type": "string",
+      "enum": [
+        "Male",
+        "Female",
+        "NonBinary"
+      ],
+      "description": "Gender for avatar asset selection"
+    },
+    "skin_tone": {
+      "type": "string",
+      "enum": [
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5"
+      ],
+      "description": "Skin tone code for avatar asset (S1=lightest, S5=darkest)"
+    },
+    "hair_color": {
+      "type": "string",
+      "enum": [
+        "H1",
+        "H2",
+        "H3",
+        "H4",
+        "H5"
+      ],
+      "description": "Hair color code for avatar asset (H1=blonde, H2=brown, H3=black, H4=red, H5=gray)"
     }
   },
   "required": [

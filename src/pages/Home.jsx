@@ -8,6 +8,7 @@ import { motion } from 'framer-motion';
 import { Loader2 } from 'lucide-react';
 import ChoreNotificationsDialog from '../components/ChoreNotificationsDialog';
 import RoundaboutGrid from '../components/RoundaboutGrid';
+import FamilyBannerCompositor from '../components/FamilyBannerCompositor';
 
 export default function Home() {
   const [imageUrls] = useState({
@@ -16,8 +17,6 @@ export default function Home() {
     house: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/04b7513e6_house.png',
     history: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/2d4840f69_history.png'
   });
-  const [familyImage] = useState('https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/7afddfe7e_family.png');
-
   const { data: familyMembers = [] } = useQuery({
     queryKey: ['familyMembers'],
     queryFn: () => base44.entities.FamilyMember.list(),
@@ -140,14 +139,8 @@ export default function Home() {
               </h1>
 
             </div>
-            <Link to={createPageUrl('Family')}>
-              <img 
-                src={familyImage} 
-                alt="Family Welcome"
-                className="h-40 md:h-56 w-auto object-cover flex-shrink-0 cursor-pointer hover:opacity-80 transition-opacity"
-                loading="eager"
-                decoding="async"
-              />
+            <Link to={createPageUrl('Family')} className="flex-shrink-0 cursor-pointer hover:opacity-90 transition-opacity">
+              <FamilyBannerCompositor members={sortedMembers} height={160} />
             </Link>
           </div>
         </div>
