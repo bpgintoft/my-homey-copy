@@ -124,7 +124,7 @@ export default function RoundaboutGrid({ sections, imageUrls }) {
           const offset = contentOffset[q];
 
           return (
-            <div key={section.title} style={{ display: 'contents' }}>
+            <React.Fragment key={section.title}>
               <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
@@ -164,7 +164,7 @@ export default function RoundaboutGrid({ sections, imageUrls }) {
                   {section.count}
                 </div>
               )}
-            </div>
+            </React.Fragment>
           );
         })}
 

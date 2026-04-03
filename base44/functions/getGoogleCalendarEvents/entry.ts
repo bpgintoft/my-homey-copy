@@ -8,15 +8,10 @@ Deno.serve(async (req) => {
     const body = await req.json();
     const { timeMin, timeMax, masterEventId, calendarId: singleCalendarId } = body;
 
-    let accessToken;
-    try {
-      accessToken = await base44.asServiceRole.connectors.getAccessToken("googlecalendar");
-    } catch (_) {
-      return Response.json({ events: [], notConnected: true });
-    }
+    const accessToken = await base44.asServiceRole.connectors.getAccessToken("googlecalendar");
 
     if (!accessToken) {
-      return Response.json({ events: [], notConnected: true });
+      return Response.json({ error: 'Google Calendar not authorized' }, { status: 401 });
     }
 
     const auth = new google.auth.OAuth2();

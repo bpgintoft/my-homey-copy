@@ -8,7 +8,6 @@ import { motion } from 'framer-motion';
 import { Loader2 } from 'lucide-react';
 import ChoreNotificationsDialog from '../components/ChoreNotificationsDialog';
 import RoundaboutGrid from '../components/RoundaboutGrid';
-import MemberAvatar from '@/components/MemberAvatar';
 
 export default function Home() {
   const [imageUrls] = useState({
@@ -17,7 +16,7 @@ export default function Home() {
     house: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/04b7513e6_house.png',
     history: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/2d4840f69_history.png'
   });
-  // Generic illustration replaced — Gintoft-specific image removed
+  const [familyImage] = useState('https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/7afddfe7e_family.png');
 
   const { data: familyMembers = [] } = useQuery({
     queryKey: ['familyMembers'],
@@ -142,22 +141,13 @@ export default function Home() {
 
             </div>
             <Link to={createPageUrl('Family')}>
-              {/* Generic family illustration using SVG placeholder in Sage/Gold palette */}
-              <div className="h-40 md:h-48 w-32 md:w-44 flex items-end justify-center flex-shrink-0">
-                <svg viewBox="0 0 180 160" className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
-                  {/* Adult 1 */}
-                  <circle cx="55" cy="38" r="18" fill="#7daa82"/>
-                  <ellipse cx="55" cy="95" rx="22" ry="35" fill="#5a8f60"/>
-                  {/* Adult 2 */}
-                  <circle cx="125" cy="38" r="18" fill="#e6b344"/>
-                  <ellipse cx="125" cy="95" rx="22" ry="35" fill="#d4962a"/>
-                  {/* Child */}
-                  <circle cx="90" cy="72" r="13" fill="#a8c9ab"/>
-                  <ellipse cx="90" cy="118" rx="14" ry="24" fill="#7daa82"/>
-                  {/* Ground line */}
-                  <line x1="20" y1="148" x2="160" y2="148" stroke="#cce0ce" strokeWidth="3" strokeLinecap="round"/>
-                </svg>
-              </div>
+              <img 
+                src={familyImage} 
+                alt="Family Welcome"
+                className="h-40 md:h-56 w-auto object-cover flex-shrink-0 cursor-pointer hover:opacity-80 transition-opacity"
+                loading="eager"
+                decoding="async"
+              />
             </Link>
           </div>
         </div>
@@ -175,9 +165,8 @@ export default function Home() {
             >
               <Link to={createPageUrl(member.name)}>
                 <Card className="border-0 shadow-lg bg-white hover:shadow-xl transition-shadow cursor-pointer">
-                  <CardContent className="py-2 px-2 text-center flex flex-col items-center gap-1">
-                    <MemberAvatar member={member} size="sm" />
-                    <div className="text-xs font-bold text-gray-900 truncate w-full">{member.name}</div>
+                  <CardContent className="py-2 px-2 text-center">
+                    <div className="text-sm font-bold text-gray-900">{member.name}</div>
                   </CardContent>
                 </Card>
               </Link>
@@ -188,8 +177,18 @@ export default function Home() {
         {/* Main Sections - Roundabout Layout */}
         <RoundaboutGrid sections={sections} imageUrls={imageUrls} />
 
-        {/* Footer spacer */}
-        <div className="pb-6" />
+        {/* Footer Image */}
+        <Link to={createPageUrl('Family')}>
+          <div className="w-full flex justify-center pb-2 -mt-4 cursor-pointer">
+            <img 
+              src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/8e2cf008e_Gintoftsback.png"
+              alt="Gintoft Family"
+              className="w-full max-w-lg h-auto object-contain"
+              loading="lazy"
+              decoding="async"
+            />
+          </div>
+        </Link>
       </div>
     </div>
   );
