@@ -3,7 +3,7 @@ import { getMemberAssetUrl, getMemberPlaceholderColor } from '@/lib/getMemberAss
 
 /**
  * FamilyPortraitBanner — dynamically composes a family portrait
- * from individual transparent PNGs, layered on a Sage & Gold backdrop.
+ * from individual transparent PNGs, layered on a mint/teal backdrop.
  *
  * Adults are placed in the center, Children on the sides.
  */
@@ -18,29 +18,27 @@ export default function FamilyPortraitBanner({ members = [] }) {
   const rightChildren = children.slice(Math.ceil(children.length / 2));
   arranged.push(...leftChildren, ...adults, ...rightChildren);
 
+  // Shared background style — mint/teal with white diagonal stripes
+  const bannerBg = {
+    background: 'linear-gradient(135deg, #5BBFB5 0%, #3BA9A0 50%, #2E9B92 100%)',
+  };
+  const stripeOverlay = {
+    backgroundImage: `repeating-linear-gradient(45deg, rgba(255,255,255,0.12) 0px, rgba(255,255,255,0.12) 2px, transparent 2px, transparent 18px)`,
+  };
+
   if (arranged.length === 0) {
-    // Fallback when no members yet
     return (
-      <div className="relative h-40 md:h-48 flex items-center justify-center"
-        style={{ background: 'linear-gradient(135deg, #C8DFC8 0%, #E8D89A 100%)' }}>
-        <p className="text-lg font-semibold text-stone-600 opacity-60">Welcome Home</p>
+      <div className="relative h-40 md:h-48 flex items-center justify-center" style={bannerBg}>
+        <div className="absolute inset-0" style={stripeOverlay} />
+        <p className="text-lg font-semibold text-white opacity-80 relative z-10">Welcome Home</p>
       </div>
     );
   }
 
   return (
-    <div
-      className="relative overflow-hidden h-40 md:h-52"
-      style={{
-        background: 'linear-gradient(135deg, #C8DFC8 0%, #E2D4A0 60%, #D4C87A 100%)',
-      }}
-    >
-      {/* Subtle texture overlay */}
-      <div className="absolute inset-0 opacity-10"
-        style={{
-          backgroundImage: `repeating-linear-gradient(45deg, #7A9E7A 0px, #7A9E7A 1px, transparent 1px, transparent 12px)`,
-        }}
-      />
+    <div className="relative overflow-hidden h-40 md:h-52" style={bannerBg}>
+      {/* White diagonal stripe overlay */}
+      <div className="absolute inset-0" style={stripeOverlay} />
 
       {/* Portrait row */}
       <div className="relative z-10 flex items-end justify-center h-full gap-1 px-4 pb-0">
@@ -85,7 +83,7 @@ function MemberFigure({ member, assetUrl, placeholderColor, heightClass }) {
         >
           {member.name?.charAt(0)}
         </div>
-        <span className="text-xs font-semibold text-stone-700 drop-shadow">{member.name}</span>
+        <span className="text-xs font-semibold text-white drop-shadow">{member.name}</span>
       </div>
     );
   }
@@ -98,7 +96,7 @@ function MemberFigure({ member, assetUrl, placeholderColor, heightClass }) {
         className="h-full w-auto object-contain drop-shadow-lg"
         onError={() => setImgError(true)}
       />
-      <span className="text-xs font-semibold text-stone-700 drop-shadow -mt-1">{member.name}</span>
+      <span className="text-xs font-semibold text-white drop-shadow -mt-1">{member.name}</span>
     </div>
   );
 }

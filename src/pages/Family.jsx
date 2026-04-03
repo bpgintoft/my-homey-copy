@@ -180,6 +180,81 @@ export default function Family() {
               placeholder="e.g., Parent, Child, Grandparent"
             />
           </div>
+        </div>
+
+        {/* Portrait Traits — used for the banner compositor */}
+        <div className="rounded-xl border border-teal-100 bg-teal-50/50 p-4 space-y-3">
+          <p className="text-xs font-semibold text-teal-700 uppercase tracking-wider">Banner Portrait Traits</p>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <Label className="text-xs">Gender</Label>
+              <Select value={formData.gender || ''} onValueChange={v => setFormData({...formData, gender: v})}>
+                <SelectTrigger><SelectValue placeholder="Select…" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Male">Male</SelectItem>
+                  <SelectItem value="Female">Female</SelectItem>
+                  <SelectItem value="Non-binary">Non-binary</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label className="text-xs">Age Range</Label>
+              <Select value={formData.age_range || ''} onValueChange={v => setFormData({...formData, age_range: v})}>
+                <SelectTrigger><SelectValue placeholder="Select…" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Under 13">Under 13</SelectItem>
+                  <SelectItem value="13-17">13–17</SelectItem>
+                  <SelectItem value="18+">18+</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label className="text-xs">Age Bracket</Label>
+              <Select value={formData.age_bracket || ''} onValueChange={v => setFormData({...formData, age_bracket: v})}>
+                <SelectTrigger><SelectValue placeholder="Select…" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Toddler">Toddler</SelectItem>
+                  <SelectItem value="Kid">Kid</SelectItem>
+                  <SelectItem value="Teen">Teen</SelectItem>
+                  <SelectItem value="20s">20s</SelectItem>
+                  <SelectItem value="30s">30s</SelectItem>
+                  <SelectItem value="40s">40s</SelectItem>
+                  <SelectItem value="50s">50s</SelectItem>
+                  <SelectItem value="60s+">60s+</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label className="text-xs">Skin Tone</Label>
+              <Select value={formData.skin_tone || ''} onValueChange={v => setFormData({...formData, skin_tone: v})}>
+                <SelectTrigger><SelectValue placeholder="Select…" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="S1">S1 — Lightest</SelectItem>
+                  <SelectItem value="S2">S2</SelectItem>
+                  <SelectItem value="S3">S3</SelectItem>
+                  <SelectItem value="S4">S4</SelectItem>
+                  <SelectItem value="S5">S5</SelectItem>
+                  <SelectItem value="S6">S6 — Darkest</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="col-span-2">
+              <Label className="text-xs">Hair Color</Label>
+              <Select value={formData.hair_color || ''} onValueChange={v => setFormData({...formData, hair_color: v})}>
+                <SelectTrigger><SelectValue placeholder="Select…" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="H1">H1 — Blonde</SelectItem>
+                  <SelectItem value="H2">H2 — Brown</SelectItem>
+                  <SelectItem value="H3">H3 — Black</SelectItem>
+                  <SelectItem value="H4">H4 — Red</SelectItem>
+                  <SelectItem value="H5">H5 — Gray / White</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 gap-4">
           <div>
             <Label>Phone</Label>
             <Input 
