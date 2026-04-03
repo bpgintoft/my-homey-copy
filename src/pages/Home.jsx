@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { useQuery } from '@tanstack/react-query';
@@ -8,7 +8,6 @@ import { motion } from 'framer-motion';
 import { Loader2 } from 'lucide-react';
 import ChoreNotificationsDialog from '../components/ChoreNotificationsDialog';
 import RoundaboutGrid from '../components/RoundaboutGrid';
-import FamilyPortraitBanner from '../components/FamilyPortraitBanner';
 
 export default function Home() {
   const [imageUrls] = useState({
@@ -17,6 +16,8 @@ export default function Home() {
     house: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/04b7513e6_house.png',
     history: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/2d4840f69_history.png'
   });
+  const [familyImage] = useState('https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/7afddfe7e_family.png');
+
   const { data: familyMembers = [] } = useQuery({
     queryKey: ['familyMembers'],
     queryFn: () => base44.entities.FamilyMember.list(),
@@ -102,16 +103,54 @@ export default function Home() {
     <div className="min-h-screen bg-[#F5F5F7]">
       {currentUser && <ChoreNotificationsDialog memberId={currentUser.email} />}
 
-      {/* Header — Dynamic Portrait Banner */}
+      {/* Header */}
       <div className="relative overflow-hidden">
-        <div className="absolute top-3 left-4 z-20">
-          <h1 className="text-2xl md:text-3xl font-bold text-stone-700 drop-shadow-sm">
-            Welcome Home
-          </h1>
+        <style>{`
+          .banner-bg {
+            background: linear-gradient(135deg, #C8F0E0 0%, #A8E6D3 50%, #88DCC8 100%);
+            background-size: 400% 400%;
+            position: relative;
+          }
+          .banner-bg::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: 
+              repeating-linear-gradient(
+                45deg,
+                rgba(168, 230, 211, 0.6) 0px,
+                rgba(168, 230, 211, 0.6) 10px,
+                rgba(120, 200, 180, 0.4) 10px,
+                rgba(120, 200, 180, 0.4) 20px,
+                rgba(168, 230, 211, 0.6) 20px,
+                rgba(168, 230, 211, 0.6) 25px,
+                rgba(200, 240, 224, 0.3) 25px,
+                rgba(200, 240, 224, 0.3) 30px
+              ),
+              radial-gradient(circle, rgba(120, 200, 180, 0.4) 2px, transparent 2px);
+            background-size: 100% 100%, 15px 15px;
+            background-position: 0 0, 7px 7px;
+          }
+        `}</style>
+        <div className="relative h-40 md:h-48 banner-bg">
+          <div className="relative z-10 flex items-center justify-between px-4 md:px-12 gap-0 h-full">
+            <div className="flex-1">
+              <h1 className="text-2xl md:text-4xl font-bold text-gray-800 mb-1 md:mb-2">
+                Welcome Home
+              </h1>
+
+            </div>
+            <Link to={createPageUrl('Family')}>
+              <img 
+                src={familyImage} 
+                alt="Family Welcome"
+                className="h-40 md:h-56 w-auto object-cover flex-shrink-0 cursor-pointer hover:opacity-80 transition-opacity"
+                loading="eager"
+                decoding="async"
+              />
+            </Link>
+          </div>
         </div>
-        <Link to={createPageUrl('Family')}>
-          <FamilyPortraitBanner members={sortedMembers} />
-        </Link>
       </div>
 
       {/* Family Member Cards */}
@@ -138,7 +177,18 @@ export default function Home() {
         {/* Main Sections - Roundabout Layout */}
         <RoundaboutGrid sections={sections} imageUrls={imageUrls} />
 
-
+        {/* Footer Image */}
+        <Link to={createPageUrl('Family')}>
+          <div className="w-full flex justify-center pb-2 -mt-4 cursor-pointer">
+            <img 
+              src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6990e4185e2b18f4d04a1ac8/8e2cf008e_Gintoftsback.png"
+              alt="Gintoft Family"
+              className="w-full max-w-lg h-auto object-contain"
+              loading="lazy"
+              decoding="async"
+            />
+          </div>
+        </Link>
       </div>
     </div>
   );
