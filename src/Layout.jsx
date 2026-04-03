@@ -1,7 +1,7 @@
 import React, { useState, useRef, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import { useQueryClient } from '@tanstack/react-query';
+import { useQueryClient, useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { addDays } from 'date-fns';
 import { 
@@ -81,6 +81,21 @@ export default function Layout({ children, currentPageName }) {
   const [commandCenterOpen, setCommandCenterOpen] = useState(false);
   const [scanOpen, setScanOpen] = useState(false);
   const queryClient = useQueryClient();
+
+  const { data: currentUser } = useQuery({
+    queryKey: ['currentUser'],
+    queryFn: () => base44.auth.me(),
+    staleTime: 10 * 60 * 1000,
+  });
+
+  const { data: families = [] } = useQuery({
+    queryKey: ['family', currentUser?.family_id],
+    queryFn: () => base44.entities.Family.filter({ id: currentUser.family_id }),
+    enabled: !!currentUser?.family_id,
+    staleTime: 10 * 60 * 1000,
+  });
+
+  const familyName = families[0]?.name || 'Our Family';
   const { count: commandCenterCount } = useCommandCenterCount();
   const [pullDistance, setPullDistance] = useState(0);
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -181,7 +196,7 @@ export default function Layout({ children, currentPageName }) {
               <Home className="w-5 h-5 text-white" />
             </div>
             <div>
-              <h1 className="font-bold text-gray-900">The Gintoft Family</h1>
+              <h1 className="font-bold text-gray-900">{familyName}</h1>
               <p className="text-xs text-gray-500">Family Home</p>
             </div>
           </Link>
@@ -218,7 +233,7 @@ export default function Layout({ children, currentPageName }) {
           <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-[#E91E8C] to-[#0AACFF] flex items-center justify-center">
             <Home className="w-4 h-4 text-white" />
           </div>
-          <span className="font-bold text-gray-900">The Gintoft Family</span>
+          <span className="font-bold text-gray-900">{familyName}</span>
         </Link>
         <div className="flex items-center gap-1">
           <button
@@ -248,7 +263,7 @@ export default function Layout({ children, currentPageName }) {
                   <Home className="w-5 h-5 text-white" />
                 </div>
                 <div>
-                  <h1 className="font-bold text-gray-900">The Gintoft Family</h1>
+                  <h1 className="font-bold text-gray-900">{familyName}</h1>
                   <p className="text-xs text-gray-500">Wauwatosa, WI</p>
                 </div>
               </div>
