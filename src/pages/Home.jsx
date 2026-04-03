@@ -10,6 +10,7 @@ import ChoreNotificationsDialog from '../components/ChoreNotificationsDialog';
 import RoundaboutGrid from '../components/RoundaboutGrid';
 import FamilyBannerCompositor from '../components/FamilyBannerCompositor';
 import OnboardingWizard from '../components/OnboardingWizard';
+import GrandTour from '../components/GrandTour';
 
 export default function Home() {
   const [imageUrls] = useState({
@@ -105,6 +106,36 @@ export default function Home() {
     },
   ];
 
+  // Show tour after onboarding completes (has_seen_tour is false and a family exists)
+  const showTour = !familiesLoading && families && families.length > 0
+    && currentUser && currentUser.has_seen_tour === false;
+
+  const handleTourComplete = async () => {
+    await base44.auth.updateMe({ has_seen_tour: true });
+  };
+
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 1024;
+  const tourSteps = [
+    {
+      targetId: 'tour-family-banner',
+      title: 'Your Family Command Center',
+      message: "Welcome home! This is your family command center. As you add more members, they'll join you here.",
+      position: 'bottom',
+    },
+    {
+      targetId: isMobile ? 'tour-nav-mobile' : 'tour-nav',
+      title: 'Your Navigation',
+      message: 'Quickly jump between your Meals, Calendar, and House details here.',
+      position: isMobile ? 'bottom' : 'right',
+    },
+    {
+      targetId: isMobile ? 'tour-scan-btn-mobile' : 'tour-scan-btn',
+      title: '✨ The Magic Button',
+      message: 'Tap here to scan flyers, receipts, or IDs. Homey will file them automatically for the whole family.',
+      position: 'bottom',
+    },
+  ];
+
   // Show onboarding if no family has been created yet (and we've finished loading)
   if (!familiesLoading && families && families.length === 0) {
     return <OnboardingWizard onComplete={() => window.location.reload()} />;
@@ -113,6 +144,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-[#F5F5F7]">
       {currentUser && <ChoreNotificationsDialog memberId={currentUser.email} />}
+      {showTour && <GrandTour steps={tourSteps} onComplete={handleTourComplete} />}
 
       {/* Header */}
       <div className="relative overflow-hidden">
@@ -151,7 +183,7 @@ export default function Home() {
               </h1>
 
             </div>
-            <Link to={createPageUrl('Family')} className="flex-shrink-0 cursor-pointer hover:opacity-90 transition-opacity">
+            <Link id="tour-family-banner" to={createPageUrl('Family')} className="flex-shrink-0 cursor-pointer hover:opacity-90 transition-opacity">
               <FamilyBannerCompositor members={sortedMembers} height={160} />
             </Link>
           </div>

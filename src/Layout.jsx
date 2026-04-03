@@ -191,7 +191,7 @@ export default function Layout({ children, currentPageName }) {
   return (
     <div className="min-h-screen bg-[#F5F5F7]">
       {/* Desktop Sidebar */}
-      <aside className="hidden lg:flex fixed left-0 top-0 bottom-0 w-64 bg-white border-r border-gray-200 flex-col z-40">
+      <aside id="tour-nav" className="hidden lg:flex fixed left-0 top-0 bottom-0 w-64 bg-white border-r border-gray-200 flex-col z-40">
         <div className="p-6 border-b border-gray-100">
           <Link to={createPageUrl('Home')} onClick={() => currentPageName === 'Home' && window.location.reload()} className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#E91E8C] to-[#0AACFF] flex items-center justify-center">
@@ -210,6 +210,7 @@ export default function Layout({ children, currentPageName }) {
         </nav>
         <div className="p-4 border-t border-gray-100 space-y-1">
           <button
+            id="tour-scan-btn"
             onClick={() => setScanOpen(true)}
             className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-white bg-gradient-to-r from-[#E91E8C] to-[#0AACFF] hover:opacity-90 transition-all font-medium"
           >
@@ -230,7 +231,7 @@ export default function Layout({ children, currentPageName }) {
       </aside>
 
       {/* Mobile Header */}
-      <header className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-white/95 backdrop-blur-sm border-b border-gray-200 z-40 flex items-center justify-between px-4">
+      <header id="tour-nav-mobile" className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-white/95 backdrop-blur-sm border-b border-gray-200 z-40 flex items-center justify-between px-4">
         <Link to={createPageUrl('Home')} onClick={() => currentPageName === 'Home' && window.location.reload()} className="flex items-center gap-2">
           <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-[#E91E8C] to-[#0AACFF] flex items-center justify-center">
             <Home className="w-4 h-4 text-white" />
@@ -239,6 +240,7 @@ export default function Layout({ children, currentPageName }) {
         </Link>
         <div className="flex items-center gap-1">
           <button
+            id="tour-scan-btn-mobile"
             onClick={() => setScanOpen(true)}
             className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
             title="Scan to Homey"

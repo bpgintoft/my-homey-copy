@@ -13,7 +13,16 @@
     "family_id": {
       "type": "string",
       "description": "ID of the Family this user belongs to. Set automatically when they create or join a family."
+    },
+    "has_seen_tour": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether the user has completed the Homey Grand Tour"
     }
   },
-  "name": "User"
+  "name": "User",
+  "required": [
+    "household_role",
+    "family_id"
+  ]
 }
