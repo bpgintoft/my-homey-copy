@@ -5,6 +5,7 @@ import {
   Users, Plus, Phone, Mail, Pencil, Trash2, CheckCircle2, Upload, Loader2, AlertTriangle, ArrowUpDown
 } from 'lucide-react';
 import FamilyMemberReorderDialog from '@/components/FamilyMemberReorderDialog';
+import CharacterCreator from '@/components/CharacterCreator';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -151,7 +152,8 @@ export default function Family() {
           )}
         </div>
 
-        <div className="grid grid-cols-1 gap-4">
+        {/* Name & Role */}
+        <div className="grid grid-cols-1 gap-3">
           <div>
             <Label>Name *</Label>
             <Input 
@@ -161,18 +163,6 @@ export default function Family() {
             />
           </div>
           <div>
-            <Label>Type</Label>
-            <Select value={formData.person_type || 'adult'} onValueChange={(value) => setFormData({...formData, person_type: value})}>
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="kid">Kid</SelectItem>
-                <SelectItem value="adult">Adult</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div>
             <Label>Role</Label>
             <Input 
               value={formData.role || ''}
@@ -180,6 +170,24 @@ export default function Family() {
               placeholder="e.g., Parent, Child, Grandparent"
             />
           </div>
+        </div>
+
+        {/* Character Creator */}
+        <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-3">Appearance</p>
+          <CharacterCreator
+            value={{
+              gender: formData.gender,
+              age_range: formData.age_range,
+              skin_tone: formData.skin_tone,
+              hair_color: formData.hair_color,
+            }}
+            onChange={(traits) => setFormData(f => ({ ...f, ...traits }))}
+          />
+        </div>
+
+        {/* Contact info */}
+        <div className="grid grid-cols-1 gap-3">
           <div>
             <Label>Phone</Label>
             <Input 
@@ -188,15 +196,17 @@ export default function Family() {
               placeholder="(555) 555-5555"
             />
           </div>
+          <div>
+            <Label>Email</Label>
+            <Input 
+              type="email"
+              value={formData.email || ''}
+              onChange={e => setFormData({...formData, email: e.target.value})}
+            />
+          </div>
         </div>
-        <div>
-          <Label>Email</Label>
-          <Input 
-            type="email"
-            value={formData.email || ''}
-            onChange={e => setFormData({...formData, email: e.target.value})}
-          />
-        </div>
+
+        {/* Color dot */}
         <div>
           <Label>Color</Label>
           <div className="flex flex-wrap gap-2 mt-2">
@@ -213,6 +223,7 @@ export default function Family() {
             ))}
           </div>
         </div>
+
         <div>
           <Label>Responsibilities</Label>
           <div className="flex gap-2 mt-2">
