@@ -9,6 +9,7 @@ import { Loader2 } from 'lucide-react';
 import ChoreNotificationsDialog from '../components/ChoreNotificationsDialog';
 import RoundaboutGrid from '../components/RoundaboutGrid';
 import FamilyBannerCompositor from '../components/FamilyBannerCompositor';
+import OnboardingWizard from '../components/OnboardingWizard';
 
 export default function Home() {
   const [imageUrls] = useState({
@@ -63,6 +64,12 @@ export default function Home() {
     queryFn: () => base44.auth.me(),
   });
 
+  const { data: families, isLoading: familiesLoading } = useQuery({
+    queryKey: ['families'],
+    queryFn: () => base44.entities.Family.list(),
+    staleTime: 5 * 60 * 1000,
+  });
+
   const sortedMembers = [...familyMembers].sort((a, b) => (a.display_order || 0) - (b.display_order || 0));
 
   const todayEvents = googleEvents?.length || 0;
@@ -97,6 +104,11 @@ export default function Home() {
       bgColor: 'bg-gradient-to-br from-amber-200 to-amber-300'
     },
   ];
+
+  // Show onboarding if no family has been created yet (and we've finished loading)
+  if (!familiesLoading && families && families.length === 0) {
+    return <OnboardingWizard onComplete={() => window.location.reload()} />;
+  }
 
   return (
     <div className="min-h-screen bg-[#F5F5F7]">
