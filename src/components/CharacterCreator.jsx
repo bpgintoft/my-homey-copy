@@ -7,6 +7,7 @@ const GENDERS = [
 ];
 
 const AGE_RANGES = [
+  { value: 'Baby', label: 'Baby' },
   { value: 'Under 13', label: 'Kid' },
   { value: '13-17', label: 'Teen' },
   { value: '18+', label: 'Adult' },
