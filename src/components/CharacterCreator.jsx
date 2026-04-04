@@ -28,6 +28,20 @@ const HAIR_COLORS = [
   { value: 'H5', label: 'Gray', color: '#9B9B9B' },
 ];
 
+const EYE_COLORS = [
+  { value: 'E1', label: 'Blue', color: '#5B9BD5' },
+  { value: 'E2', label: 'Brown', color: '#7B4F2E' },
+  { value: 'E3', label: 'Green', color: '#4A7C59' },
+];
+
+const FACIAL_HAIR_STYLES = [
+  { value: 'F0', label: 'None' },
+  { value: 'F1', label: 'Stubble' },
+  { value: 'F2', label: 'Goatee' },
+  { value: 'F3', label: 'Beard' },
+  { value: 'F4', label: 'Mustache' },
+];
+
 function TraitButton({ selected, onClick, children, className = '' }) {
   return (
     <button
@@ -61,10 +75,12 @@ function CircleButton({ selected, onClick, color, label }) {
 export default function CharacterCreator({ value = {}, onChange }) {
   const [imgError, setImgError] = useState(false);
 
-  const { gender, age_range, skin_tone, hair_color } = value;
+  const { gender, age_range, skin_tone, hair_color, eye_color, facial_hair } = value;
+
+  const showFacialHair = gender === 'Male' && age_range === '18+';
 
   // Reset imgError whenever traits change so we re-attempt the image
-  useEffect(() => { setImgError(false); }, [gender, age_range, skin_tone, hair_color]);
+  useEffect(() => { setImgError(false); }, [gender, age_range, skin_tone, hair_color, eye_color, facial_hair]);
 
   const set = (field, val) => onChange({ ...value, [field]: val });
 
@@ -142,6 +158,30 @@ export default function CharacterCreator({ value = {}, onChange }) {
             ))}
           </div>
         </div>
+
+        {/* Eye Color */}
+        <div>
+          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">Eye Color</p>
+          <div className="flex gap-3 flex-wrap">
+            {EYE_COLORS.map(e => (
+              <CircleButton key={e.value} selected={eye_color === e.value} onClick={() => set('eye_color', e.value)} color={e.color} label={e.label} />
+            ))}
+          </div>
+        </div>
+
+        {/* Facial Hair — only for Adult Male */}
+        {showFacialHair && (
+          <div>
+            <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">Facial Hair</p>
+            <div className="flex flex-wrap gap-2">
+              {FACIAL_HAIR_STYLES.map(f => (
+                <TraitButton key={f.value} selected={facial_hair === f.value} onClick={() => set('facial_hair', f.value)}>
+                  {f.label}
+                </TraitButton>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
