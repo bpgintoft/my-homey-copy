@@ -181,6 +181,8 @@ export default function Family() {
               age_range: formData.age_range,
               skin_tone: formData.skin_tone,
               hair_color: formData.hair_color,
+              eye_color: formData.eye_color,
+              facial_hair: formData.facial_hair,
             }}
             onChange={(traits) => setFormData(f => ({ ...f, ...traits }))}
           />

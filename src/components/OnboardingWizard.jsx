@@ -80,7 +80,7 @@ function AddMemberForm({ onAdd, onCancel }) {
       <div className="rounded-xl border border-slate-100 bg-slate-50 p-3">
         <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-2">Appearance</p>
         <CharacterCreator
-          value={{ gender: formData.gender, age_range: formData.age_range, skin_tone: formData.skin_tone, hair_color: formData.hair_color }}
+          value={{ gender: formData.gender, age_range: formData.age_range, skin_tone: formData.skin_tone, hair_color: formData.hair_color, eye_color: formData.eye_color, facial_hair: formData.facial_hair }}
           onChange={traits => setFormData(d => ({ ...d, ...traits }))}
         />
       </div>
