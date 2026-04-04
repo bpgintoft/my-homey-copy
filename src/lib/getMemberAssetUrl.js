@@ -2,26 +2,31 @@
  * getMemberAssetUrl(member)
  *
  * Constructs the filename for a member's transparent PNG avatar based on their traits.
- * Naming convention: [Type]_[Gender]_[Age]_[Skin]_[Hair].png
- * e.g., Adult_Female_30s_S1_H1.png
- *
- * Falls back to a placeholder if traits are missing.
+ * Naming convention: {gender}-{age_range}-{skin_tone}-{hair_color}-{eye_color}-{facial_hair}.png
+ * e.g., male-adult-S1-H1-E2-F0.png
  */
 
 const ASSET_BASE_URL = '/assets/members/';
 
 export function getMemberAssetUrl(member) {
-  const gender = member.gender || 'Unknown';
-  const ageRange = member.age_range || '18+';
+  const gender = member.gender === 'Male' ? 'male' : member.gender === 'Female' ? 'female' : '';
   const skin = member.skin_tone || 'S1';
   const hair = member.hair_color || 'H1';
+  const eye = member.eye_color || 'E2';
+  const facialHair = member.facial_hair || 'F0';
 
-  // Map age_range to type
-  const type = ageRange === 'Under 13' ? 'Child'
-    : ageRange === '13-17' ? 'Teen'
-    : 'Adult';
+  let ageRangeCode;
+  if (member.age_range === 'Baby') {
+    ageRangeCode = 'baby';
+  } else if (member.age_range === 'Under 13') {
+    ageRangeCode = 'kid';
+  } else if (member.age_range === '13-17') {
+    ageRangeCode = 'teen';
+  } else {
+    ageRangeCode = 'adult';
+  }
 
-  const filename = `${type}_${gender}_${ageRange.replace(/[^a-zA-Z0-9]/g, '')}_${skin}_${hair}.png`;
+  const filename = `${gender}-${ageRangeCode}-${skin}-${hair}-${eye}-${facialHair}.png`;
   return `${ASSET_BASE_URL}${filename}`;
 }
 

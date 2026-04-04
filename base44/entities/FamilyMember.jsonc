@@ -1,4 +1,5 @@
 {
+  "name": "FamilyMember",
   "type": "object",
   "properties": {
     "family_id": {
@@ -21,6 +22,7 @@
     "age_range": {
       "type": "string",
       "enum": [
+        "Baby",
         "Under 13",
         "13-17",
         "18+"
@@ -35,8 +37,7 @@
       "type": "string",
       "enum": [
         "Male",
-        "Female",
-        "NonBinary"
+        "Female"
       ],
       "description": "Gender for avatar asset selection"
     },
@@ -46,10 +47,9 @@
         "S1",
         "S2",
         "S3",
-        "S4",
-        "S5"
+        "S4"
       ],
-      "description": "Skin tone code for avatar asset (S1=lightest, S5=darkest)"
+      "description": "Skin tone code for avatar asset (S1=white, S2=light brown, S3=brown, S4=dark brown)"
     },
     "hair_color": {
       "type": "string",
@@ -61,6 +61,54 @@
         "H5"
       ],
       "description": "Hair color code for avatar asset (H1=blonde, H2=brown, H3=black, H4=red, H5=gray)"
+    },
+    "eye_color": {
+      "type": "string",
+      "enum": [
+        "E1",
+        "E2",
+        "E3"
+      ],
+      "description": "Eye color code for avatar asset (E1=blue, E2=brown, E3=green)"
+    },
+    "facial_hair": {
+      "type": "string",
+      "enum": [
+        "F0",
+        "F1",
+        "F2",
+        "F3",
+        "F4"
+      ],
+      "description": "Facial hair style code for avatar asset (F0=none, F1=stubble, F2=goatee, F3=beard, F4=mustache)"
+    },
+    "color": {
+      "type": "string",
+      "description": "Display color for the member's avatar circle"
+    },
+    "photo_url": {
+      "type": "string",
+      "description": "Optional uploaded photo URL"
+    },
+    "phone": {
+      "type": "string"
+    },
+    "email": {
+      "type": "string"
+    },
+    "responsibilities": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "can_vote": {
+      "type": "boolean",
+      "default": false
+    },
+    "display_order": {
+      "type": "number",
+      "description": "Manual sort order for display"
     }
   },
   "required": [
@@ -68,6 +116,5 @@
     "name",
     "role",
     "age_range"
-  ],
-  "name": "FamilyMember"
+  ]
 }

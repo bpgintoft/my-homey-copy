@@ -4,7 +4,6 @@ import { getMemberAssetUrl } from '@/lib/getMemberAssetUrl';
 const GENDERS = [
   { value: 'Male', label: 'Male', emoji: '♂' },
   { value: 'Female', label: 'Female', emoji: '♀' },
-  { value: 'NonBinary', label: 'Non-binary', emoji: '⚧' },
 ];
 
 const AGE_RANGES = [
@@ -14,11 +13,10 @@ const AGE_RANGES = [
 ];
 
 const SKIN_TONES = [
-  { value: 'S1', color: '#FDDBB4' },
-  { value: 'S2', color: '#F5C28B' },
-  { value: 'S3', color: '#D4956A' },
-  { value: 'S4', color: '#A0622A' },
-  { value: 'S5', color: '#5C3010' },
+  { value: 'S1', color: '#FDDBB4' }, // White
+  { value: 'S2', color: '#D4956A' }, // Light brown
+  { value: 'S3', color: '#A0622A' }, // Brown
+  { value: 'S4', color: '#5C3010' }, // Dark brown
 ];
 
 const HAIR_COLORS = [
