@@ -91,12 +91,12 @@ export default function CharacterCreator({ value = {}, onChange }) {
     <div className="flex flex-col sm:flex-row gap-5 items-start">
       {/* Live Preview */}
       <div className="flex-shrink-0 flex flex-col items-center gap-2 w-full sm:w-auto">
-        <div className="w-32 h-44 flex items-end justify-center bg-gradient-to-b from-teal-50 to-teal-100 rounded-2xl border border-teal-200 overflow-hidden">
+        <div className="w-24 h-32 flex items-end justify-center bg-gradient-to-b from-teal-50 to-teal-100 rounded-2xl border border-teal-200 overflow-hidden">
           {hasTraits && !imgError ? (
             <img
               src={assetUrl}
               alt="Preview"
-              className="h-full w-auto object-contain"
+              className="h-[120%] w-auto object-contain"
               onError={() => setImgError(true)}
             />
           ) : (
