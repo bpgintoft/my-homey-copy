@@ -22,7 +22,7 @@ export default function FamilyBannerCompositor({ members = [], height = 160 }) {
 
   // Scale down height and increase overlap as member count grows past 3
   const count = ordered.length;
-  const scale = count <= 3 ? 1 : count === 4 ? 0.9 : count === 5 ? 0.82 : count === 6 ? 0.66 : Math.max(0.55, 1 - (count - 3) * 0.1);
+  const scale = count <= 3 ? 1 : count === 4 ? 0.9 : count === 5 ? 0.82 : count === 6 ? 0.72 : Math.max(0.55, 1 - (count - 3) * 0.1);
   const scaledHeight = height * scale;
   const overlap = count <= 3 ? 18 : count <= 5 ? 22 : 28;
 
