@@ -45,7 +45,7 @@ export default function Family() {
 
   const { data: members, isLoading } = useQuery({
     queryKey: ['familyMembers'],
-    queryFn: () => base44.entities.FamilyMember.list(),
+    queryFn: () => base44.entities.FamilyMember.list('display_order'),
   });
 
   const { data: tasks } = useQuery({
@@ -92,7 +92,14 @@ export default function Family() {
     if (isEdit) {
       await updateMemberMutation.mutateAsync({ id: editingMember.id, data });
     } else {
-      await createMemberMutation.mutateAsync({ ...data, family_id: currentUser?.family_id });
+      const maxOrder = members?.length
+        ? Math.max(...members.map(m => m.display_order ?? 0))
+        : 0;
+      await createMemberMutation.mutateAsync({
+        ...data,
+        family_id: currentUser?.family_id,
+        display_order: maxOrder + 1,
+      });
     }
     setIsSubmitting(false);
   };
