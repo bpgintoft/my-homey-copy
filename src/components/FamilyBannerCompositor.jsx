@@ -27,7 +27,7 @@ export default function FamilyBannerCompositor({ members = [], height = 160 }) {
   const overlap = count <= 3 ? 18 : count <= 5 ? 22 : 28;
 
   return (
-    <div className="flex items-end justify-center h-full overflow-hidden" style={{ paddingRight: overlap }}>
+    <div className="flex items-end justify-end h-full" style={{ overflow: 'visible' }}>
       {ordered.map((member, i) => {
         const assetUrl = getMemberAssetUrl(member);
         const isAdult = isAdultMember(member);
@@ -40,7 +40,7 @@ export default function FamilyBannerCompositor({ members = [], height = 160 }) {
             style={{
               height: scaledHeight + 24,
               marginLeft: i === 0 ? 0 : -overlap,
-              zIndex: ordered.length - i,
+              zIndex: i,
               position: 'relative',
             }}
           >
