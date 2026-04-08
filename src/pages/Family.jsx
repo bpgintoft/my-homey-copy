@@ -45,7 +45,7 @@ export default function Family() {
 
   const { data: members, isLoading } = useQuery({
     queryKey: ['familyMembers'],
-    queryFn: () => base44.entities.FamilyMember.list('display_order'),
+    queryFn: () => base44.entities.FamilyMember.list('display_order,created_date'),
   });
 
   const { data: tasks } = useQuery({
