@@ -38,7 +38,7 @@ export default function FamilyBannerCompositor({ members = [], height = 160 }) {
             key={member.id}
             className="flex flex-col items-center justify-end flex-shrink-0"
             style={{
-              height: scaledHeight,
+              height: height,
               marginLeft: i === 0 ? 0 : -overlap,
               zIndex: ordered.length - i,
               position: 'relative',
