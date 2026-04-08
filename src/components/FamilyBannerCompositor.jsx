@@ -20,9 +20,11 @@ export default function FamilyBannerCompositor({ members = [], height = 160 }) {
 
   const ordered = [...leftChildren, ...adults, ...rightChildren];
 
+  const overlap = 18; // pixels each image shifts left to overlap the previous
+
   return (
-    <div className="flex items-end justify-center h-full gap-1">
-      {ordered.map((member) => {
+    <div className="flex items-end justify-center h-full" style={{ paddingRight: overlap }}>
+      {ordered.map((member, i) => {
         const assetUrl = getMemberAssetUrl(member);
         const isAdult = isAdultMember(member);
         const imgHeight = isAdult ? height : height * 0.75;
@@ -30,8 +32,13 @@ export default function FamilyBannerCompositor({ members = [], height = 160 }) {
         return (
           <div
             key={member.id}
-            className="flex flex-col items-center justify-end"
-            style={{ height }}
+            className="flex flex-col items-center justify-end flex-shrink-0"
+            style={{
+              height,
+              marginLeft: i === 0 ? 0 : -overlap,
+              zIndex: ordered.length - i,
+              position: 'relative',
+            }}
           >
             <img
               src={assetUrl}
