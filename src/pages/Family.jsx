@@ -32,10 +32,16 @@ export default function Family() {
 
   const [newMember, setNewMember] = useState({
     name: '', role: '', email: '', phone: '', person_type: 'adult',
-    color: COLORS[0], responsibilities: []
+    color: COLORS[0], responsibilities: [], family_id: ''
   });
 
   const queryClient = useQueryClient();
+
+  const { data: currentUser } = useQuery({
+    queryKey: ['currentUser'],
+    queryFn: () => base44.auth.me(),
+    staleTime: 10 * 60 * 1000,
+  });
 
   const { data: members, isLoading } = useQuery({
     queryKey: ['familyMembers'],
@@ -86,7 +92,7 @@ export default function Family() {
     if (isEdit) {
       await updateMemberMutation.mutateAsync({ id: editingMember.id, data });
     } else {
-      await createMemberMutation.mutateAsync(data);
+      await createMemberMutation.mutateAsync({ ...data, family_id: currentUser?.family_id });
     }
     setIsSubmitting(false);
   };
