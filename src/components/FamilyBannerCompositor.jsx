@@ -20,18 +20,27 @@ export default function FamilyBannerCompositor({ members = [], height = 160 }) {
 
   const ordered = [...leftChildren, ...adults, ...rightChildren];
 
-  // Scale down height and increase overlap as member count grows past 3
   const count = ordered.length;
-  const scale = count <= 3 ? 1 : count === 4 ? 0.9 : count === 5 ? 0.82 : count === 6 ? 0.68 : Math.max(0.55, 1 - (count - 3) * 0.1);
-  const scaledHeight = height * scale;
-  const overlap = count <= 3 ? 18 : count <= 5 ? 22 : 28;
+
+  // Per-count tuned values: { scale, overlap, childRatio }
+  const CONFIG = {
+    1: { scale: 1.00, overlap: 0,  childRatio: 0.75 },
+    2: { scale: 1.00, overlap: 16, childRatio: 0.75 },
+    3: { scale: 0.95, overlap: 18, childRatio: 0.75 },
+    4: { scale: 0.88, overlap: 20, childRatio: 0.75 },
+    5: { scale: 0.78, overlap: 24, childRatio: 0.76 },
+    6: { scale: 0.68, overlap: 26, childRatio: 0.77 },
+  };
+  const cfg = CONFIG[count] || { scale: Math.max(0.52, 0.68 - (count - 6) * 0.08), overlap: 28, childRatio: 0.78 };
+
+  const scaledHeight = height * cfg.scale;
 
   return (
     <div className="flex items-end justify-end h-full" style={{ overflow: 'visible' }}>
       {ordered.map((member, i) => {
         const assetUrl = getMemberAssetUrl(member);
         const isAdult = isAdultMember(member);
-        const imgHeight = isAdult ? scaledHeight : scaledHeight * 0.75;
+        const imgHeight = isAdult ? scaledHeight : scaledHeight * cfg.childRatio;
 
         return (
           <div
@@ -39,7 +48,7 @@ export default function FamilyBannerCompositor({ members = [], height = 160 }) {
             className="flex flex-col items-center justify-end flex-shrink-0"
             style={{
               height: scaledHeight + 24,
-              marginLeft: i === 0 ? 0 : -overlap,
+              marginLeft: i === 0 ? 0 : -cfg.overlap,
               zIndex: i,
               position: 'relative',
             }}
