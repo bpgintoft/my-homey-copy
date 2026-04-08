@@ -32,7 +32,7 @@ export default function Family() {
 
   const [newMember, setNewMember] = useState({
     name: '', role: '', email: '', phone: '', person_type: 'adult',
-    color: COLORS[0], responsibilities: [], family_id: ''
+    age_range: '18+', color: COLORS[0], responsibilities: [], family_id: ''
   });
 
   const queryClient = useQueryClient();
