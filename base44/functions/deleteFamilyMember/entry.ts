@@ -3,14 +3,8 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
 // Cascade-deletes all data linked to a family member
 Deno.serve(async (req) => {
   try {
-    const clonedReq = req.clone();
     const base44 = createClientFromRequest(req);
-
-    let user = null;
-    try { user = await base44.auth.me(); } catch {}
-    if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
-
-    const { memberId } = await clonedReq.json();
+    const { memberId } = await req.json();
     if (!memberId) return Response.json({ error: 'Missing memberId' }, { status: 400 });
 
     const db = base44.asServiceRole.entities;
