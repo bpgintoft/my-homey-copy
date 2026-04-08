@@ -96,7 +96,7 @@ export default function CharacterCreator({ value = {}, onChange }) {
             <img
               src={assetUrl}
               alt="Preview"
-              className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[130%] max-w-none"
+              style={{ position: 'absolute', top: '4px', bottom: 0, left: '50%', transform: 'translateX(-50%)', height: 'calc(100% - 4px)', width: 'auto', maxWidth: 'none' }}
               onError={() => setImgError(true)}
             />
           ) : (
