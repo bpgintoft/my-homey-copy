@@ -24,7 +24,7 @@ export default function FamilyBannerCompositor({ members = [], height = 160 }) {
 
   // Per-count tuned values: { scale, overlap, childRatio }
   const CONFIG = {
-    1: { scale: 1.4,  overlap: 0,  childRatio: 0.75 },
+    1: { scale: 1.65, overlap: 0,  childRatio: 0.75 },
     2: { scale: 1.00, overlap: 16, childRatio: 0.75 },
     3: { scale: 0.95, overlap: 18, childRatio: 0.75 },
     4: { scale: 0.88, overlap: 20, childRatio: 0.75 },
