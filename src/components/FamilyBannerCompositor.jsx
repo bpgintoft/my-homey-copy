@@ -36,7 +36,7 @@ export default function FamilyBannerCompositor({ members = [], height = 160 }) {
   const scaledHeight = height * cfg.scale;
 
   return (
-    <div className="flex items-start justify-end h-full" style={{ overflow: 'hidden', paddingTop: 1 }}>
+    <div className="flex items-start justify-end h-full" style={{ overflow: 'hidden', paddingTop: 8 }}>
       {ordered.map((member, i) => {
         const assetUrl = getMemberAssetUrl(member);
         const isAdult = isAdultMember(member);
