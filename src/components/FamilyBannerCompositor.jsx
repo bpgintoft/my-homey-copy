@@ -58,7 +58,7 @@ export default function FamilyBannerCompositor({ members = [], height = 160 }) {
               <img
                 src={assetUrl}
                 alt={member.name}
-                style={{ height: imgHeight, width: 'auto', objectFit: 'contain', objectPosition: 'top' }}
+                style={{ height: imgHeight, width: 'auto', objectFit: 'contain', objectPosition: 'top', transform: count === 1 ? 'scaleX(-1)' : 'none' }}
                 onError={(e) => { e.target.style.display = 'none'; }}
               />
             </div>
