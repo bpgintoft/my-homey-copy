@@ -175,7 +175,7 @@ export default function Home() {
             background-position: 0 0, 7px 7px;
           }
         `}</style>
-        <div className="relative h-40 md:h-48 banner-bg overflow-visible">
+        <div className="relative h-40 md:h-48 banner-bg overflow-hidden">
           <div className="relative z-10 flex items-center justify-between px-4 md:px-12 gap-0 h-full">
             <div className="flex-1">
               <h1 className="text-2xl md:text-4xl font-bold text-gray-800 mb-1 md:mb-2">
