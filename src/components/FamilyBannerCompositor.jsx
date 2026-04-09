@@ -36,33 +36,35 @@ export default function FamilyBannerCompositor({ members = [], height = 160 }) {
   const scaledHeight = height * cfg.scale;
 
   return (
-    <div className="flex items-start justify-end h-full" style={{ overflow: 'hidden', paddingTop: 20 }}>
-      {ordered.map((member, i) => {
-        const assetUrl = getMemberAssetUrl(member);
-        const isAdult = isAdultMember(member);
-        const imgHeight = isAdult ? scaledHeight : scaledHeight * cfg.childRatio;
+    <div className="flex items-start justify-end" style={{ height: '100%', overflow: 'hidden' }}>
+      <div className="flex items-start justify-end" style={{ paddingTop: 20, height: '100%', overflow: 'hidden' }}>
+        {ordered.map((member, i) => {
+          const assetUrl = getMemberAssetUrl(member);
+          const isAdult = isAdultMember(member);
+          const imgHeight = isAdult ? scaledHeight : scaledHeight * cfg.childRatio;
 
-        return (
-          <div
-            key={member.id}
-            className="flex flex-col items-center justify-start flex-shrink-0"
-            style={{
-              height: '100%',
-              marginLeft: i === 0 ? 0 : -cfg.overlap,
-              zIndex: i,
-              position: 'relative',
-              overflow: 'hidden',
-            }}
-          >
-            <img
-              src={assetUrl}
-              alt={member.name}
-              style={{ height: imgHeight, width: 'auto', objectFit: 'contain', objectPosition: 'top' }}
-              onError={(e) => { e.target.style.display = 'none'; }}
-            />
-          </div>
-        );
-      })}
+          return (
+            <div
+              key={member.id}
+              className="flex flex-col items-center justify-start flex-shrink-0"
+              style={{
+                height: '100%',
+                marginLeft: i === 0 ? 0 : -cfg.overlap,
+                zIndex: i,
+                position: 'relative',
+                overflow: 'hidden',
+              }}
+            >
+              <img
+                src={assetUrl}
+                alt={member.name}
+                style={{ height: imgHeight, width: 'auto', objectFit: 'contain', objectPosition: 'top' }}
+                onError={(e) => { e.target.style.display = 'none'; }}
+              />
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }
