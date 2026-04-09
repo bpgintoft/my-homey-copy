@@ -45,7 +45,7 @@ export default function Family() {
 
   const { data: members, isLoading } = useQuery({
     queryKey: ['familyMembers'],
-    queryFn: () => base44.entities.FamilyMember.list('display_order,created_date'),
+    queryFn: () => base44.entities.FamilyMember.list('display_order,created_date', 100),
   });
 
   const { data: tasks } = useQuery({
@@ -94,7 +94,7 @@ export default function Family() {
     } else {
       const maxOrder = members?.length
         ? Math.max(...members.map(m => m.display_order ?? 0))
-        : 0;
+        : -1;
       await createMemberMutation.mutateAsync({
         ...data,
         family_id: currentUser?.family_id,
