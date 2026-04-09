@@ -24,7 +24,7 @@ export default function FamilyBannerCompositor({ members = [], height = 160 }) {
 
   // Per-count tuned values: { scale, overlap, childRatio }
   const CONFIG = {
-    1: { scale: 1.00, overlap: 0,  childRatio: 0.75 },
+    1: { scale: 1.30, overlap: 0,  childRatio: 0.75 },
     2: { scale: 1.00, overlap: 16, childRatio: 0.75 },
     3: { scale: 0.95, overlap: 18, childRatio: 0.75 },
     4: { scale: 0.88, overlap: 20, childRatio: 0.75 },
@@ -36,7 +36,7 @@ export default function FamilyBannerCompositor({ members = [], height = 160 }) {
   const scaledHeight = height * cfg.scale;
 
   return (
-    <div className="flex items-end justify-end h-full" style={{ overflow: 'visible' }}>
+    <div className="flex items-start justify-end h-full" style={{ overflow: 'hidden', paddingTop: 1 }}>
       {ordered.map((member, i) => {
         const assetUrl = getMemberAssetUrl(member);
         const isAdult = isAdultMember(member);
@@ -45,18 +45,19 @@ export default function FamilyBannerCompositor({ members = [], height = 160 }) {
         return (
           <div
             key={member.id}
-            className="flex flex-col items-center justify-end flex-shrink-0"
+            className="flex flex-col items-center justify-start flex-shrink-0"
             style={{
-              height: scaledHeight + 24,
+              height: '100%',
               marginLeft: i === 0 ? 0 : -cfg.overlap,
               zIndex: i,
               position: 'relative',
+              overflow: 'hidden',
             }}
           >
             <img
               src={assetUrl}
               alt={member.name}
-              style={{ height: imgHeight, width: 'auto', objectFit: 'contain' }}
+              style={{ height: imgHeight, width: 'auto', objectFit: 'contain', objectPosition: 'top' }}
               onError={(e) => { e.target.style.display = 'none'; }}
             />
           </div>
