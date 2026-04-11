@@ -34,19 +34,17 @@ export default function FamilyBannerCompositor({ members = [], height = 160 }) {
   const cfg = CONFIG[count] || { scale: Math.max(0.52, 0.68 - (count - 6) * 0.08), overlap: 28, childRatio: 0.78 };
 
   const scaledHeight = height * cfg.scale;
-  const paddingTop = count === 1 ? 48 : 20;
 
   return (
-    <div className="flex items-start justify-end" style={{ height: '100%', overflow: 'hidden' }}>
-      <div className="flex items-start justify-end" style={{ paddingTop, height: '100%', overflow: 'hidden' }}>
+    <div className="flex items-end justify-end" style={{ height: '100%', overflow: 'hidden' }}>
+      <div className="flex items-end justify-end" style={{ height: '100%', overflow: 'hidden' }}>
         {ordered.map((member, i) => {
           const assetUrl = getMemberAssetUrl(member);
           const isAdult = isAdultMember(member);
           const imgHeight = isAdult ? scaledHeight : scaledHeight * cfg.childRatio;
 
-          // Push kids down so only the bottom 10% is cropped by the banner edge
-          const availableHeight = height - paddingTop;
-          const kidMarginTop = !isAdult ? Math.max(0, availableHeight - imgHeight * 0.9) + 15 : 0;
+          // Push kids down so their feet are slightly below the banner edge
+          const kidTranslateY = !isAdult ? 12 : 0;
 
           return (
             <div
@@ -57,8 +55,8 @@ export default function FamilyBannerCompositor({ members = [], height = 160 }) {
                 marginLeft: i === 0 ? 0 : -cfg.overlap,
                 zIndex: count - i,
                 position: 'relative',
-                overflow: 'hidden',
-                marginTop: kidMarginTop,
+                overflow: 'visible',
+                transform: `translateY(${kidTranslateY}px)`,
               }}
             >
               <img
