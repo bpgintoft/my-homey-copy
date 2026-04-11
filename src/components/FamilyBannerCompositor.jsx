@@ -24,12 +24,12 @@ export default function FamilyBannerCompositor({ members = [], height = 160 }) {
 
   // Per-count tuned values: { scale, overlap, childRatio }
   const CONFIG = {
-    1: { scale: 1.4,  overlap: 0,  childRatio: 0.75 },
-    2: { scale: 1.00, overlap: 55, childRatio: 0.75 },
-    3: { scale: 0.95, overlap: 45, childRatio: 0.75 },
-    4: { scale: 0.88, overlap: 20, childRatio: 0.75 },
-    5: { scale: 0.78, overlap: 24, childRatio: 0.76 },
-    6: { scale: 0.68, overlap: 26, childRatio: 0.77 },
+    1: { scale: 1.4,  overlap: 0,  childRatio: 0.88 },
+    2: { scale: 1.00, overlap: 55, childRatio: 0.88 },
+    3: { scale: 0.95, overlap: 45, childRatio: 0.88 },
+    4: { scale: 0.88, overlap: 20, childRatio: 0.85 },
+    5: { scale: 0.78, overlap: 24, childRatio: 0.84 },
+    6: { scale: 0.68, overlap: 26, childRatio: 0.83 },
   };
   const cfg = CONFIG[count] || { scale: Math.max(0.52, 0.68 - (count - 6) * 0.08), overlap: 28, childRatio: 0.78 };
 
