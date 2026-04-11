@@ -14,7 +14,7 @@ export default function FamilyBannerCompositor({ members = [], height = 160 }) {
   const children = members.filter(m => !isAdultMember(m));
 
   // Layout: [child, child, ...] [adult, adult, ...] [child, child, ...]
-  const half = Math.ceil(children.length / 2);
+  const half = Math.floor(children.length / 2);
   const leftChildren = children.slice(0, half);
   const rightChildren = children.slice(half);
 
