@@ -34,14 +34,19 @@ export default function FamilyBannerCompositor({ members = [], height = 160 }) {
   const cfg = CONFIG[count] || { scale: Math.max(0.52, 0.68 - (count - 6) * 0.08), overlap: 28, childRatio: 0.78 };
 
   const scaledHeight = height * cfg.scale;
+  const paddingTop = count === 1 ? 48 : 20;
 
   return (
     <div className="flex items-start justify-end" style={{ height: '100%', overflow: 'hidden' }}>
-      <div className="flex items-start justify-end" style={{ paddingTop: count === 1 ? 48 : 20, height: '100%', overflow: 'hidden' }}>
+      <div className="flex items-start justify-end" style={{ paddingTop, height: '100%', overflow: 'hidden' }}>
         {ordered.map((member, i) => {
           const assetUrl = getMemberAssetUrl(member);
           const isAdult = isAdultMember(member);
           const imgHeight = isAdult ? scaledHeight : scaledHeight * cfg.childRatio;
+
+          // Push kids down so only the bottom 10% is cropped by the banner edge
+          const availableHeight = height - paddingTop;
+          const kidMarginTop = !isAdult ? Math.max(0, availableHeight - imgHeight * 0.9) : 0;
 
           return (
             <div
@@ -53,13 +58,20 @@ export default function FamilyBannerCompositor({ members = [], height = 160 }) {
                 zIndex: count - i,
                 position: 'relative',
                 overflow: 'hidden',
+                marginTop: kidMarginTop,
               }}
             >
               <img
-              src={assetUrl}
-              alt={member.name}
-              style={{ height: imgHeight, width: 'auto', objectFit: 'contain', objectPosition: 'top', transform: (count === 1 || (count === 2 && i === 1) || (count === 3 && i === count - 1)) ? 'scaleX(-1)' : 'none' }}
-              onError={(e) => { e.target.style.display = 'none'; }}
+                src={assetUrl}
+                alt={member.name}
+                style={{
+                  height: imgHeight,
+                  width: 'auto',
+                  objectFit: 'contain',
+                  objectPosition: 'top',
+                  transform: (count === 1 || (count === 2 && i === 1) || (count === 3 && i === count - 1)) ? 'scaleX(-1)' : 'none'
+                }}
+                onError={(e) => { e.target.style.display = 'none'; }}
               />
             </div>
           );
