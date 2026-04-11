@@ -46,7 +46,7 @@ export default function FamilyBannerCompositor({ members = [], height = 160 }) {
 
           // Push kids down so only the bottom 10% is cropped by the banner edge
           const availableHeight = height - paddingTop;
-          const kidMarginTop = !isAdult ? Math.max(0, availableHeight - imgHeight * 0.9) : 0;
+          const kidMarginTop = !isAdult ? Math.max(0, availableHeight - imgHeight * 0.9) + 15 : 0;
 
           return (
             <div
